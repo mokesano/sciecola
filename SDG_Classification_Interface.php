@@ -181,10 +181,9 @@ function detectInputType($input) {
     $input = trim($input);
     if (preg_match('/orcid\.org\/(\d{4}-\d{4}-\d{4}-\d{3}[\dX])/', $input, $matches)) return 'orcid';
     if (preg_match('/^(\d{4}-\d{4}-\d{4}-\d{3}[\dX])$/', $input)) return 'orcid';
-    if (preg_match('/^0000-\d{4}-\d{4}-\d{3}[\dX]$/', $input)) return 'orcid';
+    // Cek DOI: wajib mengandung doi.org atau diawali 10.NNNN/
     if (strlen($input) >= 7 && strpos($input, '/') !== false) {
         if (preg_match('/^10\.\d+\//', $input) || preg_match('/doi\.org\//', $input) || preg_match('/dx\.doi\.org\//', $input)) return 'doi';
-        if (strlen($input) > 10) return 'doi';
     }
     return null;
 }
@@ -205,7 +204,8 @@ function cleanInput($input, $type) {
 
 function validateOrcid($orcid) {
     $orcid = trim($orcid);
-    if (!preg_match('/^0000-\d{4}-\d{4}-\d{3}[\dX]$/', $orcid)) return false;
+    // ORCID ID valid: 4 segmen digit dengan format XXXX-XXXX-XXXX-XXXX (digit pertama bebas, bukan hanya 0000-)
+    if (!preg_match('/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/', $orcid)) return false;
     $digits = str_replace('-', '', substr($orcid, 0, -1));
     $checkDigit = substr($orcid, -1);
     $total = 0;
@@ -400,8 +400,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $clean_input_value = $clean_input;
 
             if ($detected_type === 'orcid' && !validateOrcid($clean_input)) {
-                $error_message = 'The ORCID ID is invalid. The correct format is: 0000-0000-0000-0000 (with a valid checksum)';
-            } else {
+                $error_message = 'The ORCID ID is invalid. The correct format is: XXXX-XXXX-XXXX-XXXX (with a valid checksum). Note: first segment does not have to be 0000.';
+            } elseif ($detected_type === 'doi') {
+                // Validasi format DOI: wajib diawali 10.NNNN/ setelah strip prefix URL
+                $doi_check = preg_replace('/^https?:\/\/(dx\.)?doi\.org\//i', '', $clean_input);
+                $doi_check = preg_replace('/^doi:/i', '', $doi_check);
+                if (!preg_match('/^10\.\d{4,}\//', trim($doi_check))) {
+                    $error_message = 'Format DOI tidak valid. DOI harus mengandung "doi.org" atau diawali dengan "10.xxxx/".';
+                }
+            }
+            if (!$error_message) {
                 // DOI: proses via PHP (cepat, tidak timeout)
                 if ($detected_type === 'doi') {
                     $api_url = $API_BASE_URL . '?doi=' . urlencode($clean_input);
@@ -590,6 +598,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .loading-text { font-weight: 600; color: #667eea; font-size: 18px; margin-bottom: 10px; }
         .loading-subtext { color: #666; font-size: 14px; }
         .none-SDG { text-align: center; color: #666; font-style: italic; padding: 17px; background: #f8f9fa; border-radius: 17px; font-size: 14px; }
+        /* ── Profile Details (researcher full profile) ── */
+        .profile-details { margin: 18px 0 20px; padding: 18px 20px; background: #f8f9fa; border-radius: 12px; border: 1px solid #e9ecef; font-size: 14px; color: #444; display: flex; flex-direction: column; gap: 10px; }
+        .profile-bio { font-style: italic; color: #555; line-height: 1.6; }
+        .profile-bio i { color: #667eea; margin-right: 6px; }
+        .profile-keywords { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+        .profile-keywords > i { color: #667eea; margin-right: 4px; flex-shrink: 0; }
+        .kw-tag { background: #e8eafd; color: #4a5568; padding: 3px 10px; border-radius: 20px; font-size: 13px; font-weight: 500; }
+        .profile-detail-item { display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap; }
+        .profile-detail-item > i { color: #667eea; margin-top: 2px; flex-shrink: 0; width: 16px; }
+        .profile-detail-item a { color: #667eea; text-decoration: none; }
+        .profile-detail-item a:hover { text-decoration: underline; }
+        .ext-id-tag { background: #fff3cd; color: #856404; padding: 2px 9px; border-radius: 10px; font-size: 12px; font-weight: 600; border: 1px solid #ffeeba; margin-right: 4px; }
+        .ext-id-tag a { color: #856404; text-decoration: none; }
+        .ext-id-tag a:hover { text-decoration: underline; }
+        .profile-section { margin-top: 4px; }
+        .profile-section-title { font-weight: 700; color: #333; margin-bottom: 6px; }
+        .profile-section-title i { color: #667eea; margin-right: 6px; }
+        .profile-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 4px; }
+        .profile-list li { padding-left: 18px; position: relative; line-height: 1.5; }
+        .profile-list li::before { content: '•'; position: absolute; left: 4px; color: #667eea; }
+        .affil-role { font-size: 12px; font-weight: 600; background: #e8f4fd; color: #0c5460; padding: 1px 7px; border-radius: 10px; margin-left: 6px; vertical-align: middle; }
         /* ── AJAX Progress (TAMBAHAN BARU) ── */
         #ajaxProgressSection { display:none; background:white; border-radius:20px; padding:25px; margin-bottom:20px; box-shadow:0 10px 30px rgba(0,0,0,.1); max-width:900px; margin-left:auto; margin-right:auto; }
         .ajax-progress-header { display:flex; align-items:center; gap:15px; margin-bottom:15px; }
@@ -1178,17 +1207,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     function detectInputType(value) {
         value = value.trim();
         if (/orcid\.org\/(\d{4}-\d{4}-\d{4}-\d{3}[\dX])/i.test(value)) return 'orcid';
-        if (/^0000-/.test(value) && value.includes('-')) return 'orcid';
         if (/^(\d{4}-\d{4}-\d{4}-\d{3}[\dX])$/.test(value)) return 'orcid';
+        // DOI: wajib mengandung doi.org atau diawali 10.NNNN/  — URL lain langsung ditolak
         if (value.length >= 7 && value.indexOf('/') !== -1) {
             if (/^10\.\d+\//.test(value) || /doi\.org\//.test(value) || /dx\.doi\.org\//.test(value)) return 'doi';
-            if (value.length > 10) return 'doi';
         }
         return null;
     }
     function validateOrcid(orcid) {
         orcid = orcid.trim();
-        if (!/^0000-\d{4}-\d{4}-\d{3}[\dX]$/.test(orcid) || orcid.length !== 19) return false;
+        // ORCID valid: 4 segmen digit, tidak harus diawali 0000-
+        if (!/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/.test(orcid) || orcid.length !== 19) return false;
         const digits = orcid.replace(/-/g, '').slice(0, -1);
         const checkDigit = orcid.slice(-1);
         let total = 0;
@@ -1223,7 +1252,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (detectedType === 'orcid') {
             let cleanedOrcid = value;
             if (value.includes('orcid.org/')) { const m = value.match(/orcid\.org\/(\d{4}-\d{4}-\d{4}-\d{3}[\dX])/i); if (m) cleanedOrcid = m[1]; }
-            if (cleanedOrcid.length !== 19 || !cleanedOrcid.match(/^0000-\d{4}-\d{4}-\d{3}[\dX]$/)) { statusElement.className = 'input-status invalid'; statusIcon.className = 'fas fa-exclamation-triangle'; statusText.textContent = 'Invalid ORCID format: ' + cleanedOrcid + ' - Must be 0000-0000-0000-0000 format'; updateInputVisualState(inputElement, labelElement, 'invalid'); return; }
+            if (cleanedOrcid.length !== 19 || !cleanedOrcid.match(/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/)) { statusElement.className = 'input-status invalid'; statusIcon.className = 'fas fa-exclamation-triangle'; statusText.textContent = 'Invalid ORCID format: ' + cleanedOrcid + ' - Must be XXXX-XXXX-XXXX-XXXX format'; updateInputVisualState(inputElement, labelElement, 'invalid'); return; }
             const isValid = validateOrcid(cleanedOrcid);
             if (isValid) { statusElement.className = 'input-status orcid-detected'; statusIcon.className = 'fas fa-check-circle'; statusText.textContent = 'ORCID detected: ' + cleanedOrcid + ' - Valid'; updateInputVisualState(inputElement, labelElement, 'valid'); }
             else { statusElement.className = 'input-status invalid'; statusIcon.className = 'fas fa-exclamation-triangle'; statusText.textContent = 'ORCID detected: ' + cleanedOrcid + ' - Invalid checksum'; updateInputVisualState(inputElement, labelElement, 'invalid'); }
@@ -1232,7 +1261,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isValid) { statusElement.className = 'input-status doi-detected'; statusIcon.className = 'fas fa-check-circle'; statusText.textContent = 'DOI detected: ' + value.slice(0, 50) + (value.length > 50 ? '...' : '') + ' - Valid'; updateInputVisualState(inputElement, labelElement, 'valid'); }
             else { statusElement.className = 'input-status invalid'; statusIcon.className = 'fas fa-exclamation-triangle'; statusText.textContent = 'DOI detected but format is invalid'; updateInputVisualState(inputElement, labelElement, 'warning'); }
         } else {
-            if (value.startsWith('0000-') || value.includes('orcid')) { statusElement.className = 'input-status invalid'; statusIcon.className = 'fas fa-exclamation-triangle'; statusText.textContent = 'Invalid ORCID format - must follow 0000-0000-0000-0000 pattern'; updateInputVisualState(inputElement, labelElement, 'invalid'); }
+            if (/^\d{4}-/.test(value) || value.includes('orcid')) { statusElement.className = 'input-status invalid'; statusIcon.className = 'fas fa-exclamation-triangle'; statusText.textContent = 'Invalid ORCID format - must follow XXXX-XXXX-XXXX-XXXX pattern'; updateInputVisualState(inputElement, labelElement, 'invalid'); }
             else if (value.length >= 4 && value.length <= 10) { statusElement.className = 'input-status detecting'; statusIcon.className = 'fas fa-search'; statusText.textContent = 'Detecting input formats...'; updateInputVisualState(inputElement, labelElement, 'checking'); }
             else { statusElement.className = 'input-status invalid'; statusIcon.className = 'fas fa-exclamation-triangle'; statusText.textContent = 'Unrecognised format - enter a valid ORCID or DOI'; updateInputVisualState(inputElement, labelElement, 'invalid'); }
         }
@@ -1341,11 +1370,103 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     function escH(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+    /**
+     * Render string yang mungkin mengandung HTML inline aman (em, i, b, strong, sup, sub, u).
+     * Tag lain di-escape. Dipakai untuk judul artikel/work.
+     */
+    function safeHtml(s) {
+        if (!s) return '';
+        const ALLOWED = new Set(['em','i','b','strong','u','sup','sub']);
+        let str = String(s);
+        // Decode entity-encoded HTML (&lt;em&gt; → <em>) agar bisa diproses secara konsisten
+        str = str.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;/g,"'");
+        // Proses tag: simpan yang diizinkan, escape yang tidak
+        str = str.replace(/<(\/?)(\w+)([^>]*)>/g, function(match, slash, tagName, attrs) {
+            if (ALLOWED.has(tagName.toLowerCase())) {
+                return '<' + slash + tagName.toLowerCase() + '>';
+            }
+            return match.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        });
+        // Escape sisa karakter & yang bukan entity
+        str = str.replace(/&(?!(?:amp|lt|gt|quot|apos|#\d+|#x[\da-f]+);)/gi, '&amp;');
+        return str;
+    }
+
     function ajaxRenderPersonal(info, total) {
         if (!info) return;
-        const initials = (info.name||'NN').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
-        const instHtml = (info.institutions && info.institutions.length)
-            ? '<p><i class="fas fa-university"></i> ' + escH(info.institutions.slice(0,2).join(', ')) + (info.institutions.length>2?' et al.':'') + '</p>' : '';
+        const initials = (info.name||'NN').split(' ').filter(w=>w).slice(0,2).map(w=>w[0]).join('').toUpperCase() || 'NN';
+
+        // Affiliations: tampilkan semua dengan role/dept, tandai yang masih aktif
+        let affiliHtml = '';
+        if (info.affiliations && info.affiliations.length) {
+            info.affiliations.forEach(a => {
+                const role  = a.role       ? `<span class="affil-role">${escH(a.role)}</span>` : '';
+                const dept  = a.department ? ` &ndash; ${escH(a.department)}` : '';
+                const year  = a.start_date ? ` (${escH(a.start_date.slice(0,4))}${a.is_current ? '–sekarang' : (a.end_date ? '–'+a.end_date.slice(0,4) : '')})` : '';
+                affiliHtml += `<p><i class="fas fa-university"></i> <strong>${escH(a.organization)}</strong>${dept}${role}${year}</p>`;
+            });
+        } else if (info.institutions && info.institutions.length) {
+            affiliHtml = '<p><i class="fas fa-university"></i> ' + escH(info.institutions.slice(0,3).join(', ')) + (info.institutions.length>3?' <em>et al.</em>':'') + '</p>';
+        }
+
+        // Bio
+        const bioHtml = info.bio
+            ? `<div class="profile-bio"><i class="fas fa-quote-left"></i>${escH(info.bio)}</div>` : '';
+
+        // Research keywords
+        let kwHtml = '';
+        if (info.keywords && info.keywords.length) {
+            const tags = info.keywords.map(k=>`<span class="kw-tag">${escH(k)}</span>`).join('');
+            kwHtml = `<div class="profile-keywords"><i class="fas fa-tags"></i><strong>Research interests:</strong> ${tags}</div>`;
+        }
+
+        // Emails
+        let emailHtml = '';
+        if (info.emails && info.emails.length) {
+            const links = info.emails.map(e=>`<a href="mailto:${escH(e)}">${escH(e)}</a>`).join(', ');
+            emailHtml = `<div class="profile-detail-item"><i class="fas fa-envelope"></i><span>${links}</span></div>`;
+        }
+
+        // External IDs (Scopus ID, ResearcherID, etc.)
+        let extIdHtml = '';
+        if (info.external_ids && info.external_ids.length) {
+            const ids = info.external_ids.map(x => {
+                const lbl = escH((x.type||'ID').toUpperCase());
+                const val = escH(x.value||'');
+                return x.url
+                    ? `<span class="ext-id-tag"><a href="${escH(x.url)}" target="_blank">${lbl}: ${val}</a></span>`
+                    : `<span class="ext-id-tag">${lbl}: ${val}</span>`;
+            }).join(' ');
+            extIdHtml = `<div class="profile-detail-item"><i class="fas fa-id-badge"></i><span>${ids}</span></div>`;
+        }
+
+        // Researcher URLs
+        let urlHtml = '';
+        if (info.researcher_urls && info.researcher_urls.length) {
+            const links = info.researcher_urls.filter(u=>u.url).map(u=>
+                `<a href="${escH(u.url)}" target="_blank" rel="noopener">${escH(u.name||u.url)}</a>`
+            ).join(' &nbsp;|&nbsp; ');
+            if (links) urlHtml = `<div class="profile-detail-item"><i class="fas fa-link"></i><span>${links}</span></div>`;
+        }
+
+        // Education history
+        let eduHtml = '';
+        if (info.education_history && info.education_history.length) {
+            const items = info.education_history.map(e => {
+                const dept   = e.department ? ` (${escH(e.department)})` : '';
+                const degree = e.degree     ? `: ${escH(e.degree)}`      : '';
+                const yr1  = e.start_date ? e.start_date.slice(0,4) : '';
+                const yr2  = e.end_date   ? e.end_date.slice(0,4)   : 'present';
+                const yrs  = yr1 ? ` (${yr1}–${yr2})` : '';
+                return `<li>${escH(e.organization)}${dept}${degree}${yrs}</li>`;
+            }).join('');
+            eduHtml = `<div class="profile-section"><div class="profile-section-title"><i class="fas fa-graduation-cap"></i>Education</div><ul class="profile-list">${items}</ul></div>`;
+        }
+
+        const hasDetails = bioHtml || kwHtml || emailHtml || extIdHtml || urlHtml || eduHtml;
+        const profileDetailsHtml = hasDetails
+            ? `<div class="profile-details">${bioHtml}${kwHtml}${emailHtml}${extIdHtml}${urlHtml}${eduHtml}</div>` : '';
+
         document.getElementById('ajaxResultsSection').innerHTML = `
         <div class="info-general">
           <div class="personal-info">
@@ -1353,9 +1474,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="personal-info-name">
               <h2 class="info-name">${escH(info.name||'–')}</h2>
               <p class="info-orcid"><i class="fab fa-orcid"></i> ${escH(info.orcid||'')}</p>
-              ${instHtml}
+              ${affiliHtml}
             </div>
           </div>
+          ${profileDetailsHtml}
           <div class="stats-grid">
             <div class="stat-card"><div class="stat-number" id="ajaxStatWorks">${total}</div><div class="stat-label">Total Works</div></div>
             <div class="stat-card"><div class="stat-number" id="ajaxStatSdgs">–</div><div class="stat-label">Identified SDGs</div></div>
@@ -1386,12 +1508,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const sdgsHtml = work.sdgs && work.sdgs.length
                 ? `<div style="display:flex;justify-content:space-between;align-items:center;"><div class="work-sdgs">${sdgTags}</div><button class="show-more-btn" onclick="toggleAnalysis('${idx}')"><i class="fas fa-chart-bar"></i> Show Details</button></div>${buildAjaxDetailedAnalysis(work, idx)}`
                 : `<div class="none-SDG"><i class="fas fa-info-circle"></i> No SDGs were identified for this.</div>`;
-            const abstract = work.abstract ? `<div class="work-abstract"><strong>Abstract:</strong> ${escH((work.abstract||'').slice(0,400))}${work.abstract.length>400?'…':''}</div>` : '';
-            const doi = work.doi ? `<div class="work-meta-row"><i class="fas fa-link"></i><span>DOI: <a href="https://doi.org/${escH(work.doi)}" target="_blank">${escH(work.doi)}</a></span></div>` : '';
+            // Abstrak ditampilkan utuh tanpa pemotongan
+            const abstract = work.abstract ? `<div class="work-abstract"><strong>Abstract:</strong> ${escH(work.abstract)}</div>` : '';
+            // Metadata rows
+            const doi = work.doi ? `<div class="work-meta-row"><i class="fas fa-link"></i><span>DOI: <a href="https://doi.org/${escH(work.doi)}" target="_blank" rel="noopener">${escH(work.doi)}</a></span></div>` : '';
+            const journal = work.journal ? `<div class="work-meta-row"><i class="fas fa-book"></i><span>${escH(work.journal)}${work.volume?', Vol. '+escH(work.volume):''}${work.issue?' ('+escH(work.issue)+')':''}${work.pages?', pp. '+escH(work.pages):''}</span></div>` : '';
+            const contribs = (work.contributors && work.contributors.length)
+                ? (() => {
+                    const names = work.contributors.map(c=>escH(c.name||'')).filter(Boolean);
+                    const shown = names.slice(0,10).join(', ');
+                    const more  = names.length > 10 ? ' <em>et al.</em>' : '';
+                    const icon  = names.length===1 ? 'fa-user' : (names.length===2 ? 'fa-user-group' : 'fa-users');
+                    return `<div class="work-meta-row"><i class="fas ${icon}"></i><span>${shown}${more}</span></div>`;
+                  })() : '';
+            const workType = work.work_type ? `<div class="work-meta-row"><i class="fas fa-tag"></i><span>${escH(work.work_type.replace(/_/g,' '))}</span></div>` : '';
+            const yearBadge = work.year ? `<div class="work-year">${escH(String(work.year))}</div>` : '';
+            // Judul: render HTML aman (em, i, b, sup, sub, dll)
+            const titleHtml = safeHtml(work.title || '(Tanpa judul)');
             list.insertAdjacentHTML('beforeend', `
             <div class="work-item">
-              <div class="work-header"><div class="work-title">${escH(work.title||'(Tanpa judul)')}</div></div>
-              <div class="work-meta">${doi}<div class="work-meta-row"><i class="fas fa-chart-line"></i><span>${(work.sdgs||[]).length} Identified SDGs</span></div></div>
+              <div class="work-header"><div class="work-title">${titleHtml}</div>${yearBadge}</div>
+              <div class="work-meta">${doi}${journal}${contribs}${workType}<div class="work-meta-row"><i class="fas fa-chart-line"></i><span>${(work.sdgs||[]).length} Identified SDGs</span></div></div>
               ${abstract}
               <div class="work-sdgs-section">${sdgsHtml}</div>
             </div>`);
