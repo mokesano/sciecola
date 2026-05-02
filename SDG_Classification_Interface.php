@@ -11,7 +11,7 @@
  * + Progress section ditambah (hidden by default)
  * Semua CSS, HTML, fungsi PHP, dan JS asli TIDAK diubah.
  *
- * @version 2.4 - AJAX Sequential untuk ORCID
+ * @version 1.0.0 - AJAX Sequential untuk ORCID
  * @author Rochmady and Wizdam Team
  * Last update: 2025-06-16
  */
@@ -427,13 +427,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SDGs Classification Analysis | Wizdam AI-sikola</title>
-    <meta name="description" content="This system uses a hybrid method combining keyword matching, semantic similarity, research depth, and causal analysis to assess research relevance to the SDGs." />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="SDGs classification analysis uses a hybrid method combining keyword matching, semantic similarity, research depth, and causal analysis to assess research relevance to the SDGs." />
+    <meta name="keywords" content="hybrid method; keyword matching; semantic similarity; research depth; causal analysis" />
+    <meta name="access" content="Yes" />
+    <meta name="robots" content="INDEX,FOLLOW,NOARCHIVE,NOCACHE,NOODP,NOYDIR" />
+    <meta name="applicable-device" content="pc,mobile" />
+    <link rel="canonical" href="https://wizdam.sangia.org/" />
+    <meta name="google-site-verification" content="9mVvrkXamiUxutovEQqEk2eiRcjLUWHLHcwssZo3GYs" />
+    <meta name="referrer" content="origin-when-cross-origin" />
+    <meta property="og:title" content="SDGs Classification Analysis | Wizdam AI-sikola" />
+    <meta property="og:url" content="https://wizdam.sangia.org/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Sangia Publishing" />
+    <meta property="og:image" content="https://assets.sangia.org/img/sdgs/sikola-cover.jpg" />
+    <meta property="og:description" content="This system uses a hybrid method combining keyword matching, semantic similarity, research depth, and causal analysis to assess research relevance to the SDGs." />
+    <meta name="robots" content="max-image-preview:large" />
+    <meta name="twitter:site" content="@Sikola" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image:alt" content="SDGs Classification Analysis | Wizdam AI-sikola" />
+    <meta name="website_owner" content="www.sangia.org" />
     <meta name="owner" content="PT. Sangia Research Media and Publishing" />
     <meta name="design" content="Rochmady and Wizdam AI Team" />
-    <meta name="generator" content="Wizdam AI v5.1.8" />
+    <meta name="publisher" content="Sangia Wizdam" />
+    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
@@ -499,7 +519,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .info-general { background: white; border-radius: 20px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); transition: all 0.3s ease; }
         .info-general:hover { transform: translateY(-2px); box-shadow: 0 20px 60px rgba(0,0,0,0.12); }
         .personal-info { display: flex; align-items: center; gap: 20px; margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px; }
-        .avatar { width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 32px; font-weight: bold; }
+        .avatar { width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 7px; display: flex; align-items: center; justify-content: center; color: white; font-size: 40px; font-weight: bold; }
+        .personal-info-name h2 { font-size: 1.9em;line-height: 1.7; }
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
         .stat-card { text-align: center; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px; transition: all 0.3s ease; }
         .stat-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
@@ -1320,92 +1341,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     function escH(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-    // Tampilkan pesan error langsung di halaman (bukan alert)
-    function ajaxShowError(message) {
-        const progressSection = document.getElementById('ajaxProgressSection');
-        if (!progressSection) { console.error('AJAX Error:', message); return; }
-        progressSection.style.display = 'block';
-        progressSection.innerHTML = `
-            <div style="display:flex;align-items:flex-start;gap:16px;padding:20px;">
-                <div style="width:44px;height:44px;background:#fff0f0;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid #fca5a5;">
-                    <i class="fas fa-exclamation-triangle" style="color:#dc2626;font-size:18px;"></i>
-                </div>
-                <div>
-                    <h3 style="color:#dc2626;margin:0 0 6px;font-size:1rem;">Analysis Failed</h3>
-                    <p style="color:#555;margin:0;font-size:0.9rem;line-height:1.5;">${escH(message)}</p>
-                    <button onclick="document.getElementById('ajaxProgressSection').style.display='none';"
-                        style="margin-top:12px;padding:6px 14px;background:#dc2626;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.85rem;">
-                        Close
-                    </button>
-                </div>
-            </div>`;
-    }
-
-    // ── DOI: AJAX (tidak lagi via PHP form) ──
-    async function startDoiAjax(doi, forceRefresh) {
-        orcidAbortCtrl = new AbortController();
-        document.getElementById('ajaxResultsSection').innerHTML = '';
-        document.getElementById('ajaxResultsSection').style.display = 'none';
-        try {
-            ajaxShowProgress('Fetching article data…', 'Retrieving metadata from Crossref for DOI: ' + escH(doi));
-            const rfParam = forceRefresh ? { refresh: 'true' } : {};
-            const data = await ajaxCall('doi', Object.assign({ doi }, rfParam));
-            ajaxRenderDoiResult(data);
-            ajaxHideProgress();
-            setTimeout(() => { document.getElementById('ajaxResultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 400);
-        } catch (err) {
-            if (err.name !== 'AbortError') {
-                document.getElementById('ajaxProgressSection').style.display = 'none';
-                ajaxShowError(err.message);
-            }
-        } finally {
-            resetSubmitButton();
-        }
-    }
-
-    function ajaxRenderDoiResult(data) {
-        const el = document.getElementById('ajaxResultsSection');
-        if (!el) return;
-        if (!data || data.status !== 'success') {
-            ajaxShowError(data && data.message ? data.message : 'Unknown error from API');
-            return;
-        }
-        const title   = escH(data.title   || '(No title)');
-        const doi     = escH(data.doi     || '');
-        const journal = escH(data.journal || '');
-        const year    = escH(data.year    || '');
-        const authors = Array.isArray(data.authors) ? data.authors.map(a => escH(a)).join(', ') : '';
-        const abstract= data.abstract ? escH(data.abstract.slice(0, 500)) + (data.abstract.length > 500 ? '…' : '') : '';
-        const scores  = data.sdg_scores || {};
-        const sorted  = Object.entries(scores).sort((a,b) => b[1] - a[1]).filter(([,v]) => v >= 0.20);
-        const sdgTagsHtml = sorted.map(([sdg, score]) => {
-            const def = SDG_DEFS[sdg] || { color:'#666', title: sdg, svg_url:'' };
-            return `<div class="work-sdg-tag" style="background:${def.color}">
-                <div class="sdg-mini-icon"><img src="${escH(def.svg_url)}" alt="${escH(def.title)}" width="20" height="20"></div>
-                <span>${escH(sdg)}: ${escH(def.title)} <span class="sdg-confidence-info">(${(score*100).toFixed(1)}%)</span></span>
-            </div>`;
-        }).join('');
-        el.innerHTML = `
-        <div class="info-general">
-            <div class="personal-info" style="align-items:flex-start;">
-                <div class="avatar" style="font-size:1.5rem;"><i class="fas fa-file-alt"></i></div>
-                <div>
-                    <h2 style="font-size:1.1rem;line-height:1.4;">${title}</h2>
-                    ${authors ? `<p><i class="fas fa-users"></i> ${authors}</p>` : ''}
-                    ${journal  ? `<p><i class="fas fa-book"></i> ${journal}${year ? ' (' + year + ')' : ''}</p>` : ''}
-                    ${doi ? `<p><i class="fas fa-link"></i> <a href="https://doi.org/${doi}" target="_blank" rel="noopener">https://doi.org/${doi}</a></p>` : ''}
-                </div>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-card"><div class="stat-number">${sorted.length}</div><div class="stat-label">Identified SDGs</div></div>
-                <div class="stat-card"><div class="stat-number">${sorted.length > 0 ? (sorted[0][1]*100).toFixed(0)+'%' : '–'}</div><div class="stat-label">Top Score</div></div>
-            </div>
-        </div>
-        ${abstract ? `<div class="info-general" style="margin-top:16px;"><h4 style="margin-bottom:8px;"><i class="fas fa-align-left"></i> Abstract</h4><p style="color:#555;line-height:1.7;">${abstract}</p></div>` : ''}
-        ${sorted.length ? `<div class="info-general" style="margin-top:16px;"><h4 style="margin-bottom:12px;"><i class="fas fa-tags"></i> SDG Classification</h4><div class="work-sdgs" style="flex-wrap:wrap;">${sdgTagsHtml}</div></div>` : `<div class="none-SDG"><i class="fas fa-info-circle"></i> No SDGs identified with sufficient confidence for this article.</div>`}`;
-        el.style.display = 'block';
-    }
-
     function ajaxRenderPersonal(info, total) {
         if (!info) return;
         const initials = (info.name||'NN').split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
@@ -1415,15 +1350,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="info-general">
           <div class="personal-info">
             <div class="avatar">${escH(initials)}</div>
-            <div>
-              <h2>${escH(info.name||'–')}</h2>
-              <p><i class="fab fa-orcid"></i> ${escH(info.orcid||'')}</p>
+            <div class="personal-info-name">
+              <h2 class="info-name">${escH(info.name||'–')}</h2>
+              <p class="info-orcid"><i class="fab fa-orcid"></i> ${escH(info.orcid||'')}</p>
               ${instHtml}
             </div>
           </div>
           <div class="stats-grid">
             <div class="stat-card"><div class="stat-number" id="ajaxStatWorks">${total}</div><div class="stat-label">Total Works</div></div>
             <div class="stat-card"><div class="stat-number" id="ajaxStatSdgs">–</div><div class="stat-label">Identified SDGs</div></div>
+            <div class="stat-card"><div class="stat-number" id="ajaxStatRelevant">–</div><div class="stat-label">Relevant Contribution</div></div>
             <div class="stat-card"><div class="stat-number" id="ajaxStatActive">–</div><div class="stat-label">Active Contribution</div></div>
             <div class="stat-card"><div class="stat-number" id="ajaxStatConf">–</div><div class="stat-label">Average Confidence</div></div>
           </div>
@@ -1489,12 +1425,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         const summary = summaryData.researcher_sdg_summary || {};
         const profile  = summaryData.contributor_profile     || {};
         const sdgCount = Object.keys(summary).length;
+        const relevantCount = Object.values(profile).filter(p => p.dominant_type === 'Relevant Contributor').length;
         const activeCount = Object.values(profile).filter(p => p.dominant_type === 'Active Contributor').length;
         let totalConf = 0, confCount = 0;
         Object.values(summary).forEach(s => { totalConf += s.average_confidence; confCount++; });
         const avgConf = confCount > 0 ? Math.round((totalConf / confCount) * 100) : 0;
         const e = id => document.getElementById(id);
         if (e('ajaxStatSdgs'))   e('ajaxStatSdgs').textContent   = sdgCount;
+        if (e('ajaxStatRelevant')) e('ajaxStatRelevant').textContent = relevantCount;
         if (e('ajaxStatActive')) e('ajaxStatActive').textContent = activeCount;
         if (e('ajaxStatConf'))   e('ajaxStatConf').textContent   = avgConf + '%';
         if (!Object.keys(summary).length) return;
@@ -1589,7 +1527,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             while (offset < totalWorks) {
                 batchNum++;
                 const to = Math.min(offset + AJAX_BATCH, totalWorks);
-                ajaxShowProgress('Analyzing works ' + (offset+1) + '–' + to + ' from ' + totalWorks + '…', 'Batch #' + batchNum + ' | Processing ' + (to - offset) + ' works');
+                ajaxShowProgress('Analyzing works ' + (offset+1) + '–' + to + ' of ' + totalWorks + '…', 'Batch #' + batchNum + ' | Processing ' + (to - offset) + ' works');
                 document.getElementById('ajaxProgressBatch').textContent = batchNum;
 
                 const batchData = await ajaxCall('batch', Object.assign({ orcid, offset: offset, limit: AJAX_BATCH }, rfParam));
@@ -1615,7 +1553,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (err) {
             if (err.name !== 'AbortError') {
                 document.getElementById('ajaxProgressSection').style.display = 'none';
-                ajaxShowError(err.message);
+                alert('Error ORCID AJAX: ' + err.message);
             }
         } finally {
             resetSubmitButton();
@@ -1642,39 +1580,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (isSubmitting) { e.preventDefault(); return false; }
 
                 const inputValue = document.getElementById('input_value').value.trim();
-                if (!inputValue) {
-                    e.preventDefault();
-                    ajaxShowError('Please enter a valid ORCID ID (0000-0000-0000-0000) or DOI (10.xxxx/xxxxx).');
-                    return false;
-                }
+                if (!inputValue) { e.preventDefault(); alert('Please enter a valid ORCID ID or DOI.'); return false; }
 
                 const detectedType = detectInputType(inputValue);
-                if (!detectedType) {
-                    e.preventDefault();
-                    ajaxShowError('Input format not recognized. Enter a valid ORCID ID (format: 0000-0000-0000-0000) or DOI (format: 10.xxxx/xxxxx).');
-                    return false;
-                }
+                if (!detectedType) { e.preventDefault(); alert('The input format is not recognized. Please enter a valid ORCID ID or DOI.'); return false; }
 
                 const isValid = validateInput(inputValue, detectedType);
                 if (!isValid) {
                     e.preventDefault();
-                    if (detectedType === 'orcid') {
-                        ajaxShowError('Invalid ORCID ID. The correct format is: 0000-0000-0000-0000 with a valid checksum digit. Please verify your ORCID at orcid.org.');
-                    } else if (detectedType === 'doi') {
-                        ajaxShowError('Invalid DOI. Please use the format: 10.xxxx/xxxxx (e.g. 10.1038/nature12373).');
-                    }
+                    if (detectedType === 'orcid') alert('ORCID ID is invalid. Please check your ORCID checksum.');
+                    else if (detectedType === 'doi') alert('DOI is invalid. Please check the format of your DOI.');
                     return false;
                 }
 
-                const forceRefresh = document.getElementById('force_refresh').checked;
-
-                // ── ORCID: intercept dan gunakan AJAX sequential (anti-timeout) ──
+                // ── ORCID: intercept dan gunakan AJAX (anti-timeout) ──
                 if (detectedType === 'orcid') {
                     e.preventDefault();
                     let cleanOrcid = inputValue.trim();
                     const m = cleanOrcid.match(/orcid\.org\/(\d{4}-\d{4}-\d{4}-\d{3}[\dX])/i);
                     if (m) cleanOrcid = m[1];
                     cleanOrcid = cleanOrcid.replace(/[^\d\-X]/gi, '');
+                    const forceRefresh = document.getElementById('force_refresh').checked;
 
                     isSubmitting = true;
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analysing...';
@@ -1684,19 +1610,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     return false;
                 }
 
-                // ── DOI: intercept dan gunakan AJAX (tidak lagi via PHP form) ──
-                if (detectedType === 'doi') {
-                    e.preventDefault();
-                    let cleanDoi = inputValue.trim();
-                    cleanDoi = cleanDoi.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '');
+                // ── DOI: biarkan form submit normal ke PHP ──
+                isSubmitting = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+                submitBtn.disabled = true;
+                document.getElementById('loadingOverlay').style.display = 'flex';
+                startProgressCounter();
 
-                    isSubmitting = true;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
-                    submitBtn.disabled = true;
-
-                    startDoiAjax(cleanDoi, forceRefresh);
-                    return false;
-                }
+                const timeoutId = setTimeout(function() {
+                    resetSubmitButton();
+                    if (document.getElementById('loadingOverlay').style.display === 'flex')
+                        alert('Timeout: The analysis process is taking longer than expected. Please try again later.');
+                }, 130000);
+                window.currentTimeoutId = timeoutId;
             });
         }
 
