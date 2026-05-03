@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+   <!-- Halaman Utama -->
+   <url>
+      <loc>https://wizdam.sangia.org/</loc>
+      <lastmod>2025-06-07</lastmod>
+      <changefreq>weekly</changefreq>
+      <priority>1.0</priority>
+   </url>
+   <!-- Halaman Tentang (contoh) -->
+   <url>
+      <loc>https://wizdam.sangia.org/About/</loc>
+      <lastmod>2025-06-07</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.8</priority>
+   </url>
+   <!-- Halaman Kontak (contoh) -->
+   <url>
+      <loc>https://wizdam.sangia.org/Contact/</loc>
+      <lastmod>2025-06-07</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.7</priority>
+   </url>
+   <url>
+      <loc>https://wizdam.sangia.org/Teams/</loc>
+      <lastmod>2025-06-07</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.6</priority>
+   </url>
+   <!-- Tambahkan semua halaman lain di sini -->
+   <!--
+   <url>
+      <loc>https://wizdam.sangia.org/halaman-lain/</loc>
+      <lastmod>YYYY-MM-DD</lastmod>
+      <changefreq>...</changefreq>
+      <priority>0.5</priority>
+   </url>
+   -->
+</urlset>

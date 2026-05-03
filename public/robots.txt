@@ -1,0 +1,5 @@
+# Izinkan crawler
+User-agent: *
+Allow: /
+
+Sitemap: https://wizdam.sangia.org/sitemap.xml
