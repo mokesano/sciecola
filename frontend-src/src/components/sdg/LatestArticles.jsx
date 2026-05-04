@@ -57,7 +57,7 @@ const LatestArticles = () => {
       </div>
 
       {/* Daftar Artikel */}
-      <div className="flex flex-col gap-4 flex-grow">
+      <div className="flex flex-col gap-2 flex-grow">
         {articlesData.map((article) => (
           <div 
             key={article.id} 
