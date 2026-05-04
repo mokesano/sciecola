@@ -11,7 +11,7 @@ const CallToAction = () => {
       
       {/* Konten Teks Kiri */}
       <div className="lg:w-1/2 mb-6 lg:mb-0 relative z-10 text-center lg:text-left">
-        <h2 className="text-2xl md:text-3xl font-bold mb-2">
+        <h2 className="text-2xl md:text-2xl font-bold mb-2">
           Siap untuk menganalisis riset Anda?
         </h2>
         <p className="text-indigo-100 text-sm md:text-base leading-relaxed">

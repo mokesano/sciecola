@@ -1,6 +1,6 @@
 import React from 'react';
 
-// Data simulasi artikel untuk Sicola
+// Data simulasi artikel untuk komponen (ditambahkan properti 'image' agar sesuai desain)
 const articlesData = [
   {
     id: 1,
@@ -14,6 +14,7 @@ const articlesData = [
     ],
     views: 652,
     citations: 24,
+    image: 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=150&q=80',
   },
   {
     id: 2,
@@ -26,6 +27,7 @@ const articlesData = [
     ],
     views: 510,
     citations: 18,
+    image: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=150&q=80',
   },
   {
     id: 3,
@@ -38,17 +40,18 @@ const articlesData = [
     ],
     views: 411,
     citations: 32,
+    image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=150&q=80',
   }
 ];
 
 const LatestArticles = () => {
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full">
+    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full font-sans">
       
       {/* Header Komponen */}
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-bold text-gray-800">Artikel Terbaru</h3>
-        <button className="text-sm text-indigo-500 hover:text-indigo-700 font-medium transition-colors">
+        <button className="text-sm text-indigo-600 hover:text-indigo-800 font-medium transition-colors">
           Lihat semua
         </button>
       </div>
@@ -60,16 +63,20 @@ const LatestArticles = () => {
             key={article.id} 
             className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-gray-50 hover:bg-gray-50 transition-colors gap-4"
           >
-            {/* Sisi Kiri: Ikon dan Info Teks */}
+            {/* Sisi Kiri: Thumbnail Gambar dan Info Teks */}
             <div className="flex items-start gap-4 flex-1">
-              {/* Ikon Thumbnail */}
-              <div className="hidden sm:flex w-12 h-12 rounded-lg bg-indigo-100 items-center justify-center text-indigo-500 shrink-0">
-                <i className="fas fa-file-alt text-lg"></i>
+              {/* Thumbnail Gambar (disesuaikan dengan desain asli) */}
+              <div className="hidden sm:block w-16 h-14 rounded-lg overflow-hidden shrink-0 shadow-sm border border-gray-100">
+                <img 
+                  src={article.image} 
+                  alt={article.title} 
+                  className="w-full h-full object-cover"
+                />
               </div>
               
               {/* Judul dan Jurnal */}
               <div>
-                <a href="#" className="font-bold text-gray-800 hover:text-indigo-600 transition-colors line-clamp-2 leading-tight">
+                <a href="#" className="font-bold text-gray-800 hover:text-indigo-600 transition-colors line-clamp-2 leading-tight text-sm">
                   {article.title}
                 </a>
                 <div className="text-xs text-gray-500 mt-1.5">
@@ -86,7 +93,7 @@ const LatestArticles = () => {
                 {article.sdgs.map((sdg, index) => (
                   <div 
                     key={index} 
-                    className="w-7 h-7 rounded text-[10px] font-bold text-white flex items-center justify-center shadow-sm"
+                    className="w-6 h-6 rounded text-[10px] font-bold text-white flex items-center justify-center shadow-sm"
                     style={{ backgroundColor: sdg.color }}
                     title={`SDG ${sdg.id}`}
                   >
@@ -95,17 +102,27 @@ const LatestArticles = () => {
                 ))}
               </div>
 
-              {/* Metrik Views dan Sitasi */}
+              {/* Perbaikan: Mengganti tag <i> FontAwesome dengan <svg> ikon modern */}
               <div className="flex items-center gap-4 text-xs text-gray-500 font-medium">
+                {/* Ikon Views (Mata) */}
                 <div className="flex items-center gap-1.5" title="Total Views">
-                  <i className="fas fa-eye text-gray-400"></i> {article.views}
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  </svg>
+                  {article.views}
                 </div>
+                
+                {/* Ikon Sitasi (Kutipan) */}
                 <div className="flex items-center gap-1.5" title="Total Citations">
-                  <i className="fas fa-quote-right text-gray-400"></i> {article.citations}
+                  <svg className="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+                  </svg>
+                  {article.citations}
                 </div>
               </div>
-            </div>
 
+            </div>
           </div>
         ))}
       </div>
