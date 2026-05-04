@@ -3,7 +3,7 @@
  * SDG Frontend - Main Application Router
  * Router utama yang menggabungkan semua komponen dengan benar
  * 
- * @version 5.1.8
+ * @version 1.0.0
  * @author Rochmady and Wizdam Team
  * @license MIT
  */
