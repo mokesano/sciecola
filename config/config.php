@@ -3,7 +3,7 @@
  * SDG Classification System Configuration
  * Konfigurasi utama sistem
  * 
- * @version 2.3
+ * @version 1.0
  * @author Rochmady and Wizdam Team
  * Last update: 2025-06-16
  */
@@ -11,7 +11,7 @@
 // ==============================================
 // KONFIGURASI SISTEM
 // ==============================================
-$API_BASE_URL = 'https://www.wizdam.sangia.org/API/v5_1_8_SDGs_Classification.php';
+$API_BASE_URL = 'https://wizdam.sangia.org/API/v5_1_8_SDGs_Classification.php';
 
 // ==============================================
 // DEFINISI SDG DENGAN SVG ICONS RESMI UN
