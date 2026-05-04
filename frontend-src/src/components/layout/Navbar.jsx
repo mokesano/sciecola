@@ -8,7 +8,7 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-20">
           
           {/* Bagian Kiri: Logo dan Judul */}
-          <div className="flex items-center gap-3 cursor-pointer">
+          <div className="items-center gap-3 cursor-pointer">
             <div className="text-indigo-600 text-3xl font-black">
               WIZDAM
             </div>
@@ -23,34 +23,34 @@ const Navbar = () => {
           <div className="hidden lg:flex space-x-1 mt-1">
             {/* Menu Aktif: border-b-[3px] untuk garis lebih tebal, pb-2 untuk jarak */}
             <a href="#" className="px-3 py-2 group">
-              <span className="text-indigo-600 font-bold border-b-[4px] border-indigo-600 pb-4">
+              <span className="text-indigo-600 font-bold border-b-[4px] border-indigo-600 pb-3">
                 Beranda
               </span>
             </a>
             
             {/* Menu Inaktif: efek hover dengan garis tebal dan berjarak */}
             <a href="#" className="px-3 py-2 group">
-              <span className="text-gray-500 group-hover:text-indigo-600 font-medium border-b-[3px] border-transparent group-hover:border-indigo-600 pb-2 transition-all">
+              <span className="text-gray-500 group-hover:text-indigo-600 font-medium border-b-[4px] border-transparent group-hover:border-indigo-600 pb-3 transition-all">
                 Journals
               </span>
             </a>
             <a href="#" className="px-3 py-2 group">
-              <span className="text-gray-500 group-hover:text-indigo-600 font-medium border-b-[3px] border-transparent group-hover:border-indigo-600 pb-2 transition-all">
+              <span className="text-gray-500 group-hover:text-indigo-600 font-medium border-b-[4px] border-transparent group-hover:border-indigo-600 pb-3 transition-all">
                 Researchers
               </span>
             </a>
             <a href="#" className="px-3 py-2 group">
-              <span className="text-gray-500 group-hover:text-indigo-600 font-medium border-b-[3px] border-transparent group-hover:border-indigo-600 pb-2 transition-all">
+              <span className="text-gray-500 group-hover:text-indigo-600 font-medium border-b-[4px] border-transparent group-hover:border-indigo-600 pb-3 transition-all">
                 SDGs
               </span>
             </a>
             <a href="#" className="px-3 py-2 group">
-              <span className="text-gray-500 group-hover:text-indigo-600 font-medium border-b-[3px] border-transparent group-hover:border-indigo-600 pb-2 transition-all">
+              <span className="text-gray-500 group-hover:text-indigo-600 font-medium border-b-[4px] border-transparent group-hover:border-indigo-600 pb-3 transition-all">
                 Analytics
               </span>
             </a>
             <a href="#" className="px-3 py-2 group">
-              <span className="text-gray-500 group-hover:text-indigo-600 font-medium border-b-[3px] border-transparent group-hover:border-indigo-600 pb-2 transition-all">
+              <span className="text-gray-500 group-hover:text-indigo-600 font-medium border-b-[4px] border-transparent group-hover:border-indigo-600 pb-3 transition-all">
                 Tentang
               </span>
             </a>
