@@ -61,7 +61,7 @@ const LatestArticles = () => {
         {articlesData.map((article) => (
           <div 
             key={article.id} 
-            className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-gray-50 hover:bg-gray-50 transition-colors gap-4"
+            className="flex flex-col sm:flex-row sm:items-center justify-between rounded-xl border border-gray-50 hover:bg-gray-50 transition-colors gap-4"
           >
             {/* Sisi Kiri: Thumbnail Gambar dan Info Teks */}
             <div className="flex items-start gap-4 flex-1">
@@ -103,7 +103,7 @@ const LatestArticles = () => {
               </div>
 
               {/* Perbaikan: Mengganti tag <i> FontAwesome dengan <svg> ikon modern */}
-              <div className="flex items-center gap-4 text-xs text-gray-500 font-medium">
+              <div className="flex items-center gap-4 p-4 text-xs text-gray-500 font-medium">
                 {/* Ikon Views (Mata) */}
                 <div className="flex items-center gap-1.5" title="Total Views">
                   <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
