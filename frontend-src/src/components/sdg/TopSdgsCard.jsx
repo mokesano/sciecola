@@ -8,7 +8,7 @@ const TopSdgsCard = () => {
       count: '4,623',
       trend: '18.7%',
       color: 'bg-[#4C9F38]',
-      iconSrc: '/images/icons/sdg3-icon.png' 
+      iconSrc: '/assets/icon-sdgs/sdg-3.svg' 
     },
     {
       id: 4,
@@ -16,7 +16,7 @@ const TopSdgsCard = () => {
       count: '3,812',
       trend: '15.4%',
       color: 'bg-[#C5192D]',
-      iconSrc: '/images/icons/sdg4-icon.png'
+      iconSrc: '/assets/icon-sdgs/sdg-4.svg'
     },
     {
       id: 13,
@@ -24,7 +24,7 @@ const TopSdgsCard = () => {
       count: '3,263',
       trend: '13.2%',
       color: 'bg-[#3F7E44]',
-      iconSrc: '/images/icons/sdg13-icon.png'
+      iconSrc: '/assets/icon-sdgs/sdg-13.svg'
     },
     {
       id: 9,
@@ -32,7 +32,7 @@ const TopSdgsCard = () => {
       count: '2,865',
       trend: '11.6%',
       color: 'bg-[#FD6925]',
-      iconSrc: '/images/icons/sdg9-icon.png'
+      iconSrc: '/assets/icon-sdgs/sdg-9.svg'
     },
     {
       id: 11,
@@ -40,7 +40,7 @@ const TopSdgsCard = () => {
       count: '2,421',
       trend: '9.8%',
       color: 'bg-[#FD9D24]',
-      iconSrc: '/images/icons/sdg11-icon.png'
+      iconSrc: '/assets/icon-sdgs/sdg-11.svg'
     },
     {
       id: 17,
@@ -48,7 +48,7 @@ const TopSdgsCard = () => {
       count: '1,957',
       trend: '7.2%',
       color: 'bg-[#19486A]',
-      iconSrc: '/images/icons/sdg17-icon.png'
+      iconSrc: '/assets/icon-sdgs/sdg-17.svg'
     }
   ];
 
