@@ -1,12 +1,10 @@
 import React from 'react';
 
-// Data statis Sicola dengan ukuran ikon yang lebih besar dan garis lebih tebal
 const statsData = [
   { 
     label: 'Artikel Terklasifikasi', 
     value: '24,751', 
     icon: (
-      // Ukuran menjadi w-8 h-8, ketebalan garis menjadi 2.5
       <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
         <polyline points="14 2 14 8 20 8"></polyline>
@@ -48,7 +46,6 @@ const statsData = [
     label: 'SDGs Terwakili', 
     value: '21,897', 
     icon: (
-      // Ukuran SVG Roda Warna disesuaikan menjadi w-10 h-10 agar proporsional
       <svg className="w-10 h-10" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
         <path fill="#E5243B" d="M18 2 A 16 16 0 0 1 34 18 L 26 18 A 8 8 0 0 0 18 10 Z"/>
         <path fill="#DDA63A" d="M34 18 A 16 16 0 0 1 18 34 L 18 26 A 8 8 0 0 0 26 18 Z"/>
@@ -63,7 +60,6 @@ const statsData = [
     label: 'Total Sitasi', 
     value: '98,732', 
     icon: (
-      // Ukuran disesuaikan menjadi w-8 h-8
       <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
       </svg>
@@ -75,23 +71,36 @@ const statsData = [
 
 const StatCards = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
-      {statsData.map((stat, index) => (
-        <div 
-          key={index} 
-          className="bg-white p-4 lg:p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 transition-transform duration-300 hover:-translate-y-1 hover:shadow-md"
-        >
-          {/* Lingkaran pembungkus diperbesar menjadi min-w-[56px] dan h-[56px] */}
-          <div className={`min-w-[56px] h-[56px] rounded-full flex shrink-0 items-center justify-center ${stat.bgClass} ${stat.colorClass}`}>
-            {stat.icon}
-          </div>
+    // Diperbaiki: Menghapus px-4 sm:px-6 lg:px-8 agar lebar maksimal (max-w-7xl) benar-benar mentok kiri-kanan
+    <div className="max-w-7xl mx-auto mb-12 relative z-20">
+      
+      {/* SATU CARD BESAR yang membungkus semua stats */}
+      <div className="bg-white rounded-2xl shadow-xl shadow-indigo-100/40 border border-gray-100 p-6 lg:p-8">
+        
+        {/* Grid dengan efek divide (garis pemisah antar item) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 lg:gap-0 divide-y lg:divide-y-0 lg:divide-x divide-gray-100">
           
-          <div>
-            <div className="text-xl font-bold text-gray-800">{stat.value}</div>
-            <div className="text-xs text-gray-500 font-medium mt-0.5">{stat.label}</div>
-          </div>
+          {statsData.map((stat, index) => (
+            <div 
+              key={index} 
+              className="flex items-center gap-4 pt-6 first:pt-0 lg:pt-0 lg:px-6 first:lg:pl-0 last:lg:pr-0 group"
+            >
+              {/* Lingkaran pembungkus */}
+              <div className={`min-w-[56px] h-[56px] rounded-full flex shrink-0 items-center justify-center transition-transform duration-300 group-hover:scale-110 ${stat.bgClass} ${stat.colorClass}`}>
+                {stat.icon}
+              </div>
+              
+              {/* Teks Info */}
+              <div>
+                <div className="text-2xl font-bold text-gray-900 leading-tight">{stat.value}</div>
+                <div className="text-sm text-gray-500 font-medium mt-1">{stat.label}</div>
+              </div>
+            </div>
+          ))}
+          
         </div>
-      ))}
+      </div>
+      
     </div>
   );
 };
