@@ -3,7 +3,7 @@
  * SDG Frontend - Main Functions
  * Kumpulan fungsi utama untuk SDG Classification Analysis
  * 
- * @version 5.1.8
+ * @version 1.0.0
  * @author Rochmady and Wizdam Team
  * @license MIT
  */
@@ -170,7 +170,7 @@ function makeApiRequest($url, $data = null, $headers = []) {
         CURLOPT_MAXREDIRS => 3,
         CURLOPT_TIMEOUT => getConfig('TIMEOUT_EXECUTE', 120),
         CURLOPT_CONNECTTIMEOUT => getConfig('TIMEOUT_CONNECT', 10),
-        CURLOPT_USERAGENT => 'SDG-Analysis-Platform/5.1.8',
+        CURLOPT_USERAGENT => 'SDG-Analysis-Platform/1.0.0',
         CURLOPT_SSL_VERIFYPEER => true,
         CURLOPT_SSL_VERIFYHOST => 2,
     ]);

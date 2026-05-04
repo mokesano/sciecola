@@ -7,7 +7,7 @@
  * Get API Key: https://dev.elsevier.com/
  * 
  * @author Rochmady and Wuzdam Team
- * @version 2.1
+ * @version 1.0.0
  * Created: 2025-06-14
  * Last update: 2025-06-16
  */
