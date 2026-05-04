@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * SDG Classification API
  * Sistem klasifikasi SDG dengan orientasi dampak yang lebih kuat
+ * Dilengkapi dengan Fallback Metadata: Crossref -> OpenCitations
  *
  * Endpoint Baru (Anti-Timeout / Sequential):
  * - ?orcid=xxx&action=init         → Info peneliti + daftar karya (tanpa SDG)
@@ -16,7 +17,7 @@ declare(strict_types=1);
  * - ?doi=xxx           → Analisis satu artikel
  *
  * @author Rochmady and Wizdam Team
- * @version 1.0.0 (Refactored for PHP 8.4 Strict Mode)
+ * @version 1.1.0 (Refactored for PHP 8.4 Strict Mode + OpenCitations Integration)
  * @license MIT
  */
 
@@ -115,7 +116,7 @@ class SdgClassificationApi
 
             if (empty($_GET)) {
                 http_response_code(200);
-                return ['status' => 'up', 'message' => 'Endpoint is operational', 'version' => 'v1.0.0'];
+                return ['status' => 'up', 'message' => 'Endpoint is operational', 'version' => 'v1.1.0'];
             }
 
             $forceRefresh = ($_GET['refresh'] ?? 'false') === 'true';
@@ -162,7 +163,7 @@ class SdgClassificationApi
                     'Refresh Cache' => 'tambahkan &refresh=true',
                 ],
                 'timestamp'   => date('c'),
-                'api_version' => 'v1.0.0',
+                'api_version' => 'v1.1.0',
             ];
         }
     }
@@ -219,7 +220,7 @@ class SdgClassificationApi
         $result = [
             'status'        => 'success',
             'action'        => 'init',
-            'api_version'   => 'v1.0.0',
+            'api_version'   => 'v1.1.0',
             'personal_info' => [
                 'name'              => $name ?: 'Peneliti ' . $orcid,
                 'institutions'      => $institutions,
@@ -258,7 +259,7 @@ class SdgClassificationApi
 
         if (empty($batchStubs)) {
             return [
-                'status' => 'success', 'action' => 'batch', 'api_version' => 'v1.0.0',
+                'status' => 'success', 'action' => 'batch', 'api_version' => 'v1.1.0',
                 'orcid' => $orcid, 'offset' => $offset, 'limit' => $limit,
                 'processed' => 0, 'total_works' => $totalWorks, 'works' => [],
                 'is_done' => true, 'next_offset' => $offset, 'timestamp' => date('c'),
@@ -308,39 +309,30 @@ class SdgClassificationApi
             }
 
             $abstract = '';
+            $metadataSource = 'ORCID';
+            
+            // Integrasi Metadata Smart Fallback (Crossref -> OpenCitations)
             if ($doi) {
                 try {
-                    $doiData = $this->fetchDoiData($doi);
+                    $metadata = $this->fetchArticleMetadata($doi);
+                    $metadataSource = $metadata['source'];
 
-                    if (isset($doiData['message']['abstract'])) {
-                        $abstract = strip_tags($doiData['message']['abstract']);
+                    if (empty($abstract) && !empty($metadata['abstract'])) {
+                        $abstract = $metadata['abstract'];
                     }
 
-                    if (empty($contributors) && !empty($doiData['message']['author'])) {
-                        foreach ($doiData['message']['author'] as $a) {
-                            $n = trim(($a['given'] ?? '') . ' ' . ($a['family'] ?? ''));
-                            if ($n) $contributors[] = ['name' => $n, 'orcid' => $a['ORCID'] ?? null];
+                    if (empty($contributors) && !empty($metadata['authors'])) {
+                        foreach ($metadata['authors'] as $a) {
+                            $contributors[] = ['name' => $a['name'], 'orcid' => null];
                         }
                     }
 
-                    if (empty($journalTitle) && !empty($doiData['message']['container-title'][0])) {
-                        $journalTitle = $doiData['message']['container-title'][0];
-                    }
-
-                    if (empty($volume) && !empty($doiData['message']['volume'])) $volume = $doiData['message']['volume'];
-                    if (empty($issue)  && !empty($doiData['message']['issue']))  $issue  = $doiData['message']['issue'];
-                    if (empty($pages)  && !empty($doiData['message']['page']))   $pages  = $doiData['message']['page'];
-
-                    if (empty($pubYear) && !empty($doiData['message']['published']['date-parts'][0][0])) {
-                        $pubYear = (int)$doiData['message']['published']['date-parts'][0][0];
-                    }
-
-                    if (empty($keywords) && !empty($doiData['message']['subject'])) {
-                        $keywords = $doiData['message']['subject'];
-                    }
+                    if (empty($journalTitle)) $journalTitle = $metadata['journal'];
+                    if (empty($pubYear))      $pubYear      = $metadata['year'];
+                    if (empty($title) && !empty($metadata['title'])) $title = $metadata['title'];
 
                 } catch (Exception $e) {
-                    error_log("Batch: gagal ambil DOI $doi: " . $e->getMessage());
+                    error_log("Batch: gagal ambil metadata gabungan $doi: " . $e->getMessage());
                 }
             }
 
@@ -405,6 +397,7 @@ class SdgClassificationApi
                 'keywords'              => $keywords,
                 'work_type'             => $workType,
                 'url'                   => $workUrl,
+                'metadata_source'       => $metadataSource,
                 'sdgs'                  => $filteredSdgs,
                 'sdg_confidence'        => $sdgConfidence,
                 'contributor_types'     => $contributorTypes,
@@ -419,7 +412,7 @@ class SdgClassificationApi
         $result = [
             'status'      => 'success',
             'action'      => 'batch',
-            'api_version' => 'v1.0.0',
+            'api_version' => 'v1.1.0',
             'orcid'       => $orcid,
             'offset'      => $offset,
             'limit'       => $limit,
@@ -474,7 +467,6 @@ class SdgClassificationApi
                         ];
                     }
 
-                    // Strict mutator
                     $researcherSdgSummary[$sdg]['work_count']++;
                     $researcherSdgSummary[$sdg]['average_confidence'] += $analysis['score'];
 
@@ -545,7 +537,7 @@ class SdgClassificationApi
         return [
             'status'                 => 'success',
             'action'                 => 'summary',
-            'api_version'            => 'v1.0.0',
+            'api_version'            => 'v1.1.0',
             'personal_info'          => $initData['personal_info'],
             'researcher_sdg_summary' => $researcherSdgSummary,
             'contributor_profile'    => $contributorProfile,
@@ -604,8 +596,9 @@ class SdgClassificationApi
             }
         }
 
-        $data   = $this->fetchDoiData($doi);
-        $result = $this->processDoiData($doi, $data);
+        $metadata = $this->fetchArticleMetadata($doi);
+        $result   = $this->processDoiData($doi, $metadata);
+        
         $this->saveToCache($cacheFile, $result);
         $result['cache_info'] = ['from_cache' => false, 'cache_date' => date('c')];
         return $result;
@@ -614,6 +607,156 @@ class SdgClassificationApi
     // =================================================================
     // FUNGSI PENGAMBILAN DATA (Fetchers)
     // =================================================================
+
+    /**
+     * Smart Fetcher: Mencoba Crossref terlebih dahulu, jika gagal (404/timeout),
+     * otomatis memanggil OpenCitations sebagai Fallback dan menormalisasi format array.
+     */
+    private function fetchArticleMetadata(string $doi): array
+    {
+        $metadata = [
+            'title'          => '',
+            'abstract'       => '',
+            'authors'        => [],
+            'journal'        => '',
+            'year'           => null,
+            'published_date' => '',
+            'source'         => ''
+        ];
+
+        try {
+            // Priority 1: Crossref
+            $cr = $this->fetchDoiData($doi);
+            $metadata['source']         = 'Crossref';
+            $metadata['title']          = $cr['message']['title'][0] ?? '';
+            $metadata['journal']        = $cr['message']['container-title'][0] ?? '';
+            
+            if (!empty($cr['message']['abstract'])) {
+                $metadata['abstract'] = strip_tags($cr['message']['abstract']);
+            }
+
+            if (isset($cr['message']['author'])) {
+                foreach ($cr['message']['author'] as $a) {
+                    $n = trim(($a['given'] ?? '') . ' ' . ($a['family'] ?? ''));
+                    if ($n) $metadata['authors'][] = ['name' => $n];
+                }
+            }
+
+            $yearParts = $cr['message']['published']['date-parts'][0] ?? ($cr['message']['published-print']['date-parts'][0] ?? []);
+            $metadata['published_date'] = !empty($yearParts) ? implode('-', $yearParts) : '';
+            $metadata['year']           = !empty($yearParts[0]) ? (int)$yearParts[0] : null;
+
+        } catch (Exception $e) {
+            // Priority 2: Fallback ke OpenCitations jika Crossref Gagal
+            try {
+                $oc = $this->fetchOpenCitationsData($doi);
+                if (empty($oc[0])) {
+                    throw new Exception("Data OpenCitations kosong.");
+                }
+
+                $metadata['source']         = 'OpenCitations';
+                $metadata['title']          = $oc[0]['title'] ?? '';
+                $metadata['journal']        = $oc[0]['source_title'] ?? '';
+                $metadata['year']           = !empty($oc[0]['year']) ? (int)$oc[0]['year'] : null;
+                $metadata['published_date'] = $oc[0]['year'] ?? '';
+
+                // Parsing nama dari format OpenCitations: "Family, Given; Family2, Given2"
+                if (!empty($oc[0]['author'])) {
+                    $authors = explode('; ', $oc[0]['author']);
+                    foreach ($authors as $a) {
+                        $parts = explode(', ', $a);
+                        if (count($parts) === 2) {
+                            $metadata['authors'][] = ['name' => trim($parts[1] . ' ' . $parts[0])];
+                        } else {
+                            $metadata['authors'][] = ['name' => trim($a)];
+                        }
+                    }
+                }
+            } catch (Exception $e2) {
+                throw new Exception("Gagal mengambil metadata dari Crossref maupun OpenCitations untuk DOI: $doi");
+            }
+        }
+
+        return $metadata;
+    }
+
+    private function fetchOpenCitationsData(string $doi): array
+    {
+        $url = "https://opencitations.net/api/v2/metadata/" . urlencode($doi);
+        $ch  = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER     => ['Accept: application/json'],
+            CURLOPT_CONNECTTIMEOUT => 5,
+            CURLOPT_TIMEOUT        => 12,
+            CURLOPT_USERAGENT      => 'SDG-Classifier/5.2 (mailto:wizdam@sangia.org)',
+        ]);
+        $response  = curl_exec($ch);
+        $httpCode  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $errno     = curl_errno($ch);
+        curl_close($ch);
+
+        if ($errno || $httpCode !== 200) {
+            throw new Exception("OpenCitations HTTP $httpCode");
+        }
+
+        $data = json_decode((string)$response, true);
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
+            throw new Exception("Respons OpenCitations bukan JSON array valid.");
+        }
+
+        return $data;
+    }
+
+    private function fetchDoiData(string $doi): array
+    {
+        $url     = "https://api.crossref.org/works/" . urlencode($doi);
+        $maxTry  = 2;
+        $delay   = 1;
+        $lastErr = '';
+
+        for ($attempt = 0; $attempt < $maxTry; $attempt++) {
+            if ($attempt > 0) sleep($delay * $attempt);
+
+            $ch = curl_init($url);
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HEADER         => true,
+                CURLOPT_USERAGENT      => 'SDG-Classifier/5.2 (mailto:wizdam@sangia.org)',
+                CURLOPT_CONNECTTIMEOUT => 5,
+                CURLOPT_TIMEOUT        => 10,
+            ]);
+            $raw        = curl_exec($ch);
+            $errno      = curl_errno($ch);
+            $errStr     = curl_error($ch);
+            $httpCode   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+            $ctypeRaw   = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+            curl_close($ch);
+
+            if ($errno) { $lastErr = 'cURL error: ' . $errStr; continue; }
+            if ($httpCode === 429) { $lastErr = 'Crossref rate limit (429)'; continue; }
+            if ($httpCode === 404) throw new Exception('DOI tidak ditemukan di Crossref (404)', 404);
+            if ($httpCode !== 200) throw new Exception("Crossref HTTP $httpCode untuk DOI: $doi", 500);
+
+            if ($ctypeRaw && stripos((string)$ctypeRaw, 'json') === false) {
+                throw new Exception('Crossref tidak mengembalikan JSON (Content-Type: ' . $ctypeRaw . ')', 500);
+            }
+
+            $body = substr((string)$raw, $headerSize);
+            $firstChar = ltrim($body)[0] ?? '';
+            if ($firstChar !== '{' && $firstChar !== '[') {
+                throw new Exception('Crossref mengembalikan respons non-JSON.', 500);
+            }
+
+            $data = json_decode($body, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new Exception('JSON Crossref tidak valid: ' . json_last_error_msg(), 500);
+            }
+            return $data;
+        }
+        throw new Exception('Gagal mengambil data Crossref setelah ' . $maxTry . ' percobaan. ' . $lastErr, 500);
+    }
 
     private function fetchOrcidData(string $orcid): array
     {
@@ -735,69 +878,19 @@ class SdgClassificationApi
         ];
     }
 
-    private function fetchDoiData(string $doi): array
-    {
-        $url     = "https://api.crossref.org/works/" . urlencode($doi);
-        $maxTry  = 3;
-        $delay   = 2;
-        $lastErr = '';
-
-        for ($attempt = 0; $attempt < $maxTry; $attempt++) {
-            if ($attempt > 0) sleep($delay * $attempt);
-
-            $ch = curl_init($url);
-            curl_setopt_array($ch, [
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_HEADER         => true,
-                CURLOPT_USERAGENT      => 'SDG-Classifier/5.2 (mailto:wizdam@sangia.org)',
-                CURLOPT_CONNECTTIMEOUT => 5,
-                CURLOPT_TIMEOUT        => 12,
-            ]);
-            $raw        = curl_exec($ch);
-            $errno      = curl_errno($ch);
-            $errStr     = curl_error($ch);
-            $httpCode   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-            $ctypeRaw   = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-            curl_close($ch);
-
-            if ($errno) { $lastErr = 'cURL error: ' . $errStr; continue; }
-            if ($httpCode === 429) { $lastErr = 'Crossref rate limit (429)'; continue; }
-            if ($httpCode === 404) throw new Exception('DOI tidak ditemukan di Crossref (404)', 404);
-            if ($httpCode !== 200) throw new Exception("Crossref HTTP $httpCode untuk DOI: $doi", 500);
-
-            if ($ctypeRaw && stripos((string)$ctypeRaw, 'json') === false) {
-                throw new Exception('Crossref tidak mengembalikan JSON (Content-Type: ' . $ctypeRaw . ')', 500);
-            }
-
-            $body = substr((string)$raw, $headerSize);
-            $firstChar = ltrim($body)[0] ?? '';
-            if ($firstChar !== '{' && $firstChar !== '[') {
-                throw new Exception('Crossref mengembalikan respons non-JSON.', 500);
-            }
-
-            $data = json_decode($body, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new Exception('JSON Crossref tidak valid: ' . json_last_error_msg(), 500);
-            }
-            return $data;
-        }
-        throw new Exception('Gagal mengambil data Crossref setelah ' . $maxTry . ' percobaan. ' . $lastErr, 500);
-    }
-
     private function fetchAbstractMultiSource(string $doi): string
     {
         if (empty($doi)) return '';
         $clean = preg_replace('/^https?:\/\/(dx\.)?doi\.org\//i', '', trim($doi));
 
-        // 1. CrossRef
+        // 1. CrossRef (Sebagai fallback abstraksi jika fetchArticleMetadata terlewat)
         try {
             $url = "https://api.crossref.org/works/" . urlencode($clean);
             $ch  = curl_init($url);
             curl_setopt_array($ch, [
                 CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_TIMEOUT        => 7,
-                CURLOPT_CONNECTTIMEOUT => 3,
+                CURLOPT_TIMEOUT        => 5,
+                CURLOPT_CONNECTTIMEOUT => 2,
                 CURLOPT_USERAGENT      => 'SDG-Classifier/5.2 (mailto:wizdam@sangia.org)',
                 CURLOPT_HTTPHEADER     => ['Accept: application/json'],
             ]);
@@ -816,8 +909,8 @@ class SdgClassificationApi
             $ch  = curl_init($url);
             curl_setopt_array($ch, [
                 CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_TIMEOUT        => 7,
-                CURLOPT_CONNECTTIMEOUT => 3,
+                CURLOPT_TIMEOUT        => 5,
+                CURLOPT_CONNECTTIMEOUT => 2,
                 CURLOPT_USERAGENT      => 'SDG-Classifier/5.2 (mailto:wizdam@sangia.org)',
             ]);
             $resp     = curl_exec($ch);
@@ -1041,12 +1134,14 @@ class SdgClassificationApi
                 $abstract = '';
                 if ($doi) {
                     try {
-                        $doiData = $this->fetchDoiData($doi);
-                        if (isset($doiData['message']['abstract'])) {
-                            $abstract = strip_tags($doiData['message']['abstract']);
-                        }
-                        if (empty($abstract)) $abstract = $this->fetchAbstractMultiSource($doi);
+                        $metadata = $this->fetchArticleMetadata($doi);
+                        if (!empty($metadata['abstract'])) $abstract = $metadata['abstract'];
+                        if (empty($title) && !empty($metadata['title'])) $title = $metadata['title'];
                     } catch (Exception $e) {}
+                }
+
+                if (empty($abstract) && $doi) {
+                    try { $abstract = $this->fetchAbstractMultiSource($doi); } catch (Exception $e) {}
                 }
 
                 $fullText      = $title . ' ' . $abstract;
@@ -1175,16 +1270,16 @@ class SdgClassificationApi
             'researcher_sdg_summary' => $researcherSdgSummary,
             'works'                  => $processedWorks,
             'status'                 => 'success',
-            'api_version'            => 'v1.0.0',
+            'api_version'            => 'v1.1.0',
             'timestamp'              => date('c'),
         ];
     }
 
-    private function processDoiData(string $doi, array $data): array
+    private function processDoiData(string $doi, array $metadata): array
     {
-        $title    = $data['message']['title'][0] ?? '';
-        $abstract = '';
-        if (isset($data['message']['abstract'])) $abstract = strip_tags($data['message']['abstract']);
+        $title    = $metadata['title'] ?? '';
+        $abstract = $metadata['abstract'] ?? '';
+        
         if (empty($abstract)) {
             try { $abstract = $this->fetchAbstractMultiSource($doi); } catch (Exception $e) {}
         }
@@ -1192,13 +1287,7 @@ class SdgClassificationApi
         $fullText     = $title . ' ' . $abstract;
         $preprocessed = $this->preprocessText($fullText);
 
-        $authors = [];
-        if (isset($data['message']['author'])) {
-            foreach ($data['message']['author'] as $a) {
-                $n = trim(($a['given'] ?? '') . ' ' . ($a['family'] ?? ''));
-                if ($n) $authors[] = $n;
-            }
-        }
+        $authors = array_column($metadata['authors'] ?? [], 'name');
 
         $sdgAnalysis = [];
         foreach (array_keys($this->sdgKeywords) as $sdg) {
@@ -1233,24 +1322,21 @@ class SdgClassificationApi
             $filtered   = array_keys($confidence);
         }
 
-        $yearParts     = $data['message']['published']['date-parts'][0] ?? ($data['message']['published-print']['date-parts'][0] ?? []);
-        $publishedDate = !empty($yearParts) ? implode('-', $yearParts) : '';
-        $year          = !empty($yearParts[0]) ? (int)$yearParts[0] : null;
-
         return [
             'doi'                   => $doi,
             'title'                 => $title,
             'abstract'              => $abstract,
             'authors'               => $authors,
-            'journal'               => $data['message']['container-title'][0] ?? '',
-            'published_date'        => $publishedDate,
-            'year'                  => $year,
+            'journal'               => $metadata['journal'] ?? '',
+            'published_date'        => $metadata['published_date'] ?? '',
+            'year'                  => $metadata['year'] ?? null,
+            'metadata_source'       => $metadata['source'] ?? 'Unknown',
             'sdgs'                  => $filtered,
             'sdg_confidence'        => $confidence,
             'contributor_types'     => $ctypes,
             'contribution_pathways' => $pathways,
             'detailed_analysis'     => $sdgAnalysis,
-            'api_version'           => 'v1.0.0',
+            'api_version'           => 'v1.1.0',
             'status'                => 'success',
             'timestamp'             => date('c'),
         ];
@@ -1658,7 +1744,7 @@ class SdgClassificationApi
     }
 
     // =================================================================
-    // FUNGSI CACHE (Menyimpan Status Cache ORCID & Crossref API)
+    // FUNGSI CACHE (Menyimpan Status Cache ORCID & Crossref/OpenCitations API)
     // =================================================================
 
     private function saveToCache(string $filename, array $data): void
