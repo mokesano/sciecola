@@ -17,7 +17,7 @@ declare(strict_types=1);
  * - ?doi=xxx           → Analisis satu artikel
  *
  * @author Rochmady and Wizdam Team
- * @version 1.2.0 (Event-Driven Cache & Standalone Execution)
+ * @version 1.1.0 (Refactored for PHP 8.4 Strict Mode + OpenCitations Integration)
  * @license MIT
  */
 
@@ -37,6 +37,7 @@ class SdgClassificationApi
         'ACTIVE_CONTRIBUTOR_THRESHOLD'   => 0.50,
         'RELEVANT_CONTRIBUTOR_THRESHOLD' => 0.35,
         'DISCUSSANT_THRESHOLD'           => 0.25,
+        'CACHE_TTL'                      => 604800,
     ];
 
     private string $cacheDir;
@@ -115,7 +116,7 @@ class SdgClassificationApi
 
             if (empty($_GET)) {
                 http_response_code(200);
-                return ['status' => 'up', 'message' => 'Endpoint is operational', 'version' => 'v1.2.0'];
+                return ['status' => 'up', 'message' => 'Endpoint is operational', 'version' => 'v1.1.0'];
             }
 
             $forceRefresh = ($_GET['refresh'] ?? 'false') === 'true';
@@ -162,7 +163,7 @@ class SdgClassificationApi
                     'Refresh Cache' => 'tambahkan &refresh=true',
                 ],
                 'timestamp'   => date('c'),
-                'api_version' => 'v1.2.0',
+                'api_version' => 'v1.1.0',
             ];
         }
     }
@@ -219,7 +220,7 @@ class SdgClassificationApi
         $result = [
             'status'        => 'success',
             'action'        => 'init',
-            'api_version'   => 'v1.2.0',
+            'api_version'   => 'v1.1.0',
             'personal_info' => [
                 'name'              => $name ?: 'Peneliti ' . $orcid,
                 'institutions'      => $institutions,
@@ -258,7 +259,7 @@ class SdgClassificationApi
 
         if (empty($batchStubs)) {
             return [
-                'status' => 'success', 'action' => 'batch', 'api_version' => 'v1.2.0',
+                'status' => 'success', 'action' => 'batch', 'api_version' => 'v1.1.0',
                 'orcid' => $orcid, 'offset' => $offset, 'limit' => $limit,
                 'processed' => 0, 'total_works' => $totalWorks, 'works' => [],
                 'is_done' => true, 'next_offset' => $offset, 'timestamp' => date('c'),
@@ -411,7 +412,7 @@ class SdgClassificationApi
         $result = [
             'status'      => 'success',
             'action'      => 'batch',
-            'api_version' => 'v1.2.0',
+            'api_version' => 'v1.1.0',
             'orcid'       => $orcid,
             'offset'      => $offset,
             'limit'       => $limit,
@@ -536,7 +537,7 @@ class SdgClassificationApi
         return [
             'status'                 => 'success',
             'action'                 => 'summary',
-            'api_version'            => 'v1.2.0',
+            'api_version'            => 'v1.1.0',
             'personal_info'          => $initData['personal_info'],
             'researcher_sdg_summary' => $researcherSdgSummary,
             'contributor_profile'    => $contributorProfile,
@@ -607,6 +608,10 @@ class SdgClassificationApi
     // FUNGSI PENGAMBILAN DATA (Fetchers)
     // =================================================================
 
+    /**
+     * Smart Fetcher: Mencoba Crossref terlebih dahulu, jika gagal (404/timeout),
+     * otomatis memanggil OpenCitations sebagai Fallback dan menormalisasi format array.
+     */
     private function fetchArticleMetadata(string $doi): array
     {
         $metadata = [
@@ -655,6 +660,7 @@ class SdgClassificationApi
                 $metadata['year']           = !empty($oc[0]['year']) ? (int)$oc[0]['year'] : null;
                 $metadata['published_date'] = $oc[0]['year'] ?? '';
 
+                // Parsing nama dari format OpenCitations: "Family, Given; Family2, Given2"
                 if (!empty($oc[0]['author'])) {
                     $authors = explode('; ', $oc[0]['author']);
                     foreach ($authors as $a) {
@@ -877,6 +883,7 @@ class SdgClassificationApi
         if (empty($doi)) return '';
         $clean = preg_replace('/^https?:\/\/(dx\.)?doi\.org\//i', '', trim($doi));
 
+        // 1. CrossRef (Sebagai fallback abstraksi jika fetchArticleMetadata terlewat)
         try {
             $url = "https://api.crossref.org/works/" . urlencode($clean);
             $ch  = curl_init($url);
@@ -896,6 +903,7 @@ class SdgClassificationApi
             }
         } catch (Exception $e) {}
 
+        // 2. OpenAlex
         try {
             $url = "https://api.openalex.org/works/doi:" . urlencode($clean);
             $ch  = curl_init($url);
@@ -1262,7 +1270,7 @@ class SdgClassificationApi
             'researcher_sdg_summary' => $researcherSdgSummary,
             'works'                  => $processedWorks,
             'status'                 => 'success',
-            'api_version'            => 'v1.2.0',
+            'api_version'            => 'v1.1.0',
             'timestamp'              => date('c'),
         ];
     }
@@ -1328,7 +1336,7 @@ class SdgClassificationApi
             'contributor_types'     => $ctypes,
             'contribution_pathways' => $pathways,
             'detailed_analysis'     => $sdgAnalysis,
-            'api_version'           => 'v1.2.0',
+            'api_version'           => 'v1.1.0',
             'status'                => 'success',
             'timestamp'             => date('c'),
         ];
@@ -1736,7 +1744,7 @@ class SdgClassificationApi
     }
 
     // =================================================================
-    // FUNGSI CACHE SECARA EVENT-DRIVEN (TANPA TIME-EXPIRY)
+    // FUNGSI CACHE (Menyimpan Status Cache ORCID & Crossref/OpenCitations API)
     // =================================================================
 
     private function saveToCache(string $filename, array $data): void
@@ -1747,8 +1755,7 @@ class SdgClassificationApi
     private function readFromCache(string $filename): array|bool
     {
         if (!file_exists($filename)) return false;
-        
-        // Dihapus: Pengecekan TTL berbasis waktu. Cache kini bersifat event-driven.
+        if ((time() - filemtime($filename)) > self::CONFIG['CACHE_TTL']) return false;
         
         $compressed = file_get_contents($filename);
         if ($compressed === false) return false;
@@ -1775,9 +1782,7 @@ class SdgClassificationApi
     }
 }
 
-// =================================================================
-// EKSEKUSI ENDPOINT (STANDALONE)
-// =================================================================
+// Eksekusi (Simpan di file index.php atau router Anda)
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, OPTIONS');
