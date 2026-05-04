@@ -265,22 +265,6 @@ define('DEBUG_MODE', true);
 - **Resource Allocation**: Optimize funding decisions
 - **Progress Tracking**: Monitor SDG advancement
 
-## 🌟 Why Choose This Platform?
-
-### Competitive Advantages
-1. **AI-Powered**: Advanced machine learning algorithms
-2. **Comprehensive**: Covers all 17 SDGs with detailed analysis
-3. **User-Friendly**: Intuitive interface for all skill levels
-4. **Scalable**: From individual researchers to large institutions
-5. **Reliable**: 99.9% uptime with robust infrastructure
-6. **Supported**: Comprehensive documentation and support
-
-### Success Stories
-- **University of Cambridge**: 40% increase in SDG-aligned research identification
-- **Nature Publishing**: Enhanced editorial decision-making process
-- **UN Research Division**: Streamlined global impact assessment
-- **Gates Foundation**: Improved grant allocation effectiveness
-
 ---
 
 **Built with ❤️ by the Wizdam AI Team**
