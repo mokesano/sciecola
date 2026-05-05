@@ -2,11 +2,13 @@ import React from 'react';
 
 const Hero = () => {
   return (
-    <div className="relative bg-transparent overflow-hidden mb-12 mt-4 font-sans">
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-10">
-        
-        {/* SISI KIRI: Area Teks dan Tombol */}
-        <div className="w-full lg:w-1/2 flex flex-col justify-center text-center lg:text-left z-10">
+    // Wrapper paling luar diset relative untuk menampung gambar yang posisinya absolute
+    <div className="relative bg-transparent pt-8 pb-12 lg:pt-16 lg:pb-24 font-sans overflow-hidden">
+      
+      {/* SISI KIRI: AREA TEKS */}
+      {/* Tetap menggunakan max-w-7xl agar teks sejajar dan tidak meluber ke kiri */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="w-full lg:w-[50%] flex flex-col justify-center text-center lg:text-left">
           
           {/* Badge AI */}
           <div className="inline-flex items-center justify-center lg:justify-start px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold tracking-wider mb-6 w-max mx-auto lg:mx-0">
@@ -15,7 +17,7 @@ const Hero = () => {
 
           {/* Judul Utama */}
           <h1 className="text-4xl md:text-5xl lg:text-[52px] font-bold text-gray-900 leading-[1.2] mb-6 tracking-tight">
-            Menghubungkan Riset <br />
+            Menghubungkan Riset <br className="hidden lg:block" />
             dengan{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
               Tujuan Global
@@ -29,8 +31,6 @@ const Hero = () => {
           
           {/* Tombol Aksi */}
           <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-            
-            {/* Tombol Primer (Jelajahi Riset) dengan SVG Panah */}
             <button className="w-full sm:w-auto flex items-center justify-center px-8 py-3.5 border border-transparent text-base font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-lg hover:shadow-indigo-500/30 group">
               Jelajahi Riset 
               <svg 
@@ -45,7 +45,6 @@ const Hero = () => {
               </svg>
             </button>
             
-            {/* Tombol Sekunder (Analisis Artikel) dengan SVG Ikon Analitik */}
             <button className="w-full sm:w-auto flex items-center justify-center px-8 py-3.5 border-2 border-indigo-100 text-base font-medium rounded-xl text-indigo-700 bg-white hover:bg-indigo-50 transition-all">
               Analisis Artikel 
               <svg 
@@ -59,22 +58,26 @@ const Hero = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </button>
-            
           </div>
         </div>
-        
-        {/* SISI KANAN: Area Ilustrasi Gambar */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center relative mt-10 lg:mt-0 z-0">
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-indigo-300 rounded-full blur-[80px] opacity-30"></div>
-          
-          <img 
-            src="/assets/img/hero.png" 
-            alt="Ilustrasi Homepage" 
-            className="w-full max-w-md aspect-square rounded-full object-cover relative z-10"
-          />
-        </div>
-        
       </div>
+      
+      {/* SISI KANAN: AREA ILUSTRASI */}
+      {/* DIKELUARKAN dari max-w-7xl. Posisi absolut menempel tepat di ujung kanan browser. */}
+      <div className="relative lg:absolute lg:inset-y-0 lg:right-0 w-full lg:w-[50%] flex items-center justify-center lg:justify-end mt-12 lg:mt-0 z-0 pointer-events-none">
+        
+        {/* Efek Glow Cahaya Biru */}
+        <div className="absolute top-1/2 left-1/2 lg:left-[60%] transform -translate-x-1/2 -translate-y-1/2 w-[300px] lg:w-[600px] h-[300px] lg:h-[600px] bg-indigo-500 rounded-full blur-[100px] lg:blur-[150px] opacity-15"></div>
+        
+        <img 
+          src="/assets/img/Hero-Illustrated.png" 
+          alt="Ilustrasi Homepage" 
+          // max-w-none mengizinkan gambar membesar memenuhi seluruh 50% bagian kanan layar
+          // object-right memastikan gambar melekat sempurna ke sisi kanan layar
+          className="w-[90%] lg:w-full h-auto max-w-[600px] lg:max-w-none object-contain lg:object-right relative z-10"
+        />
+      </div>
+      
     </div>
   );
 };

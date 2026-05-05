@@ -4,11 +4,11 @@ const TrustedSources = () => {
   // Array sekarang berisi objek dengan nama dan lokasi file gambar (src).
   // Silakan sesuaikan path 'src' dengan lokasi file logo Anda.
   const sources = [
-    { name: "Scopus", src: "/assets/img/scopus.svg" },
-    { name: "ORCID", src: "/images/logos/orcid.png" },
-    { name: "Crossref", src: "/images/logos/crossref.png" },
-    { name: "DOAJ", src: "/images/logos/doaj.png" },
-    { name: "Google Scholar", src: "/images/logos/google-scholar.png" }
+    { name: "Scopus", src: "/assets/logo/Scopus.svg" },
+    { name: "ORCID", src: "/assets/logo/ORCID.png" },
+    { name: "Crossref", src: "/assets/logo/Crossref.svg" },
+    { name: "OpenAlex", src: "/assets/logo/OpenAlex.png" },
+    { name: "Dimensions", src: "/assets/logo/dimensions.png" }
   ];
 
   return (
