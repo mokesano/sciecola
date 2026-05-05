@@ -37,7 +37,7 @@ const Hero = () => {
           </div>
 
           {/* Judul Utama */}
-          <h1 className="text-4xl md:text-5xl lg:text-[52px] font-bold text-gray-900 leading-[1.2] mb-6 tracking-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-[48px] font-bold text-gray-900 leading-[1.2] mb-6 tracking-tight">
             Menghubungkan Riset <br className="hidden lg:block" />
             dengan{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
