@@ -23,14 +23,14 @@ ini_set('error_log', dirname(__DIR__) . '/error_log');
 
 // dirname(__DIR__) = satu level di atas folder public/
 // Hasilnya: /home/user/public_html/wizdam/sicola.php
-$targetFile = dirname(__DIR__) . '/sicola.php';
+$bootstrapFile = ROOT_PATH . '/includes/bootstrap.php';
 
-if (file_exists($targetFile)) {
-    require $targetFile;
+if (file_exists($bootstrapFile)) {
+    require $bootstrapFile;
 } else {
     http_response_code(503);
     header('Content-Type: text/html; charset=utf-8');
     echo '<h1>503 – Service Unavailable</h1>';
     echo '<p>File aplikasi tidak ditemukan.</p>';
-    echo '<small style="color:#999">Path: ' . htmlspecialchars($targetFile) . '</small>';
+    echo '<small style="color:#999">Path: ' . htmlspecialchars($bootstrapFile) . '</small>';
 }
