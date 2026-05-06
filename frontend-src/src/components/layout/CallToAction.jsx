@@ -23,7 +23,7 @@ const CallToAction = () => {
       <div className="lg:w-1/2 flex justify-center lg:justify-end w-full relative z-10">
         
         {/* Container Input */}
-        <div className="bg-white rounded-xl md:rounded-full p-1.5 flex flex-col md:flex-row w-full max-w-lg shadow-md">
+        <div className="bg-white rounded-xl p-1.5 flex flex-col md:flex-row w-full max-w-lg shadow-md">
           
           <input 
             type="text" 
@@ -33,7 +33,7 @@ const CallToAction = () => {
           />
           
           {/* Dikembalikan ke py-3 agar serasi dengan tinggi input */}
-          <button className="bg-[#5A67D8] hover:bg-[#4C51BF] text-white px-6 py-3 rounded-lg md:rounded-full text-sm md:text-base font-medium flex items-center justify-center gap-2 mt-2 md:mt-0 transition-colors">
+          <button className="bg-[#5A67D8] hover:bg-[#4C51BF] text-white px-6 py-3 rounded-lg text-sm md:text-base font-medium flex items-center justify-center gap-2 mt-2 md:mt-0 transition-colors">
             Analisis Sekarang
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 12h14M12 5l7 7-7 7" />
