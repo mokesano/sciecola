@@ -23,7 +23,7 @@ ini_set('error_log', dirname(__DIR__) . '/error_log');
 
 // dirname(__DIR__) = satu level di atas folder public/
 // Hasilnya: /home/user/public_html/wizdam/wizdam-sicola.php
-$targetFile = dirname(__DIR__) . '/wizdam-sicola.php';
+$targetFile = dirname(__DIR__) . '/wizdam-scola.php';
 
 if (file_exists($targetFile)) {
     require $targetFile;
