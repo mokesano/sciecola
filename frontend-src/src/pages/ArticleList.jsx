@@ -238,7 +238,7 @@ const ArticleList = () => {
         {articles.map((article) => (
           <Link 
             key={article.id} 
-            to={`/doi/${article.id}`}
+            to={`/doi/${article.doi}`}
             className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-indigo-300 transition-all"
           >
             <div className="flex flex-col md:flex-row gap-6">

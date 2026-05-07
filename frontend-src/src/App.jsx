@@ -20,17 +20,19 @@ import CallToAction from './components/layout/CallToAction';
 // Wrapper Adapter
 import { transformToChartData, generateSummaryStats } from './utils/sdgDataAdapter';
 
-// Impor Halaman Profil Dinamis (Asumsi Anda akan/sudah membuat file ini di folder src/pages/)
+// Impor Halaman Profil Dinamis (Semua file ada di src/pages/)
 import JournalList from './pages/JournalList';
 import JournalProfile from './pages/JournalProfile';
 
 import ResearchersList from './pages/ResearchersList';
-import ArticleProfile from './pages/ArticleProfile';
 import ResearcherProfile from './pages/ResearcherProfile';
+
+// ✅ Impor Halaman Artikel (Baru)
+import ArticleList from './pages/ArticleList';
+import ArticleProfile from './pages/ArticleProfile';
 
 // =====================================================================
 // KOMPONEN BERANDA (HOME)
-// Semua state dan UI halaman utama Anda diekstrak ke sini agar aman
 // =====================================================================
 const Home = () => {
   // === STATE MANAGEMENT ===
@@ -91,7 +93,6 @@ const Home = () => {
 // =====================================================================
 function App() {
   return (
-    // HAPUS basename="/assets/sicola-ui", cukup gunakan <Router> saja
     <Router>
       <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
         
@@ -100,11 +101,19 @@ function App() {
 
         {/* Pengatur Lalu Lintas Halaman */}
         <Routes>
+          {/* Halaman Utama */}
           <Route path="/" element={<Home />} />
+          
+          {/* Rute Jurnal */}
           <Route path="/journals" element={<JournalList />} />
           <Route path="/journals/:journalId" element={<JournalProfile />} />
+          
+          {/* Rute Peneliti */}
           <Route path="/researchers" element={<ResearchersList />} />
           <Route path="/orcid/:orcidCode" element={<ResearcherProfile />} />
+          
+          {/* ✅ Rute Artikel (Baru) */}
+          <Route path="/articles" element={<ArticleList />} />
           <Route path="/doi/*" element={<ArticleProfile />} />
         </Routes>
 

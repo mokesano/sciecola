@@ -26,7 +26,7 @@ const Hero = () => {
       {/* 3. LAYER TEKS (SISI KIRI) */}
       {/* Padding vertikal (jarak area hero) ditaruh HANYA di container ini */}
       {/* max-w-7xl menahan agar teks tetap sejajar dengan navbar */}
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24 z-10 pointer-events-auto">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-4 lg:px-4 pt-12 pb-24 z-10 pointer-events-auto">
         
         {/* Teks dibatasi lebarnya (50%) agar tidak menimpa gambar di desktop */}
         <div className="w-full lg:w-[50%] flex flex-col justify-center text-center lg:text-left">

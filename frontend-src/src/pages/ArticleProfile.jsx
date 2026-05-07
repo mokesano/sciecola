@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   PieChart, Pie, Cell, LineChart, Line, BarChart, Bar, 
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
 
-const ArticleProfile = () => {
-  const { doi } = useParams();
-  
-  // Simulasi data artikel
-  const [article] = useState({
+// Mock Database Artikel
+const articlesDatabase = [
+  {
+    id: "10.1234/jess.2024.1002",
     title: "Climate Change Adaptation in Coastal Communities: A Systematic Review",
     doi: "10.1234/jess.2024.1002",
     articleType: "Review Article",
@@ -18,14 +17,12 @@ const ArticleProfile = () => {
     publisher: "Sangia Research Media and Publishing",
     coverImage: "https://via.placeholder.com/300x400/1e40af/ffffff?text=Article",
     
-    // Authors
     authors: [
       { name: "Andi Rahman", affiliation: "Department of Environmental Science, Universitas Indonesia, Indonesia", id: 1 },
       { name: "Budi Santoso", affiliation: "Faculty of Geography, Universitas Gadjah Mada, Indonesia", id: 2 },
       { name: "Siti Nurhaliza", affiliation: "Research Center for Climate Change, BRIN, Indonesia", id: 3 }
     ],
     
-    // Stats
     citations: 652,
     hIndex: 24,
     views: 98732,
@@ -33,7 +30,6 @@ const ArticleProfile = () => {
     altmetricScore: 124,
     impactScore: 2.48,
     
-    // Journal info
     journal: {
       name: "Journal of Environmental Science and Sustainability",
       eissn: "1234-5678",
@@ -45,18 +41,15 @@ const ArticleProfile = () => {
       country: "Indonesia"
     },
     
-    // Article details
     abstract: "Artikel ini melakukan tinjauan sistematis terhadap strategi adaptasi perubahan iklim di komunitas pesisir. Hasil penelitian menunjukkan bahwa pendekatan berbasis ekosistem dan kearifan lokal memiliki peran penting dalam meningkatkan ketahanan masyarakat pesisir terhadap perubahan iklim.",
     keywords: ["Climate Change", "Adaptation", "Coastal Communities", "Resilience", "Ecosystem-based Adaptation", "Indonesia", "Local Knowledge"],
     
-    // SDG Distribution
     sdgDistribution: [
       { name: "Climate Action", value: 52, color: "#10b981", sdg: 13 },
       { name: "Sustainable Cities & Communities", value: 28, color: "#f59e0b", sdg: 11 },
       { name: "Life on Land", value: 20, color: "#84cc16", sdg: 15 }
     ],
     
-    // Citation trend
     citationTrend: [
       { year: "2019", citations: 25 },
       { year: "2020", citations: 58 },
@@ -66,7 +59,6 @@ const ArticleProfile = () => {
       { year: "2024", citations: 298 }
     ],
     
-    // Performance metrics
     performanceMetrics: [
       { year: "2019", citations: 25, views: 12500, downloads: 1200 },
       { year: "2020", citations: 58, views: 18200, downloads: 1850 },
@@ -76,7 +68,6 @@ const ArticleProfile = () => {
       { year: "2024", citations: 298, views: 42800, downloads: 4890 }
     ],
     
-    // Version history
     versions: [
       { date: "15 Mei 2024", event: "Versi Online (Published)", type: "published" },
       { date: "10 Mei 2024", event: "Versi Final", type: "final" },
@@ -85,7 +76,6 @@ const ArticleProfile = () => {
       { date: "20 Maret 2024", event: "Versi Awal (Submitted)", type: "submitted" }
     ],
     
-    // Top citations
     topCitations: [
       { title: "Nature-based solutions for coastal adaptation: A global meta-analysis", journal: "Nature Climate Change, 2023", citations: 124 },
       { title: "Local knowledge and community resilience in climate adaptation", journal: "Environmental Science & Policy, 2023", citations: 98 },
@@ -94,16 +84,119 @@ const ArticleProfile = () => {
       { title: "Integrating traditional and modern knowledge for climate resilience", journal: "Sustainability, 2021", citations: 54 }
     ],
     
-    // Related articles
     relatedArticles: [
       { title: "Community-based adaptation to sea level rise in Indonesia", journal: "Environmental Science & Policy, 2024", sdgs: [13, 11] },
       { title: "Ecosystem-based adaptation in coastal areas: A review", journal: "Ocean & Coastal Management, 2023", sdgs: [13, 15] },
       { title: "Climate resilience through local wisdom in coastal communities", journal: "Sustainability, 2023", sdgs: [11, 15] },
       { title: "Blue carbon and coastal adaptation strategies", journal: "Journal of Cleaner Production, 2022", sdgs: [13, 14] }
     ]
-  });
+  },
+  {
+    id: "10.1234/jess.2024.1003",
+    title: "Sustainable Urban Transport Systems in Indonesia: Challenges and Opportunities",
+    doi: "10.1234/jess.2024.1003",
+    articleType: "Research Article",
+    language: "English",
+    publishedDate: "10 Maret 2024",
+    publisher: "Sangia Research Media and Publishing",
+    coverImage: "https://via.placeholder.com/300x400/059669/ffffff?text=Article",
+    
+    authors: [
+      { name: "Dewi Lestari", affiliation: "Department of Urban Planning, Institut Teknologi Bandung, Indonesia", id: 1 },
+      { name: "Ahmad Fauzi", affiliation: "School of Architecture, Universitas Gadjah Mada, Indonesia", id: 2 }
+    ],
+    
+    citations: 428,
+    hIndex: 18,
+    views: 76543,
+    downloads: 9876,
+    altmetricScore: 95,
+    impactScore: 2.15,
+    
+    journal: {
+      name: "Journal of Environmental Science and Sustainability",
+      eissn: "1234-5678",
+      pissn: "1234-5679",
+      volume: "10",
+      issue: "1",
+      pages: "45-62",
+      quartile: "Q2 (Environmental Science)",
+      country: "Indonesia"
+    },
+    
+    abstract: "Penelitian ini menganalisis tantangan dan peluang sistem transportasi berkelanjutan di kota-kota besar Indonesia. Studi ini menyoroti pentingnya integrasi moda transportasi publik dan kebijakan ramah lingkungan.",
+    keywords: ["Urban Transport", "Sustainability", "Public Transit", "Indonesia", "Green Mobility"],
+    
+    sdgDistribution: [
+      { name: "Sustainable Cities & Communities", value: 55, color: "#f59e0b", sdg: 11 },
+      { name: "Climate Action", value: 30, color: "#10b981", sdg: 13 },
+      { name: "Industry & Innovation", value: 15, color: "#f97316", sdg: 9 }
+    ],
+    
+    citationTrend: [
+      { year: "2020", citations: 15 },
+      { year: "2021", citations: 45 },
+      { year: "2022", citations: 98 },
+      { year: "2023", citations: 165 },
+      { year: "2024", citations: 210 }
+    ],
+    
+    performanceMetrics: [
+      { year: "2020", citations: 15, views: 8500, downloads: 980 },
+      { year: "2021", citations: 45, views: 15200, downloads: 1650 },
+      { year: "2022", citations: 98, views: 22800, downloads: 2450 },
+      { year: "2023", citations: 165, views: 31500, downloads: 3280 },
+      { year: "2024", citations: 210, views: 38200, downloads: 3890 }
+    ],
+    
+    versions: [
+      { date: "10 Maret 2024", event: "Versi Online (Published)", type: "published" },
+      { date: "5 Maret 2024", event: "Versi Final", type: "final" },
+      { date: "15 Februari 2024", event: "Revisi Setelah Review", type: "revision" },
+      { date: "20 Januari 2024", event: "Versi Awal (Submitted)", type: "submitted" }
+    ],
+    
+    topCitations: [
+      { title: "Smart city transportation frameworks in developing countries", journal: "Cities, 2023", citations: 87 },
+      { title: "Electric vehicle adoption in Southeast Asia", journal: "Transport Policy, 2023", citations: 65 }
+    ],
+    
+    relatedArticles: [
+      { title: "Bus rapid transit systems in Asian megacities", journal: "Transport Reviews, 2023", sdgs: [11, 13] },
+      { title: "Cycling infrastructure and urban mobility", journal: "Journal of Transport Geography, 2023", sdgs: [11, 3] }
+    ]
+  }
+];
 
+const ArticleProfile = () => {
+  const location = useLocation();
+  const doi = location.pathname.replace('/doi/', '');
+  const navigate = useNavigate();
+  const [article, setArticle] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('ringkasan');
+
+  useEffect(() => {
+    // Simulasi API call
+    setLoading(true);
+    
+    // Decode DOI dari URL (karena mungkin ada encoding)
+    const decodedDoi = decodeURIComponent(doi);
+    
+    // Cari artikel yang sesuai dengan DOI
+    const foundArticle = articlesDatabase.find(art => 
+      art.doi === decodedDoi || art.id === decodedDoi
+    );
+    
+    if (foundArticle) {
+      setArticle(foundArticle);
+    } else {
+      // Artikel tidak ditemukan
+      console.error(`Artikel dengan DOI ${decodedDoi} tidak ditemukan`);
+    }
+    
+    setLoading(false);
+  }, [doi]);
 
   // Custom tooltip
   const CustomTooltip = ({ active, payload, label }) => {
@@ -113,7 +206,7 @@ const ArticleProfile = () => {
           <p className="text-sm font-semibold text-gray-900">{label}</p>
           {payload.map((entry, index) => (
             <p key={index} className="text-sm" style={{ color: entry.color }}>
-              {entry.name}: {entry.value.toLocaleString()}
+              {entry.name}: {entry.value?.toLocaleString?.() ?? entry.value}
             </p>
           ))}
         </div>
@@ -122,6 +215,57 @@ const ArticleProfile = () => {
     return null;
   };
 
+  // Loading state
+  if (loading) {
+    return (
+      <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Memuat artikel...</p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // Error state - artikel tidak ditemukan
+  if (!article) {
+    return (
+      <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <div className="text-center py-20">
+          <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Artikel Tidak Ditemukan</h2>
+          <p className="text-gray-600 mb-6">Maaf, artikel dengan DOI {doi} tidak tersedia dalam database kami.</p>
+          <div className="flex gap-4 justify-center">
+            <button 
+              onClick={() => navigate('/articles')}
+              className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors"
+            >
+              Kembali ke Daftar Artikel
+            </button>
+            <button 
+              onClick={() => navigate('/')}
+              className="px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
+            >
+              Ke Beranda
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // ✅ Safe accessor helper untuk menghindari error render
+  const safeGet = (obj, path, fallback = '') => {
+    return path.split('.').reduce((acc, part) => acc?.[part], obj) ?? fallback;
+  };
+
+  // Render artikel jika ditemukan
   return (
     <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Header Article Info */}
