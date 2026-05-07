@@ -40,6 +40,9 @@ import ArticleProfile from './pages/ArticleProfile';
 import SdgsCluster from './pages/SdgsCluster';
 import Analytics from './pages/Analytics';
 
+// Impor Halaman Leaderboard
+import Leaderboard from './pages/Leaderboard';
+
 // Impor Halaman Tentang (About)
 import About from './pages/About';
 import Teams from './pages/Teams';
@@ -138,6 +141,9 @@ function App() {
           {/* Rute SDGs Cluster dan Analytics */}
           <Route path="/sdgs" element={<SdgsCluster />} />
           <Route path="/analytics" element={<Analytics />} />
+
+          {/* Rute Leaderboard */}
+          <Route path="/leaderboard" element={<Leaderboard />} />
 
           {/* Rute Tentang (About) */}
           <Route path="/about" element={<About />} />
