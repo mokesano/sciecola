@@ -43,11 +43,14 @@ import Analytics from './pages/Analytics';
 // Impor Halaman Leaderboard
 import Leaderboard from './pages/Leaderboard';
 
-// Impor Halaman Tentang (About)
+// Impor Halaman Tentang dan Tim
 import About from './pages/About';
 import Teams from './pages/Teams';
+
+// Impor Halaman Bantuan dan FAQ
 import Contact from './pages/Contact';
 import Help from './pages/Help';
+import Faq from './pages/Faq';
 
 // Impor Halaman Log History (Baru)
 import LogHistory from './pages/LogHistory';
@@ -155,6 +158,7 @@ function App() {
           {/* Rute Kontak dan Bantuan */}
           <Route path="/contact" element={<Contact />} />
           <Route path="/help" element={<Help />} />
+          <Route path="/faq" element={<Faq />} />
 
           {/* Rute Log History */}
           <Route path="/log-history" element={<LogHistory />} />
