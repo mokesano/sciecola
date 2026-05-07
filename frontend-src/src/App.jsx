@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Komponen Layout Global
 import Navbar from './components/layout/Navbar';
@@ -87,9 +87,8 @@ const Home = () => {
 // =====================================================================
 function App() {
   return (
-    // basename ini digunakan jika Anda menempatkan aplikasi di sub-folder.
-    // Jika nanti tayang di root domain utama (misal wizdam.sangia.org), Anda bisa menghapus basename ini.
-    <Router basename="/assets/sicola-ui">
+    // HAPUS basename="/assets/sicola-ui", cukup gunakan <Router> saja
+    <Router>
       <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
         
         {/* Navbar selalu tampil di semua halaman */}
@@ -97,13 +96,8 @@ function App() {
 
         {/* Pengatur Lalu Lintas Halaman */}
         <Routes>
-          {/* Rute Default: Menampilkan komponen Home di atas */}
           <Route path="/" element={<Home />} />
-          
-          {/* Rute Dinamis: Menampilkan Profil Peneliti */}
           <Route path="/orcid/:orcidCode" element={<ResearcherProfile />} />
-          
-          {/* Rute Dinamis: Menampilkan Profil Artikel. Tanda * penting untuk membaca DOI lengkap */}
           <Route path="/doi/*" element={<ArticleProfile />} />
         </Routes>
 
