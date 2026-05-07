@@ -5,7 +5,8 @@ const statsData = [
     label: 'Artikel Terklasifikasi', 
     value: '24,751', 
     icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      // Ketebalan garis diubah ke 1.5
+      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
         <polyline points="14 2 14 8 20 8"></polyline>
         <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -20,7 +21,8 @@ const statsData = [
     label: 'Peneliti', 
     value: '12,843', 
     icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      // Ketebalan garis diubah ke 1.5
+      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
         <circle cx="9" cy="7" r="4"></circle>
         <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -34,7 +36,8 @@ const statsData = [
     label: 'Jurnal', 
     value: '1,259', 
     icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      // Ketebalan garis diubah ke 1.5
+      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
         <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
       </svg>
@@ -46,11 +49,32 @@ const statsData = [
     label: 'SDGs Terwakili', 
     value: '21,897', 
     icon: (
-      <svg className="w-10 h-10" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
-        <path fill="#E5243B" d="M18 2 A 16 16 0 0 1 34 18 L 26 18 A 8 8 0 0 0 18 10 Z"/>
-        <path fill="#DDA63A" d="M34 18 A 16 16 0 0 1 18 34 L 18 26 A 8 8 0 0 0 26 18 Z"/>
-        <path fill="#4C9F38" d="M18 34 A 16 16 0 0 1 2 18 L 10 18 A 8 8 0 0 0 18 26 Z"/>
-        <path fill="#00689D" d="M2 18 A 16 16 0 0 1 18 2 L 18 10 A 8 8 0 0 0 10 18 Z"/>
+      // Tambahkan overflow-visible pada svg agar saat path membesar tidak terpotong oleh batas SVG
+      <svg className="w-14 h-14 overflow-visible" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+        {/* Kuadran 1 (Merah) */}
+        <path 
+          fill="#E5243B" 
+          d="M18 2 A 16 16 0 0 1 34 18 L 26 18 A 8 8 0 0 0 18 10 Z"
+          className="origin-center transition-all duration-300 hover:scale-110 cursor-pointer hover:drop-shadow-md"
+        />
+        {/* Kuadran 2 (Kuning/Emas) */}
+        <path 
+          fill="#DDA63A" 
+          d="M34 18 A 16 16 0 0 1 18 34 L 18 26 A 8 8 0 0 0 26 18 Z"
+          className="origin-center transition-all duration-300 hover:scale-110 cursor-pointer hover:drop-shadow-md"
+        />
+        {/* Kuadran 3 (Hijau) */}
+        <path 
+          fill="#4C9F38" 
+          d="M18 34 A 16 16 0 0 1 2 18 L 10 18 A 8 8 0 0 0 18 26 Z"
+          className="origin-center transition-all duration-300 hover:scale-110 cursor-pointer hover:drop-shadow-md"
+        />
+        {/* Kuadran 4 (Biru) */}
+        <path 
+          fill="#00689D" 
+          d="M2 18 A 16 16 0 0 1 18 2 L 18 10 A 8 8 0 0 0 10 18 Z"
+          className="origin-center transition-all duration-300 hover:scale-110 cursor-pointer hover:drop-shadow-md"
+        />
       </svg>
     ), 
     colorClass: '', 
@@ -60,6 +84,7 @@ const statsData = [
     label: 'Total Sitasi', 
     value: '98,732', 
     icon: (
+      // Icon ini menggunakan fill, jadi ketebalan garis tidak perlu diubah
       <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
       </svg>
@@ -71,7 +96,6 @@ const statsData = [
 
 const StatCards = () => {
   return (
-    // Diperbaiki: Menghapus px-4 sm:px-6 lg:px-8 agar lebar maksimal (max-w-7xl) benar-benar mentok kiri-kanan
     <div className="max-w-7xl mx-auto mb-12 relative z-20">
       
       {/* SATU CARD BESAR yang membungkus semua stats */}
