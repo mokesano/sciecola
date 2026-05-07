@@ -52,7 +52,10 @@ import Contact from './pages/Contact';
 import Help from './pages/Help';
 import Faq from './pages/Faq';
 
-// Impor Halaman Log History (Baru)
+// Impor Halaman Dokumentasi
+import Doc from './pages/Doc';
+
+// Impor Halaman Log History
 import LogHistory from './pages/LogHistory';
 
 // =====================================================================
@@ -159,6 +162,9 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/help" element={<Help />} />
           <Route path="/faq" element={<Faq />} />
+
+          {/* Rute Dokumentasi */}
+          <Route path="/docs" element={<Doc />} />
 
           {/* Rute Log History */}
           <Route path="/log-history" element={<LogHistory />} />
