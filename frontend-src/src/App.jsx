@@ -38,6 +38,7 @@ import Analytics from './pages/Analytics';
 
 // Impor Halaman Tentang (About)
 import About from './pages/About';
+import Help from './pages/Help';
 
 // =====================================================================
 // KOMPONEN BERANDA (HOME)
@@ -130,6 +131,7 @@ function App() {
 
           {/* Rute Tentang (About) */}
           <Route path="/about" element={<About />} />
+          <Route path="/help" element={<Help />} />
         </Routes>
 
         {/* Footer selalu tampil di semua halaman */}
