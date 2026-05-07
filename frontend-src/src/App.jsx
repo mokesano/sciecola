@@ -36,6 +36,9 @@ import ArticleProfile from './pages/ArticleProfile';
 import SdgsCluster from './pages/SdgsCluster';
 import Analytics from './pages/Analytics';
 
+// Impor Halaman Tentang (About)
+import About from './pages/About';
+
 // =====================================================================
 // KOMPONEN BERANDA (HOME)
 // =====================================================================
@@ -124,6 +127,9 @@ function App() {
           {/* Rute SDGs Cluster dan Analytics */}
           <Route path="/sdgs" element={<SdgsCluster />} />
           <Route path="/analytics" element={<Analytics />} />
+
+          {/* Rute Tentang (About) */}
+          <Route path="/about" element={<About />} />
         </Routes>
 
         {/* Footer selalu tampil di semua halaman */}
