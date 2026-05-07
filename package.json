@@ -1,0 +1,11 @@
+{
+  "name": "sicola-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Root scripts for Sicola PHP and React Hybrid",
+  "scripts": {
+    "dev": "npm run dev --prefix frontend-src",
+    "build": "npm run build --prefix frontend-src",
+    "install-ui": "npm install --prefix frontend-src"
+  }
+}
