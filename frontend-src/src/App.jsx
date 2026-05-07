@@ -54,6 +54,7 @@ import Faq from './pages/Faq';
 
 // Impor Halaman Dokumentasi
 import Doc from './pages/Doc';
+import Api from './pages/Api';
 
 // Impor Halaman Log History
 import LogHistory from './pages/LogHistory';
@@ -165,6 +166,7 @@ function App() {
 
           {/* Rute Dokumentasi */}
           <Route path="/docs" element={<Doc />} />
+          <Route path="/docs/api-reference" element={<Api />} />
 
           {/* Rute Log History */}
           <Route path="/log-history" element={<LogHistory />} />
