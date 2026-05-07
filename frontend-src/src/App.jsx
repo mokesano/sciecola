@@ -21,8 +21,8 @@ import CallToAction from './components/layout/CallToAction';
 import { transformToChartData, generateSummaryStats } from './utils/sdgDataAdapter';
 
 // Impor Halaman Profil Dinamis (Asumsi Anda akan/sudah membuat file ini di folder src/pages/)
-import JournalList from './pages/journals/JournalList';
-import JournalProfile from './pages/journals/JournalProfile';
+import JournalList from './pages/JournalList';
+import JournalProfile from './pages/JournalProfile';
 
 import ResearchersList from './pages/ResearchersList';
 import ArticleProfile from './pages/ArticleProfile';

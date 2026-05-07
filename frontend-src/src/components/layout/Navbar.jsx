@@ -4,12 +4,20 @@ import { NavLink, useLocation } from 'react-router-dom';
 const Navbar = () => {
   const location = useLocation();
 
-  // Logika Cerdas: Tab "Researchers" aktif jika di list atau di dalam profil ORCID
-  const isResearchersActive = 
+  // Logika Cerdas: Tab "Journals" aktif jika di list atau di dalam profil jurnal
+  const isJournalsActive = 
     location.pathname === '/journals' || 
     location.pathname.startsWith('/journals/');
+
+  // Logika Cerdas: Tab "Researchers" aktif jika di list atau di dalam profil ORCID
+  const isResearchersActive =
     location.pathname === '/researchers' || 
     location.pathname.startsWith('/orcid/');
+
+  // Logika Cerdas: Tab "Articles" aktif jika di dalam profil artikel (berdasarkan DOI)  
+  const isArticlesActive = 
+    location.pathname === '/articles' || 
+    location.pathname.startsWith('/doi/');  
 
   // Helper untuk styling agar kode tidak repetitif (Don't Repeat Yourself)
   const activeClass = "text-indigo-600 font-bold border-b-[4px] border-indigo-600 pb-6 transition-all";
