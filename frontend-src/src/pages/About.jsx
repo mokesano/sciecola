@@ -229,13 +229,13 @@ const About = () => {
 
         <div className="relative">
           {/* Timeline Line */}
-          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-indigo-200 transform md:-translate-x-1/2"></div>
+          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-1 bg-indigo-200 transform md:-translate-x-1/2"></div>
 
           <div className="space-y-8">
             {timeline.map((item, index) => (
               <div key={item.year} className={`relative flex items-center gap-6 ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
                 {/* Timeline Dot */}
-                <div className="absolute left-4 md:left-1/2 w-4 h-4 bg-indigo-600 rounded-full border-4 border-white shadow transform md:-translate-x-1/2 z-10"></div>
+                <div className="absolute left-4 md:left-1/2 w-6 h-6 bg-indigo-600 rounded-full border-4 border-white shadow transform md:-translate-x-1/2 z-10"></div>
 
                 {/* Content */}
                 <div className={`ml-12 md:ml-0 md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'}`}>
