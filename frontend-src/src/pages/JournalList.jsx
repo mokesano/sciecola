@@ -27,7 +27,7 @@ const JournalList = () => {
   ]);
 
   return (
-    <main className="pt-32 pb-20 px-6 max-w-7xl mx-auto w-full">
+    <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Header Halaman */}
       <div className="mb-10">
         <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Database Jurnal</h1>
