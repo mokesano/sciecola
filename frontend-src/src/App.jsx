@@ -20,16 +20,20 @@ import CallToAction from './components/layout/CallToAction';
 // Wrapper Adapter
 import { transformToChartData, generateSummaryStats } from './utils/sdgDataAdapter';
 
-// Impor Halaman Profil Dinamis (Semua file ada di src/pages/)
+// Impor Halaman Profil Dinamis
 import JournalList from './pages/JournalList';
 import JournalProfile from './pages/JournalProfile';
 
+// Impor Halaman Peneliti
 import ResearchersList from './pages/ResearchersList';
 import ResearcherProfile from './pages/ResearcherProfile';
 
-// ✅ Impor Halaman Artikel (Baru)
+// Impor Halaman Artikel
 import ArticleList from './pages/ArticleList';
 import ArticleProfile from './pages/ArticleProfile';
+
+// Impor Halaman SDGs Cluster
+import SdgsCluster from './pages/SdgsCluster';
 
 // =====================================================================
 // KOMPONEN BERANDA (HOME)
@@ -115,6 +119,9 @@ function App() {
           {/* ✅ Rute Artikel (Baru) */}
           <Route path="/articles" element={<ArticleList />} />
           <Route path="/doi/*" element={<ArticleProfile />} />
+
+          {/* Rute SDGs Cluster */}
+          <Route path="/sdgs" element={<SdgsCluster />} />
         </Routes>
 
         {/* Footer selalu tampil di semua halaman */}
