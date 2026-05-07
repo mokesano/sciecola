@@ -49,6 +49,9 @@ import Teams from './pages/Teams';
 import Contact from './pages/Contact';
 import Help from './pages/Help';
 
+// Impor Halaman Log History (Baru)
+import LogHistory from './pages/LogHistory';
+
 // =====================================================================
 // KOMPONEN BERANDA (HOME)
 // =====================================================================
@@ -145,11 +148,17 @@ function App() {
           {/* Rute Leaderboard */}
           <Route path="/leaderboard" element={<Leaderboard />} />
 
-          {/* Rute Tentang (About) */}
+          {/* Rute Tentang */}
           <Route path="/about" element={<About />} />
           <Route path="/teams" element={<Teams />} />
+
+          {/* Rute Kontak dan Bantuan */}
           <Route path="/contact" element={<Contact />} />
           <Route path="/help" element={<Help />} />
+
+          {/* Rute Log History */}
+          <Route path="/log-history" element={<LogHistory />} />
+
         </Routes>
 
         {/* Footer selalu tampil di semua halaman */}
