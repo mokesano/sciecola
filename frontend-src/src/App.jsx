@@ -28,6 +28,10 @@ import JournalProfile from './pages/JournalProfile';
 import ResearchersList from './pages/ResearchersList';
 import ResearcherProfile from './pages/ResearcherProfile';
 
+// Impor Halaman Institusi
+import InstitutionsList from './pages/InstitutionsList';
+import InstitutionProfile from './pages/InstitutionProfile';
+
 // Impor Halaman Artikel
 import ArticleList from './pages/ArticleList';
 import ArticleProfile from './pages/ArticleProfile';
@@ -118,6 +122,10 @@ function App() {
           {/* Rute Jurnal */}
           <Route path="/journals" element={<JournalList />} />
           <Route path="/journals/:journalId" element={<JournalProfile />} />
+          
+          {/* Rute Institusi */}
+          <Route path="/institutions" element={<InstitutionsList />} />
+          <Route path="/institutions/:institutionId" element={<InstitutionProfile />} />
           
           {/* Rute Peneliti */}
           <Route path="/researchers" element={<ResearchersList />} />

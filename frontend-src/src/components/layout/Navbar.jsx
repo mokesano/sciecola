@@ -70,6 +70,15 @@ const Navbar = () => {
               </span>
             </NavLink>
 
+            {/* INSTITUTIONS (Logic Khusus) */}
+            <NavLink to="/institutions" className="px-3 py-2 group">
+              {({ isActive }) => (
+                <span className={isActive ? activeClass : inactiveClass}>
+                  Institutions
+                </span>
+              )}
+            </NavLink>
+
             {/* SDGS (Placeholder) */}
             <NavLink to="/sdgs" className="px-3 py-2 group">
               {({ isActive }) => (
