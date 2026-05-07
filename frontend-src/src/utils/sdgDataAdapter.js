@@ -105,3 +105,40 @@ export const generateSummaryStats = (worksArray, totalWorksFromInit) => {
     uniqueSdgsRepresented: uniqueSdgsFound.size
   };
 };
+
+/**
+ * Wrapper khusus untuk hasil pencarian DOI tunggal
+ * Berdasarkan struktur JSON article_10...
+ */
+export const transformDoiData = (apiResult) => {
+  if (!apiResult || apiResult.status !== 'success') return null;
+
+  const sdgsList = apiResult.sdgs || [];
+  const detailedAnalysis = apiResult.detailed_analysis || {};
+  
+  // Format data SDGs untuk ditampilkan di UI (misal: badge)
+  const formattedSdgs = sdgsList.map(code => {
+    const info = SDG_DICTIONARY[code] || { name: 'Unknown SDG', color: '#cbd5e1' };
+    const details = detailedAnalysis[code] || {};
+    
+    return {
+      code: code,
+      name: info.name,
+      color: info.color,
+      score: details.score || 0,
+      confidence: details.confidence_level || 'Unknown',
+      pathway: details.impact_orientation?.dominant_pathway || '-'
+    };
+  });
+
+  return {
+    doi: apiResult.doi,
+    title: apiResult.title,
+    abstract: apiResult.abstract,
+    authors: apiResult.authors || [], // Array of string
+    journal: apiResult.journal,
+    year: apiResult.year,
+    publishedDate: apiResult.published_date,
+    sdgs: formattedSdgs
+  };
+};

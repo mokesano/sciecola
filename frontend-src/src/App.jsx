@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+// Komponen Layout Global
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+
+// Komponen Halaman Beranda (Home)
 import Hero from './components/layout/Hero';
 import StatCards from './components/sdg/StatCards';
 import SdgDistributionChart from './components/sdg/SdgDistributionChart';
@@ -12,79 +17,101 @@ import ResearchExplorer from './components/sdg/ResearchExplorer';
 import TrustedSources from './components/layout/TrustedSources';
 import CallToAction from './components/layout/CallToAction';
 
-// 1. Impor Wrapper Adapter
+// Wrapper Adapter
 import { transformToChartData, generateSummaryStats } from './utils/sdgDataAdapter';
 
-function App() {
+// Impor Halaman Profil Dinamis (Asumsi Anda akan/sudah membuat file ini di folder src/pages/)
+import ArticleProfile from './pages/ArticleProfile';
+import ResearcherProfile from './pages/ResearcherProfile';
+
+// =====================================================================
+// KOMPONEN BERANDA (HOME)
+// Semua state dan UI halaman utama Anda diekstrak ke sini agar aman
+// =====================================================================
+const Home = () => {
   // === STATE MANAGEMENT ===
-  // Menampung data utuh dari API
   const [rawApiData, setRawApiData] = useState(null);
-  
-  // Menampung data yang sudah diolah/diterjemahkan khusus untuk UI
   const [chartData, setChartData] = useState([]);
   const [summaryStats, setSummaryStats] = useState(null);
 
   // === FUNGSI PENERIMA DATA ===
-  // Fungsi ini akan dipanggil oleh HeroSearch saat API selesai menarik data
   const handleAnalysisComplete = (dataDariApi) => {
-    // 1. Simpan data mentahnya (jika dibutuhkan oleh komponen lain seperti tabel)
     setRawApiData(dataDariApi);
-
-    // 2. Terjemahkan data menggunakan Wrapper
-    // Asumsi: dataDariApi memiliki properti 'works' (array) dan 'total_works'
     const formattedChart = transformToChartData(dataDariApi.works);
     const stats = generateSummaryStats(dataDariApi.works, dataDariApi.total_works);
-
-    // 3. Simpan ke state untuk memicu re-render UI
     setChartData(formattedChart);
     setSummaryStats(stats);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
-      <Navbar />
+    <main className="flex-grow pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+      <Hero onAnalysisComplete={handleAnalysisComplete} />
+      
+      {summaryStats ? (
+        <StatCards data={summaryStats} />
+      ) : (
+        <StatCards />
+      )}
 
-      <main className="flex-grow pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        {/* 2. Kirim fungsi penerima ke Hero */}
-        <Hero onAnalysisComplete={handleAnalysisComplete} />
-        
-        {/* Render komponen statistik HANYA JIKA data sudah ada */}
-        {summaryStats ? (
-          <StatCards data={summaryStats} />
-        ) : (
-          <StatCards /> /* Bisa diisi versi kosong/default statis sementara */
-        )}
+      <CallToAction />
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        <SdgDistributionChart 
+            data={chartData.length > 0 ? chartData : null} 
+            totalArticles={summaryStats ? summaryStats.totalArticles : "0"} 
+        />
+        <SdgTrendChart rawData={rawApiData} />
+      </div>
 
-        <CallToAction />
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-          {/* 3. Kirim data chart yang sudah diolah ke komponen Donut */}
-          <SdgDistributionChart 
-             data={chartData.length > 0 ? chartData : null} 
-             totalArticles={summaryStats ? summaryStats.totalArticles : "0"} 
-          />
-          <SdgTrendChart rawData={rawApiData} />
+      <TopSdgsCard rawData={rawApiData} />
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        <div className="lg:col-span-2">
+          <LatestArticles works={rawApiData ? rawApiData.works : []} />
         </div>
+        
+        <div className="lg:col-span-1">
+            <InsightsAI rawData={rawApiData} />
+        </div>
+      </div>
 
-        <TopSdgsCard rawData={rawApiData} />
+      <ResearchExplorer rawData={rawApiData} />
+      
+      <TrustedSources />
+    </main>
+  );
+};
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-          <div className="lg:col-span-2">
-            <LatestArticles works={rawApiData ? rawApiData.works : []} />
-          </div>
+// =====================================================================
+// APLIKASI UTAMA (ROUTER)
+// =====================================================================
+function App() {
+  return (
+    // basename ini digunakan jika Anda menempatkan aplikasi di sub-folder.
+    // Jika nanti tayang di root domain utama (misal wizdam.sangia.org), Anda bisa menghapus basename ini.
+    <Router basename="/assets/sicola-ui">
+      <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
+        
+        {/* Navbar selalu tampil di semua halaman */}
+        <Navbar />
+
+        {/* Pengatur Lalu Lintas Halaman */}
+        <Routes>
+          {/* Rute Default: Menampilkan komponen Home di atas */}
+          <Route path="/" element={<Home />} />
           
-          <div className="lg:col-span-1">
-             <InsightsAI rawData={rawApiData} />
-          </div>
-        </div>
+          {/* Rute Dinamis: Menampilkan Profil Peneliti */}
+          <Route path="/orcid/:orcidCode" element={<ResearcherProfile />} />
+          
+          {/* Rute Dinamis: Menampilkan Profil Artikel. Tanda * penting untuk membaca DOI lengkap */}
+          <Route path="/doi/*" element={<ArticleProfile />} />
+        </Routes>
 
-        <ResearchExplorer rawData={rawApiData} />
+        {/* Footer selalu tampil di semua halaman */}
+        <Footer />
         
-        <TrustedSources />
-      </main>
-
-      <Footer />
-    </div>
+      </div>
+    </Router>
   );
 }
 

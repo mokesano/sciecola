@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const HeroSearch = ({ onResults }) => {
+const HeroSearch = () => {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [statusMsg, setStatusMsg] = useState('');
+  const navigate = useNavigate();
 
   const handleSearchSubmit = async (e) => {
     e.preventDefault();
@@ -11,42 +13,29 @@ const HeroSearch = ({ onResults }) => {
     
     if (query !== '') {
       setIsLoading(true);
-      setStatusMsg('Menghubungkan ke API SDGs...');
+      setStatusMsg('Mendeteksi format...');
 
-      try {
-        // Menyiapkan payload sesuai kebutuhan functions.php
-        const formData = new FormData();
-        formData.append('_sdg', 'init'); // Trigger case 'init' di proxy router
-        formData.append('query', query); // Mengirim DOI atau ORCID
+      // Jeda singkat agar UI tidak terasa terlalu "kaku" saat regex bekerja
+      setTimeout(() => {
+        // Regex untuk mendeteksi ORCID (Format: XXXX-XXXX-XXXX-XXXX atau ujungnya X)
+        const isOrcid = /^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/i.test(query);
+        
+        // Regex untuk mendeteksi DOI (Format: 10.XXXX/...)
+        const isDoi = /^10\.\d{4,9}\/[-._;()/:A-Z0-9]+$/i.test(query);
 
-        // Menembak langsung ke root "/" (Ditangkap oleh bootstrap.php)
-        const response = await fetch('/', {
-          method: 'POST',
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest', // Bypass deteksi bot/direct access
-            'Accept': 'application/json'
-          },
-          body: formData
-        });
-
-        if (!response.ok) throw new Error('Kegagalan koneksi server.');
-
-        const result = await response.json();
-
-        if (result.status === 'success') {
-          setStatusMsg('Analisis berhasil!');
-          if (onResults) onResults(result.data);
-        } else {
-          throw new Error(result.message || 'Data tidak ditemukan.');
-        }
-
-      } catch (error) {
-        console.error("Sicola Error:", error);
-        alert(`Gagal: ${error.message}`);
-      } finally {
         setIsLoading(false);
-        setTimeout(() => setStatusMsg(''), 3000);
-      }
+
+        if (isOrcid) {
+          setStatusMsg('Mengalihkan ke profil peneliti...');
+          navigate(`/orcid/${query}`);
+        } else if (isDoi) {
+          setStatusMsg('Mengalihkan ke profil artikel...');
+          navigate(`/doi/${encodeURIComponent(query)}`);
+        } else {
+          setStatusMsg('Format tidak dikenali. Masukkan ORCID atau DOI yang valid.');
+          setTimeout(() => setStatusMsg(''), 4000);
+        }
+      }, 300);
     }
   };
 
@@ -92,7 +81,7 @@ const HeroSearch = ({ onResults }) => {
           
           <div className="flex justify-between items-center mt-3 px-2">
             <div className="text-left text-sm text-gray-500">
-              <i className="fas fa-info-circle mr-1"></i> Contoh: 0000-0002-5152-9727
+              <i className="fas fa-info-circle mr-1"></i> Contoh: 0000-0002-5152-9727 atau 10.1038/nature12373
             </div>
             {statusMsg && (
               <div className="text-right text-sm font-bold text-indigo-600 animate-pulse">
