@@ -199,26 +199,26 @@ const SdgsCluster = () => {
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+        <div className="flex items-center gap-2 text-sm text-gray-600 mb-12">
           <Link to="/" className="hover:text-indigo-600">Beranda</Link>
           <span>›</span>
           <span className="text-gray-900">SDGs</span>
         </div>
         <h1 className="text-3xl font-bold text-gray-900 mb-2">SDGs</h1>
-        <p className="text-gray-600 max-w-4xl">
+        <p className="text-lg font-semibold text-gray-600 max-w-4xl">
           Jelajahi kontribusi riset dan publikasi terhadap 17 Tujuan Pembangunan Berkelanjutan (Sustainable Development Goals).
         </p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-2 mb-8">
         <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+          <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
+            <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+             </svg>
+          </div>
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
             <span className="text-sm text-gray-600">Publikasi Terkait SDGs</span>
           </div>
           <p className="text-2xl font-bold text-gray-900">{statsData.totalPublications.toLocaleString()}</p>
@@ -335,7 +335,7 @@ const SdgsCluster = () => {
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-8">
         {/* Bar Chart */}
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Kontribusi Publikasi per SDGs</h3>
@@ -401,7 +401,7 @@ const SdgsCluster = () => {
             Lihat Semua Peringkat
           </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-2">
           {topSdgs.map((sdg) => (
             <div key={sdg.sdg} className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between mb-4">
@@ -414,14 +414,14 @@ const SdgsCluster = () => {
                 <span className="text-xs font-bold text-gray-500">SDG {sdg.sdg}</span>
               </div>
               <h4 className="font-bold text-gray-900 text-sm mb-3 line-clamp-2">{sdg.name}</h4>
-              <div className="flex items-end justify-between">
+              <div className="flex items-start justify-between">
                 <div>
                   <p className="text-2xl font-bold text-gray-900">{sdg.publications.toLocaleString()}</p>
                   <p className="text-xs text-gray-500">Publikasi</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-indigo-600">{sdg.impactScore}</p>
                   <p className="text-xs text-gray-500">Skor Impact</p>
+                  <p className="text-sm font-bold text-indigo-600">{sdg.impactScore}</p>
                 </div>
               </div>
             </div>
@@ -430,7 +430,7 @@ const SdgsCluster = () => {
       </div>
 
       {/* Map & Top Researchers */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-8">
         {/* Map */}
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Peta Sebaran Kontribusi SDGs</h3>
@@ -483,10 +483,10 @@ const SdgsCluster = () => {
               ))}
             </select>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-0">
             {topResearchers.map((researcher) => (
               <div key={researcher.rank} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors">
-                <span className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-700">
+                <span className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-700">
                   {researcher.rank}
                 </span>
                 <img src={researcher.avatar} alt={researcher.name} className="w-10 h-10 rounded-full object-cover" />
