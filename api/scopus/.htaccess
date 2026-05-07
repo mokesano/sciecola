@@ -1,5 +1,5 @@
-# .htaccess for wizdam.sangia.org
-# Scopus routing with security enhancements
+# .htaccess for sciecola.sangia.org
+# Sciecola routing with security enhancements
 
 RewriteEngine On
 

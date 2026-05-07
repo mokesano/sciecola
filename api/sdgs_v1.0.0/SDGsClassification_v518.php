@@ -15,7 +15,7 @@
  * - Analisis Artikel: ?doi=10.1234/example
  * - Refresh Cache: &refresh=true
  * 
- * @author Rochmady and Wizdam Team
+ * @author Rochmady and Sciecola Team
  * @version 5.1.8
  * @license MIT
  * Last update: 2025-05-18

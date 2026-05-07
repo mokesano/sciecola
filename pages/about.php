@@ -1,11 +1,11 @@
 <?php
 // pages/about.php - About page
 $page_title = "About Us";
-$page_description = "Learn about Wizdam AI's mission to advance Sustainable Development Goals through AI-powered research analysis and classification technology.";
+$page_description = "Learn about Sciecola's mission to advance Sustainable Development Goals through AI-powered research analysis and classification technology.";
 ?>
 
 <div class="header">
-    <h1><i class="fas fa-info-circle"></i> About Wizdam AI</h1>
+    <h1><i class="fas fa-info-circle"></i> About Sciecola</h1>
     <p>Advancing Sustainable Development Goals through AI-powered research analysis</p>
 </div>
 
@@ -14,7 +14,7 @@ $page_description = "Learn about Wizdam AI's mission to advance Sustainable Deve
     <div class="info-general">
         <h2><i class="fas fa-bullseye"></i> Our Mission</h2>
         <p class="lead">
-            At Wizdam AI, we believe that artificial intelligence can be a powerful force for positive change in the world. 
+            At Sciecola, we believe that artificial intelligence can be a powerful force for positive change in the world. 
             Our mission is to accelerate progress toward the United Nations Sustainable Development Goals (SDGs) by making 
             research impact more visible, measurable, and actionable.
         </p>
@@ -54,7 +54,7 @@ $page_description = "Learn about Wizdam AI's mission to advance Sustainable Deve
                 <div class="timeline-year">2020</div>
                 <div class="timeline-content">
                     <h4>Foundation</h4>
-                    <p>Wizdam AI was founded by a team of researchers and AI experts passionate about using technology for social good. The idea emerged from the challenge of measuring research impact on the SDGs.</p>
+                    <p>Sciecola was founded by a team of researchers and AI experts passionate about using technology for social good. The idea emerged from the challenge of measuring research impact on the SDGs.</p>
                 </div>
             </div>
             

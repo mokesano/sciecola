@@ -12,7 +12,7 @@
  * - ?orcid=xxx         → Full analisis (legacy, bisa timeout jika karya banyak)
  * - ?doi=xxx           → Analisis satu artikel
  *
- * @author Rochmady and Wizdam Team
+ * @author Rochmady and Sciecola Team
  * @version 5.2.0
  * @license MIT
  */
@@ -619,7 +619,7 @@ function fetchDoiData($doi) {
     $ch  = curl_init($url);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER=> true,
-        CURLOPT_USERAGENT     => 'SDG-Classifier/5.2 (wizdam@sangia.org)',
+        CURLOPT_USERAGENT     => 'SciecolaBot/1.0 (sciecola@sangia.org)',
         CURLOPT_CONNECTTIMEOUT=> 5,
         CURLOPT_TIMEOUT       => 10,
     ]);

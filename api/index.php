@@ -98,7 +98,7 @@
         <img id="brand" alt="Sangia Publishing" src="https://assets.sangia.org/img/403index.png">
         <div class="message">
             <h1>Why You Are Here!</h1>
-            <p>This Wizdam Indonesia application is currently unavailable. This could be due to abnormal network traffic or problems with our systems. Wizdam Indonesia and/or Sangia Publishing part of Sangia Inc. unless otherwise stated.</p>
+            <p>This Sciecola application is currently unavailable. This could be due to abnormal network traffic or problems with our systems. Sciecola and/or Sangia Publishing part of Sangia Group Inc. unless otherwise stated.</p>
             <p>Please go back!</p>
         </div>
     </div>

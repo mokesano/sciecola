@@ -10,7 +10,7 @@
  * + SEMUA FITUR UI (Chatbot, Navbar, Footer) KEMBALI UTUH.
  *
  * @version 2.0.1 - Full AJAX with Complete UI
- * @author Rochmady and Wizdam Team
+ * @author Rochmady and Sciecola Team
  */
 
 // ================================================================
@@ -123,7 +123,7 @@ $SDG_DEFINITIONS = [
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>SDGs Classification & Analysis | Wizdam Sicola</title>
+    <title>SDGs Classification & Analysis | Sciecola</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -132,27 +132,27 @@ $SDG_DEFINITIONS = [
     <meta name="access" content="Yes" />
     <meta name="robots" content="INDEX,FOLLOW,NOARCHIVE,NOCACHE,NOODP,NOYDIR" />
     <meta name="applicable-device" content="pc,mobile" />
-    <link rel="canonical" href="https://wizdam.sangia.org/" />
+    <link rel="canonical" href="https://sciecola.sangia.org/" />
     <meta name="google-site-verification" content="9mVvrkXamiUxutovEQqEk2eiRcjLUWHLHcwssZo3GYs" />
     <meta name="referrer" content="origin-when-cross-origin" />
-    <meta property="og:title" content="SDGs Classification & Analysis | Wizdam Sicola" />
-    <meta property="og:url" content="https://wizdam.sangia.org/" />
+    <meta property="og:title" content="SDGs Classification & Analysis | Sciecola" />
+    <meta property="og:url" content="https://sciecola.sangia.org/" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Wizdam Sicola" />
+    <meta property="og:site_name" content="Sciecola" />
     <meta property="og:locale" content="en" />
-    <meta property="og:image" content="https://wizdam.sangia.org/assets/cover/sicola-cover.jpg" />
-    <meta property="og:image:alt" content="Wizdam Sicola - SDGs Classification & Analysis" />
+    <meta property="og:image" content="https://sciecola.sangia.org/assets/cover/sicola-cover.jpg" />
+    <meta property="og:image:alt" content="Sciecola - SDGs Classification & Analysis" />
     <meta property="og:description" content="This system uses a hybrid method combining keyword matching, semantic similarity, research depth, and causal analysis to assess research relevance to the SDGs." />
     <meta property="fb:app_id" content="1575594642876231" />
     <meta property="publisher" content="//www.facebook.com/111429340332887">
     <meta name="robots" content="max-image-preview:large" />
-    <meta name="twitter:site" content="@Sicola" />
+    <meta name="twitter:site" content="@Sciecola" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image:alt" content="Wizdam Sicola - SDGs Classification & Analysis" />
+    <meta name="twitter:image:alt" content="Sciecola - SDGs Classification & Analysis" />
     <meta name="website_owner" content="www.sangia.org" />
     <meta name="owner" content="PT. Sangia Research Media and Publishing" />
-    <meta name="design" content="Rochmady and Wizdam AI Team" />
-    <meta name="publisher" content="Sangia Wizdam" />
+    <meta name="design" content="Rochmady, Sciecola, and AI Team" />
+    <meta name="publisher" content="Sangia Sciecola" />
     
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -426,7 +426,7 @@ $SDG_DEFINITIONS = [
         <div class="navbar-container">
             <a href="#" class="navbar-brand">
                 <div class="navbar-brand-logo"><i class="fas fa-globe"></i></div>
-                <span>Wizdam</span>
+                <span>Sciecola</span>
             </a>
             <ul class="navbar-menu" id="navbarMenu">
                 <li><a href="#" class="active"><i class="fas fa-search"></i> Search</a></li>
@@ -512,7 +512,7 @@ $SDG_DEFINITIONS = [
                 <div class="footer-brand">
                     <div class="footer-logo">
                         <div class="footer-logo-icon"><i class="fas fa-globe"></i></div>
-                        <div class="footer-logo-text">Wizdam</div>
+                        <div class="footer-logo-text">Sciecola</div>
                     </div>
                     <p class="footer-description">Advanced AI-powered platform for analyzing research contributions to Sustainable Development Goals. Empowering researchers and institutions with intelligent classification and insights.</p>
                     <div class="footer-social">
@@ -558,7 +558,7 @@ $SDG_DEFINITIONS = [
                 </div>
             </div>
             <div class="footer-bottom">
-                <div class="footer-copyright">© 2025 Wizdam by PT. Sangia Research Media and Publishing. All rights reserved.</div>
+                <div class="footer-copyright">© 2025 Sciecola by PT. Sangia Research Media and Publishing. All rights reserved.</div>
                 <ul class="footer-bottom-links">
                     <li><a href="#">Terms of Service</a></li>
                     <li><a href="#">Privacy Policy</a></li>
@@ -578,13 +578,13 @@ $SDG_DEFINITIONS = [
     <!-- CHATBOT MODAL -->
     <div class="chatbot-modal" id="chatbotModal">
         <div class="chatbot-header">
-            <h4><i class="fas fa-robot"></i> Wizdam Assistant</h4>
+            <h4><i class="fas fa-robot"></i> Sciecola Assistant</h4>
             <button class="chatbot-close" id="chatbotClose"><i class="fas fa-times"></i></button>
         </div>
         <div class="chatbot-body" id="chatbotBody">
             <div class="chatbot-message bot">
                 <div class="chatbot-avatar"><i class="fas fa-robot"></i></div>
-                <div class="chatbot-message-content">Hello! I'm Wizdam Assistant. I can help you with:<br>• Understanding SDG classification results<br>• Explaining analysis components<br>• Troubleshooting input formats<br>• General platform questions<br><br>How can I assist you today?</div>
+                <div class="chatbot-message-content">Hello! I'm Sciecola Assistant. I can help you with:<br>• Understanding SDG classification results<br>• Explaining analysis components<br>• Troubleshooting input formats<br>• General platform questions<br><br>How can I assist you today?</div>
             </div>
             <div class="chatbot-message bot" style="display:none;">
                 <div class="chatbot-avatar"><i class="fas fa-robot"></i></div>

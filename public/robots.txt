@@ -2,4 +2,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://wizdam.sangia.org/sitemap.xml
+Sitemap: https://sciecola.sangia.org/sitemap.xml

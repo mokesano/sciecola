@@ -38,7 +38,7 @@
 │   ├── sdgs_v1.1.0/
 │   │   ├── SDG_Classification_API.php
 │   │   ├── SDG_Classification_Interface.php
-│   │   └── wizdam-sicola.php
+│   │   └── sciecola.php
 │   ├── index.php
 │   ├── SDG_Classification_API.php
 │   ├── SdgClassificationApi.php
@@ -171,4 +171,4 @@
 ├── debug.php
 ├── index.html
 ├── index.php
-└── wizdam-sicola.php
+└── sciecola.php

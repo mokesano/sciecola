@@ -4,7 +4,7 @@
  * Halaman utama untuk analisis SDG - versi yang berfungsi
  * 
  * @version 5.1.8
- * @author Rochmady and Wizdam Team
+ * @author Rochmady and Sciecola Team
  * @license MIT
  */
 
@@ -45,7 +45,7 @@ $csrf_token = generateCsrfToken();
 <div class="container">
     <!-- Header Section -->
     <div class="header">
-        <h1><i class="fas fa-chart-line"></i> Welcome! Wizdam AI-sikola</h1>
+        <h1><i class="fas fa-chart-line"></i> Bridging Research with Global Impact</h1>
         <h2>Sustainable Development Goals (SDGs) Classification Analysis</h2>
         <p>Advanced AI-powered platform for analyzing research contributions to the United Nations Sustainable Development Goals</p>
     </div>

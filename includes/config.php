@@ -4,7 +4,7 @@
  * Konfigurasi utama untuk aplikasi SDG Classification Analysis
  * 
  * @version 1.0.0
- * @author Rochmady and Wizdam Team
+ * @author Rochmady and Sciecola Team
  * @license MIT
  */
 
@@ -14,7 +14,7 @@
 
 // Informasi situs
 define('SITE_NAME', 'SDGs Classification Analysis');
-define('SITE_URL', 'https://wizdam.sangia.org'); // Sesuaikan domain
+define('SITE_URL', 'https://sciecola.sangia.org'); // Sesuaikan domain
 define('VERSION', '1.0.0');
 define('API_VERSION', 'v1_0_0');
 
@@ -32,7 +32,7 @@ date_default_timezone_set('Asia/Jakarta');
 // URL API utama - sesuai dengan kode original
 $CONFIG = [
     // API endpoint untuk analisis SDG
-    'API_BASE_URL' => 'https://wizdam.sangia.org/API/v1_0_0_SDGs_Classification.php',
+    'API_BASE_URL' => 'https://sciecola.sangia.org/API/v1_0_0_SDGs_Classification.php',
     
     // API eksternal
     'ORCID_API_URL' => 'https://pub.orcid.org/v3.0',
@@ -88,7 +88,7 @@ $CSP_POLICY = [
     'style-src' => "'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com",
     'font-src' => "'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com",
     'img-src' => "'self' data: https: blob:",
-    'connect-src' => "'self' https://wizdam.sangia.org https://api.orcid.org https://api.crossref.org",
+    'connect-src' => "'self' https://sciecola.sangia.org https://api.orcid.org https://api.crossref.org",
 ];
 
 // ==============================================
@@ -113,7 +113,7 @@ $EMAIL_CONFIG = [
     'port' => 587,
     'username' => 'your-email@gmail.com',
     'password' => 'your-app-password',
-    'from_email' => 'noreply@wizdam.ai',
+    'from_email' => 'noreply@sciecola.sangia.org',
     'from_name' => 'SDG Analysis Platform'
 ];
 
@@ -138,17 +138,17 @@ $ANALYTICS_CONFIG = [
 
 // Social Media Links
 $SOCIAL_LINKS = [
-    'twitter' => 'https://twitter.com/wizdamai',
-    'linkedin' => 'https://linkedin.com/company/wizdam-ai',
-    'github' => 'https://github.com/wizdam-ai',
-    'youtube' => 'https://youtube.com/@wizdamai'
+    'twitter' => 'https://twitter.com/sciecola',
+    'linkedin' => 'https://linkedin.com/company/sciecola',
+    'github' => 'https://github.com/sciecola',
+    'youtube' => 'https://youtube.com/@sciecola'
 ];
 
 // Contact Information
 $CONTACT_INFO = [
-    'email' => 'contact@wizdam.ai',
-    'support' => 'support@wizdam.ai',
-    'business' => 'business@wizdam.ai',
+    'email' => 'contact@sciecola.sangia.org',
+    'support' => 'support@sciecola.sangia.org',
+    'business' => 'business@sciecola.sangia.org',
     'phone' => '+1-555-0123',
     'address' => '123 Innovation Street, Tech City, TC 12345'
 ];

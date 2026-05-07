@@ -12,7 +12,7 @@
  * - ?orcid=xxx         → Full analisis (legacy, bisa timeout jika karya banyak)
  * - ?doi=xxx           → Analisis satu artikel
  *
- * @author Rochmady and Wizdam Team
+ * @author Rochmady and Sciecola Team
  * @version 1.0.0
  * @license MIT
  */
@@ -890,7 +890,7 @@ function fetchAbstractMultiSource($doi) {
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT        => 7,
             CURLOPT_CONNECTTIMEOUT => 3,
-            CURLOPT_USERAGENT      => 'SDG-Classifier/5.2 (mailto:wizdam@sangia.org)',
+            CURLOPT_USERAGENT      => 'SciecolaBot/1.0 (mailto:sciecola@sangia.org)',
             CURLOPT_HTTPHEADER     => ['Accept: application/json'],
         ]);
         $resp     = curl_exec($ch);
@@ -910,7 +910,7 @@ function fetchAbstractMultiSource($doi) {
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT        => 7,
             CURLOPT_CONNECTTIMEOUT => 3,
-            CURLOPT_USERAGENT      => 'SDG-Classifier/5.2 (mailto:wizdam@sangia.org)',
+            CURLOPT_USERAGENT      => 'SciecolaBot/1.0 (mailto:sciecola@sangia.org)',
         ]);
         $resp     = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -937,6 +937,7 @@ function fetchAbstractMultiSource($doi) {
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT        => 7,
             CURLOPT_CONNECTTIMEOUT => 3,
+            CURLOPT_USERAGENT      => 'SciecolaBot/1.0 (mailto:sciecola@sangia.org)',
         ]);
         $resp     = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -1028,7 +1029,7 @@ function fetchDoiData($doi) {
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER         => true,
-            CURLOPT_USERAGENT      => 'SDG-Classifier/5.2 (mailto:wizdam@sangia.org)',
+            CURLOPT_USERAGENT      => 'SciecolaBot/1.0 (mailto:sciecola@sangia.org)',
             CURLOPT_CONNECTTIMEOUT => 5,
             CURLOPT_TIMEOUT        => 12,
         ]);
@@ -1080,7 +1081,7 @@ function fetchAbstractFromAlternativeSource($doi) {
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_TIMEOUT        => 10,
-        CURLOPT_USERAGENT      => 'SDG-Classifier/5.2 (mailto:wizdam@sangia.org)',
+        CURLOPT_USERAGENT      => 'SciecolaBot/1.0 (mailto:sciecola@sangia.org)',
     ]);
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);

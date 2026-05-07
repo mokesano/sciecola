@@ -13,7 +13,7 @@
  * - Fungsi evaluateSDGContribution, scoreSDGs, dll tetap original
  * - Struktur output tetap kompatibel dengan interface
  * 
- * @author Rochmady and Wizdam Team
+ * @author Rochmady and Sciecola Team
  * @version 5.2.0-metadata-only
  * @license MIT
  */

@@ -501,7 +501,7 @@ const Help = () => {
               <span className="font-medium text-green-800">Semua sistem beroperasi normal</span>
             </div>
             <a 
-              href="https://status.wizdam.ai" 
+              href="https://status.sangia.org" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-sm font-medium text-green-700 hover:text-green-900"

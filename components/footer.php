@@ -12,7 +12,7 @@
                     <div class="footer-logo-icon">
                         <i class="fas fa-globe"></i>
                     </div>
-                    <div class="footer-logo-text">Wizdam AI</div>
+                    <div class="footer-logo-text">Sciecola</div>
                     <p>Version <?php echo VERSION; ?></p>
                 </div>
                 <p class="footer-description">
@@ -20,19 +20,19 @@
                     Empowering researchers and institutions with intelligent classification and insights.
                 </p>
                 <div class="footer-social">
-                    <a href="https://twitter.com/wizdamai" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Twitter">
+                    <a href="https://twitter.com/sciecola" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Twitter">
                         <i class="fab fa-twitter"></i>
                     </a>
-                    <a href="https://linkedin.com/company/wizdam-ai" target="_blank" rel="noopener noreferrer" aria-label="Connect with us on LinkedIn">
+                    <a href="https://linkedin.com/company/sciecola" target="_blank" rel="noopener noreferrer" aria-label="Connect with us on LinkedIn">
                         <i class="fab fa-linkedin-in"></i>
                     </a>
-                    <a href="https://github.com/wizdam-ai" target="_blank" rel="noopener noreferrer" aria-label="View our projects on GitHub">
+                    <a href="https://github.com/sciecola" target="_blank" rel="noopener noreferrer" aria-label="View our projects on GitHub">
                         <i class="fab fa-github"></i>
                     </a>
-                    <a href="https://youtube.com/@wizdamai" target="_blank" rel="noopener noreferrer" aria-label="Subscribe to our YouTube channel">
+                    <a href="https://youtube.com/@sciecola" target="_blank" rel="noopener noreferrer" aria-label="Subscribe to our YouTube channel">
                         <i class="fab fa-youtube"></i>
                     </a>
-                    <a href="mailto:contact@wizdam.ai" aria-label="Send us an email">
+                    <a href="mailto:contact@sciecola.org" aria-label="Send us an email">
                         <i class="fas fa-envelope"></i>
                     </a>
                 </div>
@@ -89,7 +89,7 @@
 
         <!-- Footer Bottom -->
         <div class="footer-bottom">
-            <p class="footer-copyright">&copy; <?php echo date('Y'); ?> Wizdam by PT. Sangia Research Media and Publishing. All rights reserved.</p>
+            <p class="footer-copyright">&copy; <?php echo date('Y'); ?> Sciecola by PT. Sangia Research Media and Publishing. All rights reserved.</p>
             <div class="footer-bottom-links">
                 <a href="?page=privacy-policy">Privacy Policy</a>
                 <a href="?page=terms-of-service">Terms of Service</a>

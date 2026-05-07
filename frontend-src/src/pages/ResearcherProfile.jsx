@@ -681,7 +681,7 @@ const ResearcherProfile = () => {
       <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-8 text-white shadow-lg">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
           <div>
-            <h3 className="text-2xl font-bold mb-2">Analisis artikel Anda di Wizdam</h3>
+            <h3 className="text-2xl font-bold mb-2">Analisis artikel Anda di Sciecola</h3>
             <p className="text-indigo-100">Masukkan DOI atau ORCID untuk melihat analisis dan klasifikasi SDGs secara instan.</p>
           </div>
           <div className="flex gap-3 w-full lg:w-auto">

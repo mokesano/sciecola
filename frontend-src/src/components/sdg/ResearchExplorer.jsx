@@ -16,7 +16,7 @@ const ResearchExplorer = () => {
         {/* --- Baris Atas: Judul dan Kolom Pencarian --- */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-6">
           <div className="lg:w-1/3">
-            <h2 className="text-xl font-bold text-gray-900 drop-shadow-sm">Jelajahi Riset di Wizdam</h2>
+            <h2 className="text-xl font-bold text-gray-900 drop-shadow-sm">Jelajahi Riset di Sciecola</h2>
             <p className="text-sm text-gray-500 mt-1">Temukan artikel, peneliti, jurnal, atau topik berdasarkan SDGs</p>
           </div>
           

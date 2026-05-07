@@ -11,7 +11,7 @@ const Footer = () => {
           
           {/* Kolom 1: Logo dan Deskripsi (Makan proporsi 3 dari 12 kolom) */}
           <div className="md:col-span-2 lg:col-span-3 lg:pr-4">
-            <div className="text-white text-3xl font-black tracking-wide mb-2">WIZDAM</div>
+            <div className="text-white text-3xl font-black tracking-wide mb-2">Sciecola</div>
             <div className="text-xs text-indigo-400 mb-6 uppercase tracking-wider font-semibold">SDGs Classification & Analytics</div>
             <p className="text-sm text-gray-400 leading-relaxed mb-6">
               Platform analitik riset berbasis AI untuk mengklasifikasikan dan memvisualisasikan kontribusi riset terhadap Sustainable Development Goals (SDGs).
@@ -64,7 +64,7 @@ const Footer = () => {
           {/* Kolom 5: Newsletter (Makan proporsi 3 dari 12 kolom) */}
           <div className="md:col-span-2 lg:col-span-3">
             <h4 className="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Berlangganan Newsletter</h4>
-            <p className="text-sm text-gray-400 mb-5 leading-relaxed">Dapatkan update terbaru tentang fitur dan analisis riset dari Wizdam.</p>
+            <p className="text-sm text-gray-400 mb-5 leading-relaxed">Dapatkan update terbaru tentang fitur dan analisis riset dari Sciecola.</p>
             <form className="flex flex-col gap-3">
               <input 
                 type="email" 
@@ -84,7 +84,7 @@ const Footer = () => {
 
         {/* Bagian Bawah: Copyright */}
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-          <p>© 2024 Wizdam. All rights reserved.</p>
+          <p>© 2024 Sciecola. All rights reserved.</p>
           <p className="mt-4 md:mt-0">Dikembangkan oleh <span className="text-gray-400 font-medium hover:text-indigo-400 cursor-pointer transition-colors">Sangia Research Media and Publishing</span></p>
         </div>
         

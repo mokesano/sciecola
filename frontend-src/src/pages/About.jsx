@@ -29,7 +29,7 @@ const About = () => {
     {
       year: '2020',
       title: 'Foundation',
-      description: 'Wizdam AI didirikan oleh tim peneliti dan ahli AI yang bersemangat menggunakan teknologi untuk kebaikan sosial. Ide muncul dari tantangan mengukur dampak riset terhadap SDGs.'
+      description: 'Sciecola didirikan oleh tim peneliti dan ahli AI yang bersemangat menggunakan teknologi untuk kebaikan sosial. Ide muncul dari tantangan mengukur dampak riset terhadap SDGs.'
     },
     {
       year: '2021',
@@ -178,7 +178,7 @@ const About = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Tentang Wizdam AI</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Tentang Sciecola</h1>
         </div>
         <p className="text-lg font-semibold text-gray-800 max-w-3xl">
           Memajukan Tujuan Pembangunan Berkelanjutan melalui analisis penelitian berbasis kecerdasan buatan.
@@ -196,7 +196,7 @@ const About = () => {
           <h2 className="text-xl font-bold text-gray-900">Misi Kami</h2>
         </div>
         <p className="text-lg font-semibold text-gray-800 mb-8 leading-relaxed">
-          Di Wizdam AI, kami percaya bahwa kecerdasan buatan dapat menjadi kekuatan kuat untuk perubahan positif di dunia. 
+          Di Sciecola, kami percaya bahwa kecerdasan buatan dapat menjadi kekuatan kuat untuk perubahan positif di dunia. 
           Misi kami adalah mempercepat kemajuan menuju Tujuan Pembangunan Berkelanjutan Perserikatan Bangsa-Bangsa (SDGs) 
           dengan membuat dampak penelitian lebih terlihat, terukur, dan dapat ditindaklanjuti.
         </p>

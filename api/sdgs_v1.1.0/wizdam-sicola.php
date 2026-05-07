@@ -4,7 +4,7 @@
  * Interface modern untuk menampilkan hasil analisis SDG
  * 
  * @version 2.3 - Enhanced with Navbar, Footer, Chatbot & Back to Top
- * @author Rochmady and Wizdam Team
+ * @author Rochmady and Sciecola Team
  * Last update: 2025-06-16
  */
 
@@ -15,7 +15,7 @@
 //$API_BASE_URL = 'https://journals.sangia.org/api/sdg_v3';
 //$API_BASE_URL = 'https://journals.sangia.org/api/sdg_v4';
 //$API_BASE_URL = 'https://journals.sangia.org/api/sdg_v5';
-$API_BASE_URL = 'https://wizdam.sangia.org/api/SDGsClassification_v518.php';
+$API_BASE_URL = 'https://sciecola.sangia.org/api/SDGsClassification_v518.php';
 
 // ==============================================
 // DEFINISI SDG DENGAN SVG ICONS RESMI UN
@@ -564,11 +564,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SDGs Classification Analysis | Wizdam AI-sikola</title>
+    <title>SDGs Classification Analysis | Sciecola</title>
     <meta name="description" content="This system uses a hybrid method combining keyword matching, semantic similarity, research depth, and causal analysis to assess research relevance to the SDGs." />
     <meta name="owner" content="PT. Sangia Research Media and Publishing" />
-    <meta name="design" content="Rochmady and Wizdam AI Team" />
-    <meta name="generator" content="Wizdam AI v5.1.8" />
+    <meta name="design" content="Rochmady and Sciecola AI Team" />
+    <meta name="generator" content="Sciecola v1.0.0" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
@@ -2164,7 +2164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="navbar-brand-logo">
                     <i class="fas fa-globe"></i>
                 </div>
-                <span>Wizdam</span>
+                <span>Sciecola</span>
             </a>
             
             <ul class="navbar-menu" id="navbarMenu">
@@ -2188,7 +2188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          MAIN CONTENT
          =============================== -->
     <div class="header">
-        <h1><i class="fas fa-globe"></i> Welcome! Wizdam AI-sikola</h1>
+        <h1><i class="fas fa-globe"></i> Bridging Research with Global Impact</h1>
         <h2>Sustainable Development Goals (SDGs) Classification</h2>
         <p>Analysis of research contributions to Sustainable Development Goals using advanced AI classification</p>
     </div>
@@ -2577,7 +2577,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="footer-logo-icon">
                             <i class="fas fa-globe"></i>
                         </div>
-                        <div class="footer-logo-text">Wizdam</div>
+                        <div class="footer-logo-text">Sciecola</div>
                     </div>
                     <p class="footer-description">
                         Advanced AI-powered platform for analyzing research contributions to Sustainable Development Goals. 
@@ -2631,7 +2631,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="footer-bottom">
                 <div class="footer-copyright">
-                    © 2025 Wizdam by PT. Sangia Research Media and Publishing. All rights reserved.
+                    © 2025 Sciecola by PT. Sangia Research Media and Publishing. All rights reserved.
                 </div>
                 <ul class="footer-bottom-links">
                     <li><a href="#">Terms of Service</a></li>
@@ -2658,7 +2658,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Chatbot Modal -->
     <div class="chatbot-modal" id="chatbotModal">
         <div class="chatbot-header">
-            <h4><i class="fas fa-robot"></i> Wizdam Assistant</h4>
+            <h4><i class="fas fa-robot"></i> Sciecola Assistant</h4>
             <button class="chatbot-close" id="chatbotClose">
                 <i class="fas fa-times"></i>
             </button>
@@ -2669,7 +2669,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <i class="fas fa-robot"></i>
                 </div>
                 <div class="chatbot-message-content">
-                    Hello! I'm Wizdam Assistant. I can help you with:
+                    Hello! I'm Sciecola Assistant. I can help you with:
                     <br>• Understanding SDG classification results
                     <br>• Explaining analysis components
                     <br>• Troubleshooting input formats
@@ -3594,8 +3594,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         });
     </script>
     
-    <!-- Default Statcounter code for Wizdam AI - SDGs
-    https://www.wizdam.sangia.org/ -->
+    <!-- Default Statcounter code for Sciecola - SDGs
+    https://www.sciecola.sangia.org/ -->
     <script type="text/javascript">
         var sc_project=13147842; 
         var sc_invisible=1; 

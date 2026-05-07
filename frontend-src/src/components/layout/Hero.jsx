@@ -47,7 +47,7 @@ const Hero = () => {
           
           {/* Deskripsi */}
           <p className="text-base sm:text-lg text-gray-600 mb-8 max-w-[540px] mx-auto lg:mx-0 leading-relaxed font-normal">
-            Wizdam menganalisis dan mengklasifikasikan artikel ilmiah berdasarkan Sustainable Development Goals (SDGs) secara otomatis menggunakan kecerdasan buatan.
+            Sciecola menganalisis dan mengklasifikasikan artikel ilmiah berdasarkan Sustainable Development Goals (SDGs) secara otomatis menggunakan kecerdasan buatan.
           </p>
           
           {/* Tombol Aksi */}

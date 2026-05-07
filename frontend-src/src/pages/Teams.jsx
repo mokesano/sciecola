@@ -198,7 +198,7 @@ const Teams = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
             <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Tim di Balik Wizdam
+              Tim di Balik Sciecola
             </h1>
             <p className="text-lg font-semibold text-gray-800 mb-3">
               Berkomitmen untuk mendukung riset dan inovasi berbasis data demi pencapaian SDGs.

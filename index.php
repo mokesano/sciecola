@@ -4,7 +4,7 @@
  * Router utama yang menggabungkan semua komponen dengan benar
  * 
  * @version 1.0.0
- * @author Rochmady and Wizdam Team
+ * @author Rochmady and Sciecola Team
  * @license MIT
  */
 

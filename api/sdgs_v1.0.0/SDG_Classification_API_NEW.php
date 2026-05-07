@@ -9,7 +9,7 @@
  * 3. Error handling yang tidak terlalu agresif
  * 4. Tetap menggunakan core logic original
  * 
- * @author Rochmady and Wizdam Team
+ * @author Rochmady and Sciecola Team
  * @version 5.2.2-working-fix
  * @license MIT
  */

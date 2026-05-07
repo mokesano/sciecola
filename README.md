@@ -1,4 +1,4 @@
-# SDG Frontend - Restructured
+# Sciecola
 
 A comprehensive restructuring of the SDG Classification Analysis platform built with PHP, JavaScript, and modern web technologies. This project provides AI-powered analysis of research contributions to the United Nations Sustainable Development Goals (SDGs).
 
@@ -16,7 +16,7 @@ A comprehensive restructuring of the SDG Classification Analysis platform built 
 ### External Services
 - **ORCID API**: Researcher profile and publication data
 - **Crossref API**: DOI resolution and metadata
-- **Wizdam AI API**: SDG classification engine
+- **Sciecola AI API**: SDG classification engine
 - **CDN Integration**: External resource optimization
 
 ## 📋 Requirements
@@ -56,7 +56,7 @@ define('VERSION', '5.1.8');
 
 // API Configuration
 $CONFIG = [
-    'API_BASE_URL' => 'https://api.wizdam.ai/v1',
+    'API_BASE_URL' => 'https://api.sangia.org/v1',
     'CACHE_TTL' => 3600,
     'MAX_WORKS_LIMIT' => 50,
     'TIMEOUT_CONNECT' => 5,
@@ -214,10 +214,10 @@ define('DEBUG_MODE', true);
 
 ### Core Development Team
 - **Project Lead**: Rochmady
-- **AI Development**: Wizdam AI Team
-- **Frontend**: Wizdam AI Team
-- **Backend**: Wizdam AI Team
-- **Design**: Rochmady & Wizdam AI Team
+- **AI Development**: Sciecola and AI Team
+- **Frontend**: Sciecola and AI Team
+- **Backend**: Sciecola and AI Team
+- **Design**: Rochmady, Sciecola & AI Team
 
 ### Special Thanks
 - **UN SDG Team**: For providing SDG framework and guidelines
@@ -234,16 +234,16 @@ define('DEBUG_MODE', true);
 - **Live Chat**: Available 24/7 via chatbot
 
 ### Contact Information
-- **Email**: [contact@wizdam.ai](mailto:contact@wizdam.ai)
-- **Support**: [support@wizdam.ai](mailto:support@wizdam.ai)
-- **Business**: [business@wizdam.ai](mailto:business@wizdam.ai)
-- **Press**: [press@wizdam.ai](mailto:press@wizdam.ai)
+- **Email**: [contact@sangia.org](mailto:contact@sangia.org)
+- **Support**: [support@sangia.org](mailto:support@sangia.org)
+- **Business**: [business@sangia.org](mailto:business@sangia.org)
+- **Press**: [press@sangia.org](mailto:press@sangia.org)
 
 ### Social Media
-- **Twitter**: [@wizdamai](https://twitter.com/wizdamai)
-- **LinkedIn**: [Wizdam AI](https://linkedin.com/company/wizdam-ai)
-- **GitHub**: [wizdam-ai](https://github.com/wizdam-ai)
-- **YouTube**: [@wizdamai](https://youtube.com/@wizdamai)
+- **Twitter**: [@Sciecola](https://twitter.com/Sciecola)
+- **LinkedIn**: [Sciecola](https://linkedin.com/company/sciecola)
+- **GitHub**: [sciecola](https://github.com/sciecola)
+- **YouTube**: [@sciecola](https://youtube.com/@sciecola)
 
 ## 🎯 Key Features Summary
 
@@ -267,6 +267,6 @@ define('DEBUG_MODE', true);
 
 ---
 
-**Built with ❤️ by the Wizdam AI Team**
+**Built with ❤️ by the Sciecola Team**
 
 *Advancing Sustainable Development Goals through AI-powered research analysis*

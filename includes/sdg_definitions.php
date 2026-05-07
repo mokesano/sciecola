@@ -4,7 +4,7 @@
  * Definisi lengkap 17 Sustainable Development Goals sesuai standar UN
  * 
  * @version 1.0.0
- * @author Rochmady and Wizdam Team
+ * @author Rochmady and Sciecola Team
  * @license MIT
  */
 

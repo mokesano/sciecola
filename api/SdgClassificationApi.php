@@ -16,7 +16,7 @@ declare(strict_types=1);
  * - ?orcid=xxx         → Full analisis (legacy, bisa timeout jika karya banyak)
  * - ?doi=xxx           → Analisis satu artikel
  *
- * @author Rochmady and Wizdam Team
+ * @author Rochmady and Sciecola Team
  * @version 1.2.0 (Event-Driven Cache & Standalone Execution)
  * @license MIT
  */
@@ -683,7 +683,7 @@ class SdgClassificationApi
             CURLOPT_HTTPHEADER     => ['Accept: application/json'],
             CURLOPT_CONNECTTIMEOUT => 5,
             CURLOPT_TIMEOUT        => 12,
-            CURLOPT_USERAGENT      => 'SDG-Classifier/5.2 (mailto:wizdam@sangia.org)',
+            CURLOPT_USERAGENT      => 'SciecolaBot/1.0 (mailto:sciecola@sangia.org)',
         ]);
         $response  = curl_exec($ch);
         $httpCode  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -716,7 +716,7 @@ class SdgClassificationApi
             curl_setopt_array($ch, [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_HEADER         => true,
-                CURLOPT_USERAGENT      => 'SDG-Classifier/5.2 (mailto:wizdam@sangia.org)',
+                CURLOPT_USERAGENT      => 'SciecolaBot/1.0 (mailto:sciecola@sangia.org)',
                 CURLOPT_CONNECTTIMEOUT => 5,
                 CURLOPT_TIMEOUT        => 10,
             ]);
@@ -884,7 +884,7 @@ class SdgClassificationApi
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_TIMEOUT        => 5,
                 CURLOPT_CONNECTTIMEOUT => 2,
-                CURLOPT_USERAGENT      => 'SDG-Classifier/5.2 (mailto:wizdam@sangia.org)',
+                CURLOPT_USERAGENT      => 'SciecolaBot/1.0 (mailto:sciecola@sangia.org)',
                 CURLOPT_HTTPHEADER     => ['Accept: application/json'],
             ]);
             $resp     = curl_exec($ch);
@@ -903,7 +903,7 @@ class SdgClassificationApi
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_TIMEOUT        => 5,
                 CURLOPT_CONNECTTIMEOUT => 2,
-                CURLOPT_USERAGENT      => 'SDG-Classifier/5.2 (mailto:wizdam@sangia.org)',
+                CURLOPT_USERAGENT      => 'SciecolaBot/1.0 (mailto:sciecola@sangia.org)',
             ]);
             $resp     = curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);

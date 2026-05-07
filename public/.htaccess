@@ -1,6 +1,6 @@
 # ====================================================================
-# KONFIGURASI .HTACCESS UNTUK WIZDAM SANGIA AI
-# File: .htaccess (ditempatkan di root direktori wizdam.sangia.org)
+# KONFIGURASI .HTACCESS UNTUK SCIECOLA
+# File: .htaccess (ditempatkan di root direktori sciecola.sangia.org)
 # Tujuan: Mengatur URL routing, keamanan, dan konfigurasi aplikasi
 # ====================================================================
 
@@ -102,9 +102,9 @@ RewriteBase /
 
 # REDIRECT NON-WWW KE WWW (OPSIONAL)
 # Tujuan: Standarisasi domain untuk SEO dan konsistensi
-# Uncomment jika ingin menggunakan www.wizdam.sangia.org
-# RewriteCond %{HTTP_HOST} ^wizdam\.sangia\.org$ [NC]
-# RewriteRule ^(.*)$ https://www.wizdam.sangia.org/$1 [R=301,L]
+# Uncomment jika ingin menggunakan www.sciecola.sangia.org
+# RewriteCond %{HTTP_HOST} ^sciecola\.sangia\.org$ [NC]
+# RewriteRule ^(.*)$ https://www.sciecola.sangia.org/$1 [R=301,L]
 
 # FORCE HTTPS
 # Mengalihkan semua traffic HTTP ke HTTPS untuk keamanan
@@ -131,10 +131,10 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
  RewriteCond %{REQUEST_URI} ^/API/NewSDGs_API\.php$ [NC]
  RewriteRule ^(.*)$ - [L]
  
- # ROUTE ROOT URL KE WIZDAM AI SIKOLA (DINONAKTIFKAN)
+ # ROUTE ROOT URL KE SCIECOLA (DINONAKTIFKAN)
  # RewriteCond %{REQUEST_URI} ^/?$ [NC]
  # RewriteCond %{QUERY_STRING} ^$
- # RewriteRule ^(.*)$ wizdam-AI-sikola.php [L]
+ # RewriteRule ^(.*)$ wizdam-sikola.php [L]
  
  # ROUTE ROOT URL KE INDEX.PHP (proxy handler)
  # Fungsi: Menampilkan konten melalui PHP proxy (DIAKTIFKAN UNTUK MENCEGAH 404)
@@ -143,7 +143,7 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
  RewriteRule ^$ index.php [L]
  
  # ----------------------------------------------------------------
- # BAGIAN 6: API ENDPOINTS - WIZDAM AI SERVICES
+ # BAGIAN 6: API ENDPOINTS - SCIECOLA SERVICES
  # Mengarahkan URL API ke handler yang sesuai
  # ----------------------------------------------------------------
  

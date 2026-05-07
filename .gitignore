@@ -1,7 +1,7 @@
 # Sicola .gitignore
 
 # Database
-/database/wizdam.db
+/database/sciecola.db
 /database/*.db
 /database/*.sqlite
 

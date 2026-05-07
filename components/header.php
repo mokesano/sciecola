@@ -6,15 +6,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($page_title) ? $page_title . ' | ' : ''; ?>SDGs Classification Analysis | Wizdam AI</title>
+    <title><?php echo isset($page_title) ? $page_title . ' | ' : ''; ?>SDGs Classification Analysis | Sciecola</title>
     
     <!-- Meta Tags -->
     <meta name="description" content="<?php echo isset($page_description) ? $page_description : 'Advanced AI-powered platform for analyzing research contributions to Sustainable Development Goals. Empowering researchers and institutions with intelligent classification and insights.'; ?>" />
     <meta name="keywords" content="SDG, Sustainable Development Goals, Research Analysis, AI Classification, Academic Research, ORCID, DOI, Research Impact" />
-    <meta name="author" content="Wizdam AI Team" />
+    <meta name="author" content="Sciecola Team" />
     <meta name="owner" content="PT. Sangia Research Media and Publishing" />
-    <meta name="design" content="Rochmady and Wizdam AI Team" />
-    <meta name="generator" content="Wizdam AI v<?php echo VERSION; ?>" />
+    <meta name="design" content="Rochmady and Sciecola Team" />
+    <meta name="generator" content="Sciecola v<?php echo VERSION; ?>" />
     <meta name="robots" content="index, follow" />
     <meta name="language" content="English" />
     <meta name="revisit-after" content="7 days" />
@@ -25,7 +25,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="<?php echo SITE_URL . $_SERVER['REQUEST_URI']; ?>" />
     <meta property="og:image" content="<?php echo SITE_URL; ?>/assets/images/og-image.jpg" />
-    <meta property="og:site_name" content="Wizdam AI - SDG Analysis" />
+    <meta property="og:site_name" content="Sciecola - SDG Analysis" />
     
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -74,7 +74,7 @@
         },
         "creator": {
             "@type": "Organization",
-            "name": "Wizdam AI",
+            "name": "Sciecola",
             "url": "<?php echo SITE_URL; ?>"
         },
         "featureList": [

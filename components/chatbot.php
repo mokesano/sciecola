@@ -13,7 +13,7 @@
     <div class="chatbot-header">
         <h3 id="chatbotTitle" class="chatbot-title">
             <i class="fas fa-robot"></i>
-            Wizdam SDG Assistant
+            Sciecola SDG Assistant
         </h3>
         <button id="chatbotClose" class="chatbot-close" aria-label="Close chatbot">
             <i class="fas fa-times"></i>
@@ -25,7 +25,7 @@
         <!-- Welcome Message -->
         <div class="chatbot-welcome">
             <i class="fas fa-wave-hand"></i>
-            Welcome! I'm your Wizdam SDG Assistant Analysis. How can I help you today?
+            Welcome! I'm your Sciecola SDG Assistant Analysis. How can I help you today?
         </div>
 
         <!-- Quick Action Buttons -->

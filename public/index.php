@@ -1,12 +1,12 @@
 <?php
 /**
- * Entry point – https://wizdam.sangia.org
- * Letak file: /home/user/public_html/wizdam/public/index.php
+ * Entry point – https://sciecola.sangia.org
+ * Letak file: /home/user/public_html/sciecola/public/index.php
  *
- * Tugasnya SATU: teruskan SEMUA request ke wizdam-AI-sikola.php
+ * Tugasnya SATU: teruskan SEMUA request ke wizdam-sikola.php
  * yang berada satu level di atasnya (di luar public/).
  *
- * wizdam-AI-sikola.php sudah cerdas:
+ * wizdam-sikola.php sudah cerdas:
  *   - Jika ada ?proxy_action= → balas JSON (mode proxy)
  *   - Jika tidak → tampilkan halaman HTML
  *
@@ -22,7 +22,7 @@
 ini_set('error_log', dirname(__DIR__) . '/error_log');
 
 // dirname(__DIR__) = satu level di atas folder public/
-// Hasilnya: /home/user/public_html/wizdam/sicola.php
+// Hasilnya: /home/user/public_html/sciecola/includes/bootstrap.php
 $bootstrapFile = ROOT_PATH . '/includes/bootstrap.php';
 
 if (file_exists($bootstrapFile)) {

@@ -18,7 +18,7 @@ define('ENVIRONMENT', 'development');
 
 // Base URL Aplikasi (PENTING: Tanpa garis miring / di akhir)
 // Contoh Lokal: http://localhost/workspace
-// Contoh Live: https://wizdam.sangia.org
+// Contoh Live: https://sciecola.sangia.org
 define('SITE_URL', 'http://localhost/workspace');
 
 define('SITE_NAME', 'Lumera Sicola');

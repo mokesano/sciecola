@@ -881,11 +881,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['issn'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scopus Journal Metrics Checker | Wizdam</title>
+    <title>Scopus Journal Metrics Checker | Sciecola</title>
     <meta name="description" content="An API and visual platform to check Scopus-indexed journal metrics by ISSN. Provides real-time CiteScore, Quartile, SJR, and SNIP data for research and integration." />
     <meta name="owner" content="PT. Sangia Research Media and Publishing" />
-    <meta name="design" content="Rochmady and Wizdam AI Team" />
-    <meta name="generator" content="Wizdam AI v1.8.0" />
+    <meta name="design" content="Rochmady and Sciecola AI Team" />
+    <meta name="generator" content="Sciecola AI v1.8.0" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -2289,7 +2289,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['issn'])) {
         <div class="navbar-container">
             <a href="#" class="navbar-brand">
                 <i class="fas fa-chart-line"></i>
-                WIZDAM AI-sikola
+                Sciecola Journal Checker
             </a>
             
             <ul class="navbar-nav">
@@ -2709,7 +2709,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['issn'])) {
         
         <div class="chatbot-window" id="chatbotWindow">
             <div class="chatbot-header">
-                <span>🤖 WIZDAM Assistant</span>
+                <span>🤖 Sciecola Assistant</span>
                 <button class="chatbot-close" id="chatbotClose">
                     <i class="fas fa-times"></i>
                 </button>
@@ -2717,7 +2717,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['issn'])) {
             
             <div class="chatbot-messages" id="chatbotMessages">
                 <div class="message bot">
-                    👋 Halo! Saya WIZDAM Assistant. Saya siap membantu Anda dengan:
+                    👋 Halo! Saya Sciecola Assistant. Saya siap membantu Anda dengan:
                     <br><br>
                     • Cara menggunakan aplikasi
                     <br>
@@ -2752,13 +2752,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['issn'])) {
                 <div class="footer-section brand-wide">
                     <div class="footer-brand">
                         <i class="fas fa-chart-line"></i>
-                        WIZDAM AI-sikola
+                        Sciecola AI-sikola
                     </div>
                     <div class="brand-description">
                         <p>Platform visualisasi hasil analisis metrik jurnal ilmiah yang memberikan informasi terkini dan akurat tentang CiteScore, Quartile, SJR, dan SNIP dari database Scopus.
                         </p>
                     </div>
-                    <div class="footer-support">Developed by Rochmady & Wizdam Team. | Contact: rochmady at sangia.org | Data powered by Scopus API</div>
+                    <div class="footer-support">Developed by Rochmady & Sciecola Team. | Contact: rochmady at sangia.org | Data powered by Scopus API</div>
                     <div class="social-links">
                         <a href="#"><i class="fab fa-twitter"></i></a>
                         <a href="#"><i class="fab fa-facebook"></i></a>
@@ -2804,7 +2804,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['issn'])) {
             
             <div class="footer-bottom">
                 <div class="footer-copyright">
-                    <div class="copyright-title">© 2025 Wizdam by PT. Sangia Research Media and Publishing. All rights reserved.</div>
+                    <div class="copyright-title">© 2025 Sciecola by PT. Sangia Research Media and Publishing. All rights reserved.</div>
                 </div>
                 <ul class="footer-bottom-links">
                     <li><a href="#">Terms of Service</a></li>
@@ -2916,7 +2916,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['issn'])) {
             responses: {
                 greeting: [
                     "Halo! Ada yang bisa saya bantu?",
-                    "Selamat datang di WIZDAM! Bagaimana saya bisa membantu Anda?",
+                    "Selamat datang di Sciecola! Bagaimana saya bisa membantu Anda?",
                     "Hi! Saya siap membantu Anda dengan analisis jurnal."
                 ],
                 
@@ -2946,7 +2946,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['issn'])) {
                 ],
                 
                 help: [
-                    "Untuk menggunakan WIZDAM:\n1. Masukkan ISSN jurnal (8 digit)\n2. Klik 'Cari Jurnal'\n3. Tunggu analisis selesai\n4. Lihat hasil metrik jurnal",
+                    "Untuk menggunakan Sciecola:\n1. Masukkan ISSN jurnal (8 digit)\n2. Klik 'Cari Jurnal'\n3. Tunggu analisis selesai\n4. Lihat hasil metrik jurnal",
                     "Anda bisa menggunakan format ISSN: 1234-5678 atau 12345678. Contoh ISSN untuk testing: 2076-3417, 1999-4915, 2071-1050."
                 ],
                 
@@ -2957,7 +2957,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['issn'])) {
                 
                 default: [
                     "Maaf, saya tidak yakin dengan pertanyaan itu. Coba tanya tentang quartile, citescore, sjr, snip, discontinued, atau cara menggunakan aplikasi.",
-                    "Saya bisa membantu menjelaskan metrik jurnal atau cara menggunakan WIZDAM. Ada pertanyaan spesifik?",
+                    "Saya bisa membantu menjelaskan metrik jurnal atau cara menggunakan Sciecola. Ada pertanyaan spesifik?",
                     "Silakan tanya tentang: cara mencari jurnal, penjelasan metrik, status discontinued, atau troubleshooting error."
                 ]
             },
@@ -3192,7 +3192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['issn'])) {
         });
     </script>
     
-    <!-- Default Statcounter code for Wizdam AI  -->
+    <!-- Default Statcounter code for Sciecola  -->
     <script type="text/javascript">
         var sc_project=13147827; 
         var sc_invisible=1; 
