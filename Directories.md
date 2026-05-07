@@ -171,4 +171,4 @@
 ├── debug.php
 ├── index.html
 ├── index.php
-└── sciecola.php
+└── wizdam-sikola.php
