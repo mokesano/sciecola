@@ -18,7 +18,7 @@ const Faq = () => {
         {
           id: 'faq-umum-1',
           question: 'Apa itu Sciecola?',
-          answer: 'Platform analisis dampak penelitian Indonesia yang mengukur kontribusi peneliti, artikel, institusi, dan jurnal menggunakan Sangia Impact Score (SIS) — skor komposit dari 4 pilar: Akademik, Sosial, Ekonomi, dan SDG.'
+          answer: 'Platform analisis dampak penelitian Indonesia yang mengukur kontribusi peneliti, artikel, institusi, dan jurnal menggunakan Sangia Impact Score (Scieco) — skor komposit dari 4 pilar: Akademik, Sosial, Ekonomi, dan SDG.'
         },
         {
           id: 'faq-umum-2',
@@ -81,14 +81,14 @@ const Faq = () => {
         }
       ]
     },
-    sis: {
+    scieco: {
       title: 'Sangia Impact Score',
       icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
       color: 'bg-amber-500',
       items: [
         {
           id: 'faq-wis-1',
-          question: 'Apakah skor SIS bisa berubah?',
+          question: 'Apakah skor Scieco bisa berubah?',
           answer: 'Ya. Skor direkam setiap kalkulasi (tidak di-update, melainkan di-insert baru). History skor tersimpan untuk grafik tren. Pemicunya bisa manual (tombol "Hitung Ulang") atau otomatis via job queue.'
         },
         {
@@ -103,8 +103,8 @@ const Faq = () => {
         },
         {
           id: 'faq-wis-4',
-          question: 'Apakah SIS sama dengan h-index?',
-          answer: 'Tidak. h-index hanya mengukur dampak akademik (sitasi). SIS mengukur 4 dimensi: akademik, sosial, ekonomi, dan kontribusi terhadap SDG. Seorang peneliti bisa punya h-index rendah tapi SIS tinggi jika risetnya berdampak sosial-ekonomi besar.'
+          question: 'Apakah Scieco sama dengan h-index?',
+          answer: 'Tidak. h-index hanya mengukur dampak akademik (sitasi). Scieco mengukur 4 dimensi: akademik, sosial, ekonomi, dan kontribusi terhadap SDG. Seorang peneliti bisa punya h-index rendah tapi Scieco tinggi jika risetnya berdampak sosial-ekonomi besar.'
         }
       ]
     },
@@ -287,7 +287,7 @@ const Faq = () => {
         // Code block
         const code = part.slice(3, -3).trim();
         return (
-          <pre key={idx} className="bg-gray-900 text-gray-100 p-3 rounded-lg text-xs overflow-x-auto my-3">
+          <pre key={idx} className="bg-gray-900 text-gray-100 p-3 rounded-lg text-sm overflow-x-auto my-3">
             <code>{code}</code>
           </pre>
         );
@@ -307,13 +307,13 @@ const Faq = () => {
             }
             if (line.trim().match(/^\d+\./)) {
               return (
-                <div key={lineIdx} className="flex gap-2 text-sm text-gray-700">
+                <div key={lineIdx} className="flex gap-2 text-m text-gray-700">
                   <span className="text-indigo-600 font-medium">{line.match(/^\d+\./)[0]}</span>
                   <span>{line.replace(/^\d+\.\s*/, '')}</span>
                 </div>
               );
             }
-            return line.trim() ? <p key={lineIdx} className="text-sm text-gray-700">{line}</p> : null;
+            return line.trim() ? <p key={lineIdx} className="text-m text-gray-700">{line}</p> : null;
           })}
         </div>
       );
@@ -349,7 +349,7 @@ const Faq = () => {
             </div>
             <div>
               <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-              <p className="text-sm text-gray-600">{stat.label}</p>
+              <p className="text-m text-gray-600">{stat.label}</p>
             </div>
           </div>
         ))}
@@ -485,7 +485,7 @@ const Faq = () => {
                         onClick={() => toggleFaq(faq.id)}
                         className="w-full flex items-start justify-between gap-4 text-left"
                       >
-                        <span className="font-medium text-gray-900 pr-4">{faq.question}</span>
+                        <span className="font-medium font-semibold text-gray-900 pr-4">{faq.question}</span>
                         <svg 
                           className={`w-5 h-5 text-gray-400 transition-transform flex-shrink-0 mt-0.5 ${openFaqs[faq.id] ? 'rotate-180' : ''}`} 
                           fill="none" 
@@ -497,7 +497,7 @@ const Faq = () => {
                       </button>
                       
                       {openFaqs[faq.id] && (
-                        <div className="mt-4 pt-4 border-t border-gray-100">
+                        <div className="mt-4 pt-4 mb-4 border-t border-gray-100">
                           <div className="text-gray-700 leading-relaxed">
                             {formatAnswer(faq.answer)}
                           </div>
