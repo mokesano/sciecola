@@ -21,6 +21,9 @@ import CallToAction from './components/layout/CallToAction';
 import { transformToChartData, generateSummaryStats } from './utils/sdgDataAdapter';
 
 // Impor Halaman Profil Dinamis (Asumsi Anda akan/sudah membuat file ini di folder src/pages/)
+import JournalList from './pages/journals/JournalList';
+import JournalProfile from './pages/journals/JournalProfile';
+
 import ResearchersList from './pages/ResearchersList';
 import ArticleProfile from './pages/ArticleProfile';
 import ResearcherProfile from './pages/ResearcherProfile';
@@ -98,6 +101,8 @@ function App() {
         {/* Pengatur Lalu Lintas Halaman */}
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/journals" element={<JournalList />} />
+          <Route path="/journals/:journalId" element={<JournalProfile />} />
           <Route path="/researchers" element={<ResearchersList />} />
           <Route path="/orcid/:orcidCode" element={<ResearcherProfile />} />
           <Route path="/doi/*" element={<ArticleProfile />} />

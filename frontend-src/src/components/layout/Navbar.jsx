@@ -6,6 +6,8 @@ const Navbar = () => {
 
   // Logika Cerdas: Tab "Researchers" aktif jika di list atau di dalam profil ORCID
   const isResearchersActive = 
+    location.pathname === '/journals' || 
+    location.pathname.startsWith('/journals/');
     location.pathname === '/researchers' || 
     location.pathname.startsWith('/orcid/');
 
