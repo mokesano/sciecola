@@ -96,6 +96,14 @@ const Navbar = () => {
                 </span>
               )}
             </NavLink>
+
+            <NavLink to="/teams" className="px-3 py-2 group">
+              {({ isActive }) => (
+                <span className={isActive ? activeClass : inactiveClass}>
+                  Tim
+                </span>
+              )}
+            </NavLink>
           </div>
 
           {/* Bagian Kanan: Bahasa dan Tombol Login/Register */}

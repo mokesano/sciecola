@@ -38,6 +38,7 @@ import Analytics from './pages/Analytics';
 
 // Impor Halaman Tentang (About)
 import About from './pages/About';
+import About from './pages/Teams';
 import Contact from './pages/Contact';
 import Help from './pages/Help';
 
@@ -122,7 +123,7 @@ function App() {
           <Route path="/researchers" element={<ResearchersList />} />
           <Route path="/orcid/:orcidCode" element={<ResearcherProfile />} />
           
-          {/* ✅ Rute Artikel (Baru) */}
+          {/* Rute Artikel (Baru) */}
           <Route path="/articles" element={<ArticleList />} />
           <Route path="/doi/*" element={<ArticleProfile />} />
 
@@ -132,6 +133,7 @@ function App() {
 
           {/* Rute Tentang (About) */}
           <Route path="/about" element={<About />} />
+          <Route path="/teams" element={<Teams />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/help" element={<Help />} />
         </Routes>
