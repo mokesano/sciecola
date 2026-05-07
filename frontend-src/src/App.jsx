@@ -38,7 +38,7 @@ import Analytics from './pages/Analytics';
 
 // Impor Halaman Tentang (About)
 import About from './pages/About';
-import About from './pages/Teams';
+import Teams from './pages/Teams';
 import Contact from './pages/Contact';
 import Help from './pages/Help';
 

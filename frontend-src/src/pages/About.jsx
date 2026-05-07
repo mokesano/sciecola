@@ -180,7 +180,7 @@ const About = () => {
           </div>
           <h1 className="text-3xl font-bold text-gray-900">Tentang Wizdam AI</h1>
         </div>
-        <p className="text-lg text-gray-600 max-w-3xl">
+        <p className="text-lg font-semibold text-gray-800 max-w-3xl">
           Memajukan Tujuan Pembangunan Berkelanjutan melalui analisis penelitian berbasis kecerdasan buatan.
         </p>
       </div>
@@ -195,7 +195,7 @@ const About = () => {
           </div>
           <h2 className="text-xl font-bold text-gray-900">Misi Kami</h2>
         </div>
-        <p className="text-lg text-gray-700 mb-8 leading-relaxed">
+        <p className="text-lg font-semibold text-gray-800 mb-8 leading-relaxed">
           Di Wizdam AI, kami percaya bahwa kecerdasan buatan dapat menjadi kekuatan kuat untuk perubahan positif di dunia. 
           Misi kami adalah mempercepat kemajuan menuju Tujuan Pembangunan Berkelanjutan Perserikatan Bangsa-Bangsa (SDGs) 
           dengan membuat dampak penelitian lebih terlihat, terukur, dan dapat ditindaklanjuti.

@@ -88,19 +88,19 @@ const Navbar = () => {
               )}
             </NavLink>
 
-            {/* TENTANG (Placeholder) */}
-            <NavLink to="/about" className="px-3 py-2 group">
+            <NavLink to="/teams" className="px-3 py-2 group">
               {({ isActive }) => (
                 <span className={isActive ? activeClass : inactiveClass}>
-                  Tentang
+                  Teams
                 </span>
               )}
             </NavLink>
 
-            <NavLink to="/teams" className="px-3 py-2 group">
+            {/* TENTANG (Placeholder) */}
+            <NavLink to="/about" className="px-3 py-2 group">
               {({ isActive }) => (
                 <span className={isActive ? activeClass : inactiveClass}>
-                  Tim
+                  About
                 </span>
               )}
             </NavLink>
