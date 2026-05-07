@@ -323,7 +323,7 @@ const Faq = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
         <span className="text-gray-400">›</span>
         <span className="text-gray-900 font-medium">FAQ</span>
@@ -514,14 +514,14 @@ const Faq = () => {
           <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-6 text-white shadow-lg">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
-                <h3 className="text-lg font-bold mb-1">Masih butuh bantuan?</h3>
-                <p className="text-indigo-100 text-sm">Tim dukungan kami siap membantu Anda 24/7.</p>
+                <h3 className="text-2xl font-bold mb-1">Masih butuh bantuan?</h3>
+                <p className="text-indigo-100 text-m">Tim dukungan kami siap membantu Anda 24/7.</p>
               </div>
               <div className="flex gap-3">
-                <Link to="/contact" className="px-5 py-2.5 bg-white text-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition-colors text-sm whitespace-nowrap">
+                <Link to="/contact" className="px-5 py-2.5 bg-white text-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition-colors text-m whitespace-nowrap">
                   Hubungi Kami
                 </Link>
-                <Link to="/docs" className="px-5 py-2.5 bg-indigo-500 text-white rounded-lg font-medium hover:bg-indigo-400 transition-colors text-sm whitespace-nowrap">
+                <Link to="/docs" className="px-5 py-2.5 bg-indigo-500 text-white rounded-lg font-medium hover:bg-indigo-400 transition-colors text-m whitespace-nowrap">
                   Dokumentasi
                 </Link>
               </div>
