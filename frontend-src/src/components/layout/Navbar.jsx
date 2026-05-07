@@ -32,7 +32,7 @@ const Navbar = () => {
           <NavLink to="/" className="flex items-center gap-3 cursor-pointer group">
             <div className="flex flex-col">
               <div className="text-indigo-600 text-3xl font-black group-hover:text-indigo-700 transition-colors">
-                Sciecola
+                SCIECOLA
               </div>
               <div className="hidden md:flex flex-col">
                 <span className="text-[10px] text-gray-500 font-semibold tracking-wider uppercase leading-none mt-1">
