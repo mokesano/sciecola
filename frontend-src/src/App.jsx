@@ -38,6 +38,7 @@ import Analytics from './pages/Analytics';
 
 // Impor Halaman Tentang (About)
 import About from './pages/About';
+import Contact from './pages/Contact';
 import Help from './pages/Help';
 
 // =====================================================================
@@ -131,6 +132,7 @@ function App() {
 
           {/* Rute Tentang (About) */}
           <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/help" element={<Help />} />
         </Routes>
 
