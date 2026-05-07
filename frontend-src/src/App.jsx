@@ -32,8 +32,9 @@ import ResearcherProfile from './pages/ResearcherProfile';
 import ArticleList from './pages/ArticleList';
 import ArticleProfile from './pages/ArticleProfile';
 
-// Impor Halaman SDGs Cluster
+// Impor Halaman SDGs Cluster dan Analytics
 import SdgsCluster from './pages/SdgsCluster';
+import Analytics from './pages/Analytics';
 
 // =====================================================================
 // KOMPONEN BERANDA (HOME)
@@ -120,8 +121,9 @@ function App() {
           <Route path="/articles" element={<ArticleList />} />
           <Route path="/doi/*" element={<ArticleProfile />} />
 
-          {/* Rute SDGs Cluster */}
+          {/* Rute SDGs Cluster dan Analytics */}
           <Route path="/sdgs" element={<SdgsCluster />} />
+          <Route path="/analytics" element={<Analytics />} />
         </Routes>
 
         {/* Footer selalu tampil di semua halaman */}
