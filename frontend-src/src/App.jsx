@@ -50,6 +50,7 @@ import Leaderboard from './pages/Leaderboard';
 // Impor Halaman Tentang dan Tim
 import About from './pages/About';
 import Teams from './pages/Teams';
+import Sponsors from './pages/Sponsors';
 
 // Impor Halaman Bantuan dan FAQ
 import Contact from './pages/Contact';
@@ -169,6 +170,7 @@ function App() {
           {/* Rute Tentang */}
           <Route path="/about" element={<About />} />
           <Route path="/teams" element={<Teams />} />
+          <Route path="/sponsors" element={<Sponsors />} />
 
           {/* Rute Kontak dan Bantuan */}
           <Route path="/contact" element={<Contact />} />
