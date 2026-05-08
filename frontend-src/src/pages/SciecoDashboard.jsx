@@ -181,7 +181,8 @@ const SciecoDashboard = () => {
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658'];
   
   return (
-    <div className="min-h-screen bg-gray-50">
+    <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+
       {/* Header */}
       <header className="bg-blue-700 text-white p-4 shadow-md">
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
@@ -466,7 +467,8 @@ const SciecoDashboard = () => {
           </div>
         </footer>
       </main>
-    </div>
+
+    </main>
   );
 };
 

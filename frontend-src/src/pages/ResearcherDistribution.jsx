@@ -69,6 +69,8 @@ const ResearcherDistribution = () => {
   };
   
   return (
+    <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+
     <div className="bg-white rounded-lg shadow-md p-4">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 space-y-2 md:space-y-0">
         <h2 className="text-lg font-semibold">Peta Distribusi Peneliti Indonesia</h2>
@@ -293,6 +295,8 @@ const ResearcherDistribution = () => {
         </div>
       )}
     </div>
+
+    </main>
   );
 };
 
