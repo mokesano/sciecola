@@ -27,11 +27,18 @@ const JournalList = () => {
   ]);
 
   return (
-    <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+    <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+        <Link to="/" className="hover:text-indigo-600">Beranda</Link>
+        <span>›</span>
+        <span className="text-gray-900">Database Jurnal</span>
+      </div>
+
       {/* Header Halaman */}
       <div className="mb-10">
-        <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Database Jurnal</h1>
-        <p className="text-gray-500 mt-2 text-lg">Temukan jurnal bereputasi berdasarkan kesesuaian target SDGs.</p>
+        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Database Jurnal</h1>
+        <p className="text-lg font-semibold text-gray-600 mt-1 max-w-2xl">Temukan jurnal bereputasi berdasarkan kesesuaian target SDGs.</p>
       </div>
 
       {/* Filter Bar Sederhana (Mengikuti desain ResearchExplorer Anda) */}

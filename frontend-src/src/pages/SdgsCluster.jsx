@@ -197,15 +197,17 @@ const SdgsCluster = () => {
 
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+        <Link to="/" className="hover:text-indigo-600">Beranda</Link>
+        <span>›</span>
+        <span className="text-gray-900">SDGs</span>
+      </div>
+
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm text-gray-600 mb-12">
-          <Link to="/" className="hover:text-indigo-600">Beranda</Link>
-          <span>›</span>
-          <span className="text-gray-900">SDGs</span>
-        </div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">SDGs</h1>
-        <p className="text-lg font-semibold text-gray-600 max-w-4xl">
+        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">SDGs</h1>
+        <p className="text-lg font-semibold text-gray-600 mt-1 max-w-2xl">
           Jelajahi kontribusi riset dan publikasi terhadap 17 Tujuan Pembangunan Berkelanjutan (Sustainable Development Goals).
         </p>
       </div>
