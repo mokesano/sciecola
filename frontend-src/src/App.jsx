@@ -63,6 +63,9 @@ import Api from './pages/Api';
 // Impor Halaman Log History
 import LogHistory from './pages/LogHistory';
 
+// Impor Halaman Dashboard 
+import SciecoDashboard from './pages/SciecoDashboard';
+
 // =====================================================================
 // KOMPONEN BERANDA (HOME)
 // =====================================================================
@@ -178,6 +181,9 @@ function App() {
 
           {/* Rute Log History */}
           <Route path="/log-history" element={<LogHistory />} />
+
+          {/* Rute Dashboard */}
+          <Route path="/dashboard" element={<SciecoDashboard />} />
 
         </Routes>
 
