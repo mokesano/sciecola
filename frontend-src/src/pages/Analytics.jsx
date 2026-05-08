@@ -108,14 +108,16 @@ const Analytics = () => {
 
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+        <Link to="/" className="hover:text-indigo-600">Beranda</Link>
+        <span>›</span>
+        <span className="text-gray-900">Analytics</span>
+      </div>
+
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-            <Link to="/" className="hover:text-indigo-600">Beranda</Link>
-            <span>›</span>
-            <span className="text-gray-900">Analytics</span>
-          </div>
           <h1 className="text-3xl font-bold text-gray-900">Analytics</h1>
           <p className="text-gray-600 mt-1 max-w-2xl">
             Jelajahi data dan visualisasi untuk memahami tren, dampak, dan kontribusi riset terhadap pencapaian SDGs.

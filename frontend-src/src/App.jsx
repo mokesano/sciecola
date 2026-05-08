@@ -39,6 +39,7 @@ import ArticleProfile from './pages/ArticleProfile';
 // Impor Halaman SDGs Cluster dan Analytics
 import SdgsCluster from './pages/SdgsCluster';
 import Analytics from './pages/Analytics';
+import TrendsAnalysis from './pages/TrendsAnalysis';
 
 // Impor Halaman Leaderboard
 import Leaderboard from './pages/Leaderboard';
@@ -151,6 +152,7 @@ function App() {
           {/* Rute SDGs Cluster dan Analytics */}
           <Route path="/sdgs" element={<SdgsCluster />} />
           <Route path="/analytics" element={<Analytics />} />
+          <Route path="/trends-analysis" element={<TrendsAnalysis />} />
 
           {/* Rute Leaderboard */}
           <Route path="/leaderboard" element={<Leaderboard />} />
