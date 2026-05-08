@@ -231,8 +231,6 @@ const SciecoDashboard = () => {
         </div>
       </nav>
       
-      {/* Main Content */}
-      <main className="container mx-auto">
         {/* Dashboard Overview */}
         {activeTab === 'dashboard' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
@@ -433,16 +431,6 @@ const SciecoDashboard = () => {
             </div>
           </div>
         )}
-      </main>
-
-    {/* Footer */}
-    <footer className="bg-gray-100 p-4 mt-6">
-      <div className="container mx-auto text-center text-sm text-gray-600">
-        <p>© 2025 Scieco Indonesia - Platform Analisis Dampak Penelitian Indonesia</p>
-        <p className="mt-1">Versi 1.0 - Dikembangkan oleh Tim Scieco Indonesia</p>
-      </div>
-    </footer>
-
     </main>
   );
 };
