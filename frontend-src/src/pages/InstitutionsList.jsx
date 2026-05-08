@@ -124,7 +124,7 @@ const InstitutionsList = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
         <span className="text-gray-400">›</span>
         <span className="text-gray-900 font-medium">Institusi</span>
@@ -132,8 +132,8 @@ const InstitutionsList = () => {
 
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Daftar Institusi</h1>
-        <p className="text-gray-600">Jelajahi profil institusi penelitian dan kontribusi mereka terhadap SDGs.</p>
+        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Daftar Institusi</h1>
+        <p className="text-lg font-semibold text-gray-600 mt-1 max-w-2xl">Jelajahi profil institusi penelitian dan kontribusi mereka terhadap SDGs.</p>
       </div>
 
       {/* Search & Filter */}

@@ -118,8 +118,8 @@ const Analytics = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Analytics</h1>
-          <p className="text-gray-600 mt-1 max-w-2xl">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Analytics</h1>
+          <p className="text-lg font-semibold text-gray-600 mt-1 max-w-2xl">
             Jelajahi data dan visualisasi untuk memahami tren, dampak, dan kontribusi riset terhadap pencapaian SDGs.
           </p>
         </div>
