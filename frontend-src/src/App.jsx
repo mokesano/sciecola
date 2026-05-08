@@ -42,6 +42,7 @@ import Analytics from './pages/Analytics';
 import TrendsAnalysis from './pages/TrendsAnalysis';
 import ArticleImpactMetrics from './pages/ArticleImpactMetrics';
 import TopResearchers from './pages/TopResearchers';
+import ResearcherDistribution from './pages/ResearcherDistribution';
 
 // Impor Halaman Leaderboard
 import Leaderboard from './pages/Leaderboard';
@@ -157,6 +158,7 @@ function App() {
           <Route path="/trends-analysis" element={<TrendsAnalysis />} />
           <Route path="/article-impact" element={<ArticleImpactMetrics />} />
           <Route path="/top-researchers" element={<TopResearchers />} />
+          <Route path="/researcher-distribution" element={<ResearcherDistribution />} />
 
           {/* Rute Leaderboard */}
           <Route path="/leaderboard" element={<Leaderboard />} />
