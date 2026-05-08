@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const ResearcherDistribution = () => {
@@ -71,7 +72,13 @@ const ResearcherDistribution = () => {
   
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
+        <span className="text-gray-400">›</span>
+        <span className="text-gray-900 font-medium">Institusi</span>
+      </nav>
+      
       {/* Sub-Navigation */}
       <nav className="bg-white shadow-sm border-b">
         <div className="container mx-auto">
