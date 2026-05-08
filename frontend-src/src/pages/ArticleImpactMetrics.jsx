@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
   PieChart, Pie, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis
@@ -135,6 +136,14 @@ const ArticleImpactMetrics = () => {
 
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
+        <span>›</span>
+        <Link to="/about" className="hover:text-indigo-600 transition-colors">Analytics</Link>
+        <span>›</span>
+        <span className="text-gray-900 font-medium">Article Impact</span>
+      </div>
 
       {/* Header dan Filter */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 space-y-2 md:space-y-0">
@@ -294,7 +303,7 @@ const ArticleImpactMetrics = () => {
           </div>
         </div>
       )}
-      
+
       {/* Tabel Artikel */}
       <div className="mt-6">
         <h3 className="text-md font-semibold mb-4">Artikel dengan Dampak Tertinggi</h3>
