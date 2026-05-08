@@ -182,34 +182,9 @@ const SciecoDashboard = () => {
   
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-
-      {/* Header */}
-      <header className="bg-blue-700 text-white p-4 shadow-md">
-        <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-          <div className="flex items-center mb-4 md:mb-0">
-            <img src="/api/placeholder/50/50" alt="Wizdom Indonesia Logo" className="mr-3" />
-            <h1 className="text-xl font-bold">Wizdom Indonesia</h1>
-          </div>
-          <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <div className="relative">
-              <input 
-                type="text" 
-                placeholder="Cari peneliti, artikel atau institusi..." 
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-white w-64"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <span className="absolute right-3 top-2.5">🔍</span>
-            </div>
-            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-              <span>UI</span>
-            </div>
-          </div>
-        </div>
-      </header>
       
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm">
+      {/* Sub-Navigation */}
+      <nav className="bg-white shadow-sm border-b">
         <div className="container mx-auto">
           <ul className="flex flex-wrap space-x-1 md:space-x-8 p-4">
             <li>
@@ -257,7 +232,7 @@ const SciecoDashboard = () => {
       </nav>
       
       {/* Main Content */}
-      <main className="container mx-auto p-4 md:p-6">
+      <main className="container mx-auto">
         {/* Dashboard Overview */}
         {activeTab === 'dashboard' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
@@ -458,15 +433,15 @@ const SciecoDashboard = () => {
             </div>
           </div>
         )}
-        
-        {/* Footer */}
-        <footer className="bg-gray-100 p-4 mt-6">
-          <div className="container mx-auto text-center text-sm text-gray-600">
-            <p>© 2025 Scieco Indonesia - Platform Analisis Dampak Penelitian Indonesia</p>
-            <p className="mt-1">Versi 1.0 - Dikembangkan oleh Tim Scieco Indonesia</p>
-          </div>
-        </footer>
       </main>
+
+    {/* Footer */}
+    <footer className="bg-gray-100 p-4 mt-6">
+      <div className="container mx-auto text-center text-sm text-gray-600">
+        <p>© 2025 Scieco Indonesia - Platform Analisis Dampak Penelitian Indonesia</p>
+        <p className="mt-1">Versi 1.0 - Dikembangkan oleh Tim Scieco Indonesia</p>
+      </div>
+    </footer>
 
     </main>
   );

@@ -79,7 +79,8 @@ const TrendsAnalysis = () => {
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
   
   return (
-    <div className="bg-white rounded-lg shadow-md p-4">
+    <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+
       {/* Header dan Filter */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 space-y-2 md:space-y-0">
         <h2 className="text-lg font-semibold">Tren dan Analisis Penelitian</h2>
@@ -115,7 +116,7 @@ const TrendsAnalysis = () => {
       </div>
       
       {/* Tren Dampak Penelitian */}
-      <div className="mt-6">
+      <div className="mt-6 bg-white p-4 rounded-lg shadow-sm">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-md font-semibold">Tren Dampak Penelitian (2019-2024)</h3>
           
@@ -386,7 +387,7 @@ const TrendsAnalysis = () => {
       )}
       
       {/* Benchmark Global */}
-      <div className="mt-6">
+      <div className="mt-6 bg-white p-4 rounded-lg shadow-sm">
         <h3 className="text-md font-semibold mb-4">Perbandingan Dampak Penelitian Regional</h3>
         <ResponsiveContainer width="100%" height={400}>
           <BarChart
@@ -488,7 +489,8 @@ const TrendsAnalysis = () => {
           </div>
         </div>
       </div>
-    </div>
+
+    </main>
   );
 };
 

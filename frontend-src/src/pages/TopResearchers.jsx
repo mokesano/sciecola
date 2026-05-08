@@ -251,7 +251,8 @@ const TopResearchers = () => {
   }, []);
   
   return (
-    <div className="bg-white rounded-lg shadow-md p-4">
+    <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+
       {/* Header and Filters */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 space-y-2 md:space-y-0">
         <h2 className="text-lg font-semibold">Peneliti Terkemuka di Indonesia</h2>
@@ -672,7 +673,7 @@ const TopResearchers = () => {
           </div>
         </div>
       )}
-    </div>
+    </main>
   );
 };
 

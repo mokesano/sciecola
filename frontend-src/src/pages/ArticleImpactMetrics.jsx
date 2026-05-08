@@ -136,7 +136,6 @@ const ArticleImpactMetrics = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
 
-    <div className="bg-white rounded-lg shadow-md p-4">
       {/* Header dan Filter */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 space-y-2 md:space-y-0">
         <h2 className="text-lg font-semibold">Analisis Dampak Artikel</h2>
@@ -218,6 +217,84 @@ const ArticleImpactMetrics = () => {
         </div>
       </div>
 
+      {/* Detail Artikel yang Dipilih */}
+      {selectedArticle && (
+        <div className="mt-6 bg-blue-50 p-4 rounded-lg">
+          <div className="flex justify-between items-start">
+            <h3 className="text-md font-semibold">Detail Artikel: {selectedArticle.title}</h3>
+            <button 
+              className="text-gray-500 hover:text-gray-700"
+              onClick={() => setSelectedArticle(null)}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+          
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <p className="text-sm text-gray-600 mb-2">
+                <b>Penulis:</b> {selectedArticle.authors}
+              </p>
+              <p className="text-sm text-gray-600 mb-2">
+                <b>Jurnal:</b> {selectedArticle.journal} ({selectedArticle.year}) - {selectedArticle.sintaAccreditation}
+              </p>
+              <p className="text-sm text-gray-600 mb-2">
+                <b>Skor Dampak Total:</b> <span className="font-semibold">{selectedArticle.impactScore}</span>
+              </p>
+              
+              <div className="mt-4">
+                <h4 className="text-sm font-semibold mb-2">Komponen Dampak:</h4>
+                <div className="space-y-2">
+                  <div>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span>Dampak Akademik</span>
+                      <span>{selectedArticle.academicImpact}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-1.5">
+                      <div 
+                        className="bg-blue-600 h-1.5 rounded-full" 
+                        style={{ width: `${selectedArticle.academicImpact}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span>Dampak Media Sosial</span>
+                      <span>{selectedArticle.socialImpact}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-1.5">
+                      <div 
+                        className="bg-green-600 h-1.5 rounded-full" 
+                        style={{ width: `${selectedArticle.socialImpact}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span>Dampak Penggunaan Praktis</span>
+                      <span>{selectedArticle.practicalImpact}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-1.5">
+                      <div 
+                        className="bg-yellow-600 h-1.5 rounded-full" 
+                        style={{ width: `${selectedArticle.practicalImpact}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="text-sm font-semibold mb-3">Profil Dampak:</h4>
+              <ArticleImpactChart article={selectedArticle} />
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Tabel Artikel */}
       <div className="mt-6">
         <h3 className="text-md font-semibold mb-4">Artikel dengan Dampak Tertinggi</h3>
@@ -314,84 +391,6 @@ const ArticleImpactMetrics = () => {
         </div>
       </div>
 
-      {/* Detail Artikel yang Dipilih */}
-      {selectedArticle && (
-        <div className="mt-6 bg-blue-50 p-4 rounded-lg">
-          <div className="flex justify-between items-start">
-            <h3 className="text-md font-semibold">Detail Artikel: {selectedArticle.title}</h3>
-            <button 
-              className="text-gray-500 hover:text-gray-700"
-              onClick={() => setSelectedArticle(null)}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-          </div>
-          
-          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <p className="text-sm text-gray-600 mb-2">
-                <b>Penulis:</b> {selectedArticle.authors}
-              </p>
-              <p className="text-sm text-gray-600 mb-2">
-                <b>Jurnal:</b> {selectedArticle.journal} ({selectedArticle.year}) - {selectedArticle.sintaAccreditation}
-              </p>
-              <p className="text-sm text-gray-600 mb-2">
-                <b>Skor Dampak Total:</b> <span className="font-semibold">{selectedArticle.impactScore}</span>
-              </p>
-              
-              <div className="mt-4">
-                <h4 className="text-sm font-semibold mb-2">Komponen Dampak:</h4>
-                <div className="space-y-2">
-                  <div>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span>Dampak Akademik</span>
-                      <span>{selectedArticle.academicImpact}</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-1.5">
-                      <div 
-                        className="bg-blue-600 h-1.5 rounded-full" 
-                        style={{ width: `${selectedArticle.academicImpact}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span>Dampak Media Sosial</span>
-                      <span>{selectedArticle.socialImpact}</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-1.5">
-                      <div 
-                        className="bg-green-600 h-1.5 rounded-full" 
-                        style={{ width: `${selectedArticle.socialImpact}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span>Dampak Penggunaan Praktis</span>
-                      <span>{selectedArticle.practicalImpact}</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-1.5">
-                      <div 
-                        className="bg-yellow-600 h-1.5 rounded-full" 
-                        style={{ width: `${selectedArticle.practicalImpact}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="text-sm font-semibold mb-3">Profil Dampak:</h4>
-              <ArticleImpactChart article={selectedArticle} />
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Komponen Dampak */}
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white p-4 rounded-lg shadow-sm">
@@ -436,7 +435,6 @@ const ArticleImpactMetrics = () => {
           </ResponsiveContainer>
         </div>
       </div>
-    </div>
 
     </main>
   );

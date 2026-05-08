@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const ResearcherDistribution = () => {
+  const [activeTab, setActiveTab] = useState('researcherMap');
   // State
   const [mapView, setMapView] = useState('province');
   const [selectedField, setSelectedField] = useState('all');
@@ -70,6 +71,54 @@ const ResearcherDistribution = () => {
   
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+
+      {/* Sub-Navigation */}
+      <nav className="bg-white shadow-sm border-b">
+        <div className="container mx-auto">
+          <ul className="flex flex-wrap space-x-1 md:space-x-8 p-4">
+            <li>
+              <button 
+                className={`font-medium ${activeTab === 'dashboard' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-600 hover:text-blue-700'}`}
+                onClick={() => setActiveTab('dashboard')}
+              >
+                Dashboard
+              </button>
+            </li>
+            <li>
+              <button 
+                className={`font-medium ${activeTab === 'articleImpact' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-600 hover:text-blue-700'}`}
+                onClick={() => setActiveTab('articleImpact')}
+              >
+                Dampak Artikel
+              </button>
+            </li>
+            <li>
+              <button 
+                className={`font-medium ${activeTab === 'researcherImpact' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-600 hover:text-blue-700'}`}
+                onClick={() => setActiveTab('researcherImpact')}
+              >
+                Peneliti Terkemuka
+              </button>
+            </li>
+            <li>
+              <button 
+                className={`font-medium ${activeTab === 'researcherMap' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-600 hover:text-blue-700'}`}
+                onClick={() => setActiveTab('researcherMap')}
+              >
+                Peta Distribusi
+              </button>
+            </li>
+            <li>
+              <button 
+                className={`font-medium ${activeTab === 'trends' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-600 hover:text-blue-700'}`}
+                onClick={() => setActiveTab('trends')}
+              >
+                Tren & Analisis
+              </button>
+            </li>
+          </ul>
+        </div>
+      </nav>
 
     <div className="bg-white rounded-lg shadow-md p-4">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 space-y-2 md:space-y-0">
