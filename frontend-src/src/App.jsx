@@ -49,8 +49,10 @@ import Leaderboard from './pages/Leaderboard';
 
 // Impor Halaman Tentang dan Tim
 import About from './pages/About';
+import History from './pages/History';
 import Teams from './pages/Teams';
 import Sponsors from './pages/Sponsors';
+import BecomeSponsor from './pages/BecomeSponsor';
 
 // Impor Halaman Bantuan dan FAQ
 import Contact from './pages/Contact';
@@ -169,8 +171,10 @@ function App() {
 
           {/* Rute Tentang */}
           <Route path="/about" element={<About />} />
+          <Route path="/history" element={<History />} />
           <Route path="/teams" element={<Teams />} />
           <Route path="/sponsors" element={<Sponsors />} />
+          <Route path="/become-sponsor" element={<BecomeSponsor />} />
 
           {/* Rute Kontak dan Bantuan */}
           <Route path="/contact" element={<Contact />} />

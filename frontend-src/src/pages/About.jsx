@@ -24,35 +24,6 @@ const About = () => {
     }
   ];
 
-  // Timeline Data
-  const timeline = [
-    {
-      year: '2020',
-      title: 'Foundation',
-      description: 'Sciecola didirikan oleh tim peneliti dan ahli AI yang bersemangat menggunakan teknologi untuk kebaikan sosial. Ide muncul dari tantangan mengukur dampak riset terhadap SDGs.'
-    },
-    {
-      year: '2021',
-      title: 'First Platform',
-      description: 'Meluncurkan prototipe klasifikasi SDG pertama, bekerja sama dengan universitas untuk menguji dan menyempurnakan algoritma AI menggunakan ribuan makalah penelitian.'
-    },
-    {
-      year: '2022',
-      title: 'API Launch',
-      description: 'Merilis API komprehensif kami, memungkinkan institusi mengintegrasikan analisis SDG langsung ke dalam sistem manajemen penelitian mereka.'
-    },
-    {
-      year: '2023',
-      title: 'Global Expansion',
-      description: 'Bermitra dengan universitas dan lembaga penelitian terkemuka di seluruh dunia, menganalisis lebih dari 1 juta publikasi untuk relevansi SDG.'
-    },
-    {
-      year: '2024',
-      title: 'AI Enhancement',
-      description: 'Memperkenalkan kemampuan pemrosesan bahasa alami dan machine learning canggih, mencapai akurasi 95%+ dalam klasifikasi SDG.'
-    }
-  ];
-
   // Technology Features Data
   const techFeatures = [
     {
@@ -213,46 +184,6 @@ const About = () => {
               <p className="text-sm text-gray-600 leading-relaxed">{mission.description}</p>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Story Timeline */}
-      <section className="mb-16">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-            <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <h2 className="text-xl font-bold text-gray-900">Perjalanan Kami</h2>
-        </div>
-
-        <div className="relative">
-          {/* Timeline Line */}
-          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-1 bg-indigo-200 transform md:-translate-x-1/2"></div>
-
-          <div className="space-y-8">
-            {timeline.map((item, index) => (
-              <div key={item.year} className={`relative flex items-center gap-6 ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
-                {/* Timeline Dot */}
-                <div className="absolute left-4 md:left-1/2 w-6 h-6 bg-indigo-600 rounded-full border-4 border-white shadow transform md:-translate-x-1/2 z-10"></div>
-
-                {/* Content */}
-                <div className={`ml-12 md:ml-0 md:w-1/2 ${index % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'}`}>
-                  <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
-                    <span className="inline-block px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold mb-3">
-                      {item.year}
-                    </span>
-                    <h4 className="font-bold text-gray-900 mb-2">{item.title}</h4>
-                    <p className="text-sm text-gray-600 leading-relaxed">{item.description}</p>
-                  </div>
-                </div>
-
-                {/* Spacer for alternating layout */}
-                <div className="hidden md:block md:w-1/2"></div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -438,7 +369,7 @@ const About = () => {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              Mulai Analisis
+              Analysis Now
             </Link>
             <Link 
               to="/contact"
@@ -447,7 +378,7 @@ const About = () => {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
-              Hubungi Kami
+              Cantact Us
             </Link>
             <Link 
               to="/docs"
@@ -456,7 +387,7 @@ const About = () => {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
-              Pelajari Lebih Lanjut
+              Learn More
             </Link>
           </div>
         </div>
