@@ -40,6 +40,7 @@ import ArticleProfile from './pages/ArticleProfile';
 import SdgsCluster from './pages/SdgsCluster';
 import Analytics from './pages/Analytics';
 import TrendsAnalysis from './pages/TrendsAnalysis';
+import ArticleImpactMetrics from './pages/ArticleImpactMetrics';
 
 // Impor Halaman Leaderboard
 import Leaderboard from './pages/Leaderboard';
@@ -153,6 +154,7 @@ function App() {
           <Route path="/sdgs" element={<SdgsCluster />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/trends-analysis" element={<TrendsAnalysis />} />
+          <Route path="/article-impact" element={<ArticleImpactMetrics />} />
 
           {/* Rute Leaderboard */}
           <Route path="/leaderboard" element={<Leaderboard />} />
