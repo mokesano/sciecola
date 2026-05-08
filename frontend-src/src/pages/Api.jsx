@@ -513,9 +513,9 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
           </svg>
         ) : (
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"></path>
-          </svg>
+          <svg className='w-4 h-4' fill="none" stroke="currentColor" viewBox="0 0 1024 1024">
+            <path fill="currentColor" d="M464 85.333333H768q70.698667 0 120.661333 50.005334Q938.666667 185.301333 938.666667 256v304a42.666667 42.666667 0 1 1-85.333334 0V256q0-35.328-25.002666-60.330667T768 170.666667h-304a42.666667 42.666667 0 1 1 0-85.333334z m314.666667 714.666667q0 57.429333-40.618667 98.048T640 938.666667H224q-57.429333 0-98.048-40.618667T85.333333 800V384q0-57.429333 40.618667-98.048T224 245.333333H640q57.429333 0 98.048 40.618667T778.666667 384v416z m-85.333334 0V384q0-22.101333-15.616-37.717333T640 330.666667H224q-22.101333 0-37.717333 15.616T170.666667 384v416q0 22.101333 15.616 37.717333T224 853.333333H640q22.101333 0 37.717333-15.616t15.616-37.717333z"/>
+        </svg>
         )}
       </button>
     </div>
@@ -550,9 +550,13 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-xm text-gray-600 mb-16">
         <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
-        <span className="text-gray-400">›</span>
+        <span className="text-gray-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </span>
         <Link to="/docs" className="hover:text-indigo-600 transition-colors">Dokumentasi</Link>
-        <span className="text-gray-400">›</span>
+        <span className="text-gray-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </span>
         <span className="text-gray-900 font-medium">API Reference</span>
       </nav>
 

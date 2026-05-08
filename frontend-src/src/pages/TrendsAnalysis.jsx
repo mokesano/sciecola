@@ -84,16 +84,21 @@ const TrendsAnalysis = () => {
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
-        <span className="text-gray-400">›</span>
+        <span className="text-gray-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </span>
         <span className="text-gray-900 font-medium">Institusi</span>
       </nav>
 
       {/* Header dan Filter */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 space-y-2 md:space-y-0">
-        <h2 className="text-lg font-semibold">Tren dan Analisis Penelitian</h2>
+        <div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Analisis Trend Penelitian</h1>
+          <p className="text-lg font-semibold text-gray-600 mt-1 max-w-2xl">Analisis mendalam tentang tren dampak penelitian, kolaborasi, dan topik terpanas.</p>
+        </div>
         <div className="flex flex-wrap gap-2">
           <select 
-            className="border rounded px-2 py-1 text-sm"
+            className="border rounded-md px-4 py-2.5 text-sm"
             value={selectedField}
             onChange={(e) => setSelectedField(e.target.value)}
           >
@@ -105,7 +110,7 @@ const TrendsAnalysis = () => {
             <option value="soc">Sosial Ekonomi</option>
           </select>
           <select 
-            className="border rounded px-2 py-1 text-sm"
+            className="border rounded-md px-4 py-2.5 text-sm"
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
           >
@@ -114,11 +119,215 @@ const TrendsAnalysis = () => {
             <option value="5years">5 Tahun Terakhir</option>
           </select>
           <button 
-            className={`px-3 py-1 text-sm rounded-md ${showInsights ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+            className={`px-4 py-2.5 text-sm rounded-md shadow-sm transition-colors ${showInsights ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
             onClick={() => setShowInsights(!showInsights)}
           >
             {showInsights ? 'Sembunyikan Insights' : 'Tampilkan Insights'}
           </button>
+        </div>
+      </div>
+      
+      {/* Ikhtisar Analisis */}
+      {showInsights && (
+        <div className="mt-6">
+          <h3 className="text-lg font-semibold mb-3 flex items-center">
+            <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Ikhtisar Analisis Trend Penelitian
+          </h3>
+          
+          <div className="bg-green-50 p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="text-m font-semibold mb-2 text-gray-700">Tren Utama:</h4>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li className="flex items-start">
+                    <svg className="w-4 h-4 text-green-500 mt-0.5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
+                    </svg>
+                    Peningkatan signifikan pada semua dimensi dampak penelitian (akademik, sosial, praktis) dengan rata-rata +51.0% dalam 5 tahun terakhir
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="w-4 h-4 text-green-500 mt-0.5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
+                    </svg>
+                    Percepatan kolaborasi internasional dengan peningkatan +58.2%, yang mencerminkan keberhasilan program internasionalisasi penelitian
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="w-4 h-4 text-green-500 mt-0.5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
+                    </svg>
+                    Fokus pada bidang-bidang strategis (Kecerdasan Buatan, Energi Terbarukan, dan Perubahan Iklim) dengan pertumbuhan dan dampak tertinggi
+                  </li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 className="text-m font-semibold mb-2 text-gray-700">Rekomendasi Kebijakan:</h4>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li className="flex items-start">
+                    <svg className="w-4 h-4 text-blue-500 mt-0.5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                    </svg>
+                    Meningkatkan dukungan untuk penelitian di bidang dengan pertumbuhan tinggi seperti AI dan Energi Terbarukan
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="w-4 h-4 text-blue-500 mt-0.5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                    </svg>
+                    Memperkuat program kolaborasi internasional terutama dengan mitra utama di ASEAN dan negara prioritas lainnya
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="w-4 h-4 text-blue-500 mt-0.5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                    </svg>
+                    Mengembangkan mekanisme diseminasi yang lebih baik untuk meningkatkan dampak media sosial dan praktis dari penelitian
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="w-4 h-4 text-blue-500 mt-0.5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+                    </svg>
+                    Mempertahankan dan memperluas hibah penelitian berdasarkan model prediksi dampak dan relevansi
+                  </li>
+                </ul>
+              </div>
+            </div>
+            
+            <div className="mt-4 text-m text-gray-600">
+              <p className="italic">
+                "Tren dampak penelitian Indonesia menunjukkan progres signifikan dalam 5 tahun terakhir, dengan peningkatan pada semua dimensi dampak dan penguatan posisi global. Prediksi untuk 2 tahun ke depan mengindikasikan pertumbuhan berkelanjutan, dengan kemungkinan mencapai skor dampak 83.0 pada tahun 2026 jika tren saat ini berlanjut."
+              </p>
+              <p className="text-right text-xs text-gray-500 mt-1">- Analisis Wizdom Indonesia, Mei 2025</p>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Topik Potensial & Emerging */}
+      <div className="mt-6 bg-transparent">
+        <h3 className="text-lg font-semibold mb-4">Topik Penelitian Potensial di Indonesia (2025-2030)</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-blue-50 p-3 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all">
+            <div className="flex items-center mb-2">
+              <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+                <svg className="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <h4 className="font-medium text-blue-800">Inovasi Teknologi</h4>
+            </div>
+            <ul className="text-sm space-y-1 text-blue-700">
+              <li>• AI untuk Bahasa dan Budaya Lokal</li>
+              <li>• Kota Pintar dan Mobilitas Berkelanjutan</li>
+              <li>• Teknologi Blockchain untuk Governance</li>
+            </ul>
+            <div className="mt-2 text-xs text-blue-600">
+              <span className="font-semibold">Potensi dampak:</span> Sangat tinggi
+            </div>
+          </div>
+          
+          <div className="bg-green-50 p-3 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all">
+            <div className="flex items-center mb-2">
+              <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mr-2">
+                <svg className="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+              </div>
+              <h4 className="font-medium text-green-800">Keberlanjutan</h4>
+            </div>
+            <ul className="text-sm space-y-1 text-green-700">
+              <li>• Ketahanan Pangan Berbasis Ekosistem</li>
+              <li>• Energi Bersih untuk Wilayah Terpencil</li>
+              <li>• Adaptasi Perubahan Iklim di Wilayah Pesisir</li>
+            </ul>
+            <div className="mt-2 text-xs text-green-600">
+              <span className="font-semibold">Potensi dampak:</span> Tinggi
+            </div>
+          </div>
+          
+          <div className="bg-yellow-50 p-3 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all">
+            <div className="flex items-center mb-2">
+              <div className="h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center mr-2">
+                <svg className="h-5 w-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                </svg>
+              </div>
+              <h4 className="font-medium text-yellow-800">Kesehatan & Biomedis</h4>
+            </div>
+            <ul className="text-sm space-y-1 text-yellow-700">
+              <li>• Kedokteran Presisi untuk Penyakit Tropis</li>
+              <li>• Biofarmasi dari Keanekaragaman Hayati</li>
+              <li>• Kesiapsiagaan Pandemi dan Penyakit Menular</li>
+            </ul>
+            <div className="mt-2 text-xs text-yellow-600">
+              <span className="font-semibold">Potensi dampak:</span> Sangat tinggi
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Prediksi dan Topik Trending */}
+      <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white p-4 rounded-lg shadow-sm">
+          <h3 className="text-md font-semibold mb-4">Prediksi Dampak Penelitian</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <ComposedChart data={predictionData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="year" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="actual" stroke="#8884d8" strokeWidth={2} name="Dampak Aktual" />
+              <Line type="monotone" dataKey="predicted" stroke="#82ca9d" strokeDasharray="5 5" strokeWidth={2} name="Dampak Prediksi" />
+            </ComposedChart>
+          </ResponsiveContainer>
+          
+          {showInsights && (
+            <div className="mt-4 bg-indigo-50 p-3 rounded-lg">
+              <h4 className="text-sm font-medium text-indigo-800 flex items-center">
+                <svg className="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fillRule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
+                </svg>
+                Insight Prediksi
+              </h4>
+              <p className="text-sm text-indigo-700 mt-1">
+                Prediksi menunjukkan peningkatan dampak penelitian Indonesia sebesar ~12.1% dalam 2 tahun ke depan, mencapai skor 83.0 pada tahun 2026.
+              </p>
+            </div>
+          )}
+        </div>
+        
+        <div className="bg-white p-4 rounded-lg shadow-sm">
+          <h3 className="text-md font-semibold mb-4">Topik Penelitian dengan Pertumbuhan Tertinggi</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={researchTopicsTrends} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis type="number" />
+              <YAxis dataKey="topic" type="category" width={140} />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="growth" fill="#8884d8" name="Pertumbuhan (%)" />
+            </BarChart>
+          </ResponsiveContainer>
+          
+          {showInsights && (
+            <div className="mt-4 bg-purple-50 p-3 rounded-lg">
+              <h4 className="text-sm font-medium text-purple-800 flex items-center">
+                <svg className="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
+                </svg>
+                Insight Topik Trending
+              </h4>
+              <p className="text-sm text-purple-700 mt-1">
+                Kecerdasan Buatan, Energi Terbarukan, dan Perubahan Iklim adalah tiga topik dengan pertumbuhan dan dampak tertinggi.
+              </p>
+              <p className="text-sm text-purple-700 mt-1">
+                Topik-topik ini juga memiliki tingkat kolaborasi internasional yang lebih tinggi dari rata-rata.
+              </p>
+            </div>
+          )}
         </div>
       </div>
       
@@ -253,146 +462,6 @@ const TrendsAnalysis = () => {
         </div>
       </div>
       
-      {/* Prediksi dan Topik Trending */}
-      <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white p-4 rounded-lg shadow-sm">
-          <h3 className="text-md font-semibold mb-4">Prediksi Dampak Penelitian</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <ComposedChart data={predictionData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="year" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="actual" stroke="#8884d8" strokeWidth={2} name="Dampak Aktual" />
-              <Line type="monotone" dataKey="predicted" stroke="#82ca9d" strokeDasharray="5 5" strokeWidth={2} name="Dampak Prediksi" />
-            </ComposedChart>
-          </ResponsiveContainer>
-          
-          {showInsights && (
-            <div className="mt-4 bg-indigo-50 p-3 rounded-lg">
-              <h4 className="text-sm font-medium text-indigo-800 flex items-center">
-                <svg className="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                  <path fillRule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
-                </svg>
-                Insight Prediksi
-              </h4>
-              <p className="text-sm text-indigo-700 mt-1">
-                Prediksi menunjukkan peningkatan dampak penelitian Indonesia sebesar ~12.1% dalam 2 tahun ke depan, mencapai skor 83.0 pada tahun 2026.
-              </p>
-            </div>
-          )}
-        </div>
-        
-        <div className="bg-white p-4 rounded-lg shadow-sm">
-          <h3 className="text-md font-semibold mb-4">Topik Penelitian dengan Pertumbuhan Tertinggi</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={researchTopicsTrends} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis dataKey="topic" type="category" width={140} />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="growth" fill="#8884d8" name="Pertumbuhan (%)" />
-            </BarChart>
-          </ResponsiveContainer>
-          
-          {showInsights && (
-            <div className="mt-4 bg-purple-50 p-3 rounded-lg">
-              <h4 className="text-sm font-medium text-purple-800 flex items-center">
-                <svg className="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
-                </svg>
-                Insight Topik Trending
-              </h4>
-              <p className="text-sm text-purple-700 mt-1">
-                Kecerdasan Buatan, Energi Terbarukan, dan Perubahan Iklim adalah tiga topik dengan pertumbuhan dan dampak tertinggi.
-              </p>
-              <p className="text-sm text-purple-700 mt-1">
-                Topik-topik ini juga memiliki tingkat kolaborasi internasional yang lebih tinggi dari rata-rata.
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-      
-      {/* Ikhtisar Analisis */}
-      {showInsights && (
-        <div className="mt-6 bg-white p-4 rounded-lg shadow-sm">
-          <h3 className="text-md font-semibold mb-3 flex items-center">
-            <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            Ikhtisar Analisis Tren
-          </h3>
-          
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="text-sm font-semibold mb-2 text-gray-700">Tren Utama:</h4>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li className="flex items-start">
-                    <svg className="w-4 h-4 text-green-500 mt-0.5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
-                    </svg>
-                    Peningkatan signifikan pada semua dimensi dampak penelitian (akademik, sosial, praktis) dengan rata-rata +51.0% dalam 5 tahun terakhir
-                  </li>
-                  <li className="flex items-start">
-                    <svg className="w-4 h-4 text-green-500 mt-0.5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
-                    </svg>
-                    Percepatan kolaborasi internasional dengan peningkatan +58.2%, yang mencerminkan keberhasilan program internasionalisasi penelitian
-                  </li>
-                  <li className="flex items-start">
-                    <svg className="w-4 h-4 text-green-500 mt-0.5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
-                    </svg>
-                    Fokus pada bidang-bidang strategis (Kecerdasan Buatan, Energi Terbarukan, dan Perubahan Iklim) dengan pertumbuhan dan dampak tertinggi
-                  </li>
-                </ul>
-              </div>
-              
-              <div>
-                <h4 className="text-sm font-semibold mb-2 text-gray-700">Rekomendasi Kebijakan:</h4>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li className="flex items-start">
-                    <svg className="w-4 h-4 text-blue-500 mt-0.5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
-                    </svg>
-                    Meningkatkan dukungan untuk penelitian di bidang dengan pertumbuhan tinggi seperti AI dan Energi Terbarukan
-                  </li>
-                  <li className="flex items-start">
-                    <svg className="w-4 h-4 text-blue-500 mt-0.5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
-                    </svg>
-                    Memperkuat program kolaborasi internasional terutama dengan mitra utama di ASEAN dan negara prioritas lainnya
-                  </li>
-                  <li className="flex items-start">
-                    <svg className="w-4 h-4 text-blue-500 mt-0.5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
-                    </svg>
-                    Mengembangkan mekanisme diseminasi yang lebih baik untuk meningkatkan dampak media sosial dan praktis dari penelitian
-                  </li>
-                  <li className="flex items-start">
-                    <svg className="w-4 h-4 text-blue-500 mt-0.5 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
-                    </svg>
-                    Mempertahankan dan memperluas hibah penelitian berdasarkan model prediksi dampak dan relevansi
-                  </li>
-                </ul>
-              </div>
-            </div>
-            
-            <div className="mt-4 text-sm text-gray-600">
-              <p className="italic">
-                "Tren dampak penelitian Indonesia menunjukkan progres signifikan dalam 5 tahun terakhir, dengan peningkatan pada semua dimensi dampak dan penguatan posisi global. Prediksi untuk 2 tahun ke depan mengindikasikan pertumbuhan berkelanjutan, dengan kemungkinan mencapai skor dampak 83.0 pada tahun 2026 jika tren saat ini berlanjut."
-              </p>
-              <p className="text-right text-xs text-gray-500 mt-1">- Analisis Wizdom Indonesia, Mei 2025</p>
-            </div>
-          </div>
-        </div>
-      )}
-      
       {/* Benchmark Global */}
       <div className="mt-6 bg-white p-4 rounded-lg shadow-sm">
         <h3 className="text-md font-semibold mb-4">Perbandingan Dampak Penelitian Regional</h3>
@@ -431,70 +500,6 @@ const TrendsAnalysis = () => {
             </p>
           </div>
         )}
-      </div>
-      
-      {/* Topik Potensial & Emerging */}
-      <div className="mt-6 bg-white p-4 rounded-lg shadow-sm">
-        <h3 className="text-md font-semibold mb-4">Topik Penelitian Potensial di Indonesia (2025-2030)</h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-blue-50 p-3 rounded-lg">
-            <div className="flex items-center mb-2">
-              <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
-                <svg className="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
-              </div>
-              <h4 className="font-medium text-blue-800">Inovasi Teknologi</h4>
-            </div>
-            <ul className="text-sm space-y-1 text-blue-700">
-              <li>• AI untuk Bahasa dan Budaya Lokal</li>
-              <li>• Kota Pintar dan Mobilitas Berkelanjutan</li>
-              <li>• Teknologi Blockchain untuk Governance</li>
-            </ul>
-            <div className="mt-2 text-xs text-blue-600">
-              <span className="font-semibold">Potensi dampak:</span> Sangat tinggi
-            </div>
-          </div>
-          
-          <div className="bg-green-50 p-3 rounded-lg">
-            <div className="flex items-center mb-2">
-              <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mr-2">
-                <svg className="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                </svg>
-              </div>
-              <h4 className="font-medium text-green-800">Keberlanjutan</h4>
-            </div>
-            <ul className="text-sm space-y-1 text-green-700">
-              <li>• Ketahanan Pangan Berbasis Ekosistem</li>
-              <li>• Energi Bersih untuk Wilayah Terpencil</li>
-              <li>• Adaptasi Perubahan Iklim di Wilayah Pesisir</li>
-            </ul>
-            <div className="mt-2 text-xs text-green-600">
-              <span className="font-semibold">Potensi dampak:</span> Tinggi
-            </div>
-          </div>
-          
-          <div className="bg-yellow-50 p-3 rounded-lg">
-            <div className="flex items-center mb-2">
-              <div className="h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center mr-2">
-                <svg className="h-5 w-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                </svg>
-              </div>
-              <h4 className="font-medium text-yellow-800">Kesehatan & Biomedis</h4>
-            </div>
-            <ul className="text-sm space-y-1 text-yellow-700">
-              <li>• Kedokteran Presisi untuk Penyakit Tropis</li>
-              <li>• Biofarmasi dari Keanekaragaman Hayati</li>
-              <li>• Kesiapsiagaan Pandemi dan Penyakit Menular</li>
-            </ul>
-            <div className="mt-2 text-xs text-yellow-600">
-              <span className="font-semibold">Potensi dampak:</span> Sangat tinggi
-            </div>
-          </div>
-        </div>
       </div>
 
     </main>
