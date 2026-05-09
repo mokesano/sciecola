@@ -25,7 +25,7 @@ const Navbar = () => {
           <NavLink to="/" className="flex items-center gap-3 cursor-pointer group">
             <div className="flex flex-col">
               <div className="text-indigo-600 text-3xl font-black group-hover:text-indigo-700 transition-colors">
-                SCIECOLA
+                SCIECO
               </div>
               <div className="hidden md:flex flex-col">
                 <span className="text-[10px] text-gray-500 font-semibold tracking-wider uppercase leading-none mt-1">
@@ -96,7 +96,7 @@ const Navbar = () => {
             {/* Conditional Rendering: Auth Buttons vs User Menu */}
             {!isAuthenticated ? (
               <>
-                {/* ✅ Tombol Masuk (Login) */}
+                {/* Tombol Masuk (Login) */}
                 <Link 
                   to="/login" 
                   className="text-indigo-600 font-medium px-4 py-2 rounded-xl hover:bg-indigo-50 transition-all"
@@ -104,7 +104,7 @@ const Navbar = () => {
                   Masuk
                 </Link>
                 
-                {/* ✅ Tombol Daftar (Register) */}
+                {/* Tombol Daftar (Register) */}
                 <Link 
                   to="/register" 
                   className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-medium shadow-md shadow-indigo-200 transition-all"

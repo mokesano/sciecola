@@ -26,7 +26,7 @@ const Footer = () => {
           {/* Kolom 1: Logo dan Deskripsi */}
           <div className="md:col-span-2 lg:col-span-3 lg:pr-4">
             <Link to="/" className="text-white text-3xl font-black tracking-wide mb-2 hover:text-indigo-400 transition-colors inline-block">
-              SCIECOLA
+              SCIECO
             </Link>
             <div className="text-xs text-indigo-400 mb-6 uppercase tracking-wider font-semibold">SDGs Classification & Analytics</div>
             <p className="text-sm text-gray-400 leading-relaxed mb-6">
@@ -52,7 +52,7 @@ const Footer = () => {
           {/* Kolom 2: Link Produk */}
           <div className="lg:col-span-2">
             <h4 className="text-white font-semibold mb-2 text-m tracking-wider">Produk</h4>
-            <div className="w-12 h-0.5 bg-indigo-500 mb-3"></div>
+            <div className="w-7 h-1 bg-indigo-500 mb-3"></div>
             <ul className="space-y-3 text-sm text-gray-400">
               <li><Link to="/trends-analysis" className="hover:text-indigo-400 transition-colors">Trends Analysis</Link></li>
               <li><Link to="/sdgs" className="hover:text-indigo-400 transition-colors">SDGs Explorer</Link></li>
@@ -66,12 +66,13 @@ const Footer = () => {
           {/* Kolom 3: Link Sumber Data (External Links) */}
           <div className="lg:col-span-2">
             <h4 className="text-white font-semibold mb-2 text-m tracking-wider">Sumber Data</h4>
-            <div className="w-12 h-0.5 bg-indigo-500 mb-3"></div>
+            <div className="w-7 h-1 bg-indigo-500 mb-3"></div>
             <ul className="space-y-3 text-sm text-gray-400">
-              <li><a href="https://www.crossref.org" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors flex items-center gap-1">Crossref <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a></li>
               <li><a href="https://orcid.org" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors flex items-center gap-1">ORCID <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a></li>
+              <li><a href="https://opencitations.net" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors flex items-center gap-1">Open Citations <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a></li>
+              <li><a href="https://www.crossref.org" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors flex items-center gap-1">Crossref <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a></li>
+              <li><a href="https://www.scopus.com" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors flex items-center gap-1">Scopus <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a></li>
               <li><a href="https://www.dimensions.ai" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors flex items-center gap-1">Dimensions <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a></li>
-              <li><a href="https://scholar.google.com" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors flex items-center gap-1">Google Scholar <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a></li>
               <li><a href="https://www.datacite.org" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors flex items-center gap-1">DataCite <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a></li>
             </ul>
           </div>
@@ -79,11 +80,11 @@ const Footer = () => {
           {/* Kolom 4: Link Informasi */}
           <div className="lg:col-span-2">
             <h4 className="text-white font-semibold mb-2 text-m tracking-wider">Informasi</h4>
-            <div className="w-12 h-0.5 bg-indigo-500 mb-3"></div>
+            <div className="w-7 h-1 bg-indigo-500 mb-3"></div>
             <ul className="space-y-3 text-sm text-gray-400">
               <li><Link to="/about" className="hover:text-indigo-400 transition-colors">Tentang Kami</Link></li>
-              <li><Link to="/docs" className="hover:text-indigo-400 transition-colors">Fitur</Link></li>
-              <li><Link to="/docs#faq" className="hover:text-indigo-400 transition-colors">FAQ</Link></li>
+              <li><Link to="/docs" className="hover:text-indigo-400 transition-colors">Dokumentasi Fitur</Link></li>
+              <li><Link to="/docs/faq" className="hover:text-indigo-400 transition-colors">FAQ</Link></li>
               <li><Link to="/blog" className="hover:text-indigo-400 transition-colors">Blog</Link></li>
               <li><Link to="/privacy" className="hover:text-indigo-400 transition-colors">Kebijakan Privasi</Link></li>
               <li><Link to="/terms" className="hover:text-indigo-400 transition-colors">Syarat & Ketentuan</Link></li>
@@ -92,7 +93,7 @@ const Footer = () => {
 
           {/* Kolom 5: Newsletter */}
           <div className="md:col-span-2 lg:col-span-3">
-            <h4 className="text-white font-semibold mb-5 text-sm tracking-wider">Berlangganan <span className="text-indigo-400 uppercase">Newsletter</span></h4>
+            <h4 className="text-white font-semibold mb-5 text-m tracking-wider">Berlangganan <span className="text-indigo-400 uppercase">Newsletter</span></h4>
             <p className="text-sm text-gray-400 mb-5 leading-relaxed">Dapatkan update terbaru tentang fitur dan analisis riset dari Sciecola.</p>
             <form onSubmit={handleSubscribe} className="flex flex-col gap-3">
               <input 
