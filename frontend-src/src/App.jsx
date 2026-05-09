@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import ScrollToTop from './components/shared/ScrollToTop';
 
 // Komponen Layout Global
 import Navbar from './components/layout/Navbar';
@@ -92,6 +93,12 @@ import Settings from './pages/Settings';
 import MyActivity from './pages/MyActivity';
 import LogHistory from './pages/LogHistory';
 
+// Impor Halaman Insights AI
+import InsightsPage from './pages/InsightsPage';
+
+// Impor Chatbot
+import Chatbot from './components/layout/Chatbot';
+
 // =====================================================================
 // KOMPONEN BERANDA (HOME)
 // =====================================================================
@@ -120,7 +127,7 @@ const Home = () => {
         <StatCards />
       )}
 
-      <CallToAction />
+      <div id="cta-section"><CallToAction /></div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
         <SdgDistributionChart 
@@ -159,6 +166,9 @@ function App() {
         
         {/* Navbar selalu tampil di semua halaman */}
         <Navbar />
+
+        {/* Scroll ke atas setiap perpindahan halaman */}
+        <ScrollToTop />
 
         {/* Pengatur Lalu Lintas Halaman */}
         <Routes>
@@ -234,6 +244,9 @@ function App() {
           <Route path="/my-activity" element={<MyActivity />} />
           <Route path="/log-history" element={<LogHistory />} />
 
+          {/* Rute Insights AI */}
+          <Route path="/insights" element={<InsightsPage />} />
+
           {/* Rute Register */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
@@ -241,6 +254,9 @@ function App() {
 
         {/* Footer selalu tampil di semua halaman */}
         <Footer />
+
+        {/* Floating Chatbot */}
+        <Chatbot />
         
       </div>
     </Router>

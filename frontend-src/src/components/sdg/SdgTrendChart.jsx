@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { SDG_TREND_MOCK } from '../../data/mock/sdgTrendMock';
 import { SDG_DICTIONARY } from '../../utils/sdgDataAdapter';
@@ -73,7 +74,7 @@ const SdgTrendChart = ({ rawData }) => {
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
       <div className="flex justify-between items-end mb-6">
         <h3 className="text-lg md:text-xl font-bold text-gray-900">Tren Publikasi per SDGs</h3>
-        <button className="text-sm text-blue-600 hover:text-blue-800 font-semibold transition-colors pb-0.5">Lihat semua</button>
+        <Link to="/trends-analysis" className="text-sm text-blue-600 hover:text-blue-800 font-semibold transition-colors pb-0.5">Lihat selengkapnya</Link>
       </div>
       <div className="h-[300px] w-full mt-4">
         <ResponsiveContainer width="100%" height="100%">

@@ -21,7 +21,7 @@ const JournalProfile = () => {
     language: "English",
     established: "2018",
     frequency: "4 issue / tahun",
-    coverImage: "https://via.placeholder.com/300x400/1e40af/ffffff?text=JESS",
+    coverImage: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=400&fit=crop&q=80",
     
     // Stats
     totalArticles: 356,
@@ -156,9 +156,10 @@ const JournalProfile = () => {
           <div className="flex flex-col sm:flex-row gap-6">
             {/* Cover Image */}
             <div className="shrink-0">
-              <img 
-                src={journal.coverImage} 
+              <img
+                src={journal.coverImage}
                 alt={journal.name}
+                onError={(e) => { e.target.src = '/assets/img/journal-default.svg'; }}
                 className="w-full sm:w-48 h-64 object-cover rounded-xl shadow-lg"
               />
             </div>
@@ -444,7 +445,7 @@ const JournalProfile = () => {
           <div className="space-y-4">
             {journal.topArticles.map((article) => (
               <div key={article.id} className="flex gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors">
-                <img src={article.thumbnail} alt={article.title} className="w-16 h-16 object-cover rounded-lg" />
+                <img src={article.thumbnail} alt={article.title} onError={(e) => { e.target.src = '/assets/img/article-default.svg'; }} className="w-16 h-16 object-cover rounded-lg" />
                 <div className="flex-grow">
                   <h4 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{article.title}</h4>
                   <p className="text-xs text-gray-500 mb-2">{article.volume}</p>

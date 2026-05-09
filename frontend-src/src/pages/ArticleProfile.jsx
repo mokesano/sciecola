@@ -15,7 +15,7 @@ const articlesDatabase = [
     language: "English",
     publishedDate: "15 Mei 2024",
     publisher: "Sangia Research Media and Publishing",
-    coverImage: "https://via.placeholder.com/300x400/1e40af/ffffff?text=Article",
+    coverImage: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=300&h=400&fit=crop&q=80",
     
     authors: [
       { name: "Andi Rahman", affiliation: "Department of Environmental Science, Universitas Indonesia, Indonesia", id: 1 },
@@ -99,7 +99,7 @@ const articlesDatabase = [
     language: "English",
     publishedDate: "10 Maret 2024",
     publisher: "Sangia Research Media and Publishing",
-    coverImage: "https://via.placeholder.com/300x400/059669/ffffff?text=Article",
+    coverImage: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=300&h=400&fit=crop&q=80",
     
     authors: [
       { name: "Dewi Lestari", affiliation: "Department of Urban Planning, Institut Teknologi Bandung, Indonesia", id: 1 },
@@ -275,9 +275,10 @@ const ArticleProfile = () => {
           <div className="flex flex-col sm:flex-row gap-6">
             {/* Cover Image */}
             <div className="shrink-0">
-              <img 
-                src={article.coverImage} 
+              <img
+                src={article.coverImage}
                 alt={article.title}
+                onError={(e) => { e.target.src = '/assets/img/article-default.svg'; }}
                 className="w-full sm:w-48 h-64 object-cover rounded-xl shadow-lg"
               />
               <div className="mt-2 flex items-center gap-2 text-xs text-gray-600">
@@ -618,7 +619,7 @@ const ArticleProfile = () => {
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
           <h3 className="text-lg font-bold text-gray-900 mb-4">Jurnal & Penerbit</h3>
           <div className="flex gap-4 mb-4">
-            <img src={article.coverImage} alt={article.journal.name} className="w-20 h-24 object-cover rounded-lg" />
+            <img src={article.coverImage} alt={article.journal.name} onError={(e) => { e.target.src = '/assets/img/article-default.svg'; }} className="w-20 h-24 object-cover rounded-lg" />
             <div>
               <h4 className="font-bold text-gray-900 text-sm mb-1">{article.journal.name}</h4>
               <p className="text-xs text-gray-600 mb-1">EISSN: {article.journal.eissn}</p>
@@ -632,9 +633,9 @@ const ArticleProfile = () => {
               <span className="font-semibold">Quartile:</span> {article.journal.quartile}
             </p>
           </div>
-          <button className="mt-4 w-full py-2.5 border-2 border-indigo-600 text-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition-colors text-sm">
+          <Link to="/journals/jess-2024" className="mt-4 w-full py-2.5 border-2 border-indigo-600 text-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition-colors text-sm flex items-center justify-center">
             Lihat Profil Jurnal
-          </button>
+          </Link>
         </div>
 
         {/* Article Information */}
@@ -727,12 +728,12 @@ const ArticleProfile = () => {
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold text-gray-900">Kutipan Teratas</h3>
-            <button className="text-sm text-indigo-600 font-medium hover:text-indigo-700">Lihat semua</button>
+            <Link to="/articles" className="text-sm text-indigo-600 font-medium hover:text-indigo-700">Lihat semua</Link>
           </div>
           <div className="space-y-4">
             {article.topCitations.map((citation, idx) => (
               <div key={idx} className="flex gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors">
-                <img src={`https://via.placeholder.com/60x60/${['3b82f6', '10b981', 'f59e0b', 'ef4444', '8b5cf6'][idx]}/ffffff?text=C${idx + 1}`} alt="" className="w-16 h-16 object-cover rounded-lg" />
+                <img src={`/assets/img/article-default.svg`} alt="" className="w-16 h-16 object-cover rounded-lg" />
                 <div className="flex-grow">
                   <h4 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{citation.title}</h4>
                   <p className="text-xs text-gray-500 mb-2">{citation.journal}</p>
@@ -749,12 +750,12 @@ const ArticleProfile = () => {
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold text-gray-900">Artikel Terkait</h3>
-            <button className="text-sm text-indigo-600 font-medium hover:text-indigo-700">Lihat semua</button>
+            <Link to="/articles" className="text-sm text-indigo-600 font-medium hover:text-indigo-700">Lihat semua</Link>
           </div>
           <div className="space-y-4">
             {article.relatedArticles.map((related, idx) => (
               <div key={idx} className="flex gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors">
-                <img src={`https://via.placeholder.com/60x60/${['10b981', '84cc16', 'f59e0b', '3b82f6'][idx]}/ffffff?text=A${idx + 1}`} alt="" className="w-16 h-16 object-cover rounded-lg" />
+                <img src={`/assets/img/article-default.svg`} alt="" className="w-16 h-16 object-cover rounded-lg" />
                 <div className="flex-grow">
                   <h4 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{related.title}</h4>
                   <p className="text-xs text-gray-500 mb-2">{related.journal}</p>

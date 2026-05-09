@@ -4,7 +4,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, AreaChart, Area
 } from 'recharts';
-import { SdgIcon, SDG_META } from '../components/shared/icons';
+import { SDG_META } from '../components/shared/icons';
 
 const SdgsCluster = () => {
   const [activeTab, setActiveTab] = useState('semua');
@@ -27,7 +27,7 @@ const SdgsCluster = () => {
 
   const publicationPerSdg = Array.from({ length: 17 }, (_, i) => {
     const n = i + 1;
-    return { sdg: n, name: SDG_META[n].label, value: [1245,987,2845,2431,876,1123,2102,1456,1678,743,1987,1234,3256,876,1543,654,856][i], color: SDG_META[n].color };
+    return { id: n, sdg: n, name: SDG_META[n].label, value: [1245,987,2845,2431,876,1123,2102,1456,1678,743,1987,1234,3256,876,1543,654,856][i], color: SDG_META[n].color };
   });
 
   const categoryData = [
@@ -39,11 +39,11 @@ const SdgsCluster = () => {
   ];
 
   const topSdgs = [
-    { rank: 1, sdg: 13, name: 'Climate Action',                    publications: 3256, impactScore: 92.1, color: '#10b981' },
-    { rank: 2, sdg: 3,  name: 'Good Health and Well-being',        publications: 2845, impactScore: 91.3, color: '#14b8a6' },
-    { rank: 3, sdg: 4,  name: 'Quality Education',                 publications: 2431, impactScore: 89.7, color: '#ef4444' },
-    { rank: 4, sdg: 7,  name: 'Affordable and Clean Energy',       publications: 2102, impactScore: 88.9, color: '#fbbf24' },
-    { rank: 5, sdg: 11, name: 'Sustainable Cities and Communities', publications: 1987, impactScore: 87.5, color: '#f59e0b' },
+    { rank: 1, id: 13, sdg: 13, name: 'Climate Action',                    publications: 3256, impactScore: 92.1, color: '#10b981' },
+    { rank: 2, id: 3,  sdg: 3,  name: 'Good Health and Well-being',        publications: 2845, impactScore: 91.3, color: '#14b8a6' },
+    { rank: 3, id: 4,  sdg: 4,  name: 'Quality Education',                 publications: 2431, impactScore: 89.7, color: '#ef4444' },
+    { rank: 4, id: 7,  sdg: 7,  name: 'Affordable and Clean Energy',       publications: 2102, impactScore: 88.9, color: '#fbbf24' },
+    { rank: 5, id: 11, sdg: 11, name: 'Sustainable Cities and Communities', publications: 1987, impactScore: 87.5, color: '#f59e0b' },
   ];
 
   const topResearchers = [
@@ -126,6 +126,19 @@ const SdgsCluster = () => {
       color: '#f59e0b'
     }
   ];
+
+  const CustomXAxisTick = ({ x, y, payload }) => {
+    const sdgNum = payload.value;
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <image
+          href={`/assets/sdgs/icons/sdg-${sdgNum}.svg`}
+          x={-12} y={4} width={24} height={24}
+          style={{ imageRendering: 'auto' }}
+        />
+      </g>
+    );
+  };
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -288,16 +301,13 @@ const SdgsCluster = () => {
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Kontribusi Publikasi per SDGs</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={publicationPerSdg} margin={{ top: 20, right: 30, left: 0, bottom: 60 }}>
+            <BarChart data={publicationPerSdg} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis 
-                dataKey="sdg" 
-                stroke="#6b7280" 
-                fontSize={11}
-                angle={-45}
-                textAnchor="end"
-                height={80}
-                tickFormatter={(value) => `SDG ${value}`}
+              <XAxis
+                dataKey="id"
+                tick={<CustomXAxisTick />}
+                height={36}
+                stroke="#e5e7eb"
               />
               <YAxis stroke="#6b7280" fontSize={12} />
               <Tooltip content={<CustomTooltip />} />
@@ -368,7 +378,7 @@ const SdgsCluster = () => {
                   <span className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-700">
                     {sdg.rank}
                   </span>
-                  <SdgIcon number={sdg.sdg} color={sdg.color} className="w-8 h-8 text-xs" />
+                  <img src={`/assets/sdgs/icons/sdg-${sdg.id}.svg`} alt={`SDG ${sdg.id}`} className="w-8 h-8 rounded" />
                 </div>
                 <span className="text-xs font-bold text-gray-500">SDG {sdg.sdg}</span>
               </div>
@@ -481,12 +491,7 @@ const SdgsCluster = () => {
           {featuredPublications.map((pub, idx) => (
             <div key={idx} className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center gap-2 mb-3">
-                <span 
-                  className="w-6 h-6 rounded flex items-center justify-center text-white text-xs font-bold"
-                  style={{ backgroundColor: pub.color }}
-                >
-                  {pub.sdg}
-                </span>
+                <img src={`/assets/sdgs/icons/sdg-${pub.sdg}.svg`} alt={`SDG ${pub.sdg}`} className="w-6 h-6 rounded" title={`SDG ${pub.sdg}`} />
               </div>
               <h4 className="font-semibold text-gray-900 text-sm mb-3 line-clamp-3 h-14">
                 {pub.title}

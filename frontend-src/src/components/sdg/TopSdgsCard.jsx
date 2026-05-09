@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const TopSdgsCard = () => {
   const sdgsData = [
@@ -97,9 +98,9 @@ const TopSdgsCard = () => {
         <h2 className="text-lg md:text-xl font-bold text-gray-900">
           SDGs Paling Banyak Dikontribsikan
         </h2>
-        <a href="#" className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors pb-0.5">
+        <Link to="/sdgs" className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors pb-0.5">
           Lihat semua
-        </a>
+        </Link>
       </div>
 
       {/* Container Cards */}
@@ -126,9 +127,10 @@ const TopSdgsCard = () => {
           className="flex gap-4 overflow-x-auto pb-4 pt-1 snap-x [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
         >
           {sdgsData.map((sdg) => (
-            <div 
-              key={sdg.id} 
-              className="flex bg-white rounded-xl shadow-[0_2px_8px_-3px_rgba(0,0,0,0.1)] border border-gray-100 overflow-hidden shrink-0 snap-start w-[230px]"
+            <Link
+              key={sdg.id}
+              to="/sdgs"
+              className="flex bg-white rounded-xl shadow-[0_2px_8px_-3px_rgba(0,0,0,0.1)] border border-gray-100 overflow-hidden shrink-0 snap-start w-[230px] hover:border-indigo-200 transition-colors"
             >
               <div className={`w-[60px] shrink-0 flex flex-col items-center justify-center py-4 ${sdg.color} text-white`}>
                 <span className="text-2xl font-bold leading-none">{sdg.id}</span>
@@ -159,7 +161,7 @@ const TopSdgsCard = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 

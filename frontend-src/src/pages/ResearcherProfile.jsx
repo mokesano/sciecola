@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { 
+import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area, Legend
 } from 'recharts';
@@ -21,19 +21,20 @@ const researchersDatabase = [
     scopusId: "57219929925",
     researcherId: "A-1234-2019",
     country: "Indonesia",
-    
+    bio: "Dr. Andi Rahman adalah Associate Professor di Departemen Ilmu Lingkungan Universitas Indonesia. Beliau memiliki keahlian dalam adaptasi perubahan iklim, ekologi pesisir, dan kebijakan lingkungan. Aktif sebagai peneliti sejak 2012, beliau telah menerbitkan lebih dari 42 artikel ilmiah di jurnal bereputasi internasional dan menjadi reviewer di berbagai jurnal lingkungan terkemuka.",
+
     // Metrics
     citations: 1248,
     hIndex: 17,
     i10Index: 21,
     publications: 42,
-    collaborators: 156,
+    collaboratorsCount: 156,
     views: 98732,
     downloads: 12843,
     sdgsInvolved: 12,
     yearsActive: "2012 - Sekarang",
     firstPublication: 2012,
-    
+
     // Research Focus
     researchInterests: ["Climate Change Adaptation", "Coastal Ecology", "Environmental Policy", "Sustainable Development"],
     sdgFocus: [
@@ -59,7 +60,7 @@ const researchersDatabase = [
       { text: "Ecosystem Services", size: 8 },
       { text: "Environmental Education", size: 8 }
     ],
-    
+
     // Publication Trend
     publicationTrend: [
       { year: "2015", count: 4 },
@@ -73,7 +74,7 @@ const researchersDatabase = [
       { year: "2023", count: 14 },
       { year: "2024", count: 17 }
     ],
-    
+
     // Citation Trend
     citationTrend: [
       { year: "2015", citations: 245 },
@@ -87,61 +88,66 @@ const researchersDatabase = [
       { year: "2023", citations: 1178 },
       { year: "2024", citations: 1248 }
     ],
-    
+
     // Recent Publications
     recentPublications: [
       {
         id: 1,
+        doi: "10.1234/jess.2024.1002",
         title: "Climate Change Adaptation in Coastal Communities",
         journal: "Journal of Environmental Science",
         year: 2024,
         sdgs: [13, 11, 3],
         views: 652,
         citations: 45,
-        thumbnail: "https://via.placeholder.com/80x60/10b981/ffffff?text=CC"
+        thumbnail: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=80&h=60&fit=crop&q=80"
       },
       {
         id: 2,
+        doi: "10.1234/jess.2024.1003",
         title: "Sustainable Urban Transport Systems in Indonesia",
         journal: "Sustainable Cities Review",
         year: 2024,
         sdgs: [11, 9],
         views: 510,
         citations: 38,
-        thumbnail: "https://via.placeholder.com/80x60/f59e0b/ffffff?text=UT"
+        thumbnail: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=80&h=60&fit=crop&q=80"
       },
       {
         id: 3,
+        doi: "10.1234/jess.2023.2001",
         title: "Renewable Energy Policy and Its Impact",
         journal: "Energy Policy Journal",
         year: 2023,
         sdgs: [7, 13],
         views: 411,
         citations: 32,
-        thumbnail: "https://via.placeholder.com/80x60/fbbf24/ffffff?text=RE"
+        thumbnail: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=80&h=60&fit=crop&q=80"
       },
       {
         id: 4,
+        doi: "10.1234/jet.2023.1101",
         title: "Digital Learning Innovation for Quality Education",
         journal: "Journal of Education Technology",
         year: 2023,
         sdgs: [4, 9],
         views: 398,
         citations: 21,
-        thumbnail: "https://via.placeholder.com/80x60/ef4444/ffffff?text=DL"
+        thumbnail: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=80&h=60&fit=crop&q=80"
       },
       {
         id: 5,
+        doi: "10.1234/jcp.2023.0501",
         title: "Green Technology Innovation for Sustainable Industry",
         journal: "Journal of Cleaner Production",
         year: 2023,
         sdgs: [9, 12],
         views: 362,
         citations: 17,
-        thumbnail: "https://via.placeholder.com/80x60/8b5cf6/ffffff?text=GT"
+        thumbnail: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=80&h=60&fit=crop&q=80"
       }
     ],
-    
+
     // Collaborators
     collaborators: [
       {
@@ -180,21 +186,21 @@ const researchersDatabase = [
         collaborations: 9
       }
     ],
-    
+
     // Institutional Affiliations
     affiliations: [
       { name: "Universitas Indonesia", articles: 28, percentage: 66.7, logo: "https://via.placeholder.com/40x40/6366f1/ffffff?text=UI" },
       { name: "Institut Teknologi Bandung", articles: 9, percentage: 21.4, logo: "https://via.placeholder.com/40x40/f59e0b/ffffff?text=ITB" },
       { name: "Universitas Gadjah Mada", articles: 5, percentage: 11.9, logo: "https://via.placeholder.com/40x40/10b981/ffffff?text=UGM" }
     ],
-    
+
     // Social Links
     socialLinks: {
-      googleScholar: "#",
-      scopus: "#",
-      orcid: "#",
-      linkedin: "#",
-      researchgate: "#"
+      googleScholar: "https://scholar.google.com",
+      scopus: "https://www.scopus.com",
+      orcid: "https://orcid.org/0000-0002-1825-0097",
+      linkedin: "https://www.linkedin.com",
+      researchgate: "https://www.researchgate.net"
     }
   }
 ];
@@ -202,11 +208,9 @@ const researchersDatabase = [
 const ResearcherProfile = () => {
   const { orcidCode } = useParams();
   const [activeTab, setActiveTab] = useState('ringkasan');
-  
+
   // Find researcher by ORCID
   const researcher = researchersDatabase.find(r => r.orcid === orcidCode || r.id === 1); // Fallback untuk demo
-  
-  const [article, setArticle] = useState(null);
 
   if (!researcher) {
     return (
@@ -252,10 +256,12 @@ const ResearcherProfile = () => {
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
             <div className="flex flex-col items-center text-center">
               <div className="relative mb-4">
-                <img 
-                  src={researcher.avatar} 
+                <img
+                  src={researcher.avatar}
                   alt={researcher.name}
+                  onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
                   className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
+                  onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
                 />
                 {researcher.verified && (
                   <div className="absolute bottom-1 right-1 bg-blue-500 text-white rounded-full p-1.5">
@@ -265,7 +271,7 @@ const ResearcherProfile = () => {
                   </div>
                 )}
               </div>
-              
+
               <h1 className="text-2xl font-bold text-gray-900 mb-1 flex items-center gap-2">
                 {researcher.name}
                 {researcher.verified && (
@@ -274,9 +280,9 @@ const ResearcherProfile = () => {
                   </svg>
                 )}
               </h1>
-              
+
               <p className="text-indigo-600 font-medium mb-4">{researcher.title}</p>
-              
+
               <div className="w-full space-y-2 text-sm">
                 <div className="flex items-center gap-2 text-gray-600 justify-center">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -316,19 +322,19 @@ const ResearcherProfile = () => {
                   <span className="text-xs">Researcher ID: {researcher.researcherId}</span>
                 </div>
               </div>
-              
+
               {/* Social Links */}
               <div className="flex gap-3 mt-4">
-                <a href={researcher.socialLinks.googleScholar} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
+                <a href={researcher.socialLinks.googleScholar} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
                 </a>
-                <a href={researcher.socialLinks.scopus} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
+                <a href={researcher.socialLinks.scopus} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
                 </a>
-                <a href={researcher.socialLinks.orcid} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
+                <a href={researcher.socialLinks.orcid} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
                 </a>
-                <a href={researcher.socialLinks.linkedin} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
+                <a href={researcher.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14m-.5 15.5v-5.3a3.26 3.26 0 00-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 011.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 001.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 00-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
                 </a>
               </div>
@@ -401,12 +407,10 @@ const ResearcherProfile = () => {
         <nav className="flex gap-6 overflow-x-auto">
           {[
             { id: 'ringkasan', label: 'Ringkasan', icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z' },
-            { id: 'artikel', label: 'Artikel', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z' },
-            { id: 'sitasi', label: 'Sitasi', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
-            { id: 'sdgs', label: 'SDGs', icon: 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+            { id: 'publikasi', label: 'Publikasi', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z' },
             { id: 'kolaborasi', label: 'Kolaborasi', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
-            { id: 'publikasi', label: 'Publikasi per Tahun', icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' },
-            { id: 'informasi', label: 'Informasi', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' }
+            { id: 'dampak', label: 'Dampak', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+            { id: 'tentang', label: 'Tentang', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -426,267 +430,519 @@ const ResearcherProfile = () => {
         </nav>
       </div>
 
-      {/* Quick Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-        {[
-          { label: 'Total Artikel', value: researcher.publications, icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
-          { label: 'Total Sitasi', value: researcher.citations, icon: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z' },
-          { label: 'h-index', value: researcher.hIndex, icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
-          { label: 'i10-index', value: researcher.i10Index, icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
-          { label: 'Total Views', value: researcher.views, icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z' },
-          { label: 'Downloads', value: researcher.downloads, icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4' }
-        ].map((stat, idx) => (
-          <div key={idx} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center gap-3">
-            <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center shrink-0">
-              <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={stat.icon} />
-              </svg>
-            </div>
-            <div>
-              <p className="text-lg font-bold text-gray-900">{stat.value.toLocaleString()}</p>
-              <p className="text-xs text-gray-600">{stat.label}</p>
-            </div>
+      {/* Tab: Ringkasan */}
+      {activeTab === 'ringkasan' && (
+        <div>
+          {/* Quick Stats Row */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+            {[
+              { label: 'Total Artikel', value: researcher.publications, icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+              { label: 'Total Sitasi', value: researcher.citations, icon: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z' },
+              { label: 'h-index', value: researcher.hIndex, icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+              { label: 'i10-index', value: researcher.i10Index, icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
+              { label: 'Total Views', value: researcher.views, icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z' },
+              { label: 'Downloads', value: researcher.downloads, icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4' }
+            ].map((stat, idx) => (
+              <div key={idx} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center gap-3">
+                <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center shrink-0">
+                  <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={stat.icon} />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-gray-900">{stat.value.toLocaleString()}</p>
+                  <p className="text-xs text-gray-600">{stat.label}</p>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Publication Trend */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-gray-900">Tren Publikasi per Tahun</h3>
-            <select className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-              <option>Semua Tahun</option>
-              <option>5 Tahun Terakhir</option>
-              <option>10 Tahun Terakhir</option>
-            </select>
-          </div>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={researcher.publicationTrend}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
-              <YAxis stroke="#6b7280" fontSize={12} />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="count" fill="#6366f1" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+          {/* Charts Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            {/* Publication Trend */}
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-bold text-gray-900">Tren Publikasi per Tahun</h3>
+                <select className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                  <option>Semua Tahun</option>
+                  <option>5 Tahun Terakhir</option>
+                  <option>10 Tahun Terakhir</option>
+                </select>
+              </div>
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={researcher.publicationTrend}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
+                  <YAxis stroke="#6b7280" fontSize={12} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="count" fill="#6366f1" radius={[4, 4, 0, 0]} name="Publikasi" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
 
-        {/* SDG Distribution */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Distribusi Artikel per SDGs</h3>
-          <div className="flex flex-col sm:flex-row items-center gap-6">
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie
-                  data={researcher.sdgFocus}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
-                  dataKey="percentage"
-                >
-                  {researcher.sdgFocus.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+            {/* SDG Distribution */}
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <h3 className="text-lg font-bold text-gray-900 mb-6">Distribusi Artikel per SDGs</h3>
+              <div className="flex flex-col sm:flex-row items-center gap-6">
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie
+                      data={researcher.sdgFocus}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="percentage"
+                    >
+                      {researcher.sdgFocus.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="flex-grow space-y-2">
+                  {researcher.sdgFocus.map((sdg, idx) => (
+                    <div key={idx} className="flex items-center gap-2 text-sm">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: sdg.color }} />
+                      <span className="text-gray-600">{sdg.name}</span>
+                      <span className="font-semibold text-gray-900">({sdg.percentage}%)</span>
+                    </div>
                   ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="flex-grow space-y-2">
-              {researcher.sdgFocus.map((sdg, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-sm">
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: sdg.color }} />
-                  <span className="text-gray-600">{sdg.name}</span>
-                  <span className="font-semibold text-gray-900">({sdg.percentage}%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Articles & Collaborators */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Recent Articles */}
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-bold text-gray-900">Artikel Terbaru</h3>
+                <Link to="/articles" className="text-sm text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
+                  Lihat semua
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
+              <div className="space-y-4">
+                {researcher.recentPublications.slice(0, 3).map((pub) => (
+                  <Link key={pub.id} to={`/doi/${pub.doi}`} className="flex gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors block">
+                    <img src={pub.thumbnail} alt={pub.title} className="w-20 h-16 object-cover rounded-lg shrink-0" />
+                    <div className="flex-grow min-w-0">
+                      <h4 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{pub.title}</h4>
+                      <p className="text-xs text-gray-500 mb-2">{pub.journal} • {pub.year}</p>
+                      <div className="flex items-center gap-3">
+                        <div className="flex gap-1">
+                          {pub.sdgs.map(sdg => (
+                            <span key={sdg} className="px-1.5 py-0.5 rounded text-[10px] font-bold text-white" style={{ backgroundColor: sdgColors[sdg] || '#6b7280' }}>
+                              {sdg}
+                            </span>
+                          ))}
+                        </div>
+                        <span className="text-xs text-gray-500">{pub.citations} sitasi</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+              <Link to="/articles" className="text-sm text-indigo-600 font-medium mt-4 inline-flex items-center gap-1 hover:text-indigo-700">
+                Lihat semua artikel
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+
+            {/* Collaborators */}
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-bold text-gray-900">Kolaborasi Penulis</h3>
+                <Link to="/researchers" className="text-sm text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
+                  Lihat semua
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
+              <div className="space-y-4">
+                {researcher.collaborators.slice(0, 3).map((collab) => (
+                  <div key={collab.id} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors">
+                    <img src={collab.avatar} alt={collab.name} className="w-10 h-10 rounded-full object-cover" onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }} />
+                    <div className="flex-grow min-w-0">
+                      <h4 className="font-semibold text-gray-900 text-sm mb-0.5">{collab.name}</h4>
+                      <p className="text-xs text-gray-500 truncate">{collab.univ}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-xs font-semibold">
+                        {collab.collaborations} kolaborasi
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab: Publikasi */}
+      {activeTab === 'publikasi' && (
+        <div>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-bold text-gray-900">Semua Publikasi ({researcher.publications})</h2>
+            <div className="flex gap-3">
+              <select className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500">
+                <option>Semua Tahun</option>
+                <option>2024</option>
+                <option>2023</option>
+                <option>2022</option>
+              </select>
+              <select className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500">
+                <option>Urutkan: Terbaru</option>
+                <option>Urutkan: Sitasi Terbanyak</option>
+                <option>Urutkan: Views Terbanyak</option>
+              </select>
+            </div>
+          </div>
+          <div className="space-y-4">
+            {researcher.recentPublications.map((pub) => (
+              <Link
+                key={pub.id}
+                to={`/doi/${pub.doi}`}
+                className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all block"
+              >
+                <div className="flex gap-5">
+                  <img
+                    src={pub.thumbnail}
+                    alt={pub.title}
+                    className="w-24 h-20 object-cover rounded-xl shrink-0"
+                  />
+                  <div className="flex-grow min-w-0">
+                    <div className="flex items-start justify-between gap-4 mb-2">
+                      <h3 className="font-bold text-gray-900 text-base leading-snug hover:text-indigo-700 transition-colors">
+                        {pub.title}
+                      </h3>
+                      <span className="shrink-0 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">{pub.year}</span>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-3">{pub.journal}</p>
+                    <div className="flex items-center gap-4 flex-wrap">
+                      <div className="flex gap-1">
+                        {pub.sdgs.map(sdg => (
+                          <span key={sdg} className="px-2 py-0.5 rounded text-xs font-bold text-white" style={{ backgroundColor: sdgColors[sdg] || '#6b7280' }}>
+                            SDG {sdg}
+                          </span>
+                        ))}
+                      </div>
+                      <span className="text-sm text-gray-500 flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        {pub.views.toLocaleString()} views
+                      </span>
+                      <span className="text-sm text-gray-500 flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                        </svg>
+                        {pub.citations} sitasi
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <div className="mt-6 text-center">
+            <Link to="/articles" className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-50 text-indigo-700 rounded-xl font-semibold hover:bg-indigo-100 transition-colors">
+              Lihat semua artikel di basis data
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Tab: Kolaborasi */}
+      {activeTab === 'kolaborasi' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Collaborators List */}
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-bold text-gray-900">Kolaborator ({researcher.collaborators.length})</h3>
+              <Link to="/researchers" className="text-sm text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
+                Lihat semua
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+            <div className="space-y-4">
+              {researcher.collaborators.map((collab) => (
+                <div key={collab.id} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors">
+                  <img
+                    src={collab.avatar}
+                    alt={collab.name}
+                    onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
+                    className="w-12 h-12 rounded-full object-cover"
+                    onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
+                  />
+                  <div className="flex-grow min-w-0">
+                    <h4 className="font-semibold text-gray-900 text-sm mb-0.5">{collab.name}</h4>
+                    <p className="text-xs text-gray-500 truncate">{collab.univ}</p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-semibold block mb-1">
+                      {collab.collaborations}
+                    </span>
+                    <p className="text-xs text-gray-400">kolaborasi</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Affiliations */}
+          <div>
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm mb-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-6">Afiliasi Institusi</h3>
+              <div className="space-y-4">
+                {researcher.affiliations.map((aff, idx) => (
+                  <div key={idx} className="flex items-center gap-4">
+                    <img src={aff.logo} alt={aff.name} className="w-10 h-10 rounded-lg object-cover" />
+                    <div className="flex-grow">
+                      <h4 className="font-semibold text-gray-900 text-sm mb-1">{aff.name}</h4>
+                      <p className="text-xs text-gray-500">{aff.articles} artikel</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden mb-1">
+                        <div className="h-full bg-indigo-600 rounded-full" style={{ width: `${aff.percentage}%` }}></div>
+                      </div>
+                      <p className="text-xs font-semibold text-gray-900">{aff.percentage}%</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Collaboration Map Placeholder */}
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Peta Kolaborasi</h3>
+              <div className="bg-gray-50 rounded-xl p-8 text-center h-48 flex items-center justify-center">
+                <div className="text-gray-400">
+                  <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="text-sm">World Collaboration Map</p>
+                  <p className="text-xs mt-1">{researcher.collaborators.length} kolaborator aktif</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab: Dampak */}
+      {activeTab === 'dampak' && (
+        <div>
+          {/* Impact Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm text-center">
+              <p className="text-4xl font-bold text-indigo-600 mb-2">{researcher.hIndex}</p>
+              <p className="text-lg font-semibold text-gray-900 mb-1">h-Index</p>
+              <p className="text-sm text-gray-500">Mengukur produktivitas dan dampak sitasi</p>
+            </div>
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm text-center">
+              <p className="text-4xl font-bold text-purple-600 mb-2">{researcher.i10Index}</p>
+              <p className="text-lg font-semibold text-gray-900 mb-1">i10-Index</p>
+              <p className="text-sm text-gray-500">Jumlah publikasi dengan 10+ sitasi</p>
+            </div>
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm text-center">
+              <p className="text-4xl font-bold text-green-600 mb-2">{researcher.citations.toLocaleString()}</p>
+              <p className="text-lg font-semibold text-gray-900 mb-1">Total Sitasi</p>
+              <p className="text-sm text-gray-500">Akumulasi sitasi sepanjang karier</p>
+            </div>
+          </div>
+
+          {/* Citation Trend Chart */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-bold text-gray-900">Tren Sitasi per Tahun</h3>
+                <select className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500">
+                  <option>Semua Tahun</option>
+                  <option>5 Tahun Terakhir</option>
+                </select>
+              </div>
+              <ResponsiveContainer width="100%" height={280}>
+                <AreaChart data={researcher.citationTrend}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
+                  <YAxis stroke="#6b7280" fontSize={12} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area type="monotone" dataKey="citations" stroke="#6366f1" fill="#6366f1" fillOpacity={0.2} name="Sitasi" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-bold text-gray-900">Tren Publikasi per Tahun</h3>
+                <select className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500">
+                  <option>Semua Tahun</option>
+                  <option>5 Tahun Terakhir</option>
+                </select>
+              </div>
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={researcher.publicationTrend}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
+                  <YAxis stroke="#6b7280" fontSize={12} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="count" fill="#8b5cf6" radius={[4, 4, 0, 0]} name="Publikasi" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Additional impact stats */}
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Ringkasan Dampak Penelitian</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { label: 'Total Views', value: researcher.views.toLocaleString(), color: 'blue' },
+                { label: 'Total Downloads', value: researcher.downloads.toLocaleString(), color: 'green' },
+                { label: 'SDGs Terlibat', value: researcher.sdgsInvolved, color: 'orange' },
+                { label: 'Tahun Aktif', value: new Date().getFullYear() - researcher.firstPublication, color: 'purple' }
+              ].map((item, idx) => (
+                <div key={idx} className="bg-gray-50 rounded-xl p-4 text-center">
+                  <p className="text-2xl font-bold text-gray-900 mb-1">{item.value}</p>
+                  <p className="text-sm text-gray-600">{item.label}</p>
                 </div>
               ))}
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Research Topics & Citation Trend */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Word Cloud */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Topik Penelitian Utama</h3>
-          <div className="flex flex-wrap justify-center items-center gap-3 py-8">
-            {researcher.topKeywords.map((keyword, idx) => (
-              <span 
-                key={idx}
-                className="text-indigo-600 hover:text-indigo-800 cursor-pointer transition-colors font-medium"
-                style={{ fontSize: `${keyword.size / 40 * 1.5}rem` }}
-              >
-                {keyword.text}
-              </span>
-            ))}
-          </div>
-        </div>
+      {/* Tab: Tentang */}
+      {activeTab === 'tentang' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
+            {/* Bio */}
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Biografi</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">{researcher.bio}</p>
+            </div>
 
-        {/* Citation Trend */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-gray-900">Tren Sitasi</h3>
-            <select className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-              <option>Semua Tahun</option>
-              <option>5 Tahun Terakhir</option>
-            </select>
-          </div>
-          <ResponsiveContainer width="100%" height={250}>
-            <AreaChart data={researcher.citationTrend}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
-              <YAxis stroke="#6b7280" fontSize={12} />
-              <Tooltip content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="citations" stroke="#6366f1" fill="#6366f1" fillOpacity={0.2} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Recent Articles & Collaborators */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Recent Articles */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-gray-900">Artikel Terbaru</h3>
-            <Link to="#" className="text-sm text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
-              Lihat semua
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
-          </div>
-          <div className="space-y-4">
-            {researcher.recentPublications.map((pub) => (
-              <div key={pub.id} className="flex gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors">
-                <img src={pub.thumbnail} alt={pub.title} className="w-20 h-16 object-cover rounded-lg shrink-0" />
-                <div className="flex-grow min-w-0">
-                  <h4 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{pub.title}</h4>
-                  <p className="text-xs text-gray-500 mb-2">{pub.journal} • {pub.year}</p>
-                  <div className="flex items-center gap-3">
-                    <div className="flex gap-1">
-                      {pub.sdgs.map(sdg => (
-                        <span key={sdg} className="px-1.5 py-0.5 rounded text-[10px] font-bold text-white" style={{ backgroundColor: sdgColors[sdg] || '#6b7280' }}>
-                          {sdg}
-                        </span>
-                      ))}
-                    </div>
-                    <span className="text-xs text-gray-500 flex items-center gap-1">
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                      {pub.views}
-                    </span>
-                    <span className="text-xs text-gray-500 flex items-center gap-1">
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                      </svg>
-                      {pub.citations}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <Link to="#" className="text-sm text-indigo-600 font-medium mt-4 inline-flex items-center gap-1 hover:text-indigo-700">
-            Lihat semua artikel
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </Link>
-        </div>
-
-        {/* Collaborators */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-gray-900">Kolaborasi Penulis</h3>
-            <Link to="#" className="text-sm text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
-              Lihat semua
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
-          </div>
-          <div className="space-y-4">
-            {researcher.collaborators.map((collab) => (
-              <div key={collab.id} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors">
-                <img src={collab.avatar} alt={collab.name} className="w-10 h-10 rounded-full object-cover" />
-                <div className="flex-grow min-w-0">
-                  <h4 className="font-semibold text-gray-900 text-sm mb-0.5">{collab.name}</h4>
-                  <p className="text-xs text-gray-500 truncate">{collab.univ}</p>
-                </div>
-                <div className="text-right">
-                  <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-xs font-semibold">
-                    {collab.collaborations}
+            {/* Research Interests */}
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Minat Penelitian</h3>
+              <div className="flex flex-wrap gap-3">
+                {researcher.researchInterests.map((interest, idx) => (
+                  <span
+                    key={idx}
+                    className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl text-sm font-medium border border-indigo-100"
+                  >
+                    {interest}
                   </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Keywords */}
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Kata Kunci Penelitian</h3>
+              <div className="flex flex-wrap justify-center items-center gap-3 py-4">
+                {researcher.topKeywords.map((keyword, idx) => (
+                  <span
+                    key={idx}
+                    className="text-indigo-600 hover:text-indigo-800 cursor-pointer transition-colors font-medium"
+                    style={{ fontSize: `${keyword.size / 40 * 1.5}rem` }}
+                  >
+                    {keyword.text}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar info */}
+          <div className="space-y-6">
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Informasi Akademik</h3>
+              <div className="space-y-3 text-sm">
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">ORCID</p>
+                  <p className="font-semibold text-gray-900 font-mono text-xs">{researcher.orcid}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">Scopus ID</p>
+                  <p className="font-semibold text-gray-900">{researcher.scopusId}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">Researcher ID</p>
+                  <p className="font-semibold text-gray-900">{researcher.researcherId}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">Departemen</p>
+                  <p className="font-semibold text-gray-900">{researcher.department}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">Institusi</p>
+                  <p className="font-semibold text-gray-900">{researcher.univ}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">Tahun Aktif</p>
+                  <p className="font-semibold text-gray-900">{researcher.yearsActive}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">Negara</p>
+                  <p className="font-semibold text-gray-900">{researcher.country}</p>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
+            </div>
 
-      {/* Collaboration Map & Affiliations */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Map Placeholder */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Peta Kolaborasi</h3>
-          <div className="bg-gray-50 rounded-xl p-8 text-center h-64 flex items-center justify-center">
-            <div className="text-gray-400">
-              <svg className="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <p className="text-sm">World Collaboration Map</p>
+            {/* SDG Focus */}
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Fokus SDGs</h3>
+              <div className="space-y-3">
+                {researcher.sdgFocus.map((sdg, idx) => (
+                  <div key={idx} className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0" style={{ backgroundColor: sdg.color }}>
+                      {sdg.sdg}
+                    </div>
+                    <div className="flex-grow min-w-0">
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-gray-700 truncate">{sdg.name}</span>
+                        <span className="font-semibold ml-2">{sdg.percentage}%</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full" style={{ width: `${sdg.percentage}%`, backgroundColor: sdg.color }}></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Affiliations */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-gray-900">Afiliasi Institusi</h3>
-            <Link to="#" className="text-sm text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
-              Lihat semua
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
-          </div>
-          <div className="space-y-4">
-            {researcher.affiliations.map((aff, idx) => (
-              <div key={idx} className="flex items-center gap-4">
-                <img src={aff.logo} alt={aff.name} className="w-10 h-10 rounded-lg object-cover" />
-                <div className="flex-grow">
-                  <h4 className="font-semibold text-gray-900 text-sm mb-1">{aff.name}</h4>
-                  <p className="text-xs text-gray-500">{aff.articles} artikel</p>
-                </div>
-                <div className="text-right">
-                  <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden mb-1">
-                    <div className="h-full bg-indigo-600 rounded-full" style={{ width: `${aff.percentage}%` }}></div>
-                  </div>
-                  <p className="text-xs font-semibold text-gray-900">{aff.percentage}%</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      )}
 
       {/* CTA Section */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-8 text-white shadow-lg">
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-8 text-white shadow-lg mt-8">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
           <div>
             <h3 className="text-2xl font-bold mb-2">Analisis artikel Anda di Sciecola</h3>
             <p className="text-indigo-100">Masukkan DOI atau ORCID untuk melihat analisis dan klasifikasi SDGs secara instan.</p>
           </div>
           <div className="flex gap-3 w-full lg:w-auto">
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Masukkan DOI atau ORCID"
               className="flex-grow lg:w-80 px-4 py-3 rounded-xl text-gray-900 focus:ring-2 focus:ring-white focus:outline-none"
             />

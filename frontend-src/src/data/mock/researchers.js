@@ -19,8 +19,11 @@ const fields = ['Climate Change', 'Renewable Energy', 'Public Health', 'Educatio
   'Ocean Science', 'Sustainable Agriculture', 'Industrial Ecology', 'Peace & Justice', 'Digital Inclusion'];
 
 const makeOrcid = (n) => {
-  const s = String(n).padStart(4, '0');
-  return `0000-0002-${s}-${String((n * 7) % 9999).padStart(4, '0')}`;
+  const a = String(n).padStart(4, '0');
+  const b = String((n * 7) % 9999).padStart(4, '0');
+  const c = String((n * 13) % 9999).padStart(4, '0');
+  const d = String((n * 31) % 9999).padStart(4, '0');
+  return `${a}-${b}-${c}-${d}`;
 };
 
 const randomFrom = (arr) => arr[Math.floor(Math.random() * arr.length)];
@@ -50,7 +53,7 @@ export const RESEARCHERS = Array.from({ length: 100 }, (_, i) => {
   ];
 
   return {
-    id: `r${String(id).padStart(3, '0')}`,
+    id: `rsr-${String(id).padStart(5, '0')}`,
     orcid: makeOrcid(1000 + id),
     name: `${firstName} ${lastName}`,
     firstName,
@@ -79,7 +82,7 @@ export const RESEARCHERS = Array.from({ length: 100 }, (_, i) => {
     verified: id % 4 !== 0,
     joinedYear: randomInt(2015, 2023),
     lastActive: `2024-${String(randomInt(1, 12)).padStart(2, '0')}-${String(randomInt(1, 28)).padStart(2, '0')}`,
-    collaborators: Array.from({ length: randomInt(2, 8) }, (_, j) => `r${String(((id + j + 1) % 100) + 1).padStart(3, '0')}`),
+    collaborators: Array.from({ length: randomInt(2, 8) }, (_, j) => `rsr-${String(((id + j + 1) % 100) + 1).padStart(5, '0')}`),
   };
 });
 

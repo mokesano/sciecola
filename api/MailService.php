@@ -50,19 +50,27 @@ class MailService {
     // ─── Convenience wrappers ───────────────────────────────────────────
 
     public function sendWelcome(string $to, string $name): bool {
-        $body = $this->template('welcome', ['name' => $name]);
+        $appUrl = defined('APP_URL') ? APP_URL : 'http://localhost';
+        $body   = $this->renderTemplate('welcome', [
+            'name'    => $name,
+            'app_url' => $appUrl,
+        ]);
         return $this->send($to, 'Selamat datang di Sciecola!', $body);
     }
 
     public function sendPasswordReset(string $to, string $token): bool {
         $link = (defined('APP_URL') ? APP_URL : 'http://localhost') . "/reset-password?token={$token}";
-        $body = $this->template('password_reset', ['link' => $link]);
+        $body = $this->renderTemplate('reset-password', ['reset_url' => $link]);
         return $this->send($to, 'Reset Kata Sandi', $body);
     }
 
     public function sendEmailVerification(string $to, string $token): bool {
-        $link = (defined('APP_URL') ? APP_URL : 'http://localhost') . "/verify-email?token={$token}";
-        $body = $this->template('email_verification', ['link' => $link]);
+        $appUrl = defined('APP_URL') ? APP_URL : 'http://localhost';
+        $link   = $appUrl . "/verify-email?token={$token}";
+        $body   = $this->renderTemplate('verify-email', [
+            'otp_code'   => strtoupper(substr($token, 0, 6)),
+            'verify_url' => $link,
+        ]);
         return $this->send($to, 'Verifikasi Email Anda', $body);
     }
 
@@ -78,16 +86,49 @@ class MailService {
 
     // ─── Private helpers ────────────────────────────────────────────────
 
+    /**
+     * Render an HTML email template from the templates/email/ directory.
+     * Replaces all {{key}} placeholders with the corresponding value from $vars.
+     * Falls back to the inline template() method if the file does not exist.
+     *
+     * @param string $template  Template filename without .html extension (e.g. 'welcome')
+     * @param array  $vars      Associative array of placeholder => value
+     * @return string           Rendered HTML string
+     */
+    private function renderTemplate(string $template, array $vars): string {
+        $path = __DIR__ . '/../templates/email/' . $template . '.html';
+
+        if (!file_exists($path)) {
+            // Derive a legacy template name for backward compatibility
+            $legacyMap = [
+                'welcome'         => 'welcome',
+                'reset-password'  => 'password_reset',
+                'verify-email'    => 'email_verification',
+                'notification'    => 'analysis_complete',
+            ];
+            $legacyKey = $legacyMap[$template] ?? $template;
+            return $this->template($legacyKey, $vars);
+        }
+
+        $html = file_get_contents($path);
+
+        foreach ($vars as $key => $value) {
+            $html = str_replace('{{' . $key . '}}', htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8'), $html);
+        }
+
+        return $html;
+    }
+
     private function sendViaSmtp(string $to, string $subject, string $body, string $from, string $fromName, array $options): bool {
         try {
             $mailer = new \PHPMailer\PHPMailer\PHPMailer(true);
             $mailer->isSMTP();
-            $mailer->Host       = defined('SMTP_HOST')     ? SMTP_HOST     : 'localhost';
-            $mailer->SMTPAuth   = defined('SMTP_USER')     ? true          : false;
-            $mailer->Username   = defined('SMTP_USER')     ? SMTP_USER     : '';
-            $mailer->Password   = defined('SMTP_PASS')     ? SMTP_PASS     : '';
-            $mailer->SMTPSecure = defined('SMTP_SECURE')   ? SMTP_SECURE   : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-            $mailer->Port       = defined('SMTP_PORT')     ? (int)SMTP_PORT : 587;
+            $mailer->Host       = defined('SMTP_HOST')   ? SMTP_HOST   : 'localhost';
+            $mailer->SMTPAuth   = defined('SMTP_AUTH')   ? SMTP_AUTH   : false;
+            $mailer->Username   = defined('SMTP_USER')   ? SMTP_USER   : '';
+            $mailer->Password   = defined('SMTP_PASS')   ? SMTP_PASS   : '';
+            $mailer->SMTPSecure = defined('SMTP_SECURE') ? SMTP_SECURE : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $mailer->Port       = defined('SMTP_PORT')   ? SMTP_PORT   : 587;
             $mailer->CharSet    = 'UTF-8';
 
             $mailer->setFrom($from, $fromName);

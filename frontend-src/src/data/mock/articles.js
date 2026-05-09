@@ -48,8 +48,8 @@ export const ARTICLES = Array.from({ length: 100 }, (_, i) => {
   const month = String((i % 12) + 1).padStart(2, '0');
 
   return {
-    id: `a${String(id).padStart(3, '0')}`,
-    doi: `10.${1000 + (i % 9000)}/${journal.id.replace('j', 'art')}-${year}-${String(id).padStart(4, '0')}`,
+    id: `art-${String(id).padStart(5, '0')}`,
+    doi: `10.${String(10000 + (i % 90000)).padStart(5, '0')}/art-${String(id).padStart(7, '0')}`,
     title,
     abstract: ABSTRACTS[i % ABSTRACTS.length],
     year,
