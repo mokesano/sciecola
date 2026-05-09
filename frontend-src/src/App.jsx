@@ -71,6 +71,10 @@ import Api from './pages/Api';
 import Register from './pages/Register';
 import Login from './pages/Login';
 
+// Impor Halaman Admin Dashboard
+import Admin from './pages/Admin';
+import Monitoring from './pages/Monitoring';
+
 // Impor Halaman User Dashboard 
 import Feeds from './pages/Feeds';
 import SciecoDashboard from './pages/SciecoDashboard';
@@ -206,6 +210,10 @@ function App() {
           <Route path="/docs" element={<Doc />} />
           <Route path="/docs/faq" element={<Faq />} />
           <Route path="/docs/api-reference" element={<Api />} />
+
+          {/* Rute Admin Dashboard */}
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/monitoring" element={<Monitoring />} />
 
           {/* Rute Dashboard */}
           <Route path="/feeds" element={<Feeds />} />

@@ -14,12 +14,37 @@
 # Dependencies
 /vendor/
 /node_modules/
+node_modules/
+.pnpm/
+.yarn/
+yarn.lock
+package-lock.json
+
+# Vite/Rollup
+dist/
+build/
+.vite/
+*.map
 
 # Environment
+.env.local
+.env*.local
 *.env
 .env
 .env.*
 !.env.example
+
+# Testing
+coverage/
+.nyc_output/
+*.test.*
+*.spec.*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
 
 # Build artifacts
 /dist/
@@ -28,6 +53,7 @@
 # Editor / OS
 .DS_Store
 .DS_Store?
+desktop.ini
 Thumbs.db
 .idea/
 .vscode/
@@ -35,10 +61,18 @@ Thumbs.db
 *.swo
 *~
 
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
 # PHP
 *.phar
 /composer.lock
 /package-lock.json
+
+# Optional: Jika pakai TypeScript
+*.tsbuildinfo
 
 # Debug files
 /public/debug.php
