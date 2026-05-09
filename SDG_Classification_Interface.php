@@ -181,9 +181,10 @@ function detectInputType($input) {
     $input = trim($input);
     if (preg_match('/orcid\.org\/(\d{4}-\d{4}-\d{4}-\d{3}[\dX])/', $input, $matches)) return 'orcid';
     if (preg_match('/^(\d{4}-\d{4}-\d{4}-\d{3}[\dX])$/', $input)) return 'orcid';
-    // Cek DOI: wajib mengandung doi.org atau diawali 10.NNNN/
+    // Cek DOI: doi: prefix, doi.org URL, dx.doi.org URL, atau diawali 10.NNNN/
+    if (preg_match('/^doi:/i', $input)) return 'doi';
     if (strlen($input) >= 7 && strpos($input, '/') !== false) {
-        if (preg_match('/^10\.\d+\//', $input) || preg_match('/doi\.org\//', $input) || preg_match('/dx\.doi\.org\//', $input)) return 'doi';
+        if (preg_match('/^10\.\d{4,}\//', $input) || preg_match('/doi\.org\//', $input) || preg_match('/dx\.doi\.org\//', $input)) return 'doi';
     }
     return null;
 }
@@ -193,7 +194,7 @@ function cleanInput($input, $type) {
     if ($type === 'orcid') {
         if (preg_match('/orcid\.org\/(\d{4}-\d{4}-\d{4}-\d{3}[\dX])/', $input, $matches)) $input = $matches[1];
         $input = preg_replace('/[^\d\-X]/i', '', $input);
-        if (!preg_match('/^0000-/', $input) && preg_match('/^\d{15}[\dX]$/', $input))
+        if (!preg_match('/-/', $input) && preg_match('/^\d{15}[\dX]$/', $input))
             $input = substr($input,0,4).'-'.substr($input,4,4).'-'.substr($input,8,4).'-'.substr($input,12);
     }
     if ($type === 'doi') {
@@ -1208,9 +1209,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         value = value.trim();
         if (/orcid\.org\/(\d{4}-\d{4}-\d{4}-\d{3}[\dX])/i.test(value)) return 'orcid';
         if (/^(\d{4}-\d{4}-\d{4}-\d{3}[\dX])$/.test(value)) return 'orcid';
-        // DOI: wajib mengandung doi.org atau diawali 10.NNNN/  — URL lain langsung ditolak
+        // DOI: doi: prefix, doi.org URL, dx.doi.org URL, atau diawali 10.NNNN/
+        if (/^doi:/i.test(value)) return 'doi';
         if (value.length >= 7 && value.indexOf('/') !== -1) {
-            if (/^10\.\d+\//.test(value) || /doi\.org\//.test(value) || /dx\.doi\.org\//.test(value)) return 'doi';
+            if (/^10\.\d{4,}\//.test(value) || /doi\.org\//.test(value) || /dx\.doi\.org\//.test(value)) return 'doi';
         }
         return null;
     }
