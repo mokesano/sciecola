@@ -69,6 +69,7 @@ import LogHistory from './pages/LogHistory';
 // Impor Halaman Dashboard 
 import SciecoDashboard from './pages/SciecoDashboard';
 import Dashboard from './pages/Dashboard';
+import MyArticles from './pages/MyArticles';
 
 // =====================================================================
 // KOMPONEN BERANDA (HOME)
@@ -192,6 +193,7 @@ function App() {
           {/* Rute Dashboard */}
           <Route path="/sciecodash" element={<SciecoDashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/my-articles" element={<MyArticles />} />
 
         </Routes>
 
