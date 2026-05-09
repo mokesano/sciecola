@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { 
+import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line, AreaChart, Area
 } from 'recharts';
 
 const JournalProfile = () => {
   const { journalId } = useParams();
-  
-  // Simulasi data jurnal - nanti bisa diganti dengan API call
+
   const [journal] = useState({
     id: "jess-2024",
     name: "Journal of Environmental Science and Sustainability",
@@ -21,8 +20,15 @@ const JournalProfile = () => {
     language: "English",
     established: "2018",
     frequency: "4 issue / tahun",
-    coverImage: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=300&h=400&fit=crop&q=80",
-    
+    coverImage: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=300&h=400&fit=crop&q=80",
+    scope: "Jurnal ini mempublikasikan penelitian orisinal dan review artikel dalam bidang ilmu lingkungan, keberlanjutan, dan tujuan pembangunan berkelanjutan (SDGs). Jurnal menerima naskah dalam bahasa Inggris dari seluruh penjuru dunia dengan fokus utama pada kawasan Asia Tenggara.",
+    editorialBoard: [
+      { name: "Prof. Dr. Ahmad Fauzi", role: "Editor-in-Chief", institution: "Universitas Indonesia" },
+      { name: "Dr. Siti Rahayu", role: "Managing Editor", institution: "Institut Teknologi Bandung" },
+      { name: "Prof. John Smith", role: "Associate Editor", institution: "University of Melbourne" },
+      { name: "Dr. Li Wei", role: "Associate Editor", institution: "Tsinghua University" }
+    ],
+
     // Stats
     totalArticles: 356,
     totalAuthors: 1248,
@@ -30,14 +36,14 @@ const JournalProfile = () => {
     totalViews: 98732,
     impactScore: 2.48,
     sdgsCovered: 15,
-    
+
     // Performance metrics
     acceptanceRate: "24%",
     avgReviewTime: "28 Hari",
     avgPublishTime: "4 Hari",
     citationsPerArticle: "16.1",
     hIndex: "17",
-    
+
     // SDG Distribution
     sdgDistribution: [
       { name: "Climate Action", value: 28, color: "#10b981" },
@@ -48,7 +54,7 @@ const JournalProfile = () => {
       { name: "Industry, Innovation", value: 8, color: "#8b5cf6" },
       { name: "Lainnya", value: 6, color: "#6b7280" }
     ],
-    
+
     // Publication trend
     publicationTrend: [
       { year: "2018", count: 45 },
@@ -59,7 +65,7 @@ const JournalProfile = () => {
       { year: "2023", count: 68 },
       { year: "2024", count: 85 }
     ],
-    
+
     // Citation trend
     citationTrend: [
       { year: "2018", citations: 450 },
@@ -70,46 +76,51 @@ const JournalProfile = () => {
       { year: "2023", citations: 1450 },
       { year: "2024", citations: 1680 }
     ],
-    
+
     // Top articles
     topArticles: [
       {
         id: 1,
+        doi: "10.1234/jess.2024.1002",
         title: "Climate Change Adaptation in Coastal Communities",
         volume: "Vol. 6 No. 2 (2020)",
         citations: 124,
-        thumbnail: "https://via.placeholder.com/60x60/3b82f6/ffffff?text=CC"
+        thumbnail: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=60&h=60&fit=crop&q=80"
       },
       {
         id: 2,
+        doi: "10.1234/jess.2024.1003",
         title: "Sustainable Urban Transport Systems in Indonesia",
         volume: "Vol. 5 No. 1 (2019)",
         citations: 98,
-        thumbnail: "https://via.placeholder.com/60x60/10b981/ffffff?text=UT"
+        thumbnail: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=60&h=60&fit=crop&q=80"
       },
       {
         id: 3,
+        doi: "10.1234/jess.2023.2001",
         title: "Renewable Energy Policy and Its Impact",
         volume: "Vol. 4 No. 2 (2018)",
         citations: 76,
-        thumbnail: "https://via.placeholder.com/60x60/f59e0b/ffffff?text=RE"
+        thumbnail: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=60&h=60&fit=crop&q=80"
       },
       {
         id: 4,
+        doi: "10.1234/jess.2020.1044",
         title: "Mangrove Restoration and Coastal Resilience",
         volume: "Vol. 6 No. 3 (2020)",
         citations: 65,
-        thumbnail: "https://via.placeholder.com/60x60/14b8a6/ffffff?text=MR"
+        thumbnail: "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=60&h=60&fit=crop&q=80"
       },
       {
         id: 5,
+        doi: "10.1234/jess.2022.0889",
         title: "Waste Management Strategies for Sustainable Cities",
         volume: "Vol. 8 No. 2 (2022)",
         citations: 59,
-        thumbnail: "https://via.placeholder.com/60x60/8b5cf6/ffffff?text=WM"
+        thumbnail: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=60&h=60&fit=crop&q=80"
       }
     ],
-    
+
     // Access stats monthly
     accessStats: [
       { month: "Jan", views: 6500 },
@@ -125,14 +136,13 @@ const JournalProfile = () => {
       { month: "Nov", views: 16500 },
       { month: "Des", views: 15900 }
     ],
-    
+
     // Indexing databases
     indexing: ["Scopus", "DOAJ", "Dimensions", "Google Scholar", "Crossref", "GARUDA", "Sinta"]
   });
 
   const [activeTab, setActiveTab] = useState('ringkasan');
 
-  // Custom tooltip for charts
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
@@ -159,18 +169,18 @@ const JournalProfile = () => {
               <img
                 src={journal.coverImage}
                 alt={journal.name}
-                onError={(e) => { e.target.src = '/assets/img/journal-default.svg'; }}
                 className="w-full sm:w-48 h-64 object-cover rounded-xl shadow-lg"
+                onError={(e) => { e.target.src = '/assets/img/journal-default.svg'; }}
               />
             </div>
-            
+
             {/* Journal Details */}
             <div className="flex-grow">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{journal.name}</h1>
               <p className="text-gray-600 mb-4">
                 EISSN: {journal.eissn} | PISSN: {journal.pissn}
               </p>
-              
+
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2">
                   <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -217,17 +227,22 @@ const JournalProfile = () => {
                   <span className="text-gray-600">Frekuensi Terbit: <span className="font-medium text-gray-900">{journal.frequency}</span></span>
                 </div>
               </div>
-              
-              <button className="mt-4 px-6 py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors inline-flex items-center gap-2">
+
+              <a
+                href={journal.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 px-6 py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors inline-flex items-center gap-2"
+              >
                 <span>Kunjungi Website</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
-              </button>
+              </a>
             </div>
           </div>
         </div>
-        
+
         {/* Stats Cards */}
         <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
           <div className="grid grid-cols-2 gap-4">
@@ -267,8 +282,8 @@ const JournalProfile = () => {
             { id: 'artikel', label: 'Artikel', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z' },
             { id: 'statistik', label: 'Statistik', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
             { id: 'sdgs', label: 'SDGs', icon: 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
-            { id: 'editorial', label: 'Editorial Team', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' },
-            { id: 'informasi', label: 'Informasi', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' }
+            { id: 'editorial', label: 'Editorial', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' },
+            { id: 'indeksasi', label: 'Indeksasi', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -288,238 +303,433 @@ const JournalProfile = () => {
         </nav>
       </div>
 
-      {/* Quick Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-        {[
-          { label: 'Total Artikel', value: journal.totalArticles, icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
-          { label: 'Total Penulis', value: journal.totalAuthors, icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
-          { label: 'Total Sitasi', value: journal.totalCitations, icon: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z' },
-          { label: 'Total Views', value: journal.totalViews, icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z' },
-          { label: 'Impact Score', value: journal.impactScore, icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
-          { label: 'SDGs Tercakup', value: journal.sdgsCovered, icon: 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064' }
-        ].map((stat, idx) => (
-          <div key={idx} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center gap-3">
-            <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center shrink-0">
-              <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={stat.icon} />
-              </svg>
-            </div>
-            <div>
-              <p className="text-lg font-bold text-gray-900">{stat.value.toLocaleString()}</p>
-              <p className="text-xs text-gray-600">{stat.label}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Publication Trend */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-gray-900">Tren Publikasi</h3>
-            <select className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-              <option>Semua Tahun</option>
-              <option>5 Tahun Terakhir</option>
-              <option>10 Tahun Terakhir</option>
-            </select>
-          </div>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={journal.publicationTrend}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
-              <YAxis stroke="#6b7280" fontSize={12} />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="count" fill="#6366f1" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* SDG Distribution */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Distribusi Artikel per SDGs</h3>
-          <div className="flex flex-col sm:flex-row items-center gap-6">
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie
-                  data={journal.sdgDistribution}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {journal.sdgDistribution.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="flex-grow space-y-2">
-              {journal.sdgDistribution.map((sdg, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-sm">
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: sdg.color }} />
-                  <span className="text-gray-600">{sdg.name}</span>
-                  <span className="font-semibold text-gray-900">({sdg.value}%)</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Indexing & Citation Trend */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Indexing */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Indeksasi & Database</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {journal.indexing.map((db, idx) => (
-              <div key={idx} className="flex items-center justify-center p-4 bg-gray-50 rounded-xl border border-gray-100">
-                <span className="font-semibold text-gray-700">{db}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Citation Trend */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-gray-900">Tren Sitasi</h3>
-            <select className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-              <option>Semua Tahun</option>
-              <option>5 Tahun Terakhir</option>
-            </select>
-          </div>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={journal.citationTrend}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
-              <YAxis stroke="#6b7280" fontSize={12} />
-              <Tooltip content={<CustomTooltip />} />
-              <Line type="monotone" dataKey="citations" stroke="#6366f1" strokeWidth={2} dot={{ fill: '#6366f1', r: 4 }} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Performance & Top Articles */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Journal Performance */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Performa Jurnal</h3>
-          <div className="space-y-4">
+      {/* Tab: Ringkasan */}
+      {activeTab === 'ringkasan' && (
+        <div>
+          {/* Quick Stats Row */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
             {[
-              { label: 'Acceptance Rate', value: journal.acceptanceRate },
-              { label: 'Waktu Review Rata-rata', value: journal.avgReviewTime },
-              { label: 'Waktu Terbit Rata-rata', value: journal.avgPublishTime },
-              { label: 'Tingkat Sitasi per Artikel', value: journal.citationsPerArticle },
-              { label: 'H-Index', value: journal.hIndex }
-            ].map((metric, idx) => (
-              <div key={idx} className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0">
-                <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              { label: 'Total Artikel', value: journal.totalArticles, icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+              { label: 'Total Penulis', value: journal.totalAuthors, icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
+              { label: 'Total Sitasi', value: journal.totalCitations, icon: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z' },
+              { label: 'Total Views', value: journal.totalViews, icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z' },
+              { label: 'Impact Score', value: journal.impactScore, icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
+              { label: 'SDGs Tercakup', value: journal.sdgsCovered, icon: 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064' }
+            ].map((stat, idx) => (
+              <div key={idx} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center gap-3">
+                <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center shrink-0">
+                  <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={stat.icon} />
                   </svg>
-                  <span className="text-gray-600">{metric.label}</span>
                 </div>
-                <span className="font-bold text-gray-900">{metric.value}</span>
+                <div>
+                  <p className="text-lg font-bold text-gray-900">{stat.value.toLocaleString()}</p>
+                  <p className="text-xs text-gray-600">{stat.label}</p>
+                </div>
               </div>
             ))}
           </div>
-        </div>
 
-        {/* Top Articles */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+          {/* Charts Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            {/* Publication Trend */}
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-bold text-gray-900">Tren Publikasi</h3>
+                <select className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                  <option>Semua Tahun</option>
+                  <option>5 Tahun Terakhir</option>
+                </select>
+              </div>
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={journal.publicationTrend}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
+                  <YAxis stroke="#6b7280" fontSize={12} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="count" fill="#6366f1" radius={[4, 4, 0, 0]} name="Artikel" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Citation Trend */}
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-bold text-gray-900">Tren Sitasi</h3>
+                <select className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                  <option>Semua Tahun</option>
+                  <option>5 Tahun Terakhir</option>
+                </select>
+              </div>
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart data={journal.citationTrend}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
+                  <YAxis stroke="#6b7280" fontSize={12} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Line type="monotone" dataKey="citations" stroke="#6366f1" strokeWidth={2} dot={{ fill: '#6366f1', r: 4 }} name="Sitasi" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Performance & Top Articles */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Journal Performance */}
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <h3 className="text-lg font-bold text-gray-900 mb-6">Performa Jurnal</h3>
+              <div className="space-y-4">
+                {[
+                  { label: 'Acceptance Rate', value: journal.acceptanceRate },
+                  { label: 'Waktu Review Rata-rata', value: journal.avgReviewTime },
+                  { label: 'Waktu Terbit Rata-rata', value: journal.avgPublishTime },
+                  { label: 'Tingkat Sitasi per Artikel', value: journal.citationsPerArticle },
+                  { label: 'H-Index', value: journal.hIndex }
+                ].map((metric, idx) => (
+                  <div key={idx} className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0">
+                    <div className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                      <span className="text-gray-600">{metric.label}</span>
+                    </div>
+                    <span className="font-bold text-gray-900">{metric.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Top Articles Preview */}
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-bold text-gray-900">Top Artikel Berdasarkan Sitasi</h3>
+                <button onClick={() => setActiveTab('artikel')} className="text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1">
+                  Lihat semua
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+              <div className="space-y-4">
+                {journal.topArticles.slice(0, 3).map((art) => (
+                  <Link key={art.id} to={`/doi/${art.doi}`} className="flex gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors block">
+                    <img
+                      src={art.thumbnail}
+                      alt={art.title}
+                      className="w-16 h-16 object-cover rounded-lg"
+                      onError={(e) => { e.target.src = '/assets/img/article-default.svg'; }}
+                    />
+                    <div className="flex-grow">
+                      <h4 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2 hover:text-indigo-700 transition-colors">{art.title}</h4>
+                      <p className="text-xs text-gray-500 mb-2">{art.volume}</p>
+                      <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-xs font-semibold">
+                        {art.citations} Sitasi
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab: Artikel */}
+      {activeTab === 'artikel' && (
+        <div>
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-gray-900">Top Artikel Berdasarkan Sitasi</h3>
-            <Link to="#" className="text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1">
-              Lihat semua
+            <h2 className="text-xl font-bold text-gray-900">Artikel Teratas ({journal.topArticles.length} ditampilkan)</h2>
+            <div className="flex gap-3">
+              <select className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500">
+                <option>Semua Tahun</option>
+                <option>2024</option>
+                <option>2023</option>
+                <option>2022</option>
+              </select>
+              <select className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500">
+                <option>Urutkan: Sitasi Terbanyak</option>
+                <option>Urutkan: Terbaru</option>
+                <option>Urutkan: Views Terbanyak</option>
+              </select>
+            </div>
+          </div>
+          <div className="space-y-4">
+            {journal.topArticles.map((art) => (
+              <Link
+                key={art.id}
+                to={`/doi/${art.doi}`}
+                className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all block"
+              >
+                <div className="flex gap-5">
+                  <img
+                    src={art.thumbnail}
+                    alt={art.title}
+                    className="w-24 h-20 object-cover rounded-xl shrink-0"
+                    onError={(e) => { e.target.src = '/assets/img/article-default.svg'; }}
+                  />
+                  <div className="flex-grow min-w-0">
+                    <h3 className="font-bold text-gray-900 text-base mb-1 hover:text-indigo-700 transition-colors line-clamp-2">
+                      {art.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-3">{art.volume}</p>
+                    <div className="flex items-center gap-3">
+                      <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-semibold">
+                        {art.citations} Sitasi
+                      </span>
+                      <span className="text-sm text-gray-500">DOI: {art.doi}</span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <div className="mt-6 text-center">
+            <Link to="/articles" className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors">
+              Lihat semua artikel di basis data
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
               </svg>
             </Link>
           </div>
-          <div className="space-y-4">
-            {journal.topArticles.map((article) => (
-              <div key={article.id} className="flex gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors">
-                <img src={article.thumbnail} alt={article.title} onError={(e) => { e.target.src = '/assets/img/article-default.svg'; }} className="w-16 h-16 object-cover rounded-lg" />
-                <div className="flex-grow">
-                  <h4 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{article.title}</h4>
-                  <p className="text-xs text-gray-500 mb-2">{article.volume}</p>
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-xs font-semibold">
-                      {article.citations} Sitasi
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
-      </div>
+      )}
 
-      {/* World Map & Access Stats */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Author Contribution Map */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Peta Kontribusi Penulis</h3>
-          <div className="bg-gray-50 rounded-xl p-8 text-center">
-            <svg className="w-full h-48 text-gray-300" fill="currentColor" viewBox="0 0 1200 600">
-              {/* Simplified world map placeholder */}
-              <path d="M150,200 Q200,150 250,200 T350,200 T450,180 T550,200 T650,190 T750,210 T850,200 T950,190" stroke="currentColor" strokeWidth="2" fill="none" />
-              <text x="50%" y="50%" textAnchor="middle" className="text-gray-400 text-sm">World Map Visualization</text>
-            </svg>
-            <div className="flex justify-center gap-4 mt-4 text-xs text-gray-500">
-              <span className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-indigo-200 rounded"></div>
-                1-100
-              </span>
-              <span className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-indigo-400 rounded"></div>
-                101-500
-              </span>
-              <span className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-indigo-600 rounded"></div>
-                500+
-              </span>
+      {/* Tab: Statistik */}
+      {activeTab === 'statistik' && (
+        <div>
+          {/* Charts Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            {/* Publication Trend */}
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-bold text-gray-900">Tren Publikasi per Tahun</h3>
+                <select className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                  <option>Semua Tahun</option>
+                  <option>5 Tahun Terakhir</option>
+                  <option>10 Tahun Terakhir</option>
+                </select>
+              </div>
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={journal.publicationTrend}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
+                  <YAxis stroke="#6b7280" fontSize={12} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="count" fill="#6366f1" radius={[4, 4, 0, 0]} name="Artikel" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Citation Trend */}
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-bold text-gray-900">Tren Sitasi per Tahun</h3>
+                <select className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                  <option>Semua Tahun</option>
+                  <option>5 Tahun Terakhir</option>
+                </select>
+              </div>
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart data={journal.citationTrend}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
+                  <YAxis stroke="#6b7280" fontSize={12} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Line type="monotone" dataKey="citations" stroke="#10b981" strokeWidth={2} dot={{ fill: '#10b981', r: 4 }} name="Sitasi" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Access Stats */}
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm mb-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-bold text-gray-900">Statistik Akses Bulanan</h3>
+              <select className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                <option>Tahun 2024</option>
+                <option>Tahun 2023</option>
+              </select>
+            </div>
+            <ResponsiveContainer width="100%" height={250}>
+              <AreaChart data={journal.accessStats}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="month" stroke="#6b7280" fontSize={12} />
+                <YAxis stroke="#6b7280" fontSize={12} />
+                <Tooltip content={<CustomTooltip />} />
+                <Area type="monotone" dataKey="views" stroke="#6366f1" fill="#6366f1" fillOpacity={0.2} name="Views" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Performance Metrics */}
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <h3 className="text-lg font-bold text-gray-900 mb-6">Performa Jurnal</h3>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              {[
+                { label: 'Acceptance Rate', value: journal.acceptanceRate },
+                { label: 'Waktu Review', value: journal.avgReviewTime },
+                { label: 'Waktu Terbit', value: journal.avgPublishTime },
+                { label: 'Sitasi/Artikel', value: journal.citationsPerArticle },
+                { label: 'H-Index', value: journal.hIndex }
+              ].map((metric, idx) => (
+                <div key={idx} className="bg-gray-50 rounded-xl p-4 text-center">
+                  <p className="text-xl font-bold text-indigo-700 mb-1">{metric.value}</p>
+                  <p className="text-xs text-gray-600">{metric.label}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
+      )}
 
-        {/* Access Statistics */}
-        <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-bold text-gray-900">Statistik Akses</h3>
-            <select className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-              <option>Tahun 2024</option>
-              <option>Tahun 2023</option>
-            </select>
+      {/* Tab: SDGs */}
+      {activeTab === 'sdgs' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* SDG Distribution Pie */}
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <h3 className="text-lg font-bold text-gray-900 mb-6">Distribusi Artikel per SDGs</h3>
+            <div className="flex flex-col sm:flex-row items-center gap-6">
+              <ResponsiveContainer width="100%" height={250}>
+                <PieChart>
+                  <Pie
+                    data={journal.sdgDistribution}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={70}
+                    outerRadius={100}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {journal.sdgDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="flex-grow space-y-3">
+                {journal.sdgDistribution.map((sdg, idx) => (
+                  <div key={idx} className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: sdg.color }} />
+                    <span className="text-gray-700 text-sm flex-grow">{sdg.name}</span>
+                    <span className="font-bold text-gray-900 text-sm">{sdg.value}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-          <ResponsiveContainer width="100%" height={250}>
-            <AreaChart data={journal.accessStats}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="month" stroke="#6b7280" fontSize={12} />
-              <YAxis stroke="#6b7280" fontSize={12} />
-              <Tooltip content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="views" stroke="#6366f1" fill="#6366f1" fillOpacity={0.2} />
-            </AreaChart>
-          </ResponsiveContainer>
+
+          {/* SDG Bar Chart */}
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <h3 className="text-lg font-bold text-gray-900 mb-6">Persentase SDGs dalam Artikel</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={journal.sdgDistribution} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis type="number" stroke="#6b7280" fontSize={12} unit="%" />
+                <YAxis dataKey="name" type="category" stroke="#6b7280" fontSize={11} width={120} />
+                <Tooltip />
+                {journal.sdgDistribution.map((entry, index) => (
+                  <Bar key={index} dataKey="value" fill={entry.color} radius={[0, 4, 4, 0]} name="Persentase" />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+            <p className="text-xs text-gray-500 mt-4 text-center">Total {journal.sdgsCovered} SDGs tercakup dalam publikasi jurnal ini</p>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Tab: Editorial */}
+      {activeTab === 'editorial' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {journal.editorialBoard.map((member, idx) => (
+            <div key={idx} className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-center gap-4">
+              <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center shrink-0">
+                <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-900 mb-1">{member.name}</h4>
+                <p className="text-sm text-indigo-600 font-medium mb-1">{member.role}</p>
+                <p className="text-xs text-gray-500">{member.institution}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Tab: Indeksasi */}
+      {activeTab === 'indeksasi' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Indexing Databases */}
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <h3 className="text-lg font-bold text-gray-900 mb-6">Indeksasi & Database</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {journal.indexing.map((db, idx) => (
+                <div key={idx} className="flex items-center justify-center p-4 bg-indigo-50 rounded-xl border border-indigo-100 hover:bg-indigo-100 transition-colors">
+                  <span className="font-semibold text-indigo-700">{db}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Journal Info */}
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <h3 className="text-lg font-bold text-gray-900 mb-6">Informasi Jurnal</h3>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between py-2 border-b border-gray-100">
+                <span className="text-gray-600">EISSN</span>
+                <span className="font-semibold text-gray-900">{journal.eissn}</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-gray-100">
+                <span className="text-gray-600">PISSN</span>
+                <span className="font-semibold text-gray-900">{journal.pissn}</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-gray-100">
+                <span className="text-gray-600">Penerbit</span>
+                <span className="font-semibold text-gray-900 text-right max-w-xs">{journal.publisher}</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-gray-100">
+                <span className="text-gray-600">Negara</span>
+                <span className="font-semibold text-gray-900">{journal.country}</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-gray-100">
+                <span className="text-gray-600">Bahasa</span>
+                <span className="font-semibold text-gray-900">{journal.language}</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-gray-100">
+                <span className="text-gray-600">Terbit Sejak</span>
+                <span className="font-semibold text-gray-900">{journal.established}</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-gray-100">
+                <span className="text-gray-600">Frekuensi</span>
+                <span className="font-semibold text-gray-900">{journal.frequency}</span>
+              </div>
+              <div className="flex justify-between py-2">
+                <span className="text-gray-600">Jumlah Indeksasi</span>
+                <span className="font-semibold text-gray-900">{journal.indexing.length} database</span>
+              </div>
+            </div>
+
+            {/* Scope */}
+            <div className="mt-6 pt-4 border-t border-gray-100">
+              <h4 className="font-semibold text-gray-900 mb-2 text-sm">Ruang Lingkup</h4>
+              <p className="text-sm text-gray-600 leading-relaxed">{journal.scope}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* CTA Section */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-8 text-white shadow-lg">
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-8 text-white shadow-lg mt-8">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
           <div>
             <h3 className="text-2xl font-bold mb-2">Ingin menganalisis artikel dari jurnal ini?</h3>
             <p className="text-indigo-100">Masukkan DOI atau ORCID untuk mendapatkan analisis dan klasifikasi SDGs secara instan.</p>
           </div>
           <div className="flex gap-3 w-full lg:w-auto">
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Masukkan DOI atau ORCID"
               className="flex-grow lg:w-80 px-4 py-3 rounded-xl text-gray-900 focus:ring-2 focus:ring-white focus:outline-none"
             />

@@ -259,7 +259,6 @@ const ResearcherProfile = () => {
                 <img
                   src={researcher.avatar}
                   alt={researcher.name}
-                  onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
                   className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
                   onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
                 />
@@ -687,7 +686,6 @@ const ResearcherProfile = () => {
                   <img
                     src={collab.avatar}
                     alt={collab.name}
-                    onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
                     className="w-12 h-12 rounded-full object-cover"
                     onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
                   />
