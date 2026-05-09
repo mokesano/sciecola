@@ -34,24 +34,7 @@ const Privacy = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link to="/" className="text-2xl font-bold text-indigo-600">WIZDAM</Link>
-            <span className="hidden sm:block text-gray-300">|</span>
-            <span className="hidden sm:block text-sm font-medium text-gray-600">Kebijakan Privasi</span>
-          </div>
-          <Link to="/" className="text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-            Kembali
-          </Link>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+    <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           
           {/* Sidebar: Table of Contents */}
@@ -258,20 +241,7 @@ const Privacy = () => {
             </div>
           </div>
         </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 py-8">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-sm text-gray-500 mb-2">© {new Date().getFullYear()} WIZDAM. Dikembangkan oleh Sangia Research Media and Publishing.</p>
-          <div className="flex justify-center gap-6 text-sm text-gray-600">
-            <Link to="/privacy" className="hover:text-indigo-600 font-medium text-indigo-600">Kebijakan Privasi</Link>
-            <Link to="/terms" className="hover:text-indigo-600">Syarat & Ketentuan</Link>
-            <Link to="/contact" className="hover:text-indigo-600">Hubungi Kami</Link>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </main>
   );
 };
 

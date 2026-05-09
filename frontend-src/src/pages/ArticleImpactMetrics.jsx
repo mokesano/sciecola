@@ -137,20 +137,27 @@ const ArticleImpactMetrics = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+      <div className="flex items-center gap-2 text-sm text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
-        <span>›</span>
-        <Link to="/about" className="hover:text-indigo-600 transition-colors">Analytics</Link>
-        <span>›</span>
+        <span className="text-gray-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </span>
+        <Link to="/analytics" className="hover:text-indigo-600 transition-colors">Analytics</Link>
+        <span className="text-gray-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </span>
         <span className="text-gray-900 font-medium">Article Impact</span>
       </div>
 
       {/* Header dan Filter */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 space-y-2 md:space-y-0">
-        <h2 className="text-lg font-semibold">Analisis Dampak Artikel</h2>
+        <div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Analisis Dampak Artikel</h1>
+          <p className="text-lg font-semibold text-gray-600 mt-1 max-w-2xl">Analisis mendalam tentang dampak artikel berdasarkan tiga dimensi utama.</p>
+        </div>
         <div className="flex flex-wrap gap-2">
           <select 
-            className="border rounded px-2 py-1 text-sm"
+            className="border rounded-md px-4 py-2.5 text-sm"
             value={selectedField}
             onChange={(e) => setSelectedField(e.target.value)}
           >
@@ -162,7 +169,7 @@ const ArticleImpactMetrics = () => {
             <option value="soc">Sosial Ekonomi</option>
           </select>
           <select 
-            className="border rounded px-2 py-1 text-sm"
+            className="border rounded-md px-4 py-2.5 text-sm"
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
           >
@@ -171,7 +178,7 @@ const ArticleImpactMetrics = () => {
             <option value="3years">3 Tahun Terakhir</option>
             <option value="5years">5 Tahun Terakhir</option>
           </select>
-          <button className="bg-blue-600 text-white px-3 py-1 rounded text-sm">
+          <button className="bg-blue-600 text-white px-4 py-2.5 rounded-md shadow-sm transition-colors text-sm">
             Terapkan Filter
           </button>
         </div>
@@ -179,9 +186,9 @@ const ArticleImpactMetrics = () => {
 
       {/* Penjelasan Skor Dampak */}
       <div className="bg-blue-50 p-4 rounded-lg mb-6">
-        <h3 className="text-md font-semibold mb-2">Tentang Skor Dampak Artikel</h3>
-        <p className="text-sm text-gray-700">
-          Skor dampak di Wizdom Indonesia menggabungkan tiga dimensi utama pengukuran dampak penelitian:
+        <h3 className="text-lg font-semibold mb-2">Tentang Skor Dampak Artikel</h3>
+        <p className="text-m text-gray-700">
+          Skor dampak di Wizdam Impact Score menggabungkan tiga dimensi utama pengukuran dampak penelitian:
         </p>
         <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white rounded p-3 shadow-sm">
@@ -191,9 +198,9 @@ const ArticleImpactMetrics = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
               </div>
-              <h4 className="font-medium">Dampak Akademik (45%)</h4>
+              <h4 className="font-medium font-semibold">Dampak Akademik (45%)</h4>
             </div>
-            <p className="text-xs mt-2 text-gray-600">
+            <p className="text-sm mt-2 text-gray-600">
               Mengukur sitasi, indeks h artikel, kualitas jurnal, dan faktor dampak akademis lainnya.
             </p>
           </div>
@@ -204,9 +211,9 @@ const ArticleImpactMetrics = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <h4 className="font-medium">Dampak Media Sosial (25%)</h4>
+              <h4 className="font-medium font-semibold">Dampak Media Sosial (25%)</h4>
             </div>
-            <p className="text-xs mt-2 text-gray-600">
+            <p className="text-sm mt-2 text-gray-600">
               Mengukur penyebaran dan diskusi penelitian di platform sosial, media berita, dan blog.
             </p>
           </div>
@@ -217,9 +224,9 @@ const ArticleImpactMetrics = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-              <h4 className="font-medium">Dampak Penggunaan (30%)</h4>
+              <h4 className="font-medium font-semibold">Dampak Penggunaan (30%)</h4>
             </div>
-            <p className="text-xs mt-2 text-gray-600">
+            <p className="text-sm mt-2 text-gray-600">
               Mengukur implementasi praktis, pengaruh pada kebijakan, produk, dan manfaat langsung pada masyarakat.
             </p>
           </div>
@@ -230,7 +237,7 @@ const ArticleImpactMetrics = () => {
       {selectedArticle && (
         <div className="mt-6 bg-blue-50 p-4 rounded-lg">
           <div className="flex justify-between items-start">
-            <h3 className="text-md font-semibold">Detail Artikel: {selectedArticle.title}</h3>
+            <h3 className="text-m font-semibold">Detail Artikel: {selectedArticle.title}</h3>
             <button 
               className="text-gray-500 hover:text-gray-700"
               onClick={() => setSelectedArticle(null)}
@@ -243,21 +250,21 @@ const ArticleImpactMetrics = () => {
           
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <p className="text-sm text-gray-600 mb-2">
+              <p className="text-m text-gray-600 mb-2">
                 <b>Penulis:</b> {selectedArticle.authors}
               </p>
-              <p className="text-sm text-gray-600 mb-2">
+              <p className="text-m text-gray-600 mb-2">
                 <b>Jurnal:</b> {selectedArticle.journal} ({selectedArticle.year}) - {selectedArticle.sintaAccreditation}
               </p>
-              <p className="text-sm text-gray-600 mb-2">
+              <p className="text-m text-gray-600 mb-2">
                 <b>Skor Dampak Total:</b> <span className="font-semibold">{selectedArticle.impactScore}</span>
               </p>
               
               <div className="mt-4">
-                <h4 className="text-sm font-semibold mb-2">Komponen Dampak:</h4>
+                <h4 className="text-m font-semibold mb-2">Komponen Dampak:</h4>
                 <div className="space-y-2">
                   <div>
-                    <div className="flex justify-between text-xs mb-1">
+                    <div className="flex justify-between text-sm mb-1">
                       <span>Dampak Akademik</span>
                       <span>{selectedArticle.academicImpact}</span>
                     </div>
@@ -269,7 +276,7 @@ const ArticleImpactMetrics = () => {
                     </div>
                   </div>
                   <div>
-                    <div className="flex justify-between text-xs mb-1">
+                    <div className="flex justify-between text-sm mb-1">
                       <span>Dampak Media Sosial</span>
                       <span>{selectedArticle.socialImpact}</span>
                     </div>
@@ -281,7 +288,7 @@ const ArticleImpactMetrics = () => {
                     </div>
                   </div>
                   <div>
-                    <div className="flex justify-between text-xs mb-1">
+                    <div className="flex justify-between text-sm mb-1">
                       <span>Dampak Penggunaan Praktis</span>
                       <span>{selectedArticle.practicalImpact}</span>
                     </div>
@@ -297,7 +304,7 @@ const ArticleImpactMetrics = () => {
             </div>
             
             <div>
-              <h4 className="text-sm font-semibold mb-3">Profil Dampak:</h4>
+              <h4 className="text-m font-semibold mb-3">Profil Dampak:</h4>
               <ArticleImpactChart article={selectedArticle} />
             </div>
           </div>
@@ -306,18 +313,18 @@ const ArticleImpactMetrics = () => {
 
       {/* Tabel Artikel */}
       <div className="mt-6">
-        <h3 className="text-md font-semibold mb-4">Artikel dengan Dampak Tertinggi</h3>
+        <h3 className="text-lg font-semibold mb-4">Artikel dengan Dampak Tertinggi</h3>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-100">
               <tr>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul & Penulis</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jurnal</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tahun</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Akademik</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sosial</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Praktis</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Skor Dampak</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Judul & Penulis</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Jurnal</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Tahun</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Akademik</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Sosial</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Praktis</th>
+                <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Skor Dampak</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -329,11 +336,11 @@ const ArticleImpactMetrics = () => {
                 >
                   <td className="px-4 py-2">
                     <div className="text-sm font-medium text-gray-900">{article.title}</div>
-                    <div className="text-xs text-gray-500">{article.authors}</div>
+                    <div className="text-sm text-gray-500">{article.authors}</div>
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
                     <div className="text-sm text-gray-900">{article.journal}</div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-sm text-gray-500">
                       <span className={`px-2 py-0.5 rounded-full text-xs ${
                         article.sintaAccreditation === 'SINTA 1' ? 'bg-green-100 text-green-800' :
                         article.sintaAccreditation === 'SINTA 2' ? 'bg-blue-100 text-blue-800' :

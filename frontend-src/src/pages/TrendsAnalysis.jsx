@@ -87,7 +87,11 @@ const TrendsAnalysis = () => {
         <span className="text-gray-400">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
-        <span className="text-gray-900 font-medium">Institusi</span>
+        <Link to="/analytics" className="hover:text-indigo-600 transition-colors">Analytics</Link>
+        <span className="text-gray-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </span>
+        <span className="text-gray-900 font-medium">Trends Analysis</span>
       </nav>
 
       {/* Header dan Filter */}
