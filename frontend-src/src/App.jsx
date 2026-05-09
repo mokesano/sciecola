@@ -54,6 +54,10 @@ import Teams from './pages/Teams';
 import Sponsors from './pages/Sponsors';
 import BecomeSponsor from './pages/BecomeSponsor';
 
+// Impor Halaman Syarat dan Ketentuan
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
+
 // Impor Halaman Bantuan dan FAQ
 import Contact from './pages/Contact';
 import Help from './pages/Help';
@@ -63,8 +67,9 @@ import Faq from './pages/Faq';
 import Doc from './pages/Doc';
 import Api from './pages/Api';
 
-// Impor Halaman Log History
-import LogHistory from './pages/LogHistory';
+// Impor Halaman Register
+import Register from './pages/Register';
+import Login from './pages/Login';
 
 // Impor Halaman User Dashboard 
 import Feeds from './pages/Feeds';
@@ -76,8 +81,11 @@ import Notifications from './pages/Notifications';
 import MyArticles from './pages/MyArticles';
 import MyCollections from './pages/MyCollections';
 import MyStatistics from './pages/MyStatistics';
-import MyActivity from './pages/MyActivity';
 import Settings from './pages/Settings';
+
+// Impor Halaman Log History/Activity
+import MyActivity from './pages/MyActivity';
+import LogHistory from './pages/LogHistory';
 
 // =====================================================================
 // KOMPONEN BERANDA (HOME)
@@ -186,13 +194,17 @@ function App() {
           <Route path="/sponsors" element={<Sponsors />} />
           <Route path="/become-sponsor" element={<BecomeSponsor />} />
 
+          {/* Rute Syarat dan Ketentuan */}
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+
           {/* Rute Kontak dan Bantuan */}
           <Route path="/contact" element={<Contact />} />
           <Route path="/help" element={<Help />} />
-          <Route path="/faq" element={<Faq />} />
 
           {/* Rute Dokumentasi */}
           <Route path="/docs" element={<Doc />} />
+          <Route path="/docs/faq" element={<Faq />} />
           <Route path="/docs/api-reference" element={<Api />} />
 
           {/* Rute Dashboard */}
@@ -210,6 +222,10 @@ function App() {
           {/* Rute Log History/Activity */}
           <Route path="/my-activity" element={<MyActivity />} />
           <Route path="/log-history" element={<LogHistory />} />
+
+          {/* Rute Register */}
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
 
         {/* Footer selalu tampil di semua halaman */}

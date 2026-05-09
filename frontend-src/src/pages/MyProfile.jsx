@@ -324,7 +324,7 @@ const MyProfile = () => {
 
         {/* Action Bar */}
         <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-gray-600">Pastikan semua ID eksternal tersinkronisasi untuk hasil analisis yang akurat.</p>
+          <p className="text-m text-gray-600">Pastikan semua ID eksternal tersinkronisasi untuk hasil analisis yang akurat.</p>
           <button 
             onClick={handleAnalyze}
             disabled={isAnalyzing}
