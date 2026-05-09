@@ -1,0 +1,138 @@
+---
+title: FAQ — Pertanyaan yang Sering Diajukan
+description: Jawaban untuk pertanyaan paling umum tentang SDGs Mapper.
+---
+
+# Pertanyaan yang Sering Diajukan
+
+---
+
+## Umum
+
+### Apa itu SDGs Mapper?
+
+SDGs Mapper adalah platform analitik yang mengklasifikasikan publikasi penelitian terhadap 17 Tujuan Pembangunan Berkelanjutan (SDGs) PBB menggunakan kecerdasan buatan. Platform ini membantu peneliti, institusi, dan pembuat kebijakan memahami kontribusi penelitian terhadap agenda pembangunan global.
+
+### Apa itu klasifikasi SDGs dan bagaimana cara kerjanya?
+
+Klasifikasi SDGs adalah proses menganalisis publikasi penelitian untuk menentukan relevansinya terhadap 17 SDGs PBB. Sistem AI kami menggunakan empat komponen analisis:
+
+| Komponen | Bobot | Keterangan |
+|----------|-------|------------|
+| Keyword Matching | 30% | Pencocokan kata kunci SDGs standar |
+| Semantic Similarity | 30% | Kesamaan semantik dengan teks referensi |
+| Substantive Analysis | 20% | Analisis substansi dan konteks konten |
+| Causal Inference | 20% | Inferensi kausal terhadap dampak SDGs |
+
+### Format input apa saja yang didukung?
+
+- **ORCID ID** — Format `0000-0000-0000-0000` untuk menganalisis semua publikasi peneliti sekaligus
+- **DOI** — Format `10.xxxx/xxxxx` untuk menganalisis artikel individual
+
+Anda bisa memasukkan ID langsung atau URL lengkap:
+- `https://orcid.org/0000-0000-0000-0000`
+- `https://doi.org/10.xxxx/xxxxx`
+
+### Seberapa akurat klasifikasi SDGs-nya?
+
+Sistem AI kami mencapai akurasi lebih dari **95%** saat diuji pada dataset yang dikurasi manual. Kami menyediakan skor kepercayaan untuk menunjukkan keandalan setiap klasifikasi:
+
+- **≥ 70%** — Sangat andal (Highly confident)
+- **50–69%** — Cukup andal (Moderate)
+- **< 50%** — Perlu verifikasi manual (Low confidence)
+
+### Apakah ada batasan jumlah publikasi yang bisa dianalisis?
+
+Untuk analisis ORCID individual, kami dapat memproses peneliti dengan hingga 1.000 publikasi. Untuk dataset lebih besar atau analisis institusional, kami menawarkan pemrosesan massal melalui paket enterprise.
+
+### Bisakah saya mengekspor hasil analisis?
+
+Ya! Anda bisa mengekspor hasil dalam beberapa format:
+- **CSV** — untuk analisis data di spreadsheet
+- **PDF** — untuk laporan dan presentasi  
+- **JSON** — untuk integrasi teknis
+
+---
+
+## Teknis
+
+### Mengapa ORCID ID saya tidak dikenali?
+
+Masalah umum meliputi:
+- **Format salah** — pastikan mengikuti pola `0000-0000-0000-0000`
+- **Digit checksum tidak valid** — karakter terakhir harus benar secara matematis (ISO 7064 MOD 11-2)
+- **Profil privat** — profil ORCID Anda harus diatur ke publik
+- **ORCID baru** — ID yang baru dibuat mungkin butuh 24-48 jam untuk muncul di sistem kami
+
+### Apa yang harus dilakukan jika analisis terlalu lama?
+
+Analisis biasanya membutuhkan 1-5 menit tergantung jumlah publikasi.
+
+- Set kecil (< 50 karya): 1-2 menit
+- Set sedang (50-200 karya): 3-7 menit
+- Set besar (200+ karya): hingga 15 menit
+
+Jika melebihi 15 menit, [hubungi dukungan](/contact).
+
+### Mengapa ada "Tidak ada hasil" untuk beberapa peneliti?
+
+Ini bisa terjadi ketika:
+- Karya peneliti tidak berkaitan dengan SDGs manapun
+- Publikasi kekurangan konten teks yang cukup untuk analisis
+- Karya ada di balik paywall dan abstrak tidak mencukupi
+- Profil ORCID memiliki sangat sedikit atau tidak ada publikasi
+
+### Apakah data saya disimpan?
+
+Hasil analisis di-cache selama 24 jam untuk meningkatkan kinerja. Data tidak dibagikan ke pihak ketiga. Lihat [Kebijakan Privasi](/privacy) kami untuk detail lengkap.
+
+---
+
+## Billing & Langganan
+
+### Apakah layanan dasar gratis?
+
+Ya! Layanan klasifikasi SDGs dasar kami gratis untuk peneliti individual dan mencakup:
+- Hingga **50 analisis per bulan**
+- Analisis ORCID dan DOI
+- Visualisasi dasar
+- Opsi ekspor standar (CSV, PDF)
+
+Untuk batas penggunaan yang lebih tinggi dan fitur lanjutan, kami menawarkan paket berbayar mulai dari $29/bulan.
+
+### Apa saja yang termasuk dalam paket premium?
+
+Paket premium mencakup:
+- Analisis bulanan tidak terbatas
+- Pemrosesan prioritas
+- Visualisasi dan laporan lanjutan
+- Akses API
+- Alat analisis massal
+- Format ekspor khusus
+- Dukungan email prioritas
+
+---
+
+## API
+
+### Bagaimana cara mendapatkan akses API?
+
+Akses API tersedia dengan paket Professional ($99/bulan) ke atas:
+
+1. Daftar untuk paket Professional atau Enterprise
+2. Kunjungi halaman API Access di dashboard Anda
+3. Generate API key Anda
+4. Tinjau [dokumentasi API](/docs/api-reference) kami
+5. Mulai integrasi dengan endpoint RESTful kami
+
+### Apa batas rate API?
+
+| Paket | Request/Menit | Request/Bulan |
+|-------|---------------|---------------|
+| Professional | 100 | 10,000 |
+| Enterprise | 500 | 100,000 |
+| Custom | Disesuaikan | Disesuaikan |
+
+---
+
+> Masih punya pertanyaan? [Hubungi tim kami](/contact) atau kunjungi [Pusat Bantuan](/help).
