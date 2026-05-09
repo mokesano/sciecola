@@ -30,7 +30,7 @@ const Footer = () => {
             </Link>
             <div className="text-xs text-indigo-400 mb-6 uppercase tracking-wider font-semibold">SDGs Classification & Analytics</div>
             <p className="text-sm text-gray-400 leading-relaxed mb-6">
-              Platform analitik riset berbasis AI untuk mengklasifikasikan dan memvisualisasikan kontribusi riset terhadap Sustainable Development Goals (SDGs).
+              Advanced AI-powered platform for analyzing research contributions to Sustainable Development Goals. Empowering researchers and institutions with intelligent classification and insights.
             </p>
             {/* Ikon Sosial Media */}
             <div className="flex gap-4">
@@ -51,10 +51,12 @@ const Footer = () => {
 
           {/* Kolom 2: Link Produk */}
           <div className="lg:col-span-2">
-            <h4 className="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Produk</h4>
+            <h4 className="text-white font-semibold mb-2 text-m tracking-wider">Produk</h4>
+            <div className="w-12 h-0.5 bg-indigo-500 mb-3"></div>
             <ul className="space-y-3 text-sm text-gray-400">
-              <li><Link to="/analytics" className="hover:text-indigo-400 transition-colors">Analytics</Link></li>
+              <li><Link to="/trends-analysis" className="hover:text-indigo-400 transition-colors">Trends Analysis</Link></li>
               <li><Link to="/sdgs" className="hover:text-indigo-400 transition-colors">SDGs Explorer</Link></li>
+              <li><Link to="/article-impact" className="hover:text-indigo-400 transition-colors">Article Impact</Link></li>
               <li><Link to="/researchers" className="hover:text-indigo-400 transition-colors">Researchers</Link></li>
               <li><Link to="/journals" className="hover:text-indigo-400 transition-colors">Journals</Link></li>
               <li><Link to="/docs/api-reference" className="hover:text-indigo-400 transition-colors">API</Link></li>
@@ -63,7 +65,8 @@ const Footer = () => {
           
           {/* Kolom 3: Link Sumber Data (External Links) */}
           <div className="lg:col-span-2">
-            <h4 className="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Sumber Data</h4>
+            <h4 className="text-white font-semibold mb-2 text-m tracking-wider">Sumber Data</h4>
+            <div className="w-12 h-0.5 bg-indigo-500 mb-3"></div>
             <ul className="space-y-3 text-sm text-gray-400">
               <li><a href="https://www.crossref.org" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors flex items-center gap-1">Crossref <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a></li>
               <li><a href="https://orcid.org" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors flex items-center gap-1">ORCID <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a></li>
@@ -75,7 +78,8 @@ const Footer = () => {
 
           {/* Kolom 4: Link Informasi */}
           <div className="lg:col-span-2">
-            <h4 className="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Informasi</h4>
+            <h4 className="text-white font-semibold mb-2 text-m tracking-wider">Informasi</h4>
+            <div className="w-12 h-0.5 bg-indigo-500 mb-3"></div>
             <ul className="space-y-3 text-sm text-gray-400">
               <li><Link to="/about" className="hover:text-indigo-400 transition-colors">Tentang Kami</Link></li>
               <li><Link to="/docs" className="hover:text-indigo-400 transition-colors">Fitur</Link></li>
@@ -88,7 +92,7 @@ const Footer = () => {
 
           {/* Kolom 5: Newsletter */}
           <div className="md:col-span-2 lg:col-span-3">
-            <h4 className="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Berlangganan Newsletter</h4>
+            <h4 className="text-white font-semibold mb-5 text-sm tracking-wider">Berlangganan <span className="text-indigo-400 uppercase">Newsletter</span></h4>
             <p className="text-sm text-gray-400 mb-5 leading-relaxed">Dapatkan update terbaru tentang fitur dan analisis riset dari Sciecola.</p>
             <form onSubmit={handleSubscribe} className="flex flex-col gap-3">
               <input 
@@ -127,7 +131,7 @@ const Footer = () => {
             <Link to="/terms" className="hover:text-indigo-400 transition-colors">Syarat & Ketentuan</Link>
             <Link to="/privacy" className="hover:text-indigo-400 transition-colors">Kebijakan Privasi</Link>
             <span className="text-gray-600">|</span>
-            <p>Dikembangkan oleh <Link to="https://sangia.id" target="_blank" rel="noopener noreferrer" className="text-gray-400 font-medium hover:text-indigo-400 transition-colors">Sangia Research Media and Publishing</Link></p>
+            <p>Dikembangkan oleh <Link to="https://sangia.org" target="_blank" rel="noopener noreferrer" className="text-gray-400 font-medium hover:text-indigo-400 transition-colors">Sangia Research Media and Publishing</Link></p>
           </div>
         </div>
         
