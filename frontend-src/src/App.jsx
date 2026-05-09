@@ -70,6 +70,7 @@ import LogHistory from './pages/LogHistory';
 import SciecoDashboard from './pages/SciecoDashboard';
 import Dashboard from './pages/Dashboard';
 import MyArticles from './pages/MyArticles';
+import MyCollections from './pages/MyCollections';
 
 // =====================================================================
 // KOMPONEN BERANDA (HOME)
@@ -194,7 +195,7 @@ function App() {
           <Route path="/sciecodash" element={<SciecoDashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/my-articles" element={<MyArticles />} />
-
+          <Route path="/my-collections" element={<MyCollections />} />
         </Routes>
 
         {/* Footer selalu tampil di semua halaman */}
