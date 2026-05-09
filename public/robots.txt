@@ -1,0 +1,5 @@
+# Izinkan crawler
+User-agent: *
+Allow: /
+
+Sitemap: https://sciecola.sangia.org/sitemap.xml

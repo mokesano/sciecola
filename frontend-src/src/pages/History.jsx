@@ -1,0 +1,328 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+const History = () => {
+  // Enriched Timeline Data with jsDelivr-style structure
+  const timelineData = [
+    {
+      year: '2024',
+      events: [
+        {
+          month: 'Mei',
+          type: 'launch',
+          icon: '🚀',
+          title: 'Wizdam 2.0 Launch',
+          description: 'Peluncuran platform Wizdam dengan interface yang sepenuhnya dirancang ulang dan fitur analitik yang lebih canggih.',
+          side: 'left'
+        },
+        {
+          month: 'Maret',
+          type: 'milestone',
+          icon: '📊',
+          title: '5 Juta Publikasi Dianalisis',
+          description: 'Mencapai tonggak sejarah dengan menganalisis lebih dari 5 juta publikasi penelitian dari seluruh dunia.',
+          side: 'right'
+        },
+        {
+          month: 'Januari',
+          type: 'partnership',
+          icon: '🤝',
+          title: 'Kemitraan dengan BRIN',
+          description: 'Badan Riset dan Inovasi Nasional menjadi mitra strategis untuk pengembangan ekosistem riset Indonesia.',
+          logo: 'BRIN',
+          side: 'left'
+        }
+      ]
+    },
+    {
+      year: '2023',
+      events: [
+        {
+          month: 'November',
+          type: 'launch',
+          icon: '🚀',
+          title: 'Sangia AI Engine v2',
+          description: 'Peluncuran mesin AI generasi kedua dengan akurasi klasifikasi SDG mencapai 95%+.',
+          side: 'right'
+        },
+        {
+          month: 'Agustus',
+          type: 'milestone',
+          icon: '📈',
+          title: '100 Institusi Mitra',
+          description: 'Seratus universitas dan lembaga penelitian bergabung sebagai mitra Wizdam.',
+          side: 'left'
+        },
+        {
+          month: 'Mei',
+          type: 'partnership',
+          icon: '⭐',
+          title: 'Google.org Support',
+          description: 'Mendapatkan dukungan dari Google.org untuk pengembangan AI untuk kebaikan sosial.',
+          logo: 'Google.org',
+          side: 'right'
+        },
+        {
+          month: 'Februari',
+          type: 'launch',
+          icon: '🚀',
+          title: 'API Public Release',
+          description: 'Peluncuran API publik untuk memungkinkan integrasi dengan sistem manajemen penelitian.',
+          side: 'left'
+        }
+      ]
+    },
+    {
+      year: '2022',
+      events: [
+        {
+          month: 'Desember',
+          type: 'milestone',
+          icon: '📊',
+          title: '1 Juta Publikasi',
+          description: 'Mencapai 1 juta publikasi yang dianalisis dalam platform Wizdam.',
+          side: 'right'
+        },
+        {
+          month: 'September',
+          type: 'partnership',
+          icon: '⭐',
+          title: 'UNDP Indonesia',
+          description: 'UNDP Indonesia bergabung sebagai mitra untuk alignment indikator SDGs.',
+          logo: 'UNDP',
+          side: 'left'
+        },
+        {
+          month: 'Juni',
+          type: 'launch',
+          icon: '🚀',
+          title: 'Dashboard Analitik',
+          description: 'Peluncuran dashboard analitik interaktif untuk visualisasi dampak riset.',
+          side: 'right'
+        },
+        {
+          month: 'Maret',
+          type: 'award',
+          icon: '🏆',
+          title: 'Innovation Award',
+          description: 'Menerima penghargaan Innovation Award untuk kontribusi terhadap SDGs.',
+          side: 'left'
+        }
+      ]
+    },
+    {
+      year: '2021',
+      events: [
+        {
+          month: 'Oktober',
+          type: 'launch',
+          icon: '🚀',
+          title: 'Wizdam Impact Score',
+          description: 'Peluncuran sistem Wizdam Impact Score dengan 4 pilar: Academic, Social, Economic, dan SDG.',
+          side: 'right'
+        },
+        {
+          month: 'Juli',
+          type: 'partnership',
+          icon: '⭐',
+          title: 'Telkom Indonesia',
+          description: 'PT Telkom Indonesia menjadi sponsor untuk infrastruktur cloud platform.',
+          logo: 'Telkom',
+          side: 'left'
+        },
+        {
+          month: 'April',
+          type: 'milestone',
+          icon: '📈',
+          title: '50 Institusi Mitra',
+          description: 'Lima puluh universitas dan lembaga penelitian bergabung dengan Wizdam.',
+          side: 'right'
+        },
+        {
+          month: 'Januari',
+          type: 'launch',
+          icon: '🚀',
+          title: 'Platform Beta',
+          description: 'Peluncuran versi beta platform Wizdam untuk pengujian terbatas.',
+          side: 'left'
+        }
+      ]
+    },
+    {
+      year: '2020',
+      events: [
+        {
+          month: 'November',
+          type: 'milestone',
+          icon: '💡',
+          title: 'Konsep Wizdam',
+          description: 'Ide awal Wizdam muncul dari tantangan mengukur dampak riset terhadap SDGs.',
+          side: 'right'
+        },
+        {
+          month: 'Agustus',
+          type: 'team',
+          icon: '👥',
+          title: 'Tim Pendiri',
+          description: 'Pembentukan tim inti yang terdiri dari peneliti dan ahli AI.',
+          side: 'left'
+        },
+        {
+          month: 'Maret',
+          type: 'foundation',
+          icon: '🏛️',
+          title: 'Foundation',
+          description: 'Wizdam didirikan dengan visi mempercepat dampak riset Indonesia terhadap SDGs global.',
+          side: 'right'
+        }
+      ]
+    }
+  ];
+
+  // Helper function to get icon color based on type
+  const getIconColor = (type) => {
+    const colors = {
+      launch: 'bg-indigo-100 text-indigo-600 border-indigo-300',
+      partnership: 'bg-purple-100 text-purple-600 border-purple-300',
+      milestone: 'bg-green-100 text-green-600 border-green-300',
+      award: 'bg-amber-100 text-amber-600 border-amber-300',
+      team: 'bg-blue-100 text-blue-600 border-blue-300',
+      foundation: 'bg-gray-100 text-gray-600 border-gray-300'
+    };
+    return colors[type] || colors.launch;
+  };
+
+  return (
+    <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
+        <span className="text-gray-400">›</span>
+        <Link to="/about" className="hover:text-indigo-600 transition-colors">Tentang Kami</Link>
+        <span className="text-gray-400">›</span>
+        <span className="text-gray-900 font-medium">Sejarah</span>
+      </nav>
+
+      {/* Header */}
+      <div className="text-center mb-16">
+        <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          Perjalanan Wizdam
+        </h1>
+        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          Dari ide sederhana menjadi platform analitik riset terdepan untuk pencapaian SDGs
+        </p>
+      </div>
+
+      {/* Timeline */}
+      <div className="relative max-w-6xl mx-auto">
+        {/* Central Line */}
+        <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-orange-300 via-orange-400 to-orange-300 transform md:-translate-x-1/2"></div>
+
+        {/* Timeline Items */}
+        <div className="space-y-12">
+          {timelineData.map((yearData, yearIndex) => (
+            <div key={yearData.year} className="relative">
+              {/* Year Header */}
+              <div className="text-center mb-8 relative z-10">
+                <h2 className="text-3xl font-bold text-orange-500 bg-white inline-block px-6 py-2 rounded-2xl">
+                  {yearData.year}
+                </h2>
+              </div>
+
+              {/* Events for this year */}
+              <div className="space-y-4">
+                {yearData.events.map((event, eventIndex) => (
+                  <div 
+                    key={eventIndex}
+                    className={`relative flex items-center gap-8 ${
+                      event.side === 'left' ? 'md:flex-row-reverse' : 'md:flex-row'
+                    }`}
+                  >
+                    {/* Content Side */}
+                    <div className={`ml-12 md:ml-0 md:w-1/2 ${
+                      event.side === 'left' ? 'md:pr-12 md:text-right' : 'md:pl-12 md:text-left'
+                    }`}>
+                      <div className="bg-white p-5 rounded-2xl border border-orange-200 shadow-md hover:shadow-lg transition-shadow">
+                        {/* Month Badge */}
+                        <span className="inline-block px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-bold mb-3">
+                          {event.month}
+                        </span>
+                        
+                        {/* Title & Description */}
+                        <h4 className="font-bold text-gray-900 text-lg mb-2">{event.title}</h4>
+                        <p className="text-sm text-gray-600 leading-relaxed">{event.description}</p>
+                        
+                        {/* Logo if exists */}
+                        {event.logo && (
+                          <div className={`mt-3 pt-3 border-t border-gray-100 ${
+                            event.side === 'left' ? 'md:text-right' : 'md:text-left'
+                          }`}>
+                            <span className="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs font-semibold">
+                              {event.logo}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Center Icon */}
+                    <div className="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 z-10">
+                      <div className={`w-12 h-12 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-xl ${getIconColor(event.type)}`}>
+                        {event.icon}
+                      </div>
+                    </div>
+
+                    {/* Empty Side for spacing */}
+                    <div className="hidden md:block md:w-1/2"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Stats Summary */}
+      <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+        {[
+          { label: 'Tahun Berdiri', value: '4+', icon: '📅' },
+          { label: 'Publikasi Dianalisis', value: '5M+', icon: '📊' },
+          { label: 'Institusi Mitra', value: '100+', icon: '🏛️' },
+          { label: 'Negara Terjangkau', value: '50+', icon: '🌍' }
+        ].map((stat, idx) => (
+          <div key={idx} className="bg-white p-6 rounded-2xl border border-orange-200 shadow-md text-center hover:shadow-lg transition-shadow">
+            <div className="text-3xl mb-2">{stat.icon}</div>
+            <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+            <p className="text-sm text-gray-600">{stat.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* CTA Section */}
+      <div className="mt-20 text-center">
+        <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-8 text-white shadow-lg max-w-3xl mx-auto">
+          <h3 className="text-2xl font-bold mb-3">Ingin Menjadi Bagian dari Perjalanan Kami?</h3>
+          <p className="text-indigo-100 mb-6">
+            Bergabunglah sebagai mitra atau sponsor untuk mendukung percepatan dampak riset Indonesia terhadap SDGs.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link 
+              to="/become-sponsor" 
+              className="px-8 py-3 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition-colors"
+            >
+              Jadi Sponsor
+            </Link>
+            <Link 
+              to="/contact" 
+              className="px-8 py-3 bg-indigo-500 text-white rounded-xl font-semibold hover:bg-indigo-400 transition-colors"
+            >
+              Hubungi Kami
+            </Link>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+};
+
+export default History;
