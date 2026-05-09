@@ -1,4 +1,5 @@
 import React from 'react';
+import { IconStar, IconAcademic, IconBriefcase, IconUsers } from '../shared/icons';
 
 const SponsorshipTiers = ({ onSelectTier, selectedTier }) => {
   // Data tiers
@@ -18,7 +19,7 @@ const SponsorshipTiers = ({ onSelectTier, selectedTier }) => {
         'Early access ke fitur beta & research insights'
       ],
       highlight: true,
-      icon: '💎',
+      icon: 'diamond',
       bgColor: 'bg-gray-100',
       borderColor: 'border-gray-400',
       buttonColor: 'bg-indigo-600 hover:bg-indigo-700'
@@ -37,7 +38,7 @@ const SponsorshipTiers = ({ onSelectTier, selectedTier }) => {
         'Priority email support'
       ],
       highlight: false,
-      icon: '🥇',
+      icon: 'gold',
       bgColor: 'bg-yellow-100',
       borderColor: 'border-yellow-400',
       buttonColor: 'bg-yellow-600 hover:bg-yellow-700'
@@ -55,7 +56,7 @@ const SponsorshipTiers = ({ onSelectTier, selectedTier }) => {
         'Update newsletter bulanan'
       ],
       highlight: false,
-      icon: '🥈',
+      icon: 'silver',
       bgColor: 'bg-gray-100',
       borderColor: 'border-gray-300',
       buttonColor: 'bg-gray-600 hover:bg-gray-700'
@@ -72,7 +73,7 @@ const SponsorshipTiers = ({ onSelectTier, selectedTier }) => {
         'Akses ke resource publik'
       ],
       highlight: false,
-      icon: '🥉',
+      icon: 'bronze',
       bgColor: 'bg-amber-100',
       borderColor: 'border-amber-300',
       buttonColor: 'bg-amber-600 hover:bg-amber-700'
@@ -119,8 +120,11 @@ const SponsorshipTiers = ({ onSelectTier, selectedTier }) => {
             )}
             
             {/* Icon & Header */}
-            <div className={`w-14 h-14 ${tier.bgColor} rounded-xl mb-4 flex items-center justify-center text-2xl`}>
-              {tier.icon}
+            <div className={`w-14 h-14 ${tier.bgColor} rounded-xl mb-4 flex items-center justify-center text-indigo-600`}>
+              {tier.icon === 'diamond' && <IconAcademic  className="w-7 h-7" />}
+              {tier.icon === 'gold'    && <IconStar      className="w-7 h-7 text-yellow-600" />}
+              {tier.icon === 'silver'  && <IconBriefcase className="w-7 h-7 text-gray-600" />}
+              {tier.icon === 'bronze'  && <IconUsers     className="w-7 h-7 text-amber-700" />}
             </div>
             
             <h3 className={`font-bold text-lg mb-1 ${selectedTier === tier.id ? 'text-indigo-600' : 'text-gray-900'}`}>

@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "home": "Home",
+    "journals": "Journals",
+    "researchers": "Researchers",
+    "institutions": "Institutions",
+    "sdgs": "SDGs",
+    "analytics": "Analytics",
+    "teams": "Teams",
+    "about": "About"
+  },
+  "hero": {
+    "badge": "AI-POWERED RESEARCH INTELLIGENCE",
+    "title_1": "Connecting Research",
+    "title_2": "with",
+    "title_highlight": "Global Goals",
+    "description": "Sciecola automatically analyzes and classifies scientific articles against the UN Sustainable Development Goals (SDGs) using artificial intelligence.",
+    "cta_explore": "Explore Research",
+    "cta_analyze": "Analyze Article"
+  },
+  "common": {
+    "search": "Search",
+    "search_placeholder": "Search...",
+    "loading": "Loading...",
+    "no_data": "No data available",
+    "view_all": "View All",
+    "download": "Download",
+    "filter": "Filter",
+    "sort": "Sort",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "share": "Share",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "export": "Export",
+    "import": "Import",
+    "refresh": "Refresh",
+    "settings": "Settings",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "required": "required",
+    "optional": "optional",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "stats": {
+    "total_articles": "Total Articles",
+    "total_researchers": "Total Researchers",
+    "total_journals": "Total Journals",
+    "total_institutions": "Total Institutions",
+    "total_citations": "Total Citations",
+    "publications": "Publications",
+    "citations": "Citations",
+    "h_index": "H-Index",
+    "impact_score": "Impact Score"
+  },
+  "sdg": {
+    "title": "SDGs Cluster",
+    "distribution": "Publications per SDG",
+    "trend": "SDG Publication Trends",
+    "top_sdgs": "Top SDGs",
+    "category": "Category",
+    "publications_count": "Publication Count"
+  },
+  "researcher": {
+    "profile": "Researcher Profile",
+    "publications": "Publications",
+    "citations": "Citations",
+    "institution": "Institution",
+    "field": "Field",
+    "verified": "Verified",
+    "wis_score": "WIS Score"
+  },
+  "article": {
+    "title": "Title",
+    "abstract": "Abstract",
+    "authors": "Authors",
+    "year": "Year",
+    "journal": "Journal",
+    "doi": "DOI",
+    "keywords": "Keywords",
+    "open_access": "Open Access",
+    "citations": "Citations"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "forgot_password": "Forgot password?",
+    "login_success": "Logged in successfully",
+    "logout_success": "Logged out successfully",
+    "register_success": "Registration successful"
+  },
+  "toast": {
+    "success": "Success",
+    "error": "An error occurred",
+    "info": "Information",
+    "copied": "Copied to clipboard",
+    "saved": "Changes saved",
+    "deleted": "Item deleted",
+    "exported": "Data exported"
+  },
+  "footer": {
+    "tagline": "SDGs-based research analytics platform",
+    "terms": "Terms & Conditions",
+    "privacy": "Privacy",
+    "contact": "Contact",
+    "copyright": "Copyright"
+  }
+}

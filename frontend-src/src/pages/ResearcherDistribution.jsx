@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 
 const ResearcherDistribution = () => {
   const [activeTab, setActiveTab] = useState('researcherMap');
@@ -51,21 +53,57 @@ const ResearcherDistribution = () => {
   };
   
   // Komponen peta Indonesia interaktif
-  const IndonesiaMap = () => {
+  // World researcher distribution map
+  const ResearcherMap = () => {
+    const worldPoints = [
+      ...institutionData.map(inst => ({ lat: inst.lat, lng: inst.lng, name: inst.name, researchers: inst.researchers, type: 'institution' })),
+      { lat: 3.56, lng: 98.65, name: 'Universitas Sumatera Utara', researchers: 287, type: 'institution' },
+      { lat: 51.51, lng: -0.13, name: 'UCL (Collaborator)', researchers: 12, type: 'collaborator' },
+      { lat: 35.68, lng: 139.69, name: 'University of Tokyo (Collaborator)', researchers: 8, type: 'collaborator' },
+      { lat: 1.35, lng: 103.82, name: 'NUS (Collaborator)', researchers: 15, type: 'collaborator' },
+      { lat: 40.71, lng: -74.01, name: 'Columbia University (Collaborator)', researchers: 6, type: 'collaborator' },
+    ];
+
     return (
-      <div className="bg-gray-100 rounded-lg h-96 flex items-center justify-center">
-        <div className="text-center p-4">
-          <p className="text-lg font-medium text-gray-700">Peta Interaktif Distribusi Peneliti Indonesia</p>
-          <p className="text-sm text-gray-500 mt-2">
-            Di implementasi sebenarnya, komponen ini akan menampilkan:
-          </p>
-          <ul className="text-sm text-gray-500 text-left mt-2 space-y-1">
-            <li>• Peta Indonesia dengan data geolokasi peneliti</li>
-            <li>• Visualisasi heatmap sebaran peneliti</li>
-            <li>• Marker untuk lokasi institusi</li>
-            <li>• Popup detail saat mengklik wilayah</li>
-          </ul>
-        </div>
+      <div className="h-96 rounded-xl overflow-hidden border border-gray-200">
+        <MapContainer
+          center={[10, 115]}
+          zoom={3}
+          minZoom={2}
+          maxZoom={6}
+          style={{ height: '100%', width: '100%' }}
+          scrollWheelZoom={false}
+          dragging={false}
+          zoomControl={false}
+          doubleClickZoom={false}
+          touchZoom={false}
+          keyboard={false}
+          attributionControl={false}
+        >
+          <TileLayer
+            url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
+          />
+          {worldPoints.map((pt, i) => (
+            <CircleMarker
+              key={i}
+              center={[pt.lat, pt.lng]}
+              radius={Math.max(5, Math.min(16, Math.floor(pt.researchers / 40)))}
+              pathOptions={{
+                color: pt.type === 'collaborator' ? '#6366f1' : '#ef4444',
+                fillColor: pt.type === 'collaborator' ? '#6366f1' : '#ef4444',
+                fillOpacity: 0.6,
+                weight: 1.5,
+              }}
+            >
+              <Popup>
+                <div className="p-1">
+                  <p className="font-bold text-sm text-gray-900">{pt.name}</p>
+                  <p className="text-xs text-gray-600">{pt.researchers} researchers</p>
+                </div>
+              </Popup>
+            </CircleMarker>
+          ))}
+        </MapContainer>
       </div>
     );
   };
@@ -170,7 +208,7 @@ const ResearcherDistribution = () => {
           </svg>
         </div>
       ) : (
-        <IndonesiaMap />
+        <ResearcherMap />
       )}
       
       {/* Statistik Peneliti */}

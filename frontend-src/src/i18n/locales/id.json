@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "home": "Beranda",
+    "journals": "Jurnal",
+    "researchers": "Peneliti",
+    "institutions": "Institusi",
+    "sdgs": "SDGs",
+    "analytics": "Analitik",
+    "teams": "Tim",
+    "about": "Tentang"
+  },
+  "hero": {
+    "badge": "AI-POWERED RESEARCH INTELLIGENCE",
+    "title_1": "Menghubungkan Riset",
+    "title_2": "dengan",
+    "title_highlight": "Tujuan Global",
+    "description": "Sciecola menganalisis dan mengklasifikasikan artikel ilmiah berdasarkan Sustainable Development Goals (SDGs) secara otomatis menggunakan kecerdasan buatan.",
+    "cta_explore": "Jelajahi Riset",
+    "cta_analyze": "Analisis Artikel"
+  },
+  "common": {
+    "search": "Cari",
+    "search_placeholder": "Cari...",
+    "loading": "Memuat...",
+    "no_data": "Tidak ada data",
+    "view_all": "Lihat Semua",
+    "download": "Unduh",
+    "filter": "Filter",
+    "sort": "Urutkan",
+    "close": "Tutup",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "confirm": "Konfirmasi",
+    "delete": "Hapus",
+    "edit": "Edit",
+    "share": "Bagikan",
+    "copy": "Salin",
+    "copied": "Tersalin!",
+    "export": "Ekspor",
+    "import": "Impor",
+    "refresh": "Muat ulang",
+    "settings": "Pengaturan",
+    "back": "Kembali",
+    "next": "Berikutnya",
+    "previous": "Sebelumnya",
+    "submit": "Kirim",
+    "required": "wajib diisi",
+    "optional": "opsional",
+    "yes": "Ya",
+    "no": "Tidak"
+  },
+  "stats": {
+    "total_articles": "Total Artikel",
+    "total_researchers": "Total Peneliti",
+    "total_journals": "Total Jurnal",
+    "total_institutions": "Total Institusi",
+    "total_citations": "Total Sitasi",
+    "publications": "Publikasi",
+    "citations": "Sitasi",
+    "h_index": "H-Index",
+    "impact_score": "Skor Dampak"
+  },
+  "sdg": {
+    "title": "SDGs Cluster",
+    "distribution": "Distribusi Publikasi per SDGs",
+    "trend": "Tren Publikasi SDGs",
+    "top_sdgs": "Top SDGs",
+    "category": "Kategori",
+    "publications_count": "Jumlah Publikasi"
+  },
+  "researcher": {
+    "profile": "Profil Peneliti",
+    "publications": "Publikasi",
+    "citations": "Sitasi",
+    "institution": "Institusi",
+    "field": "Bidang",
+    "verified": "Terverifikasi",
+    "wis_score": "Skor WIS"
+  },
+  "article": {
+    "title": "Judul",
+    "abstract": "Abstrak",
+    "authors": "Penulis",
+    "year": "Tahun",
+    "journal": "Jurnal",
+    "doi": "DOI",
+    "keywords": "Kata kunci",
+    "open_access": "Akses Terbuka",
+    "citations": "Sitasi"
+  },
+  "auth": {
+    "login": "Masuk",
+    "logout": "Keluar",
+    "register": "Daftar",
+    "email": "Email",
+    "password": "Kata Sandi",
+    "forgot_password": "Lupa kata sandi?",
+    "login_success": "Berhasil masuk",
+    "logout_success": "Berhasil keluar",
+    "register_success": "Pendaftaran berhasil"
+  },
+  "toast": {
+    "success": "Berhasil",
+    "error": "Terjadi kesalahan",
+    "info": "Informasi",
+    "copied": "Disalin ke clipboard",
+    "saved": "Perubahan disimpan",
+    "deleted": "Item dihapus",
+    "exported": "Data diekspor"
+  },
+  "footer": {
+    "tagline": "Platform analitik riset berbasis SDGs",
+    "terms": "Syarat & Ketentuan",
+    "privacy": "Privasi",
+    "contact": "Kontak",
+    "copyright": "Hak cipta"
+  }
+}

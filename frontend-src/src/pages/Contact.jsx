@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -190,6 +191,7 @@ const Contact = () => {
       // await fetch('/api/contact', { method: 'POST', body: JSON.stringify(formData), ... })
       
       setSubmitStatus('success');
+      toast.success('Pesan Anda berhasil dikirim!');
       setFormData({
         name: '',
         email: '',
@@ -201,12 +203,11 @@ const Contact = () => {
         privacy: false
       });
       setCharCount(0);
-      
-      // Scroll to top to show success message
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      
+
     } catch (error) {
       console.error('Form submission error:', error);
+      toast.error('Gagal mengirim pesan. Silakan coba lagi.');
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);

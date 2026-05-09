@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 // ✅ Import komponen SponsorshipTiers
@@ -243,9 +244,11 @@ const BecomeSponsor = () => {
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
       setSubmitStatus('success');
+      toast.success('Pengajuan sponsor berhasil dikirim!');
       setActiveStep(4);
     } catch (error) {
       console.error('Submission error:', error);
+      toast.error('Gagal mengirim pengajuan. Silakan coba lagi.');
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);

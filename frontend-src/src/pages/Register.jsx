@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -116,10 +117,12 @@ const Register = () => {
       
       // 4. Success Flow
       window.turnstile?.reset();
+      toast.success('Pendaftaran berhasil! Silakan verifikasi email Anda.');
       navigate('/auth/verify-email', { state: { email: formData.email } });
-      
+
     } catch (error) {
       console.error('Registration failed:', error);
+      toast.error('Pendaftaran gagal. Silakan coba lagi.');
       setErrors({ submit: 'Pendaftaran gagal. Silakan periksa koneksi atau coba lagi nanti.' });
     } finally {
       setLoading(false);

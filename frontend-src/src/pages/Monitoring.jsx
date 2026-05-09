@@ -15,16 +15,33 @@ const Monitoring = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState('24h');
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Mock Data: Geographic Distribution dengan node berdenyut
-  const [geoData, setGeoData] = useState([
-    { id: 1, lat: -6.2088, lng: 106.8456, city: 'Jakarta', visitors: 1247, pulse: true },
-    { id: 2, lat: -7.2575, lng: 112.7521, city: 'Surabaya', visitors: 856, pulse: true },
-    { id: 3, lat: -6.9175, lng: 107.6191, city: 'Bandung', visitors: 734, pulse: false },
-    { id: 4, lat: -8.6705, lng: 115.2126, city: 'Denpasar', visitors: 623, pulse: true },
-    { id: 5, lat: -7.7956, lng: 110.3695, city: 'Yogyakarta', visitors: 512, pulse: false },
-    { id: 6, lat: -5.1477, lng: 119.4327, city: 'Makassar', visitors: 445, pulse: true },
-    { id: 7, lat: -3.3194, lng: 114.5906, city: 'Banjarmasin', visitors: 334, pulse: false },
-    { id: 8, lat: -0.5017, lng: 117.1536, city: 'Balikpapan', visitors: 289, pulse: true },
+  // World-wide geographic distribution data
+  const [geoData] = useState([
+    { id: 1,  lat: -6.21,  lng: 106.85, city: 'Jakarta',        visitors: 1247 },
+    { id: 2,  lat: -7.26,  lng: 112.75, city: 'Surabaya',       visitors: 856  },
+    { id: 3,  lat: 1.35,   lng: 103.82, city: 'Singapore',      visitors: 743  },
+    { id: 4,  lat: 3.14,   lng: 101.69, city: 'Kuala Lumpur',   visitors: 698  },
+    { id: 5,  lat: 13.76,  lng: 100.50, city: 'Bangkok',        visitors: 612  },
+    { id: 6,  lat: 14.60,  lng: 121.00, city: 'Manila',         visitors: 534  },
+    { id: 7,  lat: 22.30,  lng: 114.18, city: 'Hong Kong',      visitors: 489  },
+    { id: 8,  lat: 35.68,  lng: 139.69, city: 'Tokyo',          visitors: 456  },
+    { id: 9,  lat: 37.57,  lng: 126.98, city: 'Seoul',          visitors: 421  },
+    { id: 10, lat: 39.91,  lng: 116.39, city: 'Beijing',        visitors: 398  },
+    { id: 11, lat: 31.23,  lng: 121.47, city: 'Shanghai',       visitors: 376  },
+    { id: 12, lat: 28.61,  lng: 77.21,  city: 'New Delhi',      visitors: 345  },
+    { id: 13, lat: 19.08,  lng: 72.88,  city: 'Mumbai',         visitors: 312  },
+    { id: 14, lat: 51.51,  lng: -0.13,  city: 'London',         visitors: 289  },
+    { id: 15, lat: 48.86,  lng: 2.35,   city: 'Paris',          visitors: 267  },
+    { id: 16, lat: 52.52,  lng: 13.40,  city: 'Berlin',         visitors: 245  },
+    { id: 17, lat: 40.71,  lng: -74.01, city: 'New York',       visitors: 523  },
+    { id: 18, lat: 34.05,  lng: -118.24,city: 'Los Angeles',    visitors: 412  },
+    { id: 19, lat: -33.87, lng: 151.21, city: 'Sydney',         visitors: 198  },
+    { id: 20, lat: -23.55, lng: -46.63, city: 'São Paulo',      visitors: 187  },
+    { id: 21, lat: -34.60, lng: -58.38, city: 'Buenos Aires',   visitors: 156  },
+    { id: 22, lat: 30.05,  lng: 31.25,  city: 'Cairo',          visitors: 143  },
+    { id: 23, lat: 6.52,   lng: 3.38,   city: 'Lagos',          visitors: 132  },
+    { id: 24, lat: -26.20, lng: 28.04,  city: 'Johannesburg',   visitors: 121  },
+    { id: 25, lat: 55.75,  lng: 37.62,  city: 'Moscow',         visitors: 118  },
   ]);
 
   // Mock Data: Traffic Sources
@@ -86,16 +103,16 @@ const Monitoring = () => {
   // Mock Data: System Analytics
   const systemData = {
     browsers: [
-      { name: 'Chrome', value: 6789, percentage: 58, icon: '🌐' },
-      { name: 'Firefox', value: 2345, percentage: 20, icon: '🦊' },
-      { name: 'Safari', value: 1567, percentage: 13, icon: '🧭' },
-      { name: 'Edge', value: 987, percentage: 8, icon: '🔷' },
-      { name: 'Others', value: 123, percentage: 1, icon: '📱' },
+      { name: 'Chrome',  value: 6789, percentage: 58 },
+      { name: 'Firefox', value: 2345, percentage: 20 },
+      { name: 'Safari',  value: 1567, percentage: 13 },
+      { name: 'Edge',    value: 987,  percentage: 8  },
+      { name: 'Others',  value: 123,  percentage: 1  },
     ],
     platforms: [
-      { name: 'Desktop', value: 7654, percentage: 65, icon: '💻' },
-      { name: 'Mobile', value: 3456, percentage: 29, icon: '📱' },
-      { name: 'Tablet', value: 701, percentage: 6, icon: '📲' },
+      { name: 'Desktop', value: 7654, percentage: 65 },
+      { name: 'Mobile',  value: 3456, percentage: 29 },
+      { name: 'Tablet',  value: 701,  percentage: 6  },
     ],
     screens: [
       { resolution: '1920x1080', value: 4567, percentage: 39 },
@@ -105,11 +122,11 @@ const Monitoring = () => {
       { resolution: 'Others', value: 678, percentage: 6 },
     ],
     os: [
-      { name: 'Windows', value: 6789, percentage: 58, icon: '🪟' },
-      { name: 'macOS', value: 2345, percentage: 20, icon: '🍎' },
-      { name: 'Android', value: 1567, percentage: 13, icon: '🤖' },
-      { name: 'iOS', value: 987, percentage: 8, icon: '📱' },
-      { name: 'Linux', value: 123, percentage: 1, icon: '🐧' },
+      { name: 'Windows', value: 6789, percentage: 58 },
+      { name: 'macOS', value: 2345, percentage: 20 },
+      { name: 'Android', value: 1567, percentage: 13 },
+      { name: 'iOS', value: 987, percentage: 8 },
+      { name: 'Linux', value: 123, percentage: 1 },
     ],
     devices: [
       { name: 'Desktop', value: 7654, percentage: 65 },
@@ -132,22 +149,20 @@ const Monitoring = () => {
     { id: 8, timestamp: '2024-05-25 14:25:18', page: '/researchers', source: 'google.com', location: 'Jakarta', device: 'Firefox/Linux', duration: '3m 56s' },
   ]);
 
-  // Custom Pulse Marker Component
-  const PulseMarker = ({ position, city, visitors, pulse }) => {
+  // Pulsing red heatmap marker
+  const PulseMarker = ({ position, city, visitors }) => {
+    const radius = Math.max(6, Math.min(18, Math.floor(visitors / 80)));
     return (
       <CircleMarker
         center={position}
-        radius={pulse ? 12 : 8}
-        color={pulse ? '#6366f1' : '#8b5cf6'}
-        fillColor={pulse ? '#6366f1' : '#8b5cf6'}
-        fillOpacity={0.6}
-        weight={2}
-        className={pulse ? 'animate-pulse' : ''}
+        radius={radius}
+        pathOptions={{ color: '#ef4444', fillColor: '#ef4444', fillOpacity: 0.55, weight: 1.5 }}
+        className="leaflet-pulse-marker"
       >
         <Popup>
-          <div className="p-2">
-            <p className="font-bold text-gray-900">{city}</p>
-            <p className="text-sm text-gray-600">{visitors.toLocaleString()} visitors</p>
+          <div className="p-1.5">
+            <p className="font-bold text-gray-900 text-sm">{city}</p>
+            <p className="text-xs text-gray-600">{visitors.toLocaleString()} visitors</p>
           </div>
         </Popup>
       </CircleMarker>
@@ -257,23 +272,31 @@ const Monitoring = () => {
             <p className="text-sm text-gray-600 mt-1">Distribusi pengunjung berdasarkan lokasi geografis</p>
           </div>
           <div className="h-96">
-            <MapContainer 
-              center={[-2.5489, 118.0149]} 
-              zoom={5} 
+            <MapContainer
+              center={[20, 0]}
+              zoom={2}
+              minZoom={2}
+              maxZoom={5}
               style={{ height: '100%', width: '100%' }}
               scrollWheelZoom={false}
+              dragging={false}
+              zoomControl={false}
+              doubleClickZoom={false}
+              touchZoom={false}
+              keyboard={false}
+              attributionControl={false}
             >
+              {/* Monochrome tile layer (CartoDB Positron – light grey) */}
               <TileLayer
-                attribution={`&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>`}
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
+                url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
               />
               {geoData.map((location) => (
-                <PulseMarker 
+                <PulseMarker
                   key={location.id}
                   position={[location.lat, location.lng]}
                   city={location.city}
                   visitors={location.visitors}
-                  pulse={location.pulse}
                 />
               ))}
             </MapContainer>

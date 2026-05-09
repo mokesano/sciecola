@@ -2,38 +2,28 @@ import React from 'react';
 
 const Hero = () => {
   return (
-    // 1. ROOT WRAPPER: Bebas hambatan. 
-    // Tanpa overflow-hidden, tanpa padding atas/bawah di sini.
-    <div className="relative w-full font-sans">
-      
-      {/* 2. LAYER GAMBAR (SISI KANAN) */}
-      {/* Posisinya absolute, langsung menempel ke tepi kanan viewport browser */}
-      <div className="absolute inset-y-0 right-0 w-full lg:w-[60vw] flex items-center justify-end pointer-events-none z-0">
-        <img 
-          src="/assets/img/Hero-Illustrated.png" 
-          alt="Ilustrasi Homepage" 
-          // max-w-none dilepas. Ukurannya mengikuti layar tanpa dikurung container teks.
-          className="w-full max-w-[600px] lg:max-w-[900px] h-auto object-contain object-right"
-          // PENAMBAHAN MASKING: 
-          // linear-gradient ini akan membuat transisi transparan di 15% sisi kiri dan 15% sisi kanan gambar.
+    <div className="relative w-full font-sans overflow-hidden">
+
+      {/* Hero image — hidden on mobile, visible on large screens only */}
+      <div className="hidden lg:flex absolute inset-y-0 right-0 w-[60vw] items-center justify-end pointer-events-none z-0">
+        <img
+          src="/assets/img/Hero-Illustrated.png"
+          alt="Ilustrasi Homepage"
+          className="w-full max-w-[900px] h-auto object-contain object-right"
           style={{
-            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)',
-            maskImage: 'linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)'
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 20%, black 85%, transparent 100%)',
+            maskImage: 'linear-gradient(to right, transparent 0%, black 20%, black 85%, transparent 100%)'
           }}
         />
       </div>
 
-      {/* 3. LAYER TEKS (SISI KIRI) */}
-      {/* Padding vertikal (jarak area hero) ditaruh HANYA di container ini */}
-      {/* max-w-7xl menahan agar teks tetap sejajar dengan navbar */}
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-4 lg:px-4 pt-12 pb-24 z-10 pointer-events-auto">
-        
-        {/* Teks dibatasi lebarnya (50%) agar tidak menimpa gambar di desktop */}
-        <div className="w-full lg:w-[50%] flex flex-col justify-center text-center lg:text-left">
+      {/* Text layer — full width on mobile, left-half on desktop */}
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 lg:pb-24 z-10 pointer-events-auto">
+        <div className="w-full lg:w-[52%] flex flex-col justify-center text-center lg:text-left">
           
           {/* Badge AI */}
           <div className="inline-flex items-center justify-center lg:justify-start px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold tracking-wider mb-6 w-max mx-auto lg:mx-0">
-            <span className="mr-2 text-sm">✨</span> AI-POWERED RESEARCH INTELLIGENCE
+            <svg className="w-3.5 h-3.5 mr-1.5 text-indigo-500" fill="currentColor" viewBox="0 0 24 24"><path d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg> AI-POWERED RESEARCH INTELLIGENCE
           </div>
 
           {/* Judul Utama */}

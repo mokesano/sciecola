@@ -370,8 +370,8 @@ const Feeds = () => {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-gray-900">{event.title}</p>
-                      <p className="text-xs text-gray-500 mt-1">🕒 {event.time}</p>
-                      <p className="text-xs text-gray-500">📍 {event.location}</p>
+                      <p className="text-xs text-gray-500 mt-1">{event.time}</p>
+                      <p className="text-xs text-gray-500">{event.location}</p>
                       <button className="mt-2 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-200 transition-colors">Daftar</button>
                     </div>
                   </div>
