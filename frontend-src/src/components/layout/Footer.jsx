@@ -26,7 +26,7 @@ const Footer = () => {
           {/* Kolom 1: Logo dan Deskripsi */}
           <div className="md:col-span-2 lg:col-span-3 lg:pr-4">
             <Link to="/" className="text-white text-3xl font-black tracking-wide mb-2 hover:text-indigo-400 transition-colors inline-block">
-              SCIECO
+              SCIECOLA
             </Link>
             <div className="text-xs text-indigo-400 mb-6 uppercase tracking-wider font-semibold">SDGs Classification & Analytics</div>
             <p className="text-sm text-gray-400 leading-relaxed mb-6">
