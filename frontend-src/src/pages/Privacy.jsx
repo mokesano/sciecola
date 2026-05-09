@@ -182,7 +182,7 @@ const Privacy = () => {
                   <li><strong>Hak Keberatan:</strong> Menolak pemrosesan data untuk keperluan pemasaran atau analitik non-esensial.</li>
                 </ul>
                 <p className="mt-4">
-                  Gunakan menu <Link to="/settings" className="text-indigo-600 hover:underline font-medium">Pengaturan > Privasi & Keamanan</Link> atau hubungi kami untuk menjalankan hak-hak ini.
+                  Gunakan menu <Link to="/settings" className="text-indigo-600 hover:underline font-medium">Pengaturan Privasi & Keamanan</Link> atau hubungi kami untuk menjalankan hak-hak ini.
                 </p>
               </section>
 
@@ -246,13 +246,13 @@ const Privacy = () => {
 
             {/* Action Buttons */}
             <div className="mt-12 pt-8 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p className="text-sm text-gray-500">Kelola data dan privasi Anda kapan saja melalui pengaturan akun.</p>
+              <p className="text-m text-gray-500">Kelola data dan privasi Anda kapan saja melalui pengaturan akun.</p>
               <div className="flex gap-3">
                 <Link to="/settings#privacy" className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors shadow-sm">
-                  Buka Pengaturan Privasi
+                  Privacy Settings
                 </Link>
                 <Link to="/contact" className="px-6 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors">
-                  Hubungi Kami
+                  Contact Support
                 </Link>
               </div>
             </div>
