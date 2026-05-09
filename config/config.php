@@ -68,18 +68,23 @@ $LOG_CONFIG = [
 ];
 
 // ================================================================
-// 6. DATABASE CONFIGURATION (Opsional - Jika Nanti Dibutuhkan)
+// 6. DATABASE CONFIGURATION
 // ================================================================
-// Saat ini aplikasi Anda tampaknya berbasis API eksternal murni, 
-// namun jika nanti Anda ingin menyimpan data secara permanen (MySQL/MariaDB):
 
-/*
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_NAME', 'sicola_db');
+define('DB_HOST',    getenv('DB_HOST')    ?: 'localhost');
+define('DB_PORT',    getenv('DB_PORT')    ?: '3306');
+define('DB_USER',    getenv('DB_USER')    ?: 'sicola');
+define('DB_PASS',    getenv('DB_PASS')    ?: '');
+define('DB_NAME',    getenv('DB_NAME')    ?: 'sicola_db');
 define('DB_CHARSET', 'utf8mb4');
-*/
+define('DB_DRIVER',  getenv('DB_DRIVER')  ?: 'mysql'); // 'mysql' for MariaDB, 'pgsql' for PostgreSQL
+
+// ================================================================
+// 7. WIZDAM-APIS CONFIGURATION
+// ================================================================
+
+define('WIZDAM_API_BASE', getenv('WIZDAM_API_BASE') ?: 'https://api.sangia.org');
+define('WIZDAM_API_KEY',  getenv('WIZDAM_API_KEY')  ?: '');
 
 // ================================================================
 // IMPLEMENTASI ENVIRONMENT (TIDAK PERLU DIUBAH)

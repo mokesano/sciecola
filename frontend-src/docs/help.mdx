@@ -1,0 +1,132 @@
+---
+title: Pusat Bantuan
+description: Temukan jawaban, dapatkan dukungan, dan pelajari cara memaksimalkan platform SDGs Mapper.
+---
+
+# Pusat Bantuan
+
+Temukan jawaban, dapatkan dukungan, dan pelajari cara memaksimalkan platform kami.
+
+---
+
+## Kategori Bantuan
+
+| Kategori | Deskripsi | Artikel |
+|----------|-----------|---------|
+| **Getting Started** | Pelajari dasar-dasar penggunaan platform klasifikasi SDGs kami | 8 |
+| **Analysis Guide** | Pahami cara AI kami menganalisis dan mengklasifikasikan penelitian | 12 |
+| **API & Integration** | Dokumentasi teknis dan panduan integrasi | 15 |
+| **Troubleshooting** | Solusi untuk masalah umum dan pesan error | 10 |
+| **Account & Billing** | Kelola akun, langganan, dan penagihan Anda | 6 |
+| **Advanced Features** | Analisis massal, integrasi khusus, dan fitur enterprise | 9 |
+
+---
+
+## Tutorial Cepat
+
+### 1. Menganalisis Profil Penelitian Anda (3 menit · Pemula)
+
+Gunakan ORCID ID Anda untuk menganalisis semua publikasi sekaligus:
+
+1. Buka halaman utama [SDGs Mapper](/).
+2. Masukkan ORCID ID Anda dalam format `0000-0000-0000-0000`.
+3. Klik **Analisis** dan tunggu proses selesai.
+4. Lihat ringkasan SDGs, grafik distribusi, dan skor impact Anda.
+
+### 2. Analisis Artikel Tunggal (2 menit · Pemula)
+
+Analisis artikel penelitian individual menggunakan DOI:
+
+1. Masukkan DOI dalam format `10.xxxx/xxxxx` atau URL DOI lengkap.
+2. Sistem akan mengambil metadata dari Crossref secara otomatis.
+3. Lihat klasifikasi SDGs, skor kepercayaan, dan analisis komponen.
+
+### 3. Memahami Hasil Analisis (5 menit · Menengah)
+
+**Skor Kepercayaan:**
+- **≥ 70%** — Sangat andal
+- **50–69%** — Cukup andal
+- **< 50%** — Perlu verifikasi manual
+
+**4 Komponen Analisis:**
+
+| Komponen | Bobot | Keterangan |
+|----------|-------|------------|
+| Keyword Matching | 30% | Pencocokan kata kunci SDGs |
+| Semantic Similarity | 30% | Kesamaan semantik dengan teks referensi |
+| Substantive Analysis | 20% | Analisis substansi konten |
+| Causal Inference | 20% | Inferensi kausal terhadap dampak SDGs |
+
+### 4. Mengekspor Data Anda (3 menit · Pemula)
+
+Format ekspor yang tersedia:
+- **CSV** — untuk analisis data di spreadsheet
+- **PDF** — untuk laporan dan presentasi
+- **JSON** — untuk integrasi teknis
+
+---
+
+## FAQ
+
+### Umum
+
+**Apa itu klasifikasi SDGs?**
+
+Klasifikasi SDGs adalah proses menganalisis publikasi penelitian untuk menentukan relevansinya terhadap 17 Tujuan Pembangunan Berkelanjutan PBB. Sistem AI kami menggunakan empat komponen: pencocokan kata kunci, kesamaan semantik, analisis substantif, dan inferensi kausal.
+
+**Format input apa saja yang didukung?**
+
+- **ORCID ID** — Format `0000-0000-0000-0000` untuk menganalisis semua publikasi peneliti
+- **DOI** — Format `10.xxxx/xxxxx` untuk menganalisis artikel individual
+
+Anda bisa menempelkan ID langsung atau URL lengkap (misalnya `https://orcid.org/0000-0000-0000-0000`).
+
+**Seberapa akurat klasifikasi SDGs-nya?**
+
+Sistem AI kami mencapai akurasi lebih dari 95% saat diuji pada dataset yang dikurasi manual. Kami menyediakan skor kepercayaan untuk menunjukkan keandalan setiap klasifikasi.
+
+---
+
+### Teknis
+
+**Mengapa ORCID ID saya tidak dikenali?**
+
+Masalah umum meliputi:
+- Format salah — pastikan mengikuti pola `0000-0000-0000-0000`
+- Digit checksum tidak valid — karakter terakhir harus benar secara matematis
+- Profil privat — profil ORCID Anda harus diatur ke publik
+- ORCID baru — ID yang baru dibuat mungkin butuh 24-48 jam untuk muncul di sistem kami
+
+**Apa yang harus dilakukan jika analisis terlalu lama?**
+
+Analisis biasanya membutuhkan 1-5 menit tergantung jumlah publikasi. Set publikasi besar (100+) bisa membutuhkan hingga 10 menit.
+
+---
+
+### Billing
+
+**Apakah layanan dasar gratis?**
+
+Ya! Layanan klasifikasi SDGs dasar kami gratis untuk peneliti individual dan mencakup:
+- Hingga 50 analisis per bulan
+- Analisis ORCID dan DOI
+- Visualisasi dasar
+- Opsi ekspor standar
+
+---
+
+### API
+
+**Bagaimana cara mendapatkan akses API?**
+
+Akses API tersedia dengan paket Professional ($99/bulan) dan lebih tinggi. Lihat halaman [Dokumentasi API](/docs/api-reference) untuk panduan lengkap.
+
+---
+
+## Butuh Bantuan Lebih Lanjut?
+
+- **Live Chat** — Bantuan instan dari tim dukungan kami
+- **Email Support** — [Hubungi kami](/contact) dengan pertanyaan detail
+- **Dokumentasi** — [Baca docs lengkap](/docs)
+
+> Status sistem: [status.sangia.org](https://status.sangia.org)

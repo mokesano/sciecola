@@ -1,0 +1,240 @@
+---
+title: Referensi API — Wizdam APIs
+description: Dokumentasi lengkap Wizdam APIs (api.sangia.org) untuk integrasi SDGs Mapper.
+---
+
+# Referensi API
+
+**Base URL:** `https://api.sangia.org`  
+**Versi:** v1  
+**Autentikasi:** `X-API-Key: wz_{user_id}_{timestamp}_{hmac16}`
+
+---
+
+## Daftar Endpoint
+
+| Method | Endpoint | Auth | Keterangan |
+|--------|----------|------|------------|
+| GET | `/health` | Publik | Cek status API |
+| GET | `/api/v1/sdg/versions` | Publik | Daftar versi classifier |
+| POST | `/api/v1/sdg/{version}/classify` | API Key | Klasifikasi SDGs |
+| POST | `/api/v1/sdg/classify` | API Key | Alias → v5 |
+| GET | `/api/v1/orcid/profile` | API Key | Profil peneliti ORCID |
+| GET | `/api/v1/citation/doi` | API Key | Metadata DOI via Crossref |
+| GET | `/api/v1/journal/metrics` | API Key | Metrik jurnal |
+| GET | `/api/v1/scopus/author` | API Key | Data Scopus peneliti |
+| GET | `/api/v1/sinta/score` | API Key | Skor SINTA |
+| POST | `/api/v1/impact/calculate` | API Key | Wizdam Impact Score |
+| POST | `/api/v1/trend/analyze` | API Key | Analisis tren publikasi |
+| POST | `/api/v1/recommendation/policy` | API Key | Rekomendasi kebijakan |
+| POST | `/api/v1/admin/keys/revoke` | API Key | Cabut API key |
+
+---
+
+## Autentikasi
+
+Kirim API key melalui salah satu cara:
+
+```http
+X-API-Key: wz_42_1719000000_a3f8e2c1d5b7
+Authorization: Bearer wz_42_1719000000_a3f8e2c1d5b7
+?api_key=wz_42_1719000000_a3f8e2c1d5b7
+```
+
+**Format key:** `wz_{user_id}_{unix_timestamp}_{hmac16}`
+
+- `hmac16` = 16 karakter pertama dari `HMAC-SHA256(user_id:timestamp, WIZDAM_SHARED_SECRET)`
+- TTL: 1 tahun sejak `timestamp`
+
+**Rate Limit:** 60 request/60 detik per API key (default).
+
+---
+
+## POST /api/v1/sdg/{version}/classify
+
+Klasifikasikan satu atau lebih karya penelitian terhadap 17 SDGs.
+
+### Versi
+
+| Versi | Keterangan |
+|-------|------------|
+| `v0` | Keyword-only scoring |
+| `v1` | Keyword + vector similarity |
+| `v2` | Bilingual dictionary (EN + ID) |
+| `v3` | Contributor type classification |
+| `v4` | Substantive + causal analysis |
+| `v5` | Causal-boosted — **direkomendasikan** |
+| `v5e` | Metadata-enhanced — eksperimental |
+
+### Mode Input
+
+| Mode | Field Wajib | Kasus Penggunaan |
+|------|-------------|------------------|
+| Text | `title` dan/atau `abstract` | Artikel tunggal, sinkron |
+| DOI | `doi` | Ambil metadata dari Crossref lalu klasifikasikan |
+| ORCID | `orcid` | Klasifikasikan semua karya peneliti, batch |
+
+### Request Body
+
+```json
+{
+  "title": "Solar Panel Adoption in Rural Java",
+  "abstract": "This study investigates...",
+  "doi": "10.1234/example",
+  "orcid": "0000-0002-1234-5678",
+  "batch_size": 20,
+  "offset": 0,
+  "weights": {
+    "keyword": 0.30,
+    "similarity": 0.30,
+    "substantive": 0.20,
+    "causal": 0.20,
+    "max_sdgs": 7,
+    "thresholds": {
+      "min": 0.20,
+      "confidence": 0.30
+    }
+  }
+}
+```
+
+### Response
+
+```json
+{
+  "status": "success",
+  "sdgs": ["SDG7", "SDG13"],
+  "detailed_analysis": {
+    "SDG7": {
+      "score": 0.82,
+      "confidence_level": "High",
+      "keyword_score": 0.75,
+      "similarity_score": 0.88
+    }
+  }
+}
+```
+
+---
+
+## GET /api/v1/orcid/profile
+
+Ambil profil lengkap peneliti dan daftar karya dari ORCID Public API.
+
+### Query Parameters
+
+| Parameter | Tipe | Wajib | Default | Keterangan |
+|-----------|------|-------|---------|------------|
+| `orcid` | string | Ya | — | ORCID iD format `0000-0000-0000-0000` |
+| `refresh` | bool | Tidak | `false` | Paksa re-fetch dari ORCID API |
+| `limit` | int | Tidak | `50` | Maks jumlah karya (maks `200`) |
+
+### Response
+
+```json
+{
+  "status": "success",
+  "orcid": "0000-0002-1234-5678",
+  "person": {
+    "name": "Budi Santoso",
+    "given_names": "Budi",
+    "family_name": "Santoso"
+  },
+  "total_works": 145,
+  "works": [
+    {
+      "title": "Solar Panel Adoption in Rural Java",
+      "doi": "10.1234/example",
+      "publication_year": 2023,
+      "type": "journal-article"
+    }
+  ]
+}
+```
+
+---
+
+## GET /api/v1/citation/doi
+
+Ambil metadata sitasi untuk DOI melalui Crossref.
+
+### Query Parameters
+
+| Parameter | Tipe | Wajib | Keterangan |
+|-----------|------|-------|------------|
+| `doi` | string | Ya | DOI artikel, contoh: `10.1234/example` |
+
+---
+
+## POST /api/v1/impact/calculate
+
+Hitung Wizdam Impact Score (WIS) untuk seorang peneliti.
+
+### Formula WIS
+
+```
+WIS = (Academic × 0.4) + (Social × 0.3) + (Practical × 0.3)
+```
+
+| Pilar | Bobot | Komponen |
+|-------|-------|----------|
+| Academic | 40% | Publikasi, sitasi, h-index, kualitas jurnal |
+| Social | 30% | Mention media sosial, berita, kebijakan |
+| Practical | 30% | Implementasi nyata, paten, transfer teknologi |
+
+---
+
+## Error Codes
+
+| HTTP | Code | Keterangan |
+|------|------|------------|
+| 400 | `BAD_REQUEST` | Parameter tidak valid atau hilang |
+| 401 | `UNAUTHORIZED` | API key tidak valid atau kadaluarsa |
+| 404 | `NOT_FOUND` | Resource tidak ditemukan |
+| 429 | `RATE_LIMITED` | Melebihi batas request |
+| 500 | `INTERNAL_ERROR` | Kesalahan server internal |
+| 502 | `UPSTREAM_ERROR` | API eksternal tidak merespons |
+| 504 | `TIMEOUT` | Request melampaui batas waktu |
+
+### Format Response Error
+
+```json
+{
+  "status": "error",
+  "code": 401,
+  "message": "Invalid or expired API key."
+}
+```
+
+---
+
+## Pola `supplied_data`
+
+Jika Wizdam Sikola sudah memiliki data di DB, kirimkan dalam request body. API akan menggunakannya **tanpa melakukan cURL ke API eksternal**.
+
+```json
+{
+  "orcid": "0000-0002-1234-5678",
+  "supplied_works": [
+    {
+      "title": "Solar Panel Adoption in Rural Java",
+      "doi": "10.1234/example",
+      "publication_year": 2023,
+      "type": "journal-article",
+      "journal_title": "Renewable Energy"
+    }
+  ],
+  "supplied_person": {
+    "name": "Budi Santoso",
+    "given_names": "Budi",
+    "family_name": "Santoso"
+  },
+  "supplied_scopus": {
+    "h_index": 18,
+    "document_count": 145,
+    "citation_count": 3200
+  }
+}
+```
+
+Response akan menyertakan `"data_source": "wizdam_sikola_db"`.

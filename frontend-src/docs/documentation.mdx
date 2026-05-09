@@ -1,0 +1,207 @@
+---
+title: Dokumentasi — SDGs Mapper & Wizdam Impact Score
+description: Panduan lengkap platform SDGs Mapper, metodologi WIS, dan cara penggunaan.
+---
+
+# Dokumentasi SDGs Mapper
+
+Dokumentasi teknis dan konseptual untuk platform SDGs Mapper dan Wizdam Impact Score (WIS).
+
+---
+
+## Wizdam Impact Score (WIS)
+
+### Overview & Formula
+
+Wizdam Impact Score (WIS) adalah metrik holistik untuk mengukur dampak penelitian seorang akademisi berdasarkan tiga pilar utama:
+
+```
+WIS = (Academic × 0.4) + (Social × 0.3) + (Practical × 0.3)
+```
+
+Rentang nilai: **0 – 100**
+
+| Nilai WIS | Kategori |
+|-----------|----------|
+| 80 – 100 | Luar biasa (Exceptional) |
+| 60 – 79 | Tinggi (High) |
+| 40 – 59 | Sedang (Moderate) |
+| 20 – 39 | Rendah (Low) |
+| 0 – 19 | Sangat Rendah (Minimal) |
+
+---
+
+## 4 Pilar Komponen
+
+### Pilar Academic (Bobot: 40%)
+
+Mengukur kontribusi ilmiah melalui metrik akademik standar.
+
+| Metrik | Keterangan |
+|--------|------------|
+| `publication_count` | Total publikasi terverifikasi |
+| `citation_count` | Total sitasi dari semua karya |
+| `h_index` | Indeks-h Hirsch |
+| `journal_quality` | Skor kualitas berdasarkan kuartil Scopus (Q1-Q4) |
+| `collaboration_index` | Indeks kolaborasi internasional |
+
+**Formula Internal:**
+
+```
+Academic = (pub_normalized × 0.25) + 
+           (citation_normalized × 0.30) + 
+           (h_index_normalized × 0.25) + 
+           (journal_quality_avg × 0.20)
+```
+
+---
+
+### Pilar Social (Bobot: 30%)
+
+Mengukur dampak sosial dan keterlibatan publik terhadap penelitian.
+
+| Field | Rentang | Keterangan |
+|-------|---------|------------|
+| `altmetric_score` | 0–100 | Skor Altmetric agregat |
+| `media_mentions` | 0–∞ | Sebutan di media berita dan blog |
+| `policy_citations` | 0–∞ | Dikutip dalam dokumen kebijakan |
+| `social_shares` | 0–∞ | Total berbagi di media sosial |
+
+---
+
+### Pilar Economic (Bobot: 15%)
+
+Mengukur nilai ekonomi dari penelitian yang dihasilkan.
+
+| Field | Keterangan |
+|-------|------------|
+| `patent_count` | Jumlah paten yang didaftarkan |
+| `commercialization` | Produk/layanan yang dikomersialisasikan |
+| `industry_funding` | Pendanaan dari sektor industri |
+| `startup_created` | Startup yang lahir dari penelitian |
+
+---
+
+### Pilar SDGs Impact (Bobot: 15%)
+
+Mengukur relevansi dan dampak terhadap Tujuan Pembangunan Berkelanjutan.
+
+| Field | Keterangan |
+|-------|------------|
+| `sdg_coverage` | Jumlah SDGs unik yang dicakup |
+| `sdg_depth` | Rata-rata skor kepercayaan klasifikasi SDGs |
+| `sdg_consistency` | Konsistensi fokus SDGs lintas karya |
+| `primary_sdg` | SDG utama yang paling sering muncul |
+
+---
+
+## Klasifikasi SDGs
+
+### Metodologi v5 (Rekomendasi)
+
+SDGs Mapper v5 menggunakan pendekatan multi-komponen:
+
+```
+Final Score = (keyword × 0.30) + (similarity × 0.30) + 
+              (substantive × 0.20) + (causal × 0.20)
+```
+
+### Threshold Klasifikasi
+
+| Level | Threshold | Interpretasi |
+|-------|-----------|--------------|
+| Highly Relevant | ≥ 0.70 | Relevansi sangat kuat |
+| Moderately Relevant | 0.50 – 0.69 | Relevansi sedang |
+| Weakly Relevant | 0.30 – 0.49 | Relevansi lemah |
+| Not Relevant | < 0.30 | Tidak diklasifikasikan |
+
+---
+
+## Integrasi dengan Wizdam APIs
+
+### Konfigurasi
+
+Tambahkan API key di file `config/config.php`:
+
+```php
+define('WIZDAM_API_KEY',  'wz_YOUR_USER_ID_TIMESTAMP_HMAC');
+define('WIZDAM_API_BASE', 'https://api.sangia.org');
+```
+
+### Frontend Service
+
+```javascript
+// src/services/wizdamApi.js
+import { classifyOrcid, fetchOrcidProfile } from './wizdamApi';
+
+// Ambil profil peneliti
+const profile = await fetchOrcidProfile('0000-0002-1234-5678');
+
+// Klasifikasikan semua karya
+const result = await classifyOrcid('0000-0002-1234-5678', 0, 20);
+```
+
+### PHP Proxy
+
+Semua request ke Wizdam APIs diproksikan melalui `/api/proxy.php` untuk menjaga API key tetap server-side.
+
+---
+
+## Database
+
+### Skema
+
+SDGs Mapper menggunakan database relasional (MariaDB atau PostgreSQL) untuk menyimpan:
+
+| Tabel | Keterangan |
+|-------|------------|
+| `sdg_cache` | Cache generik key-value (menggantikan file gzip) |
+| `orcid_profiles` | Profil dan karya peneliti dari ORCID |
+| `doi_results` | Hasil klasifikasi per artikel DOI |
+| `classified_works` | Karya terklasifikasi dengan tag SDGs |
+| `platform_stats` | Statistik platform secara keseluruhan |
+| `sdg_trends` | Tren publikasi per SDG per tahun |
+
+### Migrasi
+
+Jalankan skema sekali:
+
+```bash
+# MariaDB
+mysql -u sicola -p sicola_db < db/schema.sql
+
+# PostgreSQL
+psql -U sicola sicola_db < db/schema.sql
+```
+
+---
+
+## Arsitektur
+
+```
+frontend-src/          ← React 18 + Vite + Tailwind
+  src/
+    services/
+      api.js           ← Client PHP backend lokal
+      wizdamApi.js     ← Client Wizdam APIs (api.sangia.org)
+    data/mock/         ← Data fallback saat API tidak tersedia
+    pages/             ← Halaman utama
+    components/        ← Komponen UI
+  docs/                ← Konten MDX (halaman statis)
+
+api/                   ← PHP backend
+  SDG_Classification_API.php
+  Database.php         ← PDO wrapper (MariaDB / PostgreSQL)
+  DbCacheService.php   ← Cache berbasis DB (ganti file gzip)
+  proxy.php            ← Proxy ke Wizdam APIs
+
+db/
+  schema.sql           ← Skema database lengkap
+
+config/
+  config.php           ← Konfigurasi aplikasi
+```
+
+---
+
+> Lihat juga: [Referensi API](/docs/api-reference) · [FAQ](/docs/faq) · [Pusat Bantuan](/help)
