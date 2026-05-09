@@ -73,6 +73,7 @@ import Notifications from './pages/Notifications';
 import MyArticles from './pages/MyArticles';
 import MyCollections from './pages/MyCollections';
 import MyStatistics from './pages/MyStatistics';
+import MyActivity from './pages/MyActivity';
 import Settings from './pages/Settings';
 
 // =====================================================================
@@ -202,6 +203,7 @@ function App() {
           <Route path="/my-collections" element={<MyCollections />} />
           <Route path="/my-statistics" element={<MyStatistics />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/my-activity" element={<MyActivity />} />
         </Routes>
 
         {/* Footer selalu tampil di semua halaman */}
