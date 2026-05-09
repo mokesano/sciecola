@@ -1,9 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 // Data simulasi artikel untuk komponen (ditambahkan properti 'image' agar sesuai desain)
 const articlesData = [
   {
-    id: 1,
+    id: '10.1234/jess.2024.001',
     title: 'Climate Change Adaptation in Coastal Communities',
     journal: 'Journal of Environmental Science',
     year: '2024',
@@ -17,7 +18,7 @@ const articlesData = [
     image: 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=150&q=80',
   },
   {
-    id: 2,
+    id: '10.1234/jess.2024.002',
     title: 'Sustainable Urban Transport Systems in Indonesia',
     journal: 'Sustainable Cities Review',
     year: '2024',
@@ -30,7 +31,7 @@ const articlesData = [
     image: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=150&q=80',
   },
   {
-    id: 3,
+    id: '10.1234/epj.2023.003',
     title: 'Renewable Energy Policy and its Impact',
     journal: 'Energy Policy Journal',
     year: '2023',
@@ -51,9 +52,7 @@ const LatestArticles = () => {
       {/* Header Komponen */}
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-bold text-gray-800">Artikel Terbaru</h3>
-        <button className="text-sm text-indigo-600 hover:text-indigo-800 font-medium transition-colors">
-          Lihat semua
-        </button>
+        <Link to="/articles" className="text-sm text-indigo-600 hover:text-indigo-800 font-medium transition-colors">Lihat semua</Link>
       </div>
 
       {/* Daftar Artikel */}
@@ -76,9 +75,9 @@ const LatestArticles = () => {
               
               {/* Judul dan Jurnal */}
               <div>
-                <a href="#" className="font-bold text-gray-800 hover:text-indigo-600 transition-colors line-clamp-2 leading-tight text-sm">
+                <Link to={`/doi/${encodeURIComponent(article.id)}`} className="font-bold text-gray-800 hover:text-indigo-600 transition-colors line-clamp-2 leading-tight text-sm">
                   {article.title}
-                </a>
+                </Link>
                 <div className="text-xs text-gray-500 mt-1.5">
                   {article.journal} • {article.year}
                 </div>

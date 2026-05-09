@@ -15,6 +15,7 @@
 /vendor/
 /node_modules/
 node_modules/
+frontend-src/node_modules/
 .pnpm/
 .yarn/
 yarn.lock
@@ -49,6 +50,7 @@ coverage/
 # Build artifacts
 /dist/
 /public/build/
+/public/assets/sicola-ui/
 
 # Editor / OS
 .DS_Store

@@ -216,9 +216,9 @@ const Privacy = () => {
                   Jika Anda memiliki pertanyaan, permintaan terkait data pribadi, atau keluhan privasi, silakan hubungi Tim Perlindungan Data kami:
                 </p>
                 <div className="bg-gray-50 border border-gray-200 rounded-xl p-5 space-y-2">
-                  <p>📧 <strong>Email:</strong> privacy@wizdam.ai</p>
-                  <p>📍 <strong>Alamat:</strong> Sangia Research Media and Publishing, Jakarta, Indonesia</p>
-                  <p>📞 <strong>Telepon:</strong> +62 21 XXXX XXXX</p>
+                  <p><strong>Email:</strong> privacy@wizdam.ai</p>
+                  <p><strong>Alamat:</strong> Sangia Research Media and Publishing, Jakarta, Indonesia</p>
+                  <p><strong>Telepon:</strong> +62 21 XXXX XXXX</p>
                 </div>
                 <p className="mt-4">
                   Anda juga berhak mengajukan pengaduan kepada <strong>Otoritas Perlindungan Data Pribadi</strong> jika merasa hak Anda tidak dipenuhi.

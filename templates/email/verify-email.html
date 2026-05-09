@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verifikasi Alamat Email Anda</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f3f4f6;font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased;">
+  <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background-color:#f3f4f6;padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.07);">
+
+          <!-- Header -->
+          <tr>
+            <td style="background-color:#4F46E5;padding:32px 40px;text-align:center;">
+              <span style="color:#ffffff;font-size:26px;font-weight:700;letter-spacing:1px;">SCIECOLA</span>
+              <p style="margin:6px 0 0;color:#c7d2fe;font-size:13px;letter-spacing:0.5px;">SDGs Research Analytics Platform</p>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="padding:40px 40px 32px;text-align:center;">
+              <!-- Shield/verify icon placeholder -->
+              <div style="width:64px;height:64px;background-color:#eef2ff;border-radius:50%;margin:0 auto 24px;display:flex;align-items:center;justify-content:center;">
+                <span style="font-size:30px;line-height:64px;">&#9993;</span>
+              </div>
+
+              <h1 style="margin:0 0 12px;font-size:22px;font-weight:700;color:#1e1b4b;">Verifikasi Alamat Email Anda</h1>
+              <p style="margin:0 0 32px;font-size:15px;color:#6b7280;line-height:1.6;">Gunakan kode OTP di bawah ini untuk memverifikasi alamat email Anda di Sciecola.</p>
+
+              <!-- OTP Code -->
+              <div style="background-color:#f5f3ff;border:2px dashed #a5b4fc;border-radius:12px;padding:24px 32px;margin:0 auto 8px;display:inline-block;">
+                <span style="font-size:42px;font-weight:700;letter-spacing:12px;color:#4F46E5;font-family:'Courier New',Courier,monospace;">{{otp_code}}</span>
+              </div>
+              <p style="margin:12px 0 32px;font-size:13px;color:#9ca3af;">Kode ini berlaku selama <strong style="color:#374151;">30 menit</strong>.</p>
+
+              <p style="margin:0 0 16px;font-size:14px;color:#6b7280;">Atau klik tombol di bawah untuk memverifikasi secara langsung:</p>
+
+              <!-- CTA Button -->
+              <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td align="center">
+                    <a href="{{verify_url}}"
+                       style="display:inline-block;background-color:#4F46E5;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;padding:14px 36px;border-radius:10px;letter-spacing:0.3px;">
+                      Verifikasi Email Sekarang
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:24px 0 0;font-size:13px;color:#9ca3af;line-height:1.6;">
+                Jika tombol tidak berfungsi, salin tautan berikut ke browser Anda:<br />
+                <a href="{{verify_url}}" style="color:#4F46E5;word-break:break-all;font-size:12px;">{{verify_url}}</a>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Divider -->
+          <tr>
+            <td style="padding:0 40px;">
+              <hr style="border:none;border-top:1px solid #e5e7eb;margin:0;" />
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:24px 40px;text-align:center;">
+              <p style="margin:0 0 8px;font-size:12px;color:#9ca3af;line-height:1.6;">
+                Jika Anda tidak meminta verifikasi ini, abaikan email ini dengan aman.<br />
+                Akun Anda tidak akan terpengaruh.
+              </p>
+              <p style="margin:0;font-size:12px;color:#d1d5db;">
+                &copy; Sciecola &mdash; SDGs Research Analytics Platform
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState('profile');
   const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
   // State per section
   const [profile, setProfile] = useState({
@@ -47,16 +47,11 @@ const Settings = () => {
   });
 
   // Handlers
-  const showToast = (message, type = 'success') => {
-    setToast({ show: true, message, type });
-    setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 3000);
-  };
-
   const handleSave = async () => {
     setLoading(true);
     await new Promise(resolve => setTimeout(resolve, 800));
     setLoading(false);
-    showToast('Pengaturan berhasil disimpan');
+    toast.success('Pengaturan berhasil disimpan');
   };
 
   const toggleNotification = (key) => {
@@ -386,13 +381,6 @@ const Settings = () => {
         </aside>
       </div>
 
-      {/* Toast Notification */}
-      {toast.show && (
-        <div className={`fixed bottom-6 right-6 px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 z-50 animate-fade-in ${toast.type === 'success' ? 'bg-gray-900 text-white' : 'bg-red-600 text-white'}`}>
-          <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
-          <span className="text-sm font-medium">{toast.message}</span>
-        </div>
-      )}
     </main>
   );
 };

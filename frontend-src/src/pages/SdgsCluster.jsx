@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, AreaChart, Area
 } from 'recharts';
+import { SDG_META } from '../components/shared/icons';
 
 const SdgsCluster = () => {
   const [activeTab, setActiveTab] = useState('semua');
@@ -24,25 +25,10 @@ const SdgsCluster = () => {
     countriesGrowth: 10
   };
 
-  const publicationPerSdg = [
-    { sdg: 1, name: 'No Poverty', value: 1245, color: '#ef4444', icon: '🏚️' },
-    { sdg: 2, name: 'Zero Hunger', value: 987, color: '#f97316', icon: '🌾' },
-    { sdg: 3, name: 'Good Health', value: 2845, color: '#14b8a6', icon: '❤️' },
-    { sdg: 4, name: 'Quality Education', value: 2431, color: '#ef4444', icon: '📚' },
-    { sdg: 5, name: 'Gender Equality', value: 876, color: '#ec4899', icon: '⚖️' },
-    { sdg: 6, name: 'Clean Water', value: 1123, color: '#3b82f6', icon: '💧' },
-    { sdg: 7, name: 'Clean Energy', value: 2102, color: '#fbbf24', icon: '⚡' },
-    { sdg: 8, name: 'Decent Work', value: 1456, color: '#f97316', icon: '💼' },
-    { sdg: 9, name: 'Industry & Innovation', value: 1678, color: '#f97316', icon: '🏭' },
-    { sdg: 10, name: 'Reduced Inequalities', value: 743, color: '#ec4899', icon: '🤝' },
-    { sdg: 11, name: 'Sustainable Cities', value: 1987, color: '#f59e0b', icon: '🏙️' },
-    { sdg: 12, name: 'Responsible Consumption', value: 1234, color: '#eab308', icon: '♻️' },
-    { sdg: 13, name: 'Climate Action', value: 3256, color: '#10b981', icon: '🌍' },
-    { sdg: 14, name: 'Life Below Water', value: 876, color: '#0ea5e9', icon: '🐟' },
-    { sdg: 15, name: 'Life on Land', value: 1543, color: '#22c55e', icon: '🌳' },
-    { sdg: 16, name: 'Peace & Justice', value: 654, color: '#6366f1', icon: '⚖️' },
-    { sdg: 17, name: 'Partnerships', value: 856, color: '#8b5cf6', icon: '🤝' }
-  ];
+  const publicationPerSdg = Array.from({ length: 17 }, (_, i) => {
+    const n = i + 1;
+    return { id: n, sdg: n, name: SDG_META[n].label, value: [1245,987,2845,2431,876,1123,2102,1456,1678,743,1987,1234,3256,876,1543,654,856][i], color: SDG_META[n].color };
+  });
 
   const categoryData = [
     { name: 'People', value: 41, color: '#6366f1' },
@@ -53,51 +39,11 @@ const SdgsCluster = () => {
   ];
 
   const topSdgs = [
-    { 
-      rank: 1, 
-      sdg: 13, 
-      name: 'Climate Action', 
-      publications: 3256, 
-      impactScore: 92.1,
-      icon: '🌍',
-      color: '#10b981'
-    },
-    { 
-      rank: 2, 
-      sdg: 3, 
-      name: 'Good Health and Well-being', 
-      publications: 2845, 
-      impactScore: 91.3,
-      icon: '❤️',
-      color: '#14b8a6'
-    },
-    { 
-      rank: 3, 
-      sdg: 4, 
-      name: 'Quality Education', 
-      publications: 2431, 
-      impactScore: 89.7,
-      icon: '📚',
-      color: '#ef4444'
-    },
-    { 
-      rank: 4, 
-      sdg: 7, 
-      name: 'Affordable and Clean Energy', 
-      publications: 2102, 
-      impactScore: 88.9,
-      icon: '⚡',
-      color: '#fbbf24'
-    },
-    { 
-      rank: 5, 
-      sdg: 11, 
-      name: 'Sustainable Cities and Communities', 
-      publications: 1987, 
-      impactScore: 87.5,
-      icon: '🏙️',
-      color: '#f59e0b'
-    }
+    { rank: 1, id: 13, sdg: 13, name: 'Climate Action',                    publications: 3256, impactScore: 92.1, color: '#10b981' },
+    { rank: 2, id: 3,  sdg: 3,  name: 'Good Health and Well-being',        publications: 2845, impactScore: 91.3, color: '#14b8a6' },
+    { rank: 3, id: 4,  sdg: 4,  name: 'Quality Education',                 publications: 2431, impactScore: 89.7, color: '#ef4444' },
+    { rank: 4, id: 7,  sdg: 7,  name: 'Affordable and Clean Energy',       publications: 2102, impactScore: 88.9, color: '#fbbf24' },
+    { rank: 5, id: 11, sdg: 11, name: 'Sustainable Cities and Communities', publications: 1987, impactScore: 87.5, color: '#f59e0b' },
   ];
 
   const topResearchers = [
@@ -180,6 +126,19 @@ const SdgsCluster = () => {
       color: '#f59e0b'
     }
   ];
+
+  const CustomXAxisTick = ({ x, y, payload }) => {
+    const sdgNum = payload.value;
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <image
+          href={`/assets/sdgs/icons/sdg-${sdgNum}.svg`}
+          x={-12} y={4} width={24} height={24}
+          style={{ imageRendering: 'auto' }}
+        />
+      </g>
+    );
+  };
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -342,16 +301,13 @@ const SdgsCluster = () => {
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Kontribusi Publikasi per SDGs</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={publicationPerSdg} margin={{ top: 20, right: 30, left: 0, bottom: 60 }}>
+            <BarChart data={publicationPerSdg} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis 
-                dataKey="sdg" 
-                stroke="#6b7280" 
-                fontSize={11}
-                angle={-45}
-                textAnchor="end"
-                height={80}
-                tickFormatter={(value) => `SDG ${value}`}
+              <XAxis
+                dataKey="id"
+                tick={<CustomXAxisTick />}
+                height={36}
+                stroke="#e5e7eb"
               />
               <YAxis stroke="#6b7280" fontSize={12} />
               <Tooltip content={<CustomTooltip />} />
@@ -364,32 +320,43 @@ const SdgsCluster = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* Donut Chart */}
+        {/* Donut Chart with centered label */}
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Distribusi Publikasi per Kategori SDGs</h3>
-          <div className="flex flex-col sm:flex-row items-center gap-6">
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie
-                  data={categoryData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={70}
-                  outerRadius={100}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {categoryData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend verticalAlign="bottom" height={36} />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="text-center">
-              <p className="text-4xl font-bold text-gray-900">{statsData.totalPublications.toLocaleString()}</p>
-              <p className="text-sm text-gray-600 mt-1">Publikasi</p>
+          <h3 className="text-lg font-bold text-gray-900 mb-4">Distribusi Publikasi per Kategori SDGs</h3>
+          <div className="flex flex-col items-center gap-4">
+            <div className="relative w-full" style={{ height: 260 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={categoryData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={75}
+                    outerRadius={105}
+                    paddingAngle={4}
+                    dataKey="value"
+                  >
+                    {categoryData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(v) => [`${v}%`, 'Proporsi']} />
+                </PieChart>
+              </ResponsiveContainer>
+              {/* Centered total label inside donut */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <p className="text-2xl font-bold text-gray-900">{statsData.totalPublications.toLocaleString()}</p>
+                <p className="text-xs text-gray-500 mt-0.5">Publikasi</p>
+              </div>
+            </div>
+            {/* Legend */}
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-2">
+              {categoryData.map((entry) => (
+                <div key={entry.name} className="flex items-center gap-1.5 text-xs text-gray-600">
+                  <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: entry.color }} />
+                  {entry.name} ({entry.value}%)
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -411,7 +378,7 @@ const SdgsCluster = () => {
                   <span className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-700">
                     {sdg.rank}
                   </span>
-                  <span className="text-3xl">{sdg.icon}</span>
+                  <img src={`/assets/sdgs/icons/sdg-${sdg.id}.svg`} alt={`SDG ${sdg.id}`} className="w-8 h-8 rounded" />
                 </div>
                 <span className="text-xs font-bold text-gray-500">SDG {sdg.sdg}</span>
               </div>
@@ -524,12 +491,7 @@ const SdgsCluster = () => {
           {featuredPublications.map((pub, idx) => (
             <div key={idx} className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center gap-2 mb-3">
-                <span 
-                  className="w-6 h-6 rounded flex items-center justify-center text-white text-xs font-bold"
-                  style={{ backgroundColor: pub.color }}
-                >
-                  {pub.sdg}
-                </span>
+                <img src={`/assets/sdgs/icons/sdg-${pub.sdg}.svg`} alt={`SDG ${pub.sdg}`} className="w-6 h-6 rounded" title={`SDG ${pub.sdg}`} />
               </div>
               <h4 className="font-semibold text-gray-900 text-sm mb-3 line-clamp-3 h-14">
                 {pub.title}

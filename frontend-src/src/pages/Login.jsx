@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -126,10 +127,12 @@ const Login = () => {
 
       // 4. Success Flow - Reset captcha & redirect
       window.turnstile?.reset();
+      toast.success('Berhasil masuk!');
       navigate('/dashboard');
-      
+
     } catch (error) {
       console.error('Login failed:', error);
+      toast.error('Email atau password salah. Silakan periksa kembali.');
       setErrors({ submit: 'Email atau password salah. Silakan periksa kembali.' });
     } finally {
       setLoading(false);

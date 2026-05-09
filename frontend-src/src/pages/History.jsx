@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { IconSparkles, IconChartBar, IconTrendingUp, IconStar, IconBolt, IconGlobe, IconCalendar, IconOfficeBuilding, IconHandshake, IconUsers } from '../components/shared/icons';
 
 const History = () => {
   // Enriched Timeline Data with jsDelivr-style structure
@@ -10,7 +11,7 @@ const History = () => {
         {
           month: 'Mei',
           type: 'launch',
-          icon: '🚀',
+          icon: 'launch',
           title: 'Wizdam 2.0 Launch',
           description: 'Peluncuran platform Wizdam dengan interface yang sepenuhnya dirancang ulang dan fitur analitik yang lebih canggih.',
           side: 'left'
@@ -18,7 +19,7 @@ const History = () => {
         {
           month: 'Maret',
           type: 'milestone',
-          icon: '📊',
+          icon: 'chart',
           title: '5 Juta Publikasi Dianalisis',
           description: 'Mencapai tonggak sejarah dengan menganalisis lebih dari 5 juta publikasi penelitian dari seluruh dunia.',
           side: 'right'
@@ -26,7 +27,7 @@ const History = () => {
         {
           month: 'Januari',
           type: 'partnership',
-          icon: '🤝',
+          icon: 'handshake',
           title: 'Kemitraan dengan BRIN',
           description: 'Badan Riset dan Inovasi Nasional menjadi mitra strategis untuk pengembangan ekosistem riset Indonesia.',
           logo: 'BRIN',
@@ -40,7 +41,7 @@ const History = () => {
         {
           month: 'November',
           type: 'launch',
-          icon: '🚀',
+          icon: 'launch',
           title: 'Sangia AI Engine v2',
           description: 'Peluncuran mesin AI generasi kedua dengan akurasi klasifikasi SDG mencapai 95%+.',
           side: 'right'
@@ -48,7 +49,7 @@ const History = () => {
         {
           month: 'Agustus',
           type: 'milestone',
-          icon: '📈',
+          icon: 'trend',
           title: '100 Institusi Mitra',
           description: 'Seratus universitas dan lembaga penelitian bergabung sebagai mitra Wizdam.',
           side: 'left'
@@ -56,7 +57,7 @@ const History = () => {
         {
           month: 'Mei',
           type: 'partnership',
-          icon: '⭐',
+          icon: 'star',
           title: 'Google.org Support',
           description: 'Mendapatkan dukungan dari Google.org untuk pengembangan AI untuk kebaikan sosial.',
           logo: 'Google.org',
@@ -65,7 +66,7 @@ const History = () => {
         {
           month: 'Februari',
           type: 'launch',
-          icon: '🚀',
+          icon: 'launch',
           title: 'API Public Release',
           description: 'Peluncuran API publik untuk memungkinkan integrasi dengan sistem manajemen penelitian.',
           side: 'left'
@@ -78,7 +79,7 @@ const History = () => {
         {
           month: 'Desember',
           type: 'milestone',
-          icon: '📊',
+          icon: 'chart',
           title: '1 Juta Publikasi',
           description: 'Mencapai 1 juta publikasi yang dianalisis dalam platform Wizdam.',
           side: 'right'
@@ -86,7 +87,7 @@ const History = () => {
         {
           month: 'September',
           type: 'partnership',
-          icon: '⭐',
+          icon: 'star',
           title: 'UNDP Indonesia',
           description: 'UNDP Indonesia bergabung sebagai mitra untuk alignment indikator SDGs.',
           logo: 'UNDP',
@@ -95,7 +96,7 @@ const History = () => {
         {
           month: 'Juni',
           type: 'launch',
-          icon: '🚀',
+          icon: 'launch',
           title: 'Dashboard Analitik',
           description: 'Peluncuran dashboard analitik interaktif untuk visualisasi dampak riset.',
           side: 'right'
@@ -103,7 +104,7 @@ const History = () => {
         {
           month: 'Maret',
           type: 'award',
-          icon: '🏆',
+          icon: 'award',
           title: 'Innovation Award',
           description: 'Menerima penghargaan Innovation Award untuk kontribusi terhadap SDGs.',
           side: 'left'
@@ -116,7 +117,7 @@ const History = () => {
         {
           month: 'Oktober',
           type: 'launch',
-          icon: '🚀',
+          icon: 'launch',
           title: 'Wizdam Impact Score',
           description: 'Peluncuran sistem Wizdam Impact Score dengan 4 pilar: Academic, Social, Economic, dan SDG.',
           side: 'right'
@@ -124,7 +125,7 @@ const History = () => {
         {
           month: 'Juli',
           type: 'partnership',
-          icon: '⭐',
+          icon: 'star',
           title: 'Telkom Indonesia',
           description: 'PT Telkom Indonesia menjadi sponsor untuk infrastruktur cloud platform.',
           logo: 'Telkom',
@@ -133,7 +134,7 @@ const History = () => {
         {
           month: 'April',
           type: 'milestone',
-          icon: '📈',
+          icon: 'trend',
           title: '50 Institusi Mitra',
           description: 'Lima puluh universitas dan lembaga penelitian bergabung dengan Wizdam.',
           side: 'right'
@@ -141,7 +142,7 @@ const History = () => {
         {
           month: 'Januari',
           type: 'launch',
-          icon: '🚀',
+          icon: 'launch',
           title: 'Platform Beta',
           description: 'Peluncuran versi beta platform Wizdam untuk pengujian terbatas.',
           side: 'left'
@@ -154,7 +155,7 @@ const History = () => {
         {
           month: 'November',
           type: 'milestone',
-          icon: '💡',
+          icon: 'idea',
           title: 'Konsep Wizdam',
           description: 'Ide awal Wizdam muncul dari tantangan mengukur dampak riset terhadap SDGs.',
           side: 'right'
@@ -162,7 +163,7 @@ const History = () => {
         {
           month: 'Agustus',
           type: 'team',
-          icon: '👥',
+          icon: 'team',
           title: 'Tim Pendiri',
           description: 'Pembentukan tim inti yang terdiri dari peneliti dan ahli AI.',
           side: 'left'
@@ -170,7 +171,7 @@ const History = () => {
         {
           month: 'Maret',
           type: 'foundation',
-          icon: '🏛️',
+          icon: 'building',
           title: 'Foundation',
           description: 'Wizdam didirikan dengan visi mempercepat dampak riset Indonesia terhadap SDGs global.',
           side: 'right'
@@ -267,8 +268,17 @@ const History = () => {
 
                     {/* Center Icon */}
                     <div className="absolute left-4 md:left-1/2 transform md:-translate-x-1/2 z-10">
-                      <div className={`w-12 h-12 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-xl ${getIconColor(event.type)}`}>
-                        {event.icon}
+                      <div className={`w-12 h-12 rounded-full border-4 border-white shadow-lg flex items-center justify-center ${getIconColor(event.type)}`}>
+                        {event.icon === 'launch'    && <IconBolt           className="w-5 h-5" />}
+                        {event.icon === 'chart'     && <IconChartBar       className="w-5 h-5" />}
+                        {event.icon === 'trend'     && <IconTrendingUp     className="w-5 h-5" />}
+                        {event.icon === 'star'      && <IconStar           className="w-5 h-5" />}
+                        {event.icon === 'idea'      && <IconSparkles       className="w-5 h-5" />}
+                        {event.icon === 'building'  && <IconOfficeBuilding className="w-5 h-5" />}
+                        {event.icon === 'handshake' && <IconHandshake      className="w-5 h-5" />}
+                        {event.icon === 'award'     && <IconStar           className="w-5 h-5" />}
+                        {event.icon === 'team'      && <IconUsers          className="w-5 h-5" />}
+                        {!['launch','chart','trend','star','idea','building','handshake','award','team'].includes(event.icon) && <IconSparkles className="w-5 h-5" />}
                       </div>
                     </div>
 
@@ -285,13 +295,13 @@ const History = () => {
       {/* Stats Summary */}
       <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
         {[
-          { label: 'Tahun Berdiri', value: '4+', icon: '📅' },
-          { label: 'Publikasi Dianalisis', value: '5M+', icon: '📊' },
-          { label: 'Institusi Mitra', value: '100+', icon: '🏛️' },
-          { label: 'Negara Terjangkau', value: '50+', icon: '🌍' }
+          { label: 'Tahun Berdiri', value: '4+', icon: <IconCalendar className="w-7 h-7" /> },
+          { label: 'Publikasi Dianalisis', value: '5M+', icon: <IconChartBar className="w-7 h-7" /> },
+          { label: 'Institusi Mitra', value: '100+', icon: <IconOfficeBuilding className="w-7 h-7" /> },
+          { label: 'Negara Terjangkau', value: '50+', icon: <IconGlobe className="w-7 h-7" /> }
         ].map((stat, idx) => (
           <div key={idx} className="bg-white p-6 rounded-2xl border border-orange-200 shadow-md text-center hover:shadow-lg transition-shadow">
-            <div className="text-3xl mb-2">{stat.icon}</div>
+            <div className="flex justify-center mb-2 text-orange-500">{stat.icon}</div>
             <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
             <p className="text-sm text-gray-600">{stat.label}</p>
           </div>

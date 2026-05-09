@@ -87,6 +87,24 @@ define('WIZDAM_API_BASE', getenv('WIZDAM_API_BASE') ?: 'https://api.sangia.org')
 define('WIZDAM_API_KEY',  getenv('WIZDAM_API_KEY')  ?: '');
 
 // ================================================================
+// MAIL / SMTP CONFIGURATION
+// MAIL_DRIVER: 'log' (write to /tmp), 'smtp', 'mail' (PHP native)
+// ================================================================
+define('MAIL_DRIVER',    getenv('MAIL_DRIVER')    ?: 'log');
+define('MAIL_FROM',      getenv('MAIL_FROM')      ?: 'noreply@sciecola.id');
+define('MAIL_FROM_NAME', getenv('MAIL_FROM_NAME') ?: 'Sciecola');
+define('SMTP_HOST',      getenv('SMTP_HOST')      ?: 'smtp.mailtrap.io');
+define('SMTP_PORT',      (int)(getenv('SMTP_PORT') ?: '2525'));
+define('SMTP_USER',      getenv('SMTP_USER')      ?: '');
+define('SMTP_PASS',      getenv('SMTP_PASS')      ?: '');
+define('SMTP_SECURE',    getenv('SMTP_SECURE')    ?: 'tls');
+// Only enable SMTP authentication when credentials are actually provided
+define('SMTP_AUTH',      (SMTP_USER !== ''));
+
+// Application URL (used in email links)
+define('APP_URL',        getenv('APP_URL')        ?: 'http://localhost:5173');
+
+// ================================================================
 // IMPLEMENTASI ENVIRONMENT (TIDAK PERLU DIUBAH)
 // ================================================================
 

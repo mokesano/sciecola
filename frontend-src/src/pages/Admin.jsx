@@ -191,7 +191,7 @@ const Admin = () => {
               </div>
               <div className="mt-6 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
                 <p className="text-sm text-indigo-800"><strong>Formula:</strong> WIS = (Academic × {Math.round(wisWeights.academic * 100)}%) + (Social × {Math.round(wisWeights.social * 100)}%) + (Economic × {Math.round(wisWeights.economic * 100)}%) + (SDG × {Math.round(wisWeights.sdg * 100)}%)</p>
-                <p className="text-xs text-indigo-600 mt-1">Total: {(Object.values(wisWeights).reduce((a, b) => a + b, 0) * 100).toFixed(1)}%{Math.abs(Object.values(wisWeights).reduce((a, b) => a + b, 0) - 1.0) > 0.01 && <span className="text-red-600 ml-2">⚠️ Harus 100%</span>}</p>
+                <p className="text-xs text-indigo-600 mt-1">Total: {(Object.values(wisWeights).reduce((a, b) => a + b, 0) * 100).toFixed(1)}%{Math.abs(Object.values(wisWeights).reduce((a, b) => a + b, 0) - 1.0) > 0.01 && <span className="text-red-600 ml-2">Harus 100%</span>}</p>
               </div>
             </div>
           </div>

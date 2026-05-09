@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Navbar = () => {
   const location = useLocation();
-  
+  const { i18n } = useTranslation();
+  const [currentLang, setCurrentLang] = useState(i18n.language || 'id');
+
+  const switchLang = useCallback((lang) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem('sciecola_lang', lang);
+    setCurrentLang(lang);
+  }, [i18n]);
+
   // Mock: Ganti ini dengan state auth yang sebenarnya dari Context/Redux
   const isAuthenticated = false; 
 
@@ -79,16 +88,26 @@ const Navbar = () => {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                 </svg>
-                <span>ID</span>
+                <span className="uppercase text-xs font-bold">{currentLang}</span>
                 <svg className="w-3 h-3 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
-              <div className="absolute right-0 top-full mt-0 w-32 bg-white border border-gray-100 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden">
+              <div className="absolute right-0 top-full mt-0 w-36 bg-white border border-gray-100 rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden">
                 <div className="flex flex-col py-1">
-                  <div className="px-4 py-2 text-sm font-bold text-indigo-600 bg-indigo-50/50">ID - Bahasa</div>
-                  <div className="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-indigo-600">EN - English</div>
+                  <button
+                    onClick={() => switchLang('id')}
+                    className={`px-4 py-2 text-sm text-left font-medium transition-colors ${currentLang === 'id' ? 'text-indigo-600 bg-indigo-50' : 'text-gray-600 hover:bg-gray-50 hover:text-indigo-600'}`}
+                  >
+                    ID — Bahasa
+                  </button>
+                  <button
+                    onClick={() => switchLang('en')}
+                    className={`px-4 py-2 text-sm text-left font-medium transition-colors ${currentLang === 'en' ? 'text-indigo-600 bg-indigo-50' : 'text-gray-600 hover:bg-gray-50 hover:text-indigo-600'}`}
+                  >
+                    EN — English
+                  </button>
                 </div>
               </div>
             </div>

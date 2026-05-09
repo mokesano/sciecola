@@ -14,7 +14,7 @@ const Messages = () => {
   const conversations = [
     { id: 1, name: 'Budi Santoso', avatar: 'https://i.pravatar.cc/150?img=3', lastMsg: 'Terima kasih atas kolaborasinya. Data sudah saya sync ke repository.', time: '10:30', unread: 2, online: true, type: 'direct' },
     { id: 2, name: 'Siti Nurhaliza', avatar: 'https://i.pravatar.cc/150?img=5', lastMsg: 'Draft Bab 3 sudah selesai. Bisa direview minggu ini?', time: 'Kemarin', unread: 0, online: false, type: 'direct' },
-    { id: 3, name: 'Climate Action Research', avatar: 'https://i.pravatar.cc/150?img=12', lastMsg: '📢 Diskusi minggu depan dijadwalkan jam 14.00 WIB. Harap konfirmasi kehadiran.', time: 'Kemarin', unread: 5, online: true, type: 'group', members: 24 },
+    { id: 3, name: 'Climate Action Research', avatar: 'https://i.pravatar.cc/150?img=12', lastMsg: '[Pengumuman] Diskusi minggu depan dijadwalkan jam 14.00 WIB. Harap konfirmasi kehadiran.', time: 'Kemarin', unread: 5, online: true, type: 'group', members: 24 },
     { id: 4, name: 'Fathimah Azzahra', avatar: 'https://i.pravatar.cc/150?img=10', lastMsg: 'Boleh minta revisi methodology section? Ada yang kurang jelas.', time: '2 hari', unread: 0, online: true, type: 'direct' },
     { id: 5, name: 'Marine Biodiversity Group', avatar: 'https://i.pravatar.cc/150?img=8', lastMsg: '📎 File: Data_Sampling_Teluk_2024.xlsx', time: '3 hari', unread: 1, online: false, type: 'group', members: 18 },
     { id: 6, name: 'Rizky Pratama', avatar: 'https://i.pravatar.cc/150?img=11', lastMsg: 'Setuju dengan pendekatan mixed-methods. Kapan bisa kick-off?', time: '1 minggu', unread: 0, online: false, type: 'direct' }
@@ -35,11 +35,11 @@ const Messages = () => {
       { id: 3, sender: 'them', text: 'Draft Bab 3 sudah selesai. Bisa direview minggu ini?', time: '16:30', status: 'read' }
     ],
     3: [
-      { id: 1, sender: 'them', name: 'Admin Grup', text: '📢 Agenda rapat koordinasi bulan depan sudah diupload.', time: '08:00', status: 'read' },
+      { id: 1, sender: 'them', name: 'Admin Grup', text: '[Pengumuman] Agenda rapat koordinasi bulan depan sudah diupload.', time: '08:00', status: 'read' },
       { id: 2, sender: 'me', text: 'Terima kasih infonya. Saya akan hadir.', time: '08:15', status: 'read' },
       { id: 3, sender: 'them', name: 'Dewi Setiawan', text: 'Saya juga akan hadir. Ada materi khusus tentang blue carbon?', time: '08:20', status: 'read' },
       { id: 4, sender: 'them', name: 'Budi Santoso', text: 'Ya, akan ada sesi khusus. Mohon siapkan literatur terkait.', time: '08:25', status: 'read' },
-      { id: 5, sender: 'them', name: 'Admin Grup', text: '📢 Diskusi minggu depan dijadwalkan jam 14.00 WIB. Harap konfirmasi kehadiran.', time: '10:00', status: 'read' }
+      { id: 5, sender: 'them', name: 'Admin Grup', text: '[Pengumuman] Diskusi minggu depan dijadwalkan jam 14.00 WIB. Harap konfirmasi kehadiran.', time: '10:00', status: 'read' }
     ]
   });
 
@@ -253,10 +253,22 @@ const Messages = () => {
                       <div className={`flex items-center gap-1 mt-1 text-[10px] ${msg.sender === 'me' ? 'justify-end text-gray-500' : 'text-gray-400'}`}>
                         <span>{msg.time}</span>
                         {msg.sender === 'me' && (
-                          <span>
-                            {msg.status === 'sent' && '✓'}
-                            {msg.status === 'delivered' && '✓✓'}
-                            {msg.status === 'read' && <span className="text-blue-500">✓✓</span>}
+                          <span className="flex items-center">
+                            {msg.status === 'sent' && (
+                              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                            )}
+                            {msg.status === 'delivered' && (
+                              <>
+                                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                                <svg className="w-3 h-3 -ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                              </>
+                            )}
+                            {msg.status === 'read' && (
+                              <span className="flex text-blue-500">
+                                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                                <svg className="w-3 h-3 -ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                              </span>
+                            )}
                           </span>
                         )}
                       </div>
