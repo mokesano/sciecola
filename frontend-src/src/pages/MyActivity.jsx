@@ -172,30 +172,37 @@ const MyActivity = () => {
       {/* Activity Timeline */}
       {Object.keys(groupedActivities).length > 0 ? (
         <div className="relative">
-          {/* Timeline Line - Posisi fix di left-5 (20px) untuk mobile, left-7 (28px) untuk desktop */}
-          <div className="absolute left-5 sm:left-7 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+          {/* Timeline Line - Fixed Position */}
+          <div className="absolute left-5 sm:left-7 top-0 bottom-0 w-0.5 bg-gray-200 z-0"></div>
 
           {Object.entries(groupedActivities).map(([date, items]) => (
             <div key={date} className="mb-8 last:mb-0">
-              {/* Date Header - Dot sejajar dengan garis */}
+              {/* Date Header */}
               <div className="relative flex items-center gap-4 mb-6">
-                <div className="absolute left-5 sm:left-7 -translate-x-1/2 w-4 h-4 bg-indigo-600 rounded-full border-4 border-white shadow z-10"></div>
-                <h3 className="ml-8 sm:ml-10 text-sm font-bold text-gray-900 uppercase tracking-wider bg-gray-50 px-3 py-2 rounded-full">{date}</h3>
+                {/* Header Dot */}
+                <div className="absolute left-5 sm:left-7 -translate-x-1/2 w-3 h-3 bg-indigo-600 rounded-full border-2 border-white shadow-sm z-10"></div>
+                <h3 className="ml-8 sm:ml-10 text-sm font-bold text-gray-900 uppercase tracking-wider bg-gray-50 px-3 py-1 rounded-full border border-gray-200">{date}</h3>
                 <div className="flex-grow h-px bg-gray-200 ml-2"></div>
               </div>
 
               {/* Items */}
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {items.map((act) => (
+                  /* Wrapper Item */
                   <div key={act.id} className="relative pl-12 sm:pl-16">
-                    {/* Activity Dot - Tepat di tengah garis */}
-                    <div className={`absolute left-5 sm:left-7 -translate-x-1/2 w-3 h-3 rounded-full border-4 border-white shadow z-10 ${
-                      expandedId === act.id ? 'bg-indigo-600 ring-4 ring-indigo-100' : 'bg-gray-400'
-                    }`}></div>
+                    
+                    {/* Activity Dot - Centered Vertically & Horizontally */}
+                    <div 
+                      className={`absolute left-5 sm:left-7 -translate-x-1/2 top-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-sm z-10 transition-all duration-200 ${
+                        expandedId === act.id 
+                          ? 'bg-indigo-600 w-4 h-4 ring-4 ring-indigo-100' 
+                          : 'bg-gray-300 w-3 h-3 hover:bg-indigo-400'
+                      }`}
+                    ></div>
 
                     {/* Card Content */}
                     <div 
-                      className={`bg-white rounded-xl border shadow-sm p-4 transition-all cursor-pointer ${
+                      className={`bg-white rounded-xl border shadow-sm p-4 transition-all duration-200 ${
                         expandedId === act.id 
                           ? 'border-indigo-300 ring-2 ring-indigo-100 shadow-md' 
                           : 'border-gray-200 hover:shadow-md hover:border-gray-300'
@@ -225,7 +232,7 @@ const MyActivity = () => {
 
                           {/* Expanded Details */}
                           {expandedId === act.id && (
-                            <div className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-3 gap-4 animate-fade-in">
                               {Object.entries(act.metadata).map(([key, value]) => (
                                 <div key={key} className="bg-gray-50 rounded-lg p-3">
                                   <p className="text-xs text-gray-500 capitalize mb-1">{key.replace(/([A-Z])/g, ' $1').trim()}</p>

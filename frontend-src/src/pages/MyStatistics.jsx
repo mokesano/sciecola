@@ -120,7 +120,10 @@ const MyStatistics = () => {
             </div>
             <div className="flex items-end gap-2">
               <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-              <span className="text-xs font-bold text-green-600 mb-1.5">↑ {stat.growth}</span>
+              <span className="text-xs flex items-end gap-1 font-bold text-green-600">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg> 
+                {stat.growth}
+              </span>
             </div>
           </div>
         ))}
