@@ -66,9 +66,10 @@ import Api from './pages/Api';
 // Impor Halaman Log History
 import LogHistory from './pages/LogHistory';
 
-// Impor Halaman Dashboard 
+// Impor Halaman User Dashboard 
 import SciecoDashboard from './pages/SciecoDashboard';
 import Dashboard from './pages/Dashboard';
+import Feeds from './pages/Feeds';
 import Notifications from './pages/Notifications';
 import MyArticles from './pages/MyArticles';
 import MyCollections from './pages/MyCollections';
@@ -198,6 +199,7 @@ function App() {
           {/* Rute Dashboard */}
           <Route path="/sciecodash" element={<SciecoDashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/feeds" element={<Feeds />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/my-articles" element={<MyArticles />} />
           <Route path="/my-collections" element={<MyCollections />} />
