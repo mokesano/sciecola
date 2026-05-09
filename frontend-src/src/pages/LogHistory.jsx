@@ -80,14 +80,20 @@ const LogHistory = () => {
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-4">
         <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
-        <span className="text-gray-400">›</span>
-        <span className="text-gray-900 font-medium">Log Activity</span>
+        <span className="text-gray-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </span>
+        <Link to="/dashboard" className="hover:text-indigo-600 transition-colors">Dashboard</Link>
+        <span className="text-gray-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </span>
+        <span className="text-gray-900 font-medium">Log History</span>
       </nav>
 
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Log Activity</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Log History</h1>
           <p className="text-gray-600 max-w-2xl">
             Lihat riwayat aktivitas Anda di Sciecola. Anda dapat memantau artikel yang dilihat, pencarian yang dilakukan, koleksi, unduhan, dan aktivitas lainnya.
           </p>

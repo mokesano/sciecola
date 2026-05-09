@@ -67,9 +67,11 @@ import Api from './pages/Api';
 import LogHistory from './pages/LogHistory';
 
 // Impor Halaman User Dashboard 
-import SciecoDashboard from './pages/SciecoDashboard';
-import Dashboard from './pages/Dashboard';
 import Feeds from './pages/Feeds';
+import SciecoDashboard from './pages/SciecoDashboard';
+import MyProfile from './pages/MyProfile';
+import Dashboard from './pages/Dashboard';
+import Messages from './pages/Messages';
 import Notifications from './pages/Notifications';
 import MyArticles from './pages/MyArticles';
 import MyCollections from './pages/MyCollections';
@@ -193,19 +195,21 @@ function App() {
           <Route path="/docs" element={<Doc />} />
           <Route path="/docs/api-reference" element={<Api />} />
 
-          {/* Rute Log History */}
-          <Route path="/log-history" element={<LogHistory />} />
-
           {/* Rute Dashboard */}
-          <Route path="/sciecodash" element={<SciecoDashboard />} />
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/feeds" element={<Feeds />} />
+          <Route path="/sciecodash" element={<SciecoDashboard />} />
+          <Route path="/my-profile" element={<MyProfile />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/messages" element={<Messages />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/my-articles" element={<MyArticles />} />
           <Route path="/my-collections" element={<MyCollections />} />
           <Route path="/my-statistics" element={<MyStatistics />} />
           <Route path="/settings" element={<Settings />} />
+          
+          {/* Rute Log History/Activity */}
           <Route path="/my-activity" element={<MyActivity />} />
+          <Route path="/log-history" element={<LogHistory />} />
         </Routes>
 
         {/* Footer selalu tampil di semua halaman */}
