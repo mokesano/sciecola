@@ -72,6 +72,7 @@ import Dashboard from './pages/Dashboard';
 import MyArticles from './pages/MyArticles';
 import MyCollections from './pages/MyCollections';
 import MyStatistics from './pages/MyStatistics';
+import Settings from './pages/Settings';
 
 // =====================================================================
 // KOMPONEN BERANDA (HOME)
@@ -198,6 +199,7 @@ function App() {
           <Route path="/my-articles" element={<MyArticles />} />
           <Route path="/my-collections" element={<MyCollections />} />
           <Route path="/my-statistics" element={<MyStatistics />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
 
         {/* Footer selalu tampil di semua halaman */}
