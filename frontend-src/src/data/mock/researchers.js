@@ -2,16 +2,16 @@
 import { JOURNALS } from './journals';
 
 const INSTITUTIONS = [
-  { id: 'i01', name: 'Universitas Indonesia', city: 'Depok', country: 'Indonesia', lat: -6.36, lng: 106.83 },
-  { id: 'i02', name: 'Institut Teknologi Bandung', city: 'Bandung', country: 'Indonesia', lat: -6.89, lng: 107.61 },
-  { id: 'i03', name: 'Universitas Gadjah Mada', city: 'Yogyakarta', country: 'Indonesia', lat: -7.77, lng: 110.38 },
-  { id: 'i04', name: 'Institut Pertanian Bogor', city: 'Bogor', country: 'Indonesia', lat: -6.56, lng: 106.72 },
-  { id: 'i05', name: 'Universitas Airlangga', city: 'Surabaya', country: 'Indonesia', lat: -7.27, lng: 112.78 },
-  { id: 'i06', name: 'Universitas Hasanuddin', city: 'Makassar', country: 'Indonesia', lat: -5.13, lng: 119.49 },
-  { id: 'i07', name: 'Universitas Diponegoro', city: 'Semarang', country: 'Indonesia', lat: -7.05, lng: 110.44 },
-  { id: 'i08', name: 'Universitas Padjadjaran', city: 'Bandung', country: 'Indonesia', lat: -6.92, lng: 107.77 },
-  { id: 'i09', name: 'Universitas Brawijaya', city: 'Malang', country: 'Indonesia', lat: -7.95, lng: 112.61 },
-  { id: 'i10', name: 'Universitas Sumatera Utara', city: 'Medan', country: 'Indonesia', lat: 3.56, lng: 98.65 },
+  { id: 'inst-00001', name: 'Universitas Indonesia', city: 'Depok', country: 'Indonesia', lat: -6.36, lng: 106.83 },
+  { id: 'inst-00002', name: 'Institut Teknologi Bandung', city: 'Bandung', country: 'Indonesia', lat: -6.89, lng: 107.61 },
+  { id: 'inst-00003', name: 'Universitas Gadjah Mada', city: 'Yogyakarta', country: 'Indonesia', lat: -7.77, lng: 110.38 },
+  { id: 'inst-00004', name: 'Institut Pertanian Bogor', city: 'Bogor', country: 'Indonesia', lat: -6.56, lng: 106.72 },
+  { id: 'inst-00005', name: 'Universitas Airlangga', city: 'Surabaya', country: 'Indonesia', lat: -7.27, lng: 112.78 },
+  { id: 'inst-00006', name: 'Universitas Hasanuddin', city: 'Makassar', country: 'Indonesia', lat: -5.13, lng: 119.49 },
+  { id: 'inst-00007', name: 'Universitas Diponegoro', city: 'Semarang', country: 'Indonesia', lat: -7.05, lng: 110.44 },
+  { id: 'inst-00008', name: 'Universitas Padjadjaran', city: 'Bandung', country: 'Indonesia', lat: -6.92, lng: 107.77 },
+  { id: 'inst-00009', name: 'Universitas Brawijaya', city: 'Malang', country: 'Indonesia', lat: -7.95, lng: 112.61 },
+  { id: 'inst-00010', name: 'Universitas Sumatera Utara', city: 'Medan', country: 'Indonesia', lat: 3.56, lng: 98.65 },
 ];
 
 const fields = ['Climate Change', 'Renewable Energy', 'Public Health', 'Education Technology', 'Food Security',
@@ -59,7 +59,7 @@ export const RESEARCHERS = Array.from({ length: 100 }, (_, i) => {
     firstName,
     lastName,
     title: id % 3 === 0 ? 'Prof.' : id % 3 === 1 ? 'Dr.' : 'M.Sc.',
-    email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@${institution.id.replace('i0', 'univ').replace('i10', 'univ10')}.ac.id`,
+    email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@${institution.id.replace('inst-000', 'univ')}.ac.id`,
     institution: institution.name,
     institutionId: institution.id,
     city: institution.city,
