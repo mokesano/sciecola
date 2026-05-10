@@ -1,26 +1,41 @@
 <?php
 /**
- * File: /includes/config.php
- * Konfigurasi Utama Sicola
+ * File: config/config.php
+ * Konfigurasi Utama Sicola — loads .env then exposes typed constants.
  */
 
-if (!defined('ROOT_PATH')) {
-    exit('Direct script access is not allowed.');
+// Load .env file (simple parser, no Composer required)
+(static function (): void {
+    $envFile = dirname(__DIR__) . '/.env';
+    if (!file_exists($envFile)) {
+        return;
+    }
+    foreach (file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        $line = trim($line);
+        if ($line === '' || $line[0] === '#' || !str_contains($line, '=')) {
+            continue;
+        }
+        [$key, $value] = explode('=', $line, 2);
+        $key   = trim($key);
+        $value = trim($value, " \t\n\r\0\x0B\"'");
+        if ($key !== '' && !array_key_exists($key, $_ENV)) {
+            putenv("{$key}={$value}");
+            $_ENV[$key] = $value;
+        }
+    }
+})();
+
+// Guard: only load through bootstrap or api files (define ROOT_PATH or skip guard for API context)
+if (!defined('ROOT_PATH') && !defined('SCIECOLA_API_CONTEXT')) {
+    define('ROOT_PATH', dirname(__DIR__));
 }
 
 // ================================================================
 // 1. ENVIRONMENT & URL SETTINGS
 // ================================================================
 
-// Ubah ke 'production' saat diupload ke server live (CPanel/Hosting)
-// Mode 'development' akan menampilkan error, 'production' akan menyembunyikannya
-define('ENVIRONMENT', 'development');
-
-// Base URL Aplikasi (PENTING: Tanpa garis miring / di akhir)
-// Contoh Lokal: http://localhost/workspace
-// Contoh Live: https://sciecola.sangia.org
-define('SITE_URL', 'http://localhost/workspace');
-
+define('ENVIRONMENT', getenv('APP_ENV')  ?: 'development');
+define('SITE_URL',    getenv('SITE_URL') ?: 'http://localhost/workspace');
 define('SITE_NAME', 'Lumera Sicola');
 
 // ================================================================

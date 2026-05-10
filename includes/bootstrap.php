@@ -14,9 +14,10 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// 3. Muat Konfigurasi dan Fungsi Global
-// Karena file-file ini sekarang berada di folder yang sama dengan bootstrap.php,
-// kita cukup menggunakan __DIR__
+// 3. PSR-4 Autoloader (Sciecola\ → src/)
+require_once __DIR__ . '/autoload.php';
+
+// 4. Muat Konfigurasi dan Fungsi Global
 $configFile = __DIR__ . '/config.php';
 if (file_exists($configFile)) {
     require_once $configFile;
@@ -30,7 +31,7 @@ if (file_exists($functionsFile)) {
 }
 
 // =========================================================================
-// 4. SISTEM ROUTER UTAMA (API vs FRONTEND)
+// 5. SISTEM ROUTER UTAMA (API vs FRONTEND)
 // =========================================================================
 
 if (is_api_request()) {
