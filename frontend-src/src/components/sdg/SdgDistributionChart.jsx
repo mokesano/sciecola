@@ -20,8 +20,9 @@ const renderActiveShape = (props) => {
 const SdgDistributionChart = ({ data, totalArticles }) => {
   const [activeIndex, setActiveIndex] = useState(null);
 
-  const chartData      = data && data.length > 0 ? data : SDG_CHART_MOCK;
-  const totalDisplay   = totalArticles != null ? totalArticles : SDG_CHART_TOTAL_MOCK;
+  const chartData    = data && data.length > 0 ? data : SDG_CHART_MOCK;
+  // Use mock when prop is absent, null, undefined, or 0 (no real data loaded yet)
+  const totalDisplay = totalArticles || SDG_CHART_TOTAL_MOCK;
 
   return (
     <div className="bg-white p-6 md:p-8 rounded-2xl shadow-[0_2px_8px_-3px_rgba(0,0,0,0.1)] border border-gray-100">
@@ -32,11 +33,11 @@ const SdgDistributionChart = ({ data, totalArticles }) => {
 
       <div className="flex flex-col md:flex-row items-center gap-8 md:gap-10">
         <div className="relative w-full md:w-[260px] shrink-0 h-[260px] flex justify-center items-center">
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-0">
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
             <span className="text-2xl font-extrabold text-gray-900">{totalDisplay}</span>
             <span className="text-sm font-medium text-gray-500 mt-1">Artikel</span>
           </div>
-          <div className="w-full h-full relative z-10">
+          <div className="w-full h-full relative z-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={chartData} cx="50%" cy="50%" innerRadius={75} outerRadius={112}

@@ -2,11 +2,35 @@
 /**
  * SDG Frontend - Configuration File
  * Konfigurasi utama untuk aplikasi SDG Classification Analysis
- * 
+ *
  * @version 1.0.0
  * @author Rochmady and Sciecola Team
  * @license MIT
  */
+
+// Load .env file (simple parser, no Composer required)
+// IMPORTANT: Only load from .env if the variable is NOT already set in the process environment.
+// This prevents a stale .env from overriding production DB credentials or API keys.
+(static function (): void {
+    $envFile = __DIR__ . '/../.env';
+    if (!file_exists($envFile)) {
+        return;
+    }
+    foreach (file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        $line = trim($line);
+        if ($line === '' || $line[0] === '#' || !str_contains($line, '=')) {
+            continue;
+        }
+        [$key, $value] = explode('=', $line, 2);
+        $key   = trim($key);
+        $value = trim($value, " \t\n\r\0\x0B\"'");
+        // Only load from .env if NOT already set in the process environment
+        if ($key !== '' && getenv($key) === false) {
+            putenv("{$key}={$value}");
+            $_ENV[$key] = $value;
+        }
+    }
+})();
 
 // ==============================================
 // PENGATURAN DASAR APLIKASI
@@ -14,13 +38,13 @@
 
 // Informasi situs
 define('SITE_NAME', 'SDGs Classification Analysis');
-define('SITE_URL', 'https://sciecola.sangia.org'); // Sesuaikan domain
+define('SITE_URL', getenv('SITE_URL') ?: 'https://sciecola.sangia.org');
 define('VERSION', '1.0.0');
 define('API_VERSION', 'v1_0_0');
 
 // Pengaturan environment
-define('ENVIRONMENT', 'production'); // 'development' atau 'production'
-define('DEBUG_MODE', false); // Set true untuk debugging
+define('ENVIRONMENT', getenv('APP_ENV') ?: 'production');
+define('DEBUG_MODE', ENVIRONMENT === 'development');
 
 // Timezone
 date_default_timezone_set('Asia/Jakarta');
@@ -65,12 +89,14 @@ $CONFIG = [
 
 // Jika Anda menggunakan database untuk logging atau caching
 $DB_CONFIG = [
-    'host' => 'localhost',
-    'database' => 'sdg_analysis',
-    'username' => 'your_username',
-    'password' => 'your_password',
-    'charset' => 'utf8mb4',
-    'enabled' => false // Set true jika menggunakan database
+    'host'     => getenv('DB_HOST')     ?: 'localhost',
+    'port'     => getenv('DB_PORT')     ?: '3306',
+    'database' => getenv('DB_NAME')     ?: 'sdg_analysis',
+    'username' => getenv('DB_USER')     ?: '',
+    'password' => getenv('DB_PASS')     ?: '',
+    'driver'   => getenv('DB_DRIVER')   ?: 'mysql',
+    'charset'  => 'utf8mb4',
+    'enabled'  => (getenv('DB_USER') !== '' && getenv('DB_USER') !== false),
 ];
 
 // ==============================================
@@ -108,13 +134,15 @@ $LOG_CONFIG = [
 // ==============================================
 
 $EMAIL_CONFIG = [
-    'enabled' => false,
-    'host' => 'smtp.gmail.com',
-    'port' => 587,
-    'username' => 'your-email@gmail.com',
-    'password' => 'your-app-password',
-    'from_email' => 'noreply@sciecola.sangia.org',
-    'from_name' => 'SDG Analysis Platform'
+    'enabled'    => (getenv('SMTP_USER') !== '' && getenv('SMTP_USER') !== false),
+    'driver'     => getenv('MAIL_DRIVER')    ?: 'log',
+    'host'       => getenv('SMTP_HOST')      ?: 'smtp.mailtrap.io',
+    'port'       => (int)(getenv('SMTP_PORT') ?: 2525),
+    'username'   => getenv('SMTP_USER')      ?: '',
+    'password'   => getenv('SMTP_PASS')      ?: '',
+    'secure'     => getenv('SMTP_SECURE')    ?: 'tls',
+    'from_email' => getenv('MAIL_FROM')      ?: 'noreply@sciecola.sangia.org',
+    'from_name'  => getenv('MAIL_FROM_NAME') ?: 'SDG Analysis Platform',
 ];
 
 // ==============================================
