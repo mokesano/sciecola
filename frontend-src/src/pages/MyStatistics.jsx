@@ -1,33 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend,
-  LineChart, Line
-} from 'recharts';
+import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
+import { useAuth } from '../context/AuthContext';
 
 const MyStatistics = () => {
-  const [timeRange, setTimeRange] = useState('12 Months');
+  const { user } = useAuth();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [timeRange, setTimeRange] = useState('12');
 
-  // Mock Data: Impact Trends
-  const impactTrends = [
-    { month: 'Jan', views: 1200, citations: 45, downloads: 120 },
-    { month: 'Feb', views: 1500, citations: 52, downloads: 140 },
-    { month: 'Mar', views: 1800, citations: 60, downloads: 160 },
-    { month: 'Apr', views: 1600, citations: 55, downloads: 130 },
-    { month: 'Mei', views: 2100, citations: 70, downloads: 190 },
-    { month: 'Jun', views: 2400, citations: 85, downloads: 210 },
-    { month: 'Jul', views: 2200, citations: 78, downloads: 180 },
-    { month: 'Agu', views: 2800, citations: 95, downloads: 240 },
-    { month: 'Sep', views: 3100, citations: 110, downloads: 270 },
-    { month: 'Okt', views: 2900, citations: 98, downloads: 250 },
-    { month: 'Nov', views: 3500, citations: 125, downloads: 310 },
-    { month: 'Des', views: 3800, citations: 140, downloads: 340 },
-  ];
+  useEffect(() => {
+    if (!user?.orcid) { setLoading(false); return; }
+    setLoading(true);
+    setError(null);
+    fetch(`/api/my_statistics.php?orcid=${encodeURIComponent(user.orcid)}&range=${timeRange}`)
+      .then(r => r.json())
+      .then(resp => {
+        if (resp.status === 'success') {
+          setData(resp);
+        } else {
+          setError(resp.message || 'Gagal memuat statistik');
+        }
+      })
+      .catch(err => setError('Gagal memuat: ' + err.message))
+      .finally(() => setLoading(false));
+  }, [user?.orcid, timeRange]);
 
-  // Mock Data: SDG Radar
-  const sdgData = [
-    { subject: 'SDG 13\nClimate', A: 95, fullMark: 100 },
+  if (!user?.orcid && !loading) {
+    return (
+      <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <div className="text-center py-20">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">ORCID Belum Terhubung</h2>
+          <Link to="/settings" className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold">Hubungkan ORCID</Link>
+        </div>
+      </main>
+    );
+  }
+
+  if (loading) {
+    return (
+      <main className="pt-28 pb-12 px-4 flex items-center justify-center py-32">
+        <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mr-3" />
+        <span className="text-gray-600">Memuat statistik…</span>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="pt-28 pb-12 px-4">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-center">{error}</div>
+      </main>
+    );
+  }
+
+  const impactTrends = data?.impactTrends || [];
+  const sdgData = data?.sdgRadar || [];
+  const demographics = data?.demographics || [];
+  const sources = data?.citationSources || [];
     { subject: 'SDG 11\nCities', A: 78, fullMark: 100 },
     { subject: 'SDG 7\nEnergy', A: 65, fullMark: 100 },
     { subject: 'SDG 4\nEducation', A: 40, fullMark: 100 },
