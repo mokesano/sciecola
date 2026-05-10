@@ -1,10 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, CircleMarker, Popup } from 'react-leaflet';
+import { MapContainer, CircleMarker, Popup, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
 const Monitoring = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState('24h');
   const [activeTab, setActiveTab] = useState('overview');
+
+  // Add pulse animation CSS
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes pulse-ring {
+        0% {
+          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+        }
+      }
+      .leaflet-pulse-marker {
+        animation: pulse-ring 2s infinite;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => style.remove();
+  }, []);
 
   // World-wide geographic distribution data
   const [geoData] = useState([
@@ -268,7 +291,7 @@ const Monitoring = () => {
               zoom={2}
               minZoom={2}
               maxZoom={5}
-              style={{ height: '100%', width: '100%', background: '#dbeafe' }}
+              style={{ height: '100%', width: '100%' }}
               scrollWheelZoom={false}
               dragging={false}
               zoomControl={false}
@@ -277,6 +300,10 @@ const Monitoring = () => {
               keyboard={false}
               attributionControl={false}
             >
+              <TileLayer
+                url="https://tiles.stadiamaps.com/tiles/stamen_tonerlite/{z}/{x}/{y}.png"
+                opacity={0.7}
+              />
               {geoData.map((location) => (
                 <PulseMarker
                   key={location.id}
