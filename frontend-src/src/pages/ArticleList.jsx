@@ -181,37 +181,37 @@ const ArticleList = () => {
         </div>
         
         {/* Active Filters */}
-        <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
-          <span className="text-sm text-gray-500">Filter aktif:</span>
-          {selectedSDG !== 'all' && (
-            <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold flex items-center gap-1">
-              SDG {selectedSDG}
-              <button onClick={() => setSelectedSDG('all')} className="hover:text-indigo-900">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </span>
-          )}
-          {selectedYear !== 'all' && (
-            <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold flex items-center gap-1">
-              Tahun {selectedYear}
-              <button onClick={() => setSelectedYear('all')} className="hover:text-indigo-900">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </span>
-          )}
-          {(selectedSDG !== 'all' || selectedYear !== 'all') && (
-            <button 
-              onClick={() => {setSelectedSDG('all'); setSelectedYear('all');}}
+        {(selectedSDG !== 'all' || selectedYear !== 'all') && (
+          <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
+            <span className="text-sm text-gray-500">Filter aktif:</span>
+            {selectedSDG !== 'all' && (
+              <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold flex items-center gap-1">
+                SDG {selectedSDG}
+                <button onClick={() => setSelectedSDG('all')} className="hover:text-indigo-900">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </span>
+            )}
+            {selectedYear !== 'all' && (
+              <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold flex items-center gap-1">
+                Tahun {selectedYear}
+                <button onClick={() => setSelectedYear('all')} className="hover:text-indigo-900">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </span>
+            )}
+            <button
+              onClick={() => { setSelectedSDG('all'); setSelectedYear('all'); }}
               className="text-xs text-gray-500 hover:text-gray-700 font-medium ml-2"
             >
               Reset semua
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Results Count */}
