@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import ScrollToTop from './components/shared/ScrollToTop';
 
 // Komponen Layout Global
@@ -162,8 +163,9 @@ const Home = () => {
 // =====================================================================
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
+    <AuthProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
         
         {/* Navbar selalu tampil di semua halaman */}
         <Navbar />
@@ -259,9 +261,10 @@ function App() {
 
         {/* Floating Chatbot */}
         <Chatbot />
-        
+
       </div>
-    </Router>
+      </Router>
+    </AuthProvider>
   );
 }
 

@@ -61,27 +61,17 @@ const MyArticles = () => {
       .finally(() => setLoading(false));
   }, [user?.orcid, currentPage, searchQuery, statusFilter, sdgFilter, sortConfig]);
 
-  const apiArticles = articles;
-    { id: 1, title: 'Climate Change Adaptation in Coastal Communities', journal: 'Journal of Environmental Science', date: '2024-03-15', sdgs: [13, 11], citations: 24, views: 652, downloads: 89, impactScore: 92.4, status: 'Published' },
-    { id: 2, title: 'Sustainable Urban Transport Systems in Indonesia', journal: 'Sustainable Cities Review', date: '2023-11-20', sdgs: [11, 9], citations: 18, views: 210, downloads: 45, impactScore: 85.1, status: 'Published' },
-    { id: 3, title: 'Renewable Energy Policy and Its Impact', journal: 'Journal of Urbanism', date: '2024-01-10', sdgs: [7, 13], citations: 32, views: 411, downloads: 67, impactScore: 88.7, status: 'Published' },
-    { id: 4, title: 'Digital Learning Innovation for Quality Education', journal: 'Journal of Education Technology', date: '2024-05-22', sdgs: [4, 9], citations: 12, views: 150, downloads: 23, impactScore: 78.3, status: 'Under Review' },
-    { id: 5, title: 'Mangrove Ecosystem as Climate Buffer', journal: 'Marine Policy', date: '2024-06-01', sdgs: [13, 14], citations: 5, views: 89, downloads: 12, impactScore: 72.1, status: 'Draft' },
-    { id: 6, title: 'AI-Driven Crop Yield Prediction Models', journal: 'Computers and Electronics in Agriculture', date: '2024-02-14', sdgs: [2, 9], citations: 15, views: 245, downloads: 38, impactScore: 81.5, status: 'Published' },
-    { id: 7, title: 'Community-Based Waste Management Strategies', journal: 'Waste Management', date: '2023-09-05', sdgs: [11, 12], citations: 28, views: 380, downloads: 56, impactScore: 86.2, status: 'Published' },
-  ];
-
   // Filter & Sort Logic
   const filteredArticles = useMemo(() => {
-    let result = [...apiArticles];
-    if (yearFilter !== 'All') result = result.filter(a => String(a.year) === yearFilter);
+    let result = [...articles];
+    if (yearFilter !== 'All') result = result.filter(a => String(new Date(a.date).getFullYear()) === yearFilter);
     return result;
-  }, [apiArticles, yearFilter]);
+  }, [articles, yearFilter]);
 
   const years = useMemo(() => {
-    const ys = [...new Set(apiArticles.map(a => String(a.year)).filter(Boolean))].sort().reverse();
+    const ys = [...new Set(articles.map(a => String(new Date(a.date).getFullYear())).filter(Boolean))].sort().reverse();
     return ['All', ...ys];
-  }, [apiArticles]);
+  }, [articles]);
 
   const totalPages = Math.ceil(filteredArticles.length / itemsPerPage);
   const paginated = filteredArticles.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -90,16 +80,20 @@ const MyArticles = () => {
     key, direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
   }));
 
-  const SortIcon = ({ column }) => {
-    if (sortConfig.key !== column) return <span className="text-gray-300 ml-1">↕</span>;
-    return <span className="text-indigo-600 ml-1">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>;
-  };
-
   const SortIcon = ({ columnKey }) => {
     if (sortConfig.key !== columnKey) return <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" /></svg>;
-    return sortConfig.direction === 'asc' 
+    return sortConfig.direction === 'asc'
       ? <svg className="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" /></svg>
       : <svg className="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>;
+  };
+
+  const getStatusBadge = (status) => {
+    const badges = {
+      'Published': 'bg-green-50 text-green-700 border-green-200',
+      'Under Review': 'bg-amber-50 text-amber-700 border-amber-200',
+      'Draft': 'bg-gray-50 text-gray-700 border-gray-200',
+    };
+    return badges[status] || 'bg-gray-50 text-gray-700 border-gray-200';
   };
 
   if (!user?.orcid && !loading) {
@@ -265,7 +259,7 @@ const MyArticles = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {paginatedArticles.length > 0 ? paginatedArticles.map((article) => (
+              {paginated.length > 0 ? paginated.map((article) => (
                 <tr key={article.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="font-medium text-gray-900 line-clamp-2 max-w-xs">{article.title}</div>
