@@ -1,268 +1,137 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, AreaChart, Area, Legend
+  PieChart, Pie, Cell, AreaChart, Area,
 } from 'recharts';
 
-// Mock Database Peneliti (Extended dari ResearchersList)
-const researchersDatabase = [
-  {
-    id: 1,
-    name: "Dr. Andi Rahman",
-    orcid: "0000-0002-1825-0097",
-    avatar: "https://i.pravatar.cc/300?img=11",
-    verified: true,
-    title: "Associate Professor",
-    univ: "Universitas Indonesia",
-    department: "Department of Environmental Science",
-    location: "Depok, Indonesia",
-    email: "andi.rahman@ui.ac.id",
-    scopusId: "57219929925",
-    researcherId: "A-1234-2019",
-    country: "Indonesia",
-    bio: "Dr. Andi Rahman adalah Associate Professor di Departemen Ilmu Lingkungan Universitas Indonesia. Beliau memiliki keahlian dalam adaptasi perubahan iklim, ekologi pesisir, dan kebijakan lingkungan. Aktif sebagai peneliti sejak 2012, beliau telah menerbitkan lebih dari 42 artikel ilmiah di jurnal bereputasi internasional dan menjadi reviewer di berbagai jurnal lingkungan terkemuka.",
+// SDG color palette (UN official)
+const SDG_COLORS = {
+  1: '#e5243b', 2: '#dda63a', 3: '#4c9f38', 4: '#c5192d',
+  5: '#ff3a21', 6: '#26bde2', 7: '#fcc30b', 8: '#a21942',
+  9: '#fd6925', 10: '#dd1367', 11: '#fd9d24', 12: '#bf8b2e',
+  13: '#3f7e44', 14: '#0a97d9', 15: '#56c02b', 16: '#00689d',
+  17: '#19486a',
+};
 
-    // Metrics
-    citations: 1248,
-    hIndex: 17,
-    i10Index: 21,
-    publications: 42,
-    collaboratorsCount: 156,
-    views: 98732,
-    downloads: 12843,
-    sdgsInvolved: 12,
-    yearsActive: "2012 - Sekarang",
-    firstPublication: 2012,
+const CustomTooltip = ({ active, payload, label }) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+      <p className="text-sm font-semibold text-gray-900">{label}</p>
+      <p className="text-sm text-indigo-600">{payload[0].name}: {payload[0].value}</p>
+    </div>
+  );
+};
 
-    // Research Focus
-    researchInterests: ["Climate Change Adaptation", "Coastal Ecology", "Environmental Policy", "Sustainable Development"],
-    sdgFocus: [
-      { sdg: 13, name: "Climate Action", percentage: 26, color: "#10b981" },
-      { sdg: 3, name: "Good Health & Well-being", percentage: 19, color: "#14b8a6" },
-      { sdg: 11, name: "Sustainable Cities", percentage: 17, color: "#f59e0b" },
-      { sdg: 7, name: "Affordable & Clean Energy", percentage: 12, color: "#fbbf24" },
-      { sdg: 4, name: "Quality Education", percentage: 10, color: "#ef4444" },
-      { sdg: 6, name: "Clean Water & Sanitation", percentage: 8, color: "#3b82f6" },
-      { sdg: 15, name: "Lainnya", percentage: 8, color: "#8b5cf6" }
-    ],
-    topKeywords: [
-      { text: "Climate Change", size: 40 },
-      { text: "Environmental Policy", size: 30 },
-      { text: "Sustainable Cities", size: 25 },
-      { text: "Coastal Resilience", size: 20 },
-      { text: "Green Technology", size: 18 },
-      { text: "Urban Sustainability", size: 16 },
-      { text: "Water Management", size: 14 },
-      { text: "Biodiversity", size: 12 },
-      { text: "Waste Management", size: 10 },
-      { text: "Energy Transition", size: 10 },
-      { text: "Ecosystem Services", size: 8 },
-      { text: "Environmental Education", size: 8 }
-    ],
+const LoadingState = () => (
+  <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+    <div className="flex flex-col items-center justify-center py-32 gap-4">
+      <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+      <p className="text-gray-600 font-medium">Memuat profil peneliti…</p>
+      <p className="text-sm text-gray-400">Mengambil data ORCID dan menghitung metrik dampak</p>
+    </div>
+  </main>
+);
 
-    // Publication Trend
-    publicationTrend: [
-      { year: "2015", count: 4 },
-      { year: "2016", count: 6 },
-      { year: "2017", count: 7 },
-      { year: "2018", count: 8 },
-      { year: "2019", count: 9 },
-      { year: "2020", count: 10 },
-      { year: "2021", count: 11 },
-      { year: "2022", count: 13 },
-      { year: "2023", count: 14 },
-      { year: "2024", count: 17 }
-    ],
-
-    // Citation Trend
-    citationTrend: [
-      { year: "2015", citations: 245 },
-      { year: "2016", citations: 312 },
-      { year: "2017", citations: 398 },
-      { year: "2018", citations: 512 },
-      { year: "2019", citations: 645 },
-      { year: "2020", citations: 789 },
-      { year: "2021", citations: 923 },
-      { year: "2022", citations: 1056 },
-      { year: "2023", citations: 1178 },
-      { year: "2024", citations: 1248 }
-    ],
-
-    // Recent Publications
-    recentPublications: [
-      {
-        id: 1,
-        doi: "10.1234/jess.2024.1002",
-        title: "Climate Change Adaptation in Coastal Communities",
-        journal: "Journal of Environmental Science",
-        year: 2024,
-        sdgs: [13, 11, 3],
-        views: 652,
-        citations: 45,
-        thumbnail: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=80&h=60&fit=crop&q=80"
-      },
-      {
-        id: 2,
-        doi: "10.1234/jess.2024.1003",
-        title: "Sustainable Urban Transport Systems in Indonesia",
-        journal: "Sustainable Cities Review",
-        year: 2024,
-        sdgs: [11, 9],
-        views: 510,
-        citations: 38,
-        thumbnail: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=80&h=60&fit=crop&q=80"
-      },
-      {
-        id: 3,
-        doi: "10.1234/jess.2023.2001",
-        title: "Renewable Energy Policy and Its Impact",
-        journal: "Energy Policy Journal",
-        year: 2023,
-        sdgs: [7, 13],
-        views: 411,
-        citations: 32,
-        thumbnail: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=80&h=60&fit=crop&q=80"
-      },
-      {
-        id: 4,
-        doi: "10.1234/jet.2023.1101",
-        title: "Digital Learning Innovation for Quality Education",
-        journal: "Journal of Education Technology",
-        year: 2023,
-        sdgs: [4, 9],
-        views: 398,
-        citations: 21,
-        thumbnail: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=80&h=60&fit=crop&q=80"
-      },
-      {
-        id: 5,
-        doi: "10.1234/jcp.2023.0501",
-        title: "Green Technology Innovation for Sustainable Industry",
-        journal: "Journal of Cleaner Production",
-        year: 2023,
-        sdgs: [9, 12],
-        views: 362,
-        citations: 17,
-        thumbnail: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=80&h=60&fit=crop&q=80"
-      }
-    ],
-
-    // Collaborators
-    collaborators: [
-      {
-        id: 1,
-        name: "Prof. Budi Santoso",
-        univ: "Universitas Gadjah Mada",
-        avatar: "https://i.pravatar.cc/100?img=12",
-        collaborations: 18
-      },
-      {
-        id: 2,
-        name: "Dr. Siti Nurhaliza",
-        univ: "Institut Teknologi Bandung",
-        avatar: "https://i.pravatar.cc/100?img=5",
-        collaborations: 14
-      },
-      {
-        id: 3,
-        name: "Dr. Dwi Setiawan",
-        univ: "Universitas Airlangga",
-        avatar: "https://i.pravatar.cc/100?img=3",
-        collaborations: 12
-      },
-      {
-        id: 4,
-        name: "Dr. Fatimah Azzahra",
-        univ: "Universitas Hasanuddin",
-        avatar: "https://i.pravatar.cc/100?img=9",
-        collaborations: 10
-      },
-      {
-        id: 5,
-        name: "Prof. Rina Wulandari",
-        univ: "IPB University",
-        avatar: "https://i.pravatar.cc/100?img=10",
-        collaborations: 9
-      }
-    ],
-
-    // Institutional Affiliations
-    affiliations: [
-      { name: "Universitas Indonesia", articles: 28, percentage: 66.7, logo: "https://via.placeholder.com/40x40/6366f1/ffffff?text=UI" },
-      { name: "Institut Teknologi Bandung", articles: 9, percentage: 21.4, logo: "https://via.placeholder.com/40x40/f59e0b/ffffff?text=ITB" },
-      { name: "Universitas Gadjah Mada", articles: 5, percentage: 11.9, logo: "https://via.placeholder.com/40x40/10b981/ffffff?text=UGM" }
-    ],
-
-    // Social Links
-    socialLinks: {
-      googleScholar: "https://scholar.google.com",
-      scopus: "https://www.scopus.com",
-      orcid: "https://orcid.org/0000-0002-1825-0097",
-      linkedin: "https://www.linkedin.com",
-      researchgate: "https://www.researchgate.net"
-    }
-  }
-];
+const ErrorState = ({ orcid, message, onRetry }) => (
+  <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+    <div className="text-center py-20">
+      <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h2 className="text-2xl font-bold text-gray-900 mb-2">Profil Tidak Ditemukan</h2>
+      <p className="text-gray-600 mb-2">ORCID <span className="font-mono text-indigo-600">{orcid}</span> tidak ditemukan atau tidak dapat diakses.</p>
+      {message && <p className="text-sm text-red-500 mb-6">{message}</p>}
+      <div className="flex gap-3 justify-center">
+        <button onClick={onRetry} className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700">
+          Coba Lagi
+        </button>
+        <Link to="/researchers" className="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50">
+          Kembali ke Daftar
+        </Link>
+      </div>
+    </div>
+  </main>
+);
 
 const ResearcherProfile = () => {
   const { orcidCode } = useParams();
-  const [activeTab, setActiveTab] = useState('ringkasan');
+  const [activeTab, setActiveTab]   = useState('ringkasan');
+  const [researcher, setResearcher] = useState(null);
+  const [loading, setLoading]       = useState(true);
+  const [error, setError]           = useState(null);
 
-  // Find researcher by ORCID
-  const researcher = researchersDatabase.find(r => r.orcid === orcidCode);
-
-  if (!researcher) {
-    return (
-      <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        <div className="text-center py-20">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Peneliti Tidak Ditemukan</h2>
-          <p className="text-gray-600 mb-6">Maaf, profil peneliti dengan ORCID {orcidCode} tidak tersedia.</p>
-          <Link to="/researchers" className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700">
-            Kembali ke Daftar Peneliti
-          </Link>
-        </div>
-      </main>
-    );
-  }
-
-  const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-          <p className="text-sm font-semibold text-gray-900">{label}</p>
-          <p className="text-sm text-indigo-600">
-            {payload[0].name}: {payload[0].value}
-          </p>
-        </div>
-      );
+  const fetchProfile = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/researcher_profile.php?orcid=${encodeURIComponent(orcidCode)}`);
+      const json = await res.json();
+      if (json.status === 'success' && json.profile) {
+        setResearcher(json.profile);
+      } else {
+        setError(json.message || 'Profil tidak ditemukan');
+      }
+    } catch (err) {
+      setError('Gagal menghubungi server: ' + err.message);
+    } finally {
+      setLoading(false);
     }
-    return null;
-  };
+  }, [orcidCode]);
 
-  // SDG Color Mapping
-  const sdgColors = {
-    1: "#ef4444", 2: "#f97316", 3: "#14b8a6", 4: "#ef4444",
-    6: "#3b82f6", 7: "#fbbf24", 9: "#f97316", 11: "#f59e0b",
-    12: "#eab308", 13: "#10b981", 14: "#0ea5e9", 15: "#22c55e"
+  useEffect(() => { fetchProfile(); }, [fetchProfile]);
+
+  if (loading)                return <LoadingState />;
+  if (error || !researcher)   return <ErrorState orcid={orcidCode} message={error} onRetry={fetchProfile} />;
+
+  // Safe defaults for optional/unavailable fields
+  const r = {
+    ...researcher,
+    avatar:           researcher.avatar ?? null,
+    verified:         researcher.verified ?? false,
+    email:            researcher.email ?? null,
+    bio:              researcher.bio ?? 'Biografi tidak tersedia di ORCID untuk peneliti ini.',
+    scopusId:         researcher.scopusId ?? null,
+    researcherId:     researcher.researcherId ?? null,
+    views:            researcher.views ?? 0,
+    downloads:        researcher.downloads ?? 0,
+    citations:        researcher.citations ?? 0,
+    hIndex:           researcher.hIndex ?? 0,
+    i10Index:         researcher.i10Index ?? 0,
+    sdgsInvolved:     researcher.sdgsInvolved ?? 0,
+    firstPublication: researcher.firstPublication ?? new Date().getFullYear(),
+    researchInterests: researcher.researchInterests ?? [],
+    sdgFocus:          researcher.sdgFocus ?? [],
+    topKeywords:       researcher.topKeywords ?? [],
+    publicationTrend:  researcher.publicationTrend ?? [],
+    citationTrend:     researcher.citationTrend ?? [],
+    recentPublications: researcher.recentPublications ?? [],
+    collaborators:     researcher.collaborators ?? [],
+    affiliations:      researcher.affiliations ?? [],
+    socialLinks:       researcher.socialLinks ?? {},
   };
 
   return (
     <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-      {/* Header Profile */}
+
+      {/* ── Header Profile ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        {/* Left: Profile Info */}
+
+        {/* Left: Profile Card */}
         <div className="lg:col-span-1">
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
             <div className="flex flex-col items-center text-center">
               <div className="relative mb-4">
                 <img
-                  src={researcher.avatar}
-                  alt={researcher.name}
+                  src={r.avatar ?? '/assets/img/researcher-default.svg'}
+                  alt={r.name}
                   className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
                   onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
                 />
-                {researcher.verified && (
+                {r.verified && (
                   <div className="absolute bottom-1 right-1 bg-blue-500 text-white rounded-full p-1.5">
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -271,71 +140,70 @@ const ResearcherProfile = () => {
                 )}
               </div>
 
-              <h1 className="text-2xl font-bold text-gray-900 mb-1 flex items-center gap-2">
-                {researcher.name}
-                {researcher.verified && (
-                  <svg className="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                )}
-              </h1>
-
-              <p className="text-indigo-600 font-medium mb-4">{researcher.title}</p>
+              <h1 className="text-2xl font-bold text-gray-900 mb-1">{r.name}</h1>
+              <p className="text-indigo-600 font-medium mb-4">{r.title}</p>
 
               <div className="w-full space-y-2 text-sm">
                 <div className="flex items-center gap-2 text-gray-600 justify-center">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
-                  <span>{researcher.univ}</span>
+                  <span className="truncate">{r.univ}</span>
                 </div>
+                {r.department && (
+                  <div className="flex items-center gap-2 text-gray-600 justify-center">
+                    <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span className="truncate">{r.department}</span>
+                  </div>
+                )}
                 <div className="flex items-center gap-2 text-gray-600 justify-center">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  <span>{researcher.department}</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-600 justify-center">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                  <span>{researcher.location}</span>
+                  <span>{r.location}</span>
                 </div>
+                {r.email && (
+                  <div className="flex items-center gap-2 text-gray-600 justify-center">
+                    <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <a href={`mailto:${r.email}`} className="text-indigo-600 hover:underline truncate">{r.email}</a>
+                  </div>
+                )}
                 <div className="flex items-center gap-2 text-gray-600 justify-center">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  <a href={`mailto:${researcher.email}`} className="text-indigo-600 hover:underline">{researcher.email}</a>
-                </div>
-                <div className="flex items-center gap-2 text-gray-600 justify-center">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
                   </svg>
-                  <span>ORCID: {researcher.orcid}</span>
+                  <span className="font-mono text-xs">{r.orcid}</span>
                 </div>
-                <div className="flex items-center gap-2 text-gray-600 justify-center">
-                  <span className="text-xs">Scopus ID: {researcher.scopusId}</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-600 justify-center">
-                  <span className="text-xs">Researcher ID: {researcher.researcherId}</span>
-                </div>
+                {r.scopusId && (
+                  <div className="text-xs text-gray-500">Scopus ID: {r.scopusId}</div>
+                )}
+                {r.researcherId && (
+                  <div className="text-xs text-gray-500">Researcher ID: {r.researcherId}</div>
+                )}
               </div>
 
               {/* Social Links */}
-              <div className="flex gap-3 mt-4">
-                <a href={researcher.socialLinks.googleScholar} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-                </a>
-                <a href={researcher.socialLinks.scopus} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                </a>
-                <a href={researcher.socialLinks.orcid} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
-                </a>
-                <a href={researcher.socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14m-.5 15.5v-5.3a3.26 3.26 0 00-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 011.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 001.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 00-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
-                </a>
+              <div className="flex gap-3 mt-4 flex-wrap justify-center">
+                {r.socialLinks.orcid && (
+                  <a href={r.socialLinks.orcid} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-green-600 hover:text-white transition-colors" title="ORCID">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                  </a>
+                )}
+                {r.socialLinks.scopus && (
+                  <a href={r.socialLinks.scopus} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-orange-500 hover:text-white transition-colors" title="Scopus">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                  </a>
+                )}
+                {r.socialLinks.googleScholar && (
+                  <a href={r.socialLinks.googleScholar} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors" title="Google Scholar">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                  </a>
+                )}
               </div>
             </div>
           </div>
@@ -343,55 +211,35 @@ const ResearcherProfile = () => {
 
         {/* Right: Stats & Actions */}
         <div className="lg:col-span-2">
-          {/* Stats Grid */}
           <div className="grid grid-cols-3 gap-4 mb-4">
-            <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-              <p className="text-sm text-gray-600 mb-1">Total Artikel</p>
-              <p className="text-2xl font-bold text-gray-900">{researcher.publications}</p>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-              <p className="text-sm text-gray-600 mb-1">Total Sitasi</p>
-              <p className="text-2xl font-bold text-gray-900">{researcher.citations.toLocaleString()}</p>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-              <p className="text-sm text-gray-600 mb-1">h-index</p>
-              <p className="text-2xl font-bold text-gray-900">{researcher.hIndex}</p>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-              <p className="text-sm text-gray-600 mb-1">i10-index</p>
-              <p className="text-2xl font-bold text-gray-900">{researcher.i10Index}</p>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-              <p className="text-sm text-gray-600 mb-1">Total Views</p>
-              <p className="text-2xl font-bold text-gray-900">{researcher.views.toLocaleString()}</p>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-              <p className="text-sm text-gray-600 mb-1">Downloads</p>
-              <p className="text-2xl font-bold text-gray-900">{researcher.downloads.toLocaleString()}</p>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-              <p className="text-sm text-gray-600 mb-1">SDGs Terlibat</p>
-              <p className="text-2xl font-bold text-gray-900">{researcher.sdgsInvolved}</p>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-              <p className="text-sm text-gray-600 mb-1">Tahun Aktif</p>
-              <p className="text-2xl font-bold text-gray-900 text-sm">{researcher.yearsActive}</p>
-            </div>
-            <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-              <p className="text-sm text-gray-600 mb-1">Negara</p>
-              <p className="text-2xl font-bold text-gray-900 text-sm">{researcher.country}</p>
-            </div>
+            {[
+              { label: 'Total Artikel', value: r.publications },
+              { label: 'Total Sitasi',  value: r.citations.toLocaleString() },
+              { label: 'h-index',       value: r.hIndex },
+              { label: 'i10-index',     value: r.i10Index },
+              { label: 'SDGs Terlibat', value: r.sdgsInvolved },
+              { label: 'Tahun Aktif',   value: r.yearsActive, small: true },
+              { label: 'Kolaborator',   value: r.collaboratorsCount },
+              { label: 'Negara',        value: r.country, small: true },
+              { label: 'Total Views',   value: r.views.toLocaleString() },
+            ].map((stat, i) => (
+              <div key={i} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
+                <p className={`font-bold text-gray-900 ${stat.small ? 'text-sm' : 'text-2xl'}`}>{stat.value}</p>
+              </div>
+            ))}
           </div>
-
-          {/* Action Buttons */}
           <div className="grid grid-cols-2 gap-4">
-            <button className="py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+            <a href={`https://orcid.org/${r.orcid}`} target="_blank" rel="noopener noreferrer"
+              className="py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
-              Unduh CV
-            </button>
-            <button className="py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+              Lihat di ORCID
+            </a>
+            <button
+              onClick={() => navigator.clipboard?.writeText(window.location.href)}
+              className="py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
               </svg>
@@ -401,19 +249,17 @@ const ResearcherProfile = () => {
         </div>
       </div>
 
-      {/* Navigation Tabs */}
+      {/* ── Tabs ── */}
       <div className="border-b border-gray-200 mb-8">
         <nav className="flex gap-6 overflow-x-auto">
           {[
-            { id: 'ringkasan', label: 'Ringkasan', icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z' },
-            { id: 'publikasi', label: 'Publikasi', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z' },
+            { id: 'ringkasan',  label: 'Ringkasan',  icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z' },
+            { id: 'publikasi',  label: 'Publikasi',  icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z' },
             { id: 'kolaborasi', label: 'Kolaborasi', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
-            { id: 'dampak', label: 'Dampak', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
-            { id: 'tentang', label: 'Tentang', icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' }
+            { id: 'dampak',     label: 'Dampak',     icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+            { id: 'tentang',    label: 'Tentang',    icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
           ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
                 activeTab === tab.id
                   ? 'border-indigo-600 text-indigo-600'
@@ -429,18 +275,17 @@ const ResearcherProfile = () => {
         </nav>
       </div>
 
-      {/* Tab: Ringkasan */}
+      {/* ── Tab: Ringkasan ── */}
       {activeTab === 'ringkasan' && (
         <div>
-          {/* Quick Stats Row */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
             {[
-              { label: 'Total Artikel', value: researcher.publications, icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
-              { label: 'Total Sitasi', value: researcher.citations, icon: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z' },
-              { label: 'h-index', value: researcher.hIndex, icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
-              { label: 'i10-index', value: researcher.i10Index, icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
-              { label: 'Total Views', value: researcher.views, icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z' },
-              { label: 'Downloads', value: researcher.downloads, icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4' }
+              { label: 'Total Artikel', value: r.publications, icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+              { label: 'Total Sitasi',  value: r.citations,    icon: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z' },
+              { label: 'h-index',       value: r.hIndex,       icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+              { label: 'i10-index',     value: r.i10Index,     icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
+              { label: 'SDGs Terlibat', value: r.sdgsInvolved, icon: 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+              { label: 'Kolaborator',   value: r.collaboratorsCount, icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
             ].map((stat, idx) => (
               <div key={idx} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center gap-3">
                 <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center shrink-0">
@@ -449,285 +294,237 @@ const ResearcherProfile = () => {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-lg font-bold text-gray-900">{stat.value.toLocaleString()}</p>
+                  <p className="text-lg font-bold text-gray-900">{typeof stat.value === 'number' ? stat.value.toLocaleString() : stat.value}</p>
                   <p className="text-xs text-gray-600">{stat.label}</p>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Charts Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             {/* Publication Trend */}
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-bold text-gray-900">Tren Publikasi per Tahun</h3>
-                <select className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                  <option>Semua Tahun</option>
-                  <option>5 Tahun Terakhir</option>
-                  <option>10 Tahun Terakhir</option>
-                </select>
-              </div>
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={researcher.publicationTrend}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
-                  <YAxis stroke="#6b7280" fontSize={12} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="count" fill="#6366f1" radius={[4, 4, 0, 0]} name="Publikasi" />
-                </BarChart>
-              </ResponsiveContainer>
+              <h3 className="text-lg font-bold text-gray-900 mb-6">Tren Publikasi per Tahun</h3>
+              {r.publicationTrend.length > 0 ? (
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart data={r.publicationTrend}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
+                    <YAxis stroke="#6b7280" fontSize={12} allowDecimals={false} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Bar dataKey="count" fill="#6366f1" radius={[4, 4, 0, 0]} name="Publikasi" />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-48 flex items-center justify-center text-gray-400 text-sm">Data tren tidak tersedia</div>
+              )}
             </div>
 
             {/* SDG Distribution */}
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
               <h3 className="text-lg font-bold text-gray-900 mb-6">Distribusi Artikel per SDGs</h3>
-              <div className="flex flex-col sm:flex-row items-center gap-6">
-                <ResponsiveContainer width="100%" height={200}>
-                  <PieChart>
-                    <Pie
-                      data={researcher.sdgFocus}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={80}
-                      paddingAngle={5}
-                      dataKey="percentage"
-                    >
-                      {researcher.sdgFocus.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="flex-grow space-y-2">
-                  {researcher.sdgFocus.map((sdg, idx) => (
-                    <div key={idx} className="flex items-center gap-2 text-sm">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: sdg.color }} />
-                      <span className="text-gray-600">{sdg.name}</span>
-                      <span className="font-semibold text-gray-900">({sdg.percentage}%)</span>
-                    </div>
-                  ))}
+              {r.sdgFocus.length > 0 ? (
+                <div className="flex flex-col sm:flex-row items-center gap-6">
+                  <ResponsiveContainer width="100%" height={200}>
+                    <PieChart>
+                      <Pie data={r.sdgFocus} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="percentage">
+                        {r.sdgFocus.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="flex-grow space-y-2">
+                    {r.sdgFocus.slice(0, 6).map((sdg, idx) => (
+                      <div key={idx} className="flex items-center gap-2 text-sm">
+                        <div className="w-6 h-6 rounded flex items-center justify-center text-white text-xs font-bold shrink-0" style={{ backgroundColor: sdg.color }}>{sdg.sdg}</div>
+                        <span className="text-gray-600 truncate">{sdg.name}</span>
+                        <span className="font-semibold text-gray-900 ml-auto">{sdg.percentage}%</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="h-48 flex items-center justify-center text-gray-400 text-sm">
+                  <div className="text-center">
+                    <p>SDG belum diklasifikasikan</p>
+                    <p className="text-xs mt-1">Jalankan analisis SDG untuk melihat distribusi</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Recent Articles & Collaborators */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Recent Articles */}
+            {/* Recent Publications */}
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-bold text-gray-900">Artikel Terbaru</h3>
-                <Link to="/articles" className="text-sm text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
-                  Lihat semua
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
               </div>
               <div className="space-y-4">
-                {researcher.recentPublications.slice(0, 3).map((pub) => (
-                  <Link key={pub.id} to={`/doi/${pub.doi}`} className="flex gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors block">
-                    <img src={pub.thumbnail} alt={pub.title} className="w-20 h-16 object-cover rounded-lg shrink-0" />
+                {r.recentPublications.slice(0, 3).map((pub) => (
+                  <div key={pub.id} className="p-3 rounded-xl hover:bg-gray-50 transition-colors">
                     <div className="flex-grow min-w-0">
-                      <h4 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{pub.title}</h4>
-                      <p className="text-xs text-gray-500 mb-2">{pub.journal} • {pub.year}</p>
-                      <div className="flex items-center gap-3">
-                        <div className="flex gap-1">
-                          {pub.sdgs.map(sdg => (
-                            <span key={sdg} className="px-1.5 py-0.5 rounded text-[10px] font-bold text-white" style={{ backgroundColor: sdgColors[sdg] || '#6b7280' }}>
-                              {sdg}
+                      {pub.doi ? (
+                        <Link to={`/doi/${encodeURIComponent(pub.doi)}`} className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2 hover:text-indigo-600 block">
+                          {pub.title}
+                        </Link>
+                      ) : (
+                        <p className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{pub.title}</p>
+                      )}
+                      <p className="text-xs text-gray-500 mb-2">{pub.journal}{pub.year ? ` • ${pub.year}` : ''}</p>
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <div className="flex gap-1 flex-wrap">
+                          {pub.sdgs.slice(0, 4).map(sdg => (
+                            <span key={sdg} className="px-1.5 py-0.5 rounded text-[10px] font-bold text-white" style={{ backgroundColor: SDG_COLORS[sdg] || '#6b7280' }}>
+                              SDG {sdg}
                             </span>
                           ))}
+                          {pub.sdgs.length === 0 && <span className="text-xs text-gray-400">SDG belum dianalisis</span>}
                         </div>
-                        <span className="text-xs text-gray-500">{pub.citations} sitasi</span>
                       </div>
                     </div>
-                  </Link>
+                  </div>
                 ))}
+                {r.recentPublications.length === 0 && (
+                  <p className="text-sm text-gray-400 text-center py-8">Tidak ada publikasi ditemukan</p>
+                )}
               </div>
-              <Link to="/articles" className="text-sm text-indigo-600 font-medium mt-4 inline-flex items-center gap-1 hover:text-indigo-700">
-                Lihat semua artikel
+              <button onClick={() => setActiveTab('publikasi')} className="text-sm text-indigo-600 font-medium mt-4 inline-flex items-center gap-1 hover:text-indigo-700">
+                Lihat semua publikasi
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                 </svg>
-              </Link>
+              </button>
             </div>
 
             {/* Collaborators */}
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-bold text-gray-900">Kolaborasi Penulis</h3>
-                <Link to="/researchers" className="text-sm text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
-                  Lihat semua
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
               </div>
               <div className="space-y-4">
-                {researcher.collaborators.slice(0, 3).map((collab) => (
+                {r.collaborators.slice(0, 4).map((collab) => (
                   <div key={collab.id} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors">
-                    <img src={collab.avatar} alt={collab.name} className="w-10 h-10 rounded-full object-cover" onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }} />
+                    <img src={collab.avatar ?? '/assets/img/researcher-default.svg'} alt={collab.name}
+                      className="w-10 h-10 rounded-full object-cover shrink-0"
+                      onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }} />
                     <div className="flex-grow min-w-0">
                       <h4 className="font-semibold text-gray-900 text-sm mb-0.5">{collab.name}</h4>
-                      <p className="text-xs text-gray-500 truncate">{collab.univ}</p>
+                      {collab.univ && <p className="text-xs text-gray-500 truncate">{collab.univ}</p>}
                     </div>
-                    <div className="text-right">
-                      <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-xs font-semibold">
-                        {collab.collaborations} kolaborasi
-                      </span>
-                    </div>
+                    <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-xs font-semibold shrink-0">
+                      {collab.collaborations} kolaborasi
+                    </span>
                   </div>
                 ))}
+                {r.collaborators.length === 0 && (
+                  <p className="text-sm text-gray-400 text-center py-8">Tidak ada data kolaborator</p>
+                )}
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Tab: Publikasi */}
+      {/* ── Tab: Publikasi ── */}
       {activeTab === 'publikasi' && (
         <div>
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Semua Publikasi ({researcher.publications})</h2>
-            <div className="flex gap-3">
-              <select className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500">
-                <option>Semua Tahun</option>
-                <option>2024</option>
-                <option>2023</option>
-                <option>2022</option>
-              </select>
-              <select className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500">
-                <option>Urutkan: Terbaru</option>
-                <option>Urutkan: Sitasi Terbanyak</option>
-                <option>Urutkan: Views Terbanyak</option>
-              </select>
-            </div>
+            <h2 className="text-xl font-bold text-gray-900">Semua Publikasi ({r.publications})</h2>
           </div>
           <div className="space-y-4">
-            {researcher.recentPublications.map((pub) => (
-              <Link
-                key={pub.id}
-                to={`/doi/${pub.doi}`}
-                className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all block"
-              >
-                <div className="flex gap-5">
-                  <img
-                    src={pub.thumbnail}
-                    alt={pub.title}
-                    className="w-24 h-20 object-cover rounded-xl shrink-0"
-                  />
-                  <div className="flex-grow min-w-0">
-                    <div className="flex items-start justify-between gap-4 mb-2">
-                      <h3 className="font-bold text-gray-900 text-base leading-snug hover:text-indigo-700 transition-colors">
-                        {pub.title}
-                      </h3>
-                      <span className="shrink-0 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">{pub.year}</span>
+            {r.recentPublications.map((pub) => (
+              <div key={pub.id} className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all">
+                <div>
+                  {pub.doi ? (
+                    <Link to={`/doi/${encodeURIComponent(pub.doi)}`} className="font-bold text-gray-900 text-base leading-snug hover:text-indigo-700 transition-colors block mb-2">
+                      {pub.title}
+                    </Link>
+                  ) : (
+                    <p className="font-bold text-gray-900 text-base leading-snug mb-2">{pub.title}</p>
+                  )}
+                  <p className="text-sm text-gray-600 mb-2">{pub.journal}{pub.year ? ` • ${pub.year}` : ''}</p>
+                  {pub.authors?.length > 0 && (
+                    <p className="text-xs text-gray-500 mb-3">{pub.authors.join(', ')}</p>
+                  )}
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <div className="flex gap-1 flex-wrap">
+                      {pub.sdgs.slice(0, 5).map(sdg => (
+                        <span key={sdg} className="px-2 py-0.5 rounded text-xs font-bold text-white" style={{ backgroundColor: SDG_COLORS[sdg] || '#6b7280' }}>
+                          SDG {sdg}
+                        </span>
+                      ))}
+                      {pub.sdgs.length === 0 && <span className="text-xs text-gray-400 italic">SDG belum dianalisis</span>}
                     </div>
-                    <p className="text-sm text-gray-600 mb-3">{pub.journal}</p>
-                    <div className="flex items-center gap-4 flex-wrap">
-                      <div className="flex gap-1">
-                        {pub.sdgs.map(sdg => (
-                          <span key={sdg} className="px-2 py-0.5 rounded text-xs font-bold text-white" style={{ backgroundColor: sdgColors[sdg] || '#6b7280' }}>
-                            SDG {sdg}
-                          </span>
-                        ))}
-                      </div>
-                      <span className="text-sm text-gray-500 flex items-center gap-1">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        {pub.views.toLocaleString()} views
-                      </span>
-                      <span className="text-sm text-gray-500 flex items-center gap-1">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                        </svg>
-                        {pub.citations} sitasi
-                      </span>
-                    </div>
+                    {pub.doi && (
+                      <span className="text-xs text-gray-400 font-mono ml-auto">{pub.doi}</span>
+                    )}
                   </div>
                 </div>
-              </Link>
+              </div>
             ))}
-          </div>
-          <div className="mt-6 text-center">
-            <Link to="/articles" className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-50 text-indigo-700 rounded-xl font-semibold hover:bg-indigo-100 transition-colors">
-              Lihat semua artikel di basis data
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
+            {r.recentPublications.length === 0 && (
+              <div className="text-center py-16 text-gray-400">
+                <p>Tidak ada publikasi ditemukan</p>
+              </div>
+            )}
           </div>
         </div>
       )}
 
-      {/* Tab: Kolaborasi */}
+      {/* ── Tab: Kolaborasi ── */}
       {activeTab === 'kolaborasi' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Collaborators List */}
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-bold text-gray-900">Kolaborator ({researcher.collaborators.length})</h3>
-              <Link to="/researchers" className="text-sm text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
-                Lihat semua
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
-            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-6">Kolaborator ({r.collaborators.length})</h3>
             <div className="space-y-4">
-              {researcher.collaborators.map((collab) => (
+              {r.collaborators.map((collab) => (
                 <div key={collab.id} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors">
-                  <img
-                    src={collab.avatar}
-                    alt={collab.name}
-                    className="w-12 h-12 rounded-full object-cover"
-                    onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
-                  />
+                  <img src={collab.avatar ?? '/assets/img/researcher-default.svg'} alt={collab.name}
+                    className="w-12 h-12 rounded-full object-cover shrink-0"
+                    onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }} />
                   <div className="flex-grow min-w-0">
-                    <h4 className="font-semibold text-gray-900 text-sm mb-0.5">{collab.name}</h4>
-                    <p className="text-xs text-gray-500 truncate">{collab.univ}</p>
+                    {collab.orcid ? (
+                      <Link to={`/orcid/${collab.orcid}`} className="font-semibold text-gray-900 text-sm hover:text-indigo-600 block">{collab.name}</Link>
+                    ) : (
+                      <h4 className="font-semibold text-gray-900 text-sm">{collab.name}</h4>
+                    )}
+                    {collab.univ && <p className="text-xs text-gray-500 truncate">{collab.univ}</p>}
                   </div>
                   <div className="text-right shrink-0">
-                    <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-semibold block mb-1">
-                      {collab.collaborations}
-                    </span>
+                    <p className="text-lg font-bold text-indigo-600">{collab.collaborations}</p>
                     <p className="text-xs text-gray-400">kolaborasi</p>
                   </div>
                 </div>
               ))}
+              {r.collaborators.length === 0 && (
+                <p className="text-sm text-gray-400 text-center py-8">Tidak ada data kolaborator</p>
+              )}
             </div>
           </div>
 
-          {/* Affiliations */}
           <div>
-            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm mb-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-6">Afiliasi Institusi</h3>
-              <div className="space-y-4">
-                {researcher.affiliations.map((aff, idx) => (
-                  <div key={idx} className="flex items-center gap-4">
-                    <img src={aff.logo} alt={aff.name} className="w-10 h-10 rounded-lg object-cover" />
-                    <div className="flex-grow">
-                      <h4 className="font-semibold text-gray-900 text-sm mb-1">{aff.name}</h4>
-                      <p className="text-xs text-gray-500">{aff.articles} artikel</p>
-                    </div>
-                    <div className="text-right">
-                      <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden mb-1">
-                        <div className="h-full bg-indigo-600 rounded-full" style={{ width: `${aff.percentage}%` }}></div>
+            {r.affiliations.length > 0 && (
+              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm mb-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-6">Afiliasi Institusi</h3>
+                <div className="space-y-4">
+                  {r.affiliations.map((aff, idx) => (
+                    <div key={idx} className="flex items-start gap-4">
+                      <img src={aff.logo ?? '/assets/img/institution-default.svg'} alt={aff.name}
+                        className="w-10 h-10 rounded-lg object-cover shrink-0"
+                        onError={(e) => { e.target.src = '/assets/img/institution-default.svg'; }} />
+                      <div className="flex-grow">
+                        <h4 className="font-semibold text-gray-900 text-sm mb-0.5">{aff.name}</h4>
+                        {aff.department && <p className="text-xs text-gray-500">{aff.department}</p>}
+                        {aff.role && <p className="text-xs text-indigo-600">{aff.role}</p>}
+                        {aff.is_current && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Aktif</span>}
                       </div>
-                      <p className="text-xs font-semibold text-gray-900">{aff.percentage}%</p>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Collaboration Map Placeholder */}
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
               <h3 className="text-lg font-bold text-gray-900 mb-4">Peta Kolaborasi</h3>
               <div className="bg-gray-50 rounded-xl p-8 text-center h-48 flex items-center justify-center">
@@ -736,7 +533,7 @@ const ResearcherProfile = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <p className="text-sm">World Collaboration Map</p>
-                  <p className="text-xs mt-1">{researcher.collaborators.length} kolaborator aktif</p>
+                  <p className="text-xs mt-1">{r.collaborators.length} kolaborator aktif</p>
                 </div>
               </div>
             </div>
@@ -744,78 +541,75 @@ const ResearcherProfile = () => {
         </div>
       )}
 
-      {/* Tab: Dampak */}
+      {/* ── Tab: Dampak ── */}
       {activeTab === 'dampak' && (
         <div>
-          {/* Impact Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm text-center">
-              <p className="text-4xl font-bold text-indigo-600 mb-2">{researcher.hIndex}</p>
+              <p className="text-4xl font-bold text-indigo-600 mb-2">{r.hIndex}</p>
               <p className="text-lg font-semibold text-gray-900 mb-1">h-Index</p>
-              <p className="text-sm text-gray-500">Mengukur produktivitas dan dampak sitasi</p>
+              <p className="text-sm text-gray-500">Produktivitas dan dampak sitasi</p>
             </div>
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm text-center">
-              <p className="text-4xl font-bold text-purple-600 mb-2">{researcher.i10Index}</p>
+              <p className="text-4xl font-bold text-purple-600 mb-2">{r.i10Index}</p>
               <p className="text-lg font-semibold text-gray-900 mb-1">i10-Index</p>
-              <p className="text-sm text-gray-500">Jumlah publikasi dengan 10+ sitasi</p>
+              <p className="text-sm text-gray-500">Publikasi dengan 10+ sitasi</p>
             </div>
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm text-center">
-              <p className="text-4xl font-bold text-green-600 mb-2">{researcher.citations.toLocaleString()}</p>
+              <p className="text-4xl font-bold text-green-600 mb-2">{r.citations.toLocaleString()}</p>
               <p className="text-lg font-semibold text-gray-900 mb-1">Total Sitasi</p>
               <p className="text-sm text-gray-500">Akumulasi sitasi sepanjang karier</p>
             </div>
           </div>
 
-          {/* Citation Trend Chart */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-bold text-gray-900">Tren Sitasi per Tahun</h3>
-                <select className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500">
-                  <option>Semua Tahun</option>
-                  <option>5 Tahun Terakhir</option>
-                </select>
-              </div>
-              <ResponsiveContainer width="100%" height={280}>
-                <AreaChart data={researcher.citationTrend}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
-                  <YAxis stroke="#6b7280" fontSize={12} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Area type="monotone" dataKey="citations" stroke="#6366f1" fill="#6366f1" fillOpacity={0.2} name="Sitasi" />
-                </AreaChart>
-              </ResponsiveContainer>
+              <h3 className="text-lg font-bold text-gray-900 mb-6">Tren Sitasi per Tahun</h3>
+              {r.citationTrend.length > 0 ? (
+                <ResponsiveContainer width="100%" height={280}>
+                  <AreaChart data={r.citationTrend}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
+                    <YAxis stroke="#6b7280" fontSize={12} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Area type="monotone" dataKey="citations" stroke="#6366f1" fill="#6366f1" fillOpacity={0.2} name="Sitasi" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-64 flex items-center justify-center text-gray-400 text-sm">
+                  <div className="text-center">
+                    <p>Data tren sitasi tidak tersedia</p>
+                    <p className="text-xs mt-1">Membutuhkan integrasi Wizdam Impact API</p>
+                  </div>
+                </div>
+              )}
             </div>
-
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-bold text-gray-900">Tren Publikasi per Tahun</h3>
-                <select className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500">
-                  <option>Semua Tahun</option>
-                  <option>5 Tahun Terakhir</option>
-                </select>
-              </div>
-              <ResponsiveContainer width="100%" height={280}>
-                <BarChart data={researcher.publicationTrend}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
-                  <YAxis stroke="#6b7280" fontSize={12} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="count" fill="#8b5cf6" radius={[4, 4, 0, 0]} name="Publikasi" />
-                </BarChart>
-              </ResponsiveContainer>
+              <h3 className="text-lg font-bold text-gray-900 mb-6">Tren Publikasi per Tahun</h3>
+              {r.publicationTrend.length > 0 ? (
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart data={r.publicationTrend}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
+                    <YAxis stroke="#6b7280" fontSize={12} allowDecimals={false} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Bar dataKey="count" fill="#8b5cf6" radius={[4, 4, 0, 0]} name="Publikasi" />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-64 flex items-center justify-center text-gray-400 text-sm">Data tidak tersedia</div>
+              )}
             </div>
           </div>
 
-          {/* Additional impact stats */}
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
             <h3 className="text-lg font-bold text-gray-900 mb-4">Ringkasan Dampak Penelitian</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { label: 'Total Views', value: researcher.views.toLocaleString(), color: 'blue' },
-                { label: 'Total Downloads', value: researcher.downloads.toLocaleString(), color: 'green' },
-                { label: 'SDGs Terlibat', value: researcher.sdgsInvolved, color: 'orange' },
-                { label: 'Tahun Aktif', value: new Date().getFullYear() - researcher.firstPublication, color: 'purple' }
+                { label: 'Total Artikel',    value: r.publications },
+                { label: 'SDGs Terlibat',    value: r.sdgsInvolved },
+                { label: 'Total Kolaborator',value: r.collaboratorsCount },
+                { label: 'Tahun Aktif',      value: r.firstPublication ? (new Date().getFullYear() - r.firstPublication) : 'N/A' },
               ].map((item, idx) => (
                 <div key={idx} className="bg-gray-50 rounded-xl p-4 text-center">
                   <p className="text-2xl font-bold text-gray-900 mb-1">{item.value}</p>
@@ -827,111 +621,92 @@ const ResearcherProfile = () => {
         </div>
       )}
 
-      {/* Tab: Tentang */}
+      {/* ── Tab: Tentang ── */}
       {activeTab === 'tentang' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            {/* Bio */}
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
               <h3 className="text-lg font-bold text-gray-900 mb-4">Biografi</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">{researcher.bio}</p>
+              <p className="text-gray-600 text-sm leading-relaxed">{r.bio}</p>
             </div>
 
-            {/* Research Interests */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Minat Penelitian</h3>
-              <div className="flex flex-wrap gap-3">
-                {researcher.researchInterests.map((interest, idx) => (
-                  <span
-                    key={idx}
-                    className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl text-sm font-medium border border-indigo-100"
-                  >
-                    {interest}
-                  </span>
-                ))}
+            {r.researchInterests.length > 0 && (
+              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Minat Penelitian</h3>
+                <div className="flex flex-wrap gap-3">
+                  {r.researchInterests.map((interest, idx) => (
+                    <span key={idx} className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl text-sm font-medium border border-indigo-100">
+                      {interest}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Keywords */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Kata Kunci Penelitian</h3>
-              <div className="flex flex-wrap justify-center items-center gap-3 py-4">
-                {researcher.topKeywords.map((keyword, idx) => (
-                  <span
-                    key={idx}
-                    className="text-indigo-600 hover:text-indigo-800 cursor-pointer transition-colors font-medium"
-                    style={{ fontSize: `${keyword.size / 40 * 1.5}rem` }}
-                  >
-                    {keyword.text}
-                  </span>
-                ))}
+            {r.topKeywords.length > 0 && (
+              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Kata Kunci Penelitian</h3>
+                <div className="flex flex-wrap justify-center items-center gap-3 py-4">
+                  {r.topKeywords.map((kw, idx) => (
+                    <span key={idx} className="text-indigo-600 hover:text-indigo-800 cursor-pointer transition-colors font-medium"
+                      style={{ fontSize: `${(kw.size / 40) * 1.5}rem` }}>
+                      {kw.text}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
-          {/* Sidebar info */}
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
               <h3 className="text-lg font-bold text-gray-900 mb-4">Informasi Akademik</h3>
               <div className="space-y-3 text-sm">
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">ORCID</p>
-                  <p className="font-semibold text-gray-900 font-mono text-xs">{researcher.orcid}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Scopus ID</p>
-                  <p className="font-semibold text-gray-900">{researcher.scopusId}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Researcher ID</p>
-                  <p className="font-semibold text-gray-900">{researcher.researcherId}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Departemen</p>
-                  <p className="font-semibold text-gray-900">{researcher.department}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Institusi</p>
-                  <p className="font-semibold text-gray-900">{researcher.univ}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Tahun Aktif</p>
-                  <p className="font-semibold text-gray-900">{researcher.yearsActive}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Negara</p>
-                  <p className="font-semibold text-gray-900">{researcher.country}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* SDG Focus */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Fokus SDGs</h3>
-              <div className="space-y-3">
-                {researcher.sdgFocus.map((sdg, idx) => (
-                  <div key={idx} className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0" style={{ backgroundColor: sdg.color }}>
-                      {sdg.sdg}
-                    </div>
-                    <div className="flex-grow min-w-0">
-                      <div className="flex justify-between text-xs mb-1">
-                        <span className="text-gray-700 truncate">{sdg.name}</span>
-                        <span className="font-semibold ml-2">{sdg.percentage}%</span>
-                      </div>
-                      <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                        <div className="h-full rounded-full" style={{ width: `${sdg.percentage}%`, backgroundColor: sdg.color }}></div>
-                      </div>
-                    </div>
+                {[
+                  { label: 'ORCID', value: r.orcid, mono: true },
+                  r.scopusId     && { label: 'Scopus ID', value: r.scopusId },
+                  r.researcherId && { label: 'Researcher ID', value: r.researcherId },
+                  r.department   && { label: 'Departemen', value: r.department },
+                  { label: 'Institusi', value: r.univ },
+                  { label: 'Tahun Aktif', value: r.yearsActive },
+                  { label: 'Negara', value: r.country },
+                ].filter(Boolean).map((item, idx) => (
+                  <div key={idx}>
+                    <p className="text-xs text-gray-500 mb-1">{item.label}</p>
+                    <p className={`font-semibold text-gray-900 ${item.mono ? 'font-mono text-xs' : ''}`}>{item.value}</p>
                   </div>
                 ))}
               </div>
             </div>
+
+            {r.sdgFocus.length > 0 && (
+              <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Fokus SDGs</h3>
+                <div className="space-y-3">
+                  {r.sdgFocus.slice(0, 7).map((sdg, idx) => (
+                    <div key={idx} className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0" style={{ backgroundColor: sdg.color }}>
+                        {sdg.sdg}
+                      </div>
+                      <div className="flex-grow min-w-0">
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-gray-700 truncate">{sdg.name}</span>
+                          <span className="font-semibold ml-2">{sdg.percentage}%</span>
+                        </div>
+                        <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                          <div className="h-full rounded-full" style={{ width: `${sdg.percentage}%`, backgroundColor: sdg.color }} />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
 
-      {/* CTA Section */}
+      {/* ── CTA ── */}
       <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-8 text-white shadow-lg mt-8">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
           <div>
@@ -939,13 +714,10 @@ const ResearcherProfile = () => {
             <p className="text-indigo-100">Masukkan DOI atau ORCID untuk melihat analisis dan klasifikasi SDGs secara instan.</p>
           </div>
           <div className="flex gap-3 w-full lg:w-auto">
-            <input
-              type="text"
-              placeholder="Masukkan DOI atau ORCID"
-              className="flex-grow lg:w-80 px-4 py-3 rounded-xl text-gray-900 focus:ring-2 focus:ring-white focus:outline-none"
-            />
+            <input type="text" placeholder="Masukkan DOI atau ORCID"
+              className="flex-grow lg:w-80 px-4 py-3 rounded-xl text-gray-900 focus:ring-2 focus:ring-white focus:outline-none" />
             <button className="px-6 py-3 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition-colors whitespace-nowrap flex items-center gap-2">
-              Analisis Sekarang
+              Analisis
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
