@@ -6,23 +6,17 @@ const Monitoring = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState('24h');
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Add pulse animation CSS
+  // Add pulse animation CSS — uses SVG stroke animation (box-shadow doesn't work on SVG paths)
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `
-      @keyframes pulse-ring {
-        0% {
-          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-        }
-        70% {
-          box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
-        }
-        100% {
-          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
-        }
+      @keyframes pulse-stroke {
+        0%   { stroke-width: 1.5; stroke-opacity: 0.9; }
+        50%  { stroke-width: 10;  stroke-opacity: 0;   }
+        100% { stroke-width: 1.5; stroke-opacity: 0.9; }
       }
       .leaflet-pulse-marker {
-        animation: pulse-ring 2s infinite;
+        animation: pulse-stroke 2s ease-out infinite;
       }
     `;
     document.head.appendChild(style);
@@ -170,8 +164,7 @@ const Monitoring = () => {
       <CircleMarker
         center={position}
         radius={radius}
-        pathOptions={{ color: '#ef4444', fillColor: '#ef4444', fillOpacity: 0.55, weight: 1.5 }}
-        className="leaflet-pulse-marker"
+        pathOptions={{ color: '#ef4444', fillColor: '#ef4444', fillOpacity: 0.55, weight: 1.5, className: 'leaflet-pulse-marker' }}
       >
         <Popup>
           <div className="p-1.5">
@@ -301,8 +294,10 @@ const Monitoring = () => {
               attributionControl={false}
             >
               <TileLayer
-                url="https://tiles.stadiamaps.com/tiles/stamen_tonerlite/{z}/{x}/{y}.png"
-                opacity={0.7}
+                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+                subdomains="abcd"
+                maxZoom={19}
               />
               {geoData.map((location) => (
                 <PulseMarker
