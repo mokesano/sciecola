@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-// Helper: Warna SDG
 const getSDGColor = (sdg) => {
   const colors = {
     1: 'bg-red-100 text-red-700', 2: 'bg-orange-100 text-orange-700', 3: 'bg-teal-100 text-teal-700',
@@ -14,16 +14,13 @@ const getSDGColor = (sdg) => {
   return colors[sdg] || 'bg-gray-100 text-gray-700';
 };
 
-const getStatusBadge = (status) => {
-  const styles = {
-    'Published': 'bg-green-100 text-green-700 border-green-200',
-    'Under Review': 'bg-amber-100 text-amber-700 border-amber-200',
-    'Draft': 'bg-gray-100 text-gray-700 border-gray-200'
-  };
-  return styles[status] || styles['Draft'];
-};
-
 const MyArticles = () => {
+  const { user } = useAuth();
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [total, setTotal] = useState(0);
+
   // State Management
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -31,10 +28,40 @@ const MyArticles = () => {
   const [sdgFilter, setSdgFilter] = useState('All');
   const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'desc' });
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
-  // Mock Data
-  const articles = [
+  // Fetch from real API
+  useEffect(() => {
+    if (!user?.orcid) { setLoading(false); return; }
+    setLoading(true);
+    setError(null);
+
+    const params = new URLSearchParams({
+      orcid: user.orcid,
+      page: currentPage,
+      limit: 50,
+      search: searchQuery,
+      status: statusFilter,
+      sdg: sdgFilter,
+      sort: sortConfig.key,
+      dir: sortConfig.direction,
+    });
+
+    fetch(`/api/my_articles.php?${params}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.status === 'success') {
+          setArticles(data.articles ?? []);
+          setTotal(data.total ?? 0);
+        } else {
+          setError(data.message || 'Gagal memuat artikel');
+        }
+      })
+      .catch(err => setError('Gagal memuat: ' + err.message))
+      .finally(() => setLoading(false));
+  }, [user?.orcid, currentPage, searchQuery, statusFilter, sdgFilter, sortConfig]);
+
+  const apiArticles = articles;
     { id: 1, title: 'Climate Change Adaptation in Coastal Communities', journal: 'Journal of Environmental Science', date: '2024-03-15', sdgs: [13, 11], citations: 24, views: 652, downloads: 89, impactScore: 92.4, status: 'Published' },
     { id: 2, title: 'Sustainable Urban Transport Systems in Indonesia', journal: 'Sustainable Cities Review', date: '2023-11-20', sdgs: [11, 9], citations: 18, views: 210, downloads: 45, impactScore: 85.1, status: 'Published' },
     { id: 3, title: 'Renewable Energy Policy and Its Impact', journal: 'Journal of Urbanism', date: '2024-01-10', sdgs: [7, 13], citations: 32, views: 411, downloads: 67, impactScore: 88.7, status: 'Published' },
@@ -46,36 +73,26 @@ const MyArticles = () => {
 
   // Filter & Sort Logic
   const filteredArticles = useMemo(() => {
-    let result = [...articles];
-
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      result = result.filter(a => a.title.toLowerCase().includes(q) || a.journal.toLowerCase().includes(q));
-    }
-    if (statusFilter !== 'All') result = result.filter(a => a.status === statusFilter);
-    if (yearFilter !== 'All') result = result.filter(a => a.date.startsWith(yearFilter));
-    if (sdgFilter !== 'All') result = result.filter(a => a.sdgs.includes(Number(sdgFilter)));
-
-    result.sort((a, b) => {
-      const aVal = a[sortConfig.key];
-      const bVal = b[sortConfig.key];
-      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
-      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
-      return 0;
-    });
-
+    let result = [...apiArticles];
+    if (yearFilter !== 'All') result = result.filter(a => String(a.year) === yearFilter);
     return result;
-  }, [searchQuery, statusFilter, yearFilter, sdgFilter, sortConfig]);
+  }, [apiArticles, yearFilter]);
 
-  // Pagination
+  const years = useMemo(() => {
+    const ys = [...new Set(apiArticles.map(a => String(a.year)).filter(Boolean))].sort().reverse();
+    return ['All', ...ys];
+  }, [apiArticles]);
+
   const totalPages = Math.ceil(filteredArticles.length / itemsPerPage);
-  const paginatedArticles = filteredArticles.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const paginated = filteredArticles.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  const handleSort = (key) => {
-    setSortConfig(prev => ({
-      key,
-      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
-    }));
+  const handleSort = (key) => setSortConfig(prev => ({
+    key, direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+  }));
+
+  const SortIcon = ({ column }) => {
+    if (sortConfig.key !== column) return <span className="text-gray-300 ml-1">↕</span>;
+    return <span className="text-indigo-600 ml-1">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>;
   };
 
   const SortIcon = ({ columnKey }) => {
@@ -85,20 +102,67 @@ const MyArticles = () => {
       : <svg className="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>;
   };
 
+  if (!user?.orcid && !loading) {
+    return (
+      <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <div className="text-center py-20">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">ORCID Belum Terhubung</h2>
+          <p className="text-gray-600 mb-6">Hubungkan ORCID Anda untuk melihat daftar artikel.</p>
+          <Link to="/settings" className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700">
+            Hubungkan ORCID
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
-        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
-        <span className="text-gray-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-        </span>
-        <Link to="/dashboard" className="hover:text-indigo-600 transition-colors">Dashboard</Link>
-        <span className="text-gray-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-        </span>
+        <Link to="/" className="hover:text-indigo-600">Beranda</Link>
+        <span className="text-gray-400">›</span>
+        <Link to="/dashboard" className="hover:text-indigo-600">Dashboard</Link>
+        <span className="text-gray-400">›</span>
         <span className="text-gray-900 font-medium">Artikel Saya</span>
       </nav>
+
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Artikel Saya</h1>
+          <p className="text-gray-600 text-sm mt-1">
+            {loading ? 'Memuat…' : `${total} artikel dari ORCID ${user?.orcid}`}
+          </p>
+        </div>
+        <a href={`https://orcid.org/${user?.orcid}`} target="_blank" rel="noopener noreferrer"
+          className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 flex items-center gap-2">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+          Tambah via ORCID
+        </a>
+      </div>
+
+      {/* Filters */}
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 mb-6 flex flex-wrap gap-3">
+        <input value={searchQuery} onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+          placeholder="Cari judul atau jurnal..."
+          className="flex-1 min-w-48 px-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500" />
+        <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+          className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500">
+          <option>All</option><option>Published</option><option>Under Review</option><option>Draft</option>
+        </select>
+        <select value={yearFilter} onChange={e => { setYearFilter(e.target.value); setCurrentPage(1); }}
+          className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500">
+          {years.map(y => <option key={y} value={y}>{y}</option>)}
+        </select>
+        <select value={sdgFilter} onChange={e => { setSdgFilter(e.target.value); setCurrentPage(1); }}
+          className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500">
+          <option>All</option>
+          {Array.from({length:17},(_,i)=><option key={i+1} value={i+1}>SDG {i+1}</option>)}
+        </select>
+      </div>
 
       {/* Header & CTA */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
