@@ -1,38 +1,43 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const ORCID_RE = /\d{4}-\d{4}-\d{4}-\d{3}[\dX]/i;
+const DOI_RE   = /10\.\d{4,9}\/[-._;()/:A-Z0-9]+/i;
+
+function parseInput(raw) {
+  const q = raw.trim();
+  // Strip ORCID URL prefix
+  const orcidMatch = q.match(/(?:orcid\.org\/)?(\d{4}-\d{4}-\d{4}-\d{3}[\dX])$/i);
+  if (orcidMatch) return { type: 'orcid', value: orcidMatch[1] };
+  // Strip DOI URL prefix
+  const doiMatch = q.match(/(?:doi\.org\/)?(10\.\d{4,9}\/[-._;()/:A-Z0-9]+)/i);
+  if (doiMatch) return { type: 'doi', value: doiMatch[1] };
+  return null;
+}
+
 const CallToAction = () => {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    const query = inputValue.trim();
-
-    if (query !== '') {
-      setIsLoading(true);
-
-      // Jeda singkat untuk transisi halus
-      setTimeout(() => {
-        // Regex untuk mendeteksi ORCID
-        const isOrcid = /^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/i.test(query);
-        
-        // Regex untuk mendeteksi DOI
-        const isDoi = /^10\.\d{4,9}\/[-._;()/:A-Z0-9]+$/i.test(query);
-
-        setIsLoading(false);
-
-        if (isOrcid) {
-          navigate(`/orcid/${query}`);
-        } else if (isDoi) {
-          navigate(`/doi/${encodeURIComponent(query)}`);
-        } else {
-          // Alert sederhana jika format salah (karena ini komponen ringkas)
-          alert('Format tidak dikenali. Masukkan ORCID atau DOI yang valid.');
-        }
-      }, 300);
+    setError('');
+    const result = parseInput(inputValue);
+    if (!result) {
+      setError('Format tidak dikenali. Masukkan ORCID (0000-0000-0000-0000) atau DOI (10.xxxx/...)');
+      return;
     }
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      if (result.type === 'orcid') {
+        navigate(`/orcid/${result.value}`);
+      } else {
+        navigate(`/doi/${encodeURIComponent(result.value)}`);
+      }
+    }, 300);
   };
 
   return (
@@ -59,14 +64,13 @@ const CallToAction = () => {
         {/* Container Input (Diubah menjadi tag <form> agar tombol Enter berfungsi) */}
         <form onSubmit={handleSearchSubmit} className="bg-white rounded-xl p-1.5 flex flex-col md:flex-row w-full max-w-lg shadow-md">
           
-          <input 
-            type="text" 
-            placeholder="Masukkan DOI atau ORCID" 
+          <input
+            type="text"
+            placeholder="Masukkan DOI atau ORCID"
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={(e) => { setInputValue(e.target.value); setError(''); }}
             disabled={isLoading}
-            // Dikembalikan ke py-3 agar teks di dalam input tidak terasa sesak
-            className="flex-1 px-5 py-3 text-gray-700 text-sm md:text-base outline-none bg-transparent rounded-full placeholder-gray-400 disabled:bg-gray-50"
+            className={`flex-1 px-5 py-3 text-gray-700 text-sm md:text-base outline-none bg-transparent rounded-full placeholder-gray-400 disabled:bg-gray-50 ${error ? 'text-red-700' : ''}`}
           />
           
           {/* Dikembalikan ke py-3 agar serasi dengan tinggi input */}
@@ -84,9 +88,12 @@ const CallToAction = () => {
           </button>
           
         </form>
+        {error && (
+          <p className="mt-2 text-xs text-red-200 text-center">{error}</p>
+        )}
 
       </div>
-      
+
     </div>
   );
 };
