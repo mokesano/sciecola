@@ -438,7 +438,7 @@ const Admin = () => {
                       setCrawlStatus(d);
                       const r2 = await fetch('/api/crawl_queue.php?action=list');
                       const d2 = await r2.json();
-                      setCrawlQueue(d2.queue || []);
+                      setCrawlQueue(d2.jobs || []);
                       setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Status antrian diperbarui', type: 'info' }, ...prev.slice(0, 19)]);
                     } catch {
                       setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal terhubung ke API crawl', type: 'error' }, ...prev.slice(0, 19)]);
@@ -483,10 +483,12 @@ const Admin = () => {
                     if (!crawlInput.trim()) return;
                     setCrawlLoading(true);
                     try {
+                      const id = crawlInput.trim();
+                      const inferredType = /^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/i.test(id) ? 'orcid' : 'doi';
                       const r = await fetch('/api/crawl_queue.php?action=enqueue', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ identifier: crawlInput.trim() }),
+                        body: JSON.stringify({ type: inferredType, identifier: id }),
                       });
                       const d = await r.json();
                       setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: d.message || `Ditambahkan: ${crawlInput}`, type: d.status === 'ok' ? 'success' : 'error' }, ...prev.slice(0, 19)]);

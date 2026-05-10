@@ -210,7 +210,7 @@ const ResearcherProfile = () => {
   const [activeTab, setActiveTab] = useState('ringkasan');
 
   // Find researcher by ORCID
-  const researcher = researchersDatabase.find(r => r.orcid === orcidCode || r.id === 1); // Fallback untuk demo
+  const researcher = researchersDatabase.find(r => r.orcid === orcidCode);
 
   if (!researcher) {
     return (

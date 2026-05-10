@@ -5,6 +5,12 @@ import remarkGfm from 'remark-gfm';
 import remarkFrontmatter from 'remark-frontmatter';
 
 export default defineConfig(({ command }) => ({
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/__tests__/setup.js',
+    css: false,
+  },
   plugins: [
     mdx({ remarkPlugins: [remarkGfm, remarkFrontmatter] }),
     react(),
