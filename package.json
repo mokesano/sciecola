@@ -7,7 +7,6 @@
     "frontend-src"
   ],
   "scripts": {
-    "install": "npm install -w frontend-src",
     "dev": "npm run dev -w frontend-src",
     "dev:frontend": "npm run dev -w frontend-src",
     "build": "npm run build -w frontend-src",
