@@ -1,6 +1,6 @@
 <?php
 /**
- * SDG Classification API
+ * API of SDG Classification and Analysis
  * Sistem klasifikasi SDG dengan orientasi dampak yang lebih kuat
  *
  * Endpoint Baru (Anti-Timeout / Sequential):
@@ -63,7 +63,7 @@ if (!isset($CAUSAL_PATTERNS))    $CAUSAL_PATTERNS = ['contributes to','supports'
 if (!isset($TRANSFORMATIVE_VERBS)) $TRANSFORMATIVE_VERBS = ['develop','implement','improve','enhance','establish','strengthen','mengembangkan','mengimplementasikan','meningkatkan','memperbaiki'];
 
 // -----------------------------------------------------------------
-// SDG KEYWORDS (tidak berubah dari v5.1.8)
+// SDG KEYWORDS
 // -----------------------------------------------------------------
 $SDG_KEYWORDS = [
     "SDG1"  => ["poverty","inequality","social protection","economic disparity","vulnerable population","basic services","financial inclusion","social security","welfare","homelessness","slum","basic income","extreme poverty","social safety net","underprivileged","income inequality","marginalized communities","poverty eradication","poverty reduction","socioeconomic","disadvantaged","low-income","resource allocation","poverty line","inclusive growth","pro-poor","rural poverty","urban poverty","wealth distribution","social mobility","income distribution","microfinance","kemiskinan","ketimpangan","perlindungan sosial","kesenjangan ekonomi","populasi rentan","layanan dasar","inklusi keuangan","jaminan sosial","kesejahteraan","tunawisma","permukiman kumuh","pendapatan dasar","kemiskinan ekstrem","jaring pengaman sosial","masyarakat kurang mampu","pengentasan kemiskinan","pengurangan kemiskinan","pertumbuhan inklusif","pendapatan rendah","ketimpangan pendapatan","akses layanan dasar","mobilitas sosial","distribusi kekayaan","pembangunan pro-rakyat","pemberdayaan masyarakat miskin","pembiayaan mikro","komunitas terpinggirkan"],
@@ -86,7 +86,7 @@ $SDG_KEYWORDS = [
 ];
 
 // -----------------------------------------------------------------
-// IMPACT INDICATORS & PATHWAYS (tidak berubah)
+// IMPACT INDICATORS & PATHWAYS
 // -----------------------------------------------------------------
 $IMPACT_INDICATORS = [
     'solution_words'    => ['solution','framework','model','approach','strategy','implementation','tool','method','solusi','kerangka','model','pendekatan','strategi','implementasi','alat','metode'],
@@ -187,7 +187,7 @@ function main() {
 }
 
 // =================================================================
-// HANDLER BARU: SEQUENTIAL / BATCH PROCESSING
+// HANDLER: SEQUENTIAL / BATCH PROCESSING (NEW STRUCTURE)
 // =================================================================
 
 /**
@@ -614,7 +614,7 @@ function handleOrcidSummaryRequest($orcid) {
 }
 
 // =================================================================
-// HANDLER LAMA (backward-compatible)
+// HANDLER LAMA (SHIM Backward-compatible)
 // =================================================================
 
 function handleOrcidRequest($orcid, $force_refresh = false) {

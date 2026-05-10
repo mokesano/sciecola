@@ -1,7 +1,7 @@
 <?php
 /**
  * File: /includes/bootstrap.php
- * Pusat inisialisasi dan Routing utama (Front Controller) Sicola.
+ * Pusat inisialisasi dan Routing utama (Front Controller) Sciecola.
  */
 
 // 1. Pastikan ROOT_PATH sudah ada (dari public/index.php)
@@ -39,7 +39,7 @@ if (is_api_request()) {
      * JALUR A: SDG CLASSIFICATION PROXY
      * Request dengan ?_sdg= atau ?proxy_action= → SDG Classification API
      */
-    $apiFile = ROOT_PATH . '/api/SDG_Classification_API.php';
+    $apiFile = ROOT_PATH . '/api/sdgs/SDG_Classification_API.php';
 
     if (file_exists($apiFile)) {
         handle_api_proxy_request($apiFile);

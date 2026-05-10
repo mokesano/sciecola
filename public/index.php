@@ -1,16 +1,21 @@
 <?php
 /**
- * Entry point – https://sciecola.sangia.org
- * Letak file: /home/user/public_html/sciecola/public/index.php
+ * File: index.php
  *
- * Tugasnya SATU: teruskan SEMUA request ke wizdam-sikola.php
- * yang berada satu level di atasnya (di luar public/).
+ * Copyright (c) Sangia Publishing House (SPH) / Rochmady
+ * Distributed under the MIT License.
  *
- * wizdam-sikola.php sudah cerdas:
- *   - Jika ada ?proxy_action= → balas JSON (mode proxy)
- *   - Jika tidak → tampilkan halaman HTML
+ * @ingroup index
+ * @brief System Entry Point.
  *
- * Tidak perlu kondisi REQUEST_URI apapun di sini.
+ * Bootstrap loader for the SPH Analytics Platform.
+ * It initializes the core engine and dispatches the request to the
+ * appropriate Service Handler based on Modern Routing.
+ * 
+ * - Jika ada ?proxy_action= → balas JSON (mode proxy)
+ * - Jika tidak → tampilkan halaman HTML
+ * 
+ * @version 3.0.0 - React + PHP Backend (Opsi A)
  */
 
 // Aktifkan saat debugging, nonaktifkan di production:
