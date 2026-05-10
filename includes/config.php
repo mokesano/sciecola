@@ -9,6 +9,8 @@
  */
 
 // Load .env file (simple parser, no Composer required)
+// IMPORTANT: Only load from .env if the variable is NOT already set in the process environment.
+// This prevents a stale .env from overriding production DB credentials or API keys.
 (static function (): void {
     $envFile = __DIR__ . '/../.env';
     if (!file_exists($envFile)) {
@@ -22,7 +24,8 @@
         [$key, $value] = explode('=', $line, 2);
         $key   = trim($key);
         $value = trim($value, " \t\n\r\0\x0B\"'");
-        if ($key !== '' && !array_key_exists($key, $_ENV)) {
+        // Only load from .env if NOT already set in the process environment
+        if ($key !== '' && getenv($key) === false) {
             putenv("{$key}={$value}");
             $_ENV[$key] = $value;
         }
