@@ -156,7 +156,58 @@ function handle_api_proxy_request($api_file_path) {
 }
 
 // ================================================================
-// 3. DEFINISI DATA GLOBAL
+// 3. HELPER RESPONSE
+// ================================================================
+
+function send_json_response(array $data, int $status = 200): void {
+    while (ob_get_level()) ob_end_clean();
+    http_response_code($status);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($data);
+    exit;
+}
+
+// ================================================================
+// 4. API WRAPPER ROUTER
+// ================================================================
+
+function is_wrapper_api_request(): bool {
+    $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+    return (bool) preg_match('#^/api/[^/]+\.php$#i', $uri);
+}
+
+function route_api_wrapper(): void {
+    $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+    if (!preg_match('#^/api/([^/]+\.php)$#i', $uri, $m)) {
+        send_json_response(['status' => 'error', 'message' => 'Invalid API path'], 400);
+    }
+
+    $filename = basename($m[1]);
+
+    static $allowed = [
+        'analytics.php', 'article_profile.php', 'articles.php', 'auth.php',
+        'cache_handler.php', 'journal_profile.php', 'journals.php',
+        'leaderboard.php', 'log_history.php', 'my_activity.php',
+        'my_articles.php', 'my_collections.php', 'my_profile.php',
+        'my_statistics.php', 'platform_stats.php', 'researcher_profile.php',
+        'researchers.php', 'sdg_distribution.php', 'trends.php',
+    ];
+
+    if (!in_array($filename, $allowed, true)) {
+        send_json_response(['status' => 'error', 'message' => 'Endpoint tidak ditemukan'], 404);
+    }
+
+    $wrapperFile = ROOT_PATH . '/api/wrapper/' . $filename;
+    if (!file_exists($wrapperFile)) {
+        send_json_response(['status' => 'error', 'message' => 'Endpoint belum tersedia'], 503);
+    }
+
+    require $wrapperFile;
+    exit;
+}
+
+// ================================================================
+// 5. DEFINISI DATA GLOBAL
 // ================================================================
 
 /**

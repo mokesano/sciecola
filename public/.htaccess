@@ -189,10 +189,19 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
  
  
  # ----------------------------------------------------------------
+ # BAGIAN 6B: API WRAPPER - ROUTE KE FRONT CONTROLLER
+ # /api/*.php tidak ada sebagai file fisik di public/ → index.php
+ # index.php → bootstrap.php → route_api_wrapper() → /api/wrapper/*.php
+ # ----------------------------------------------------------------
+
+ RewriteCond %{REQUEST_FILENAME} !-f
+ RewriteRule ^api/[^/]+\.php$ index.php [L,QSA]
+
+ # ----------------------------------------------------------------
  # BAGIAN 7: KEAMANAN APLIKASI - PROTEKSI FILE SENSITIF
  # Mencegah akses langsung ke file konfigurasi dan internal
  # ----------------------------------------------------------------
- 
+
  # BLOKIR AKSES DIREKTORI CONFIG
  # Mencegah akses ke: /config/, /includes/, /vendor/, dll
  RewriteRule ^(config|includes|vendor|logs|cache|temp)/?$ error/403.html [L]
