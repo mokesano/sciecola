@@ -4,7 +4,169 @@ import {
   PieChart, Pie, Cell, LineChart, Line, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, AreaChart, Area
 } from 'recharts';
-import { ARTICLES } from '../data/mock/articles';
+
+// Mock Database Artikel
+const articlesDatabase = [
+  {
+    id: "10.1234/jess.2024.1002",
+    title: "Climate Change Adaptation in Coastal Communities: A Systematic Review",
+    doi: "10.1234/jess.2024.1002",
+    articleType: "Review Article",
+    language: "English",
+    publishedDate: "15 Mei 2024",
+    publisher: "Sangia Research Media and Publishing",
+    coverImage: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=300&h=400&fit=crop&q=80",
+
+    authors: [
+      { name: "Andi Rahman", affiliation: "Department of Environmental Science, Universitas Indonesia, Indonesia", id: 1 },
+      { name: "Budi Santoso", affiliation: "Faculty of Geography, Universitas Gadjah Mada, Indonesia", id: 2 },
+      { name: "Siti Nurhaliza", affiliation: "Research Center for Climate Change, BRIN, Indonesia", id: 3 }
+    ],
+
+    citations: 652,
+    hIndex: 24,
+    views: 98732,
+    downloads: 12843,
+    altmetricScore: 124,
+    impactScore: 2.48,
+
+    journal: {
+      name: "Journal of Environmental Science and Sustainability",
+      eissn: "1234-5678",
+      pissn: "1234-5679",
+      volume: "10",
+      issue: "2",
+      pages: "123-145",
+      quartile: "Q2 (Environmental Science)",
+      country: "Indonesia"
+    },
+
+    abstract: "Artikel ini melakukan tinjauan sistematis terhadap strategi adaptasi perubahan iklim di komunitas pesisir. Hasil penelitian menunjukkan bahwa pendekatan berbasis ekosistem dan kearifan lokal memiliki peran penting dalam meningkatkan ketahanan masyarakat pesisir terhadap perubahan iklim. Studi ini menganalisis 87 publikasi dari tahun 2010-2024 dan mengidentifikasi 5 kategori utama strategi adaptasi yang telah diimplementasikan di berbagai wilayah pesisir Indonesia.",
+    keywords: ["Climate Change", "Adaptation", "Coastal Communities", "Resilience", "Ecosystem-based Adaptation", "Indonesia", "Local Knowledge"],
+
+    sdgDistribution: [
+      { name: "Climate Action", value: 52, color: "#10b981", sdg: 13 },
+      { name: "Sustainable Cities & Communities", value: 28, color: "#f59e0b", sdg: 11 },
+      { name: "Life on Land", value: 20, color: "#84cc16", sdg: 15 }
+    ],
+
+    citationTrend: [
+      { year: "2019", citations: 25 },
+      { year: "2020", citations: 58 },
+      { year: "2021", citations: 112 },
+      { year: "2022", citations: 185 },
+      { year: "2023", citations: 245 },
+      { year: "2024", citations: 298 }
+    ],
+
+    performanceMetrics: [
+      { year: "2019", citations: 25, views: 12500, downloads: 1200 },
+      { year: "2020", citations: 58, views: 18200, downloads: 1850 },
+      { year: "2021", citations: 112, views: 24800, downloads: 2450 },
+      { year: "2022", citations: 185, views: 32100, downloads: 3280 },
+      { year: "2023", citations: 245, views: 38500, downloads: 4120 },
+      { year: "2024", citations: 298, views: 42800, downloads: 4890 }
+    ],
+
+    versions: [
+      { date: "15 Mei 2024", event: "Versi Online (Published)", type: "published" },
+      { date: "10 Mei 2024", event: "Versi Final", type: "final" },
+      { date: "20 April 2024", event: "Revisi Setelah Review", type: "revision" },
+      { date: "15 April 2024", event: "Versi Review", type: "review" },
+      { date: "20 Maret 2024", event: "Versi Awal (Submitted)", type: "submitted" }
+    ],
+
+    topCitations: [
+      { title: "Nature-based solutions for coastal adaptation: A global meta-analysis", journal: "Nature Climate Change, 2023", citations: 124 },
+      { title: "Local knowledge and community resilience in climate adaptation", journal: "Environmental Science & Policy, 2023", citations: 98 },
+      { title: "Mangrove ecosystems as climate buffer for coastal communities", journal: "Marine Policy, 2022", citations: 76 },
+      { title: "Adaptation pathways in Southeast Asian coastal regions", journal: "Regional Environmental Change, 2022", citations: 65 },
+      { title: "Integrating traditional and modern knowledge for climate resilience", journal: "Sustainability, 2021", citations: 54 }
+    ],
+
+    relatedArticles: [
+      { title: "Community-based adaptation to sea level rise in Indonesia", journal: "Environmental Science & Policy, 2024", sdgs: [13, 11], doi: "10.1234/esp.2024.0011" },
+      { title: "Ecosystem-based adaptation in coastal areas: A review", journal: "Ocean & Coastal Management, 2023", sdgs: [13, 15], doi: "10.1234/ocm.2023.0042" },
+      { title: "Climate resilience through local wisdom in coastal communities", journal: "Sustainability, 2023", sdgs: [11, 15], doi: "10.1234/su.2023.0178" },
+      { title: "Blue carbon and coastal adaptation strategies", journal: "Journal of Cleaner Production, 2022", sdgs: [13, 14], doi: "10.1234/jcp.2022.0889" }
+    ]
+  },
+  {
+    id: "10.1234/jess.2024.1003",
+    title: "Sustainable Urban Transport Systems in Indonesia: Challenges and Opportunities",
+    doi: "10.1234/jess.2024.1003",
+    articleType: "Research Article",
+    language: "English",
+    publishedDate: "10 Maret 2024",
+    publisher: "Sangia Research Media and Publishing",
+    coverImage: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=300&h=400&fit=crop&q=80",
+
+    authors: [
+      { name: "Dewi Lestari", affiliation: "Department of Urban Planning, Institut Teknologi Bandung, Indonesia", id: 1 },
+      { name: "Ahmad Fauzi", affiliation: "School of Architecture, Universitas Gadjah Mada, Indonesia", id: 2 }
+    ],
+
+    citations: 428,
+    hIndex: 18,
+    views: 76543,
+    downloads: 9876,
+    altmetricScore: 95,
+    impactScore: 2.15,
+
+    journal: {
+      name: "Journal of Environmental Science and Sustainability",
+      eissn: "1234-5678",
+      pissn: "1234-5679",
+      volume: "10",
+      issue: "1",
+      pages: "45-62",
+      quartile: "Q2 (Environmental Science)",
+      country: "Indonesia"
+    },
+
+    abstract: "Penelitian ini menganalisis tantangan dan peluang sistem transportasi berkelanjutan di kota-kota besar Indonesia. Studi ini menyoroti pentingnya integrasi moda transportasi publik dan kebijakan ramah lingkungan.",
+    keywords: ["Urban Transport", "Sustainability", "Public Transit", "Indonesia", "Green Mobility"],
+
+    sdgDistribution: [
+      { name: "Sustainable Cities & Communities", value: 55, color: "#f59e0b", sdg: 11 },
+      { name: "Climate Action", value: 30, color: "#10b981", sdg: 13 },
+      { name: "Industry & Innovation", value: 15, color: "#f97316", sdg: 9 }
+    ],
+
+    citationTrend: [
+      { year: "2020", citations: 15 },
+      { year: "2021", citations: 45 },
+      { year: "2022", citations: 98 },
+      { year: "2023", citations: 165 },
+      { year: "2024", citations: 210 }
+    ],
+
+    performanceMetrics: [
+      { year: "2020", citations: 15, views: 8500, downloads: 980 },
+      { year: "2021", citations: 45, views: 15200, downloads: 1650 },
+      { year: "2022", citations: 98, views: 22800, downloads: 2450 },
+      { year: "2023", citations: 165, views: 31500, downloads: 3280 },
+      { year: "2024", citations: 210, views: 38200, downloads: 3890 }
+    ],
+
+    versions: [
+      { date: "10 Maret 2024", event: "Versi Online (Published)", type: "published" },
+      { date: "5 Maret 2024", event: "Versi Final", type: "final" },
+      { date: "15 Februari 2024", event: "Revisi Setelah Review", type: "revision" },
+      { date: "20 Januari 2024", event: "Versi Awal (Submitted)", type: "submitted" }
+    ],
+
+    topCitations: [
+      { title: "Smart city transportation frameworks in developing countries", journal: "Cities, 2023", citations: 87 },
+      { title: "Electric vehicle adoption in Southeast Asia", journal: "Transport Policy, 2023", citations: 65 }
+    ],
+
+    relatedArticles: [
+      { title: "Bus rapid transit systems in Asian megacities", journal: "Transport Reviews, 2023", sdgs: [11, 13], doi: "10.1234/tr.2023.0021" },
+      { title: "Cycling infrastructure and urban mobility", journal: "Journal of Transport Geography, 2023", sdgs: [11, 3], doi: "10.1234/jtg.2023.0055" }
+    ]
+  }
+];
 
 const ArticleProfile = () => {
   const location = useLocation();
@@ -17,7 +179,7 @@ const ArticleProfile = () => {
   useEffect(() => {
     setLoading(true);
     const decodedDoi = decodeURIComponent(doi);
-    const foundArticle = ARTICLES.find(art =>
+    const foundArticle = articlesDatabase.find(art =>
       art.doi === decodedDoi || art.id === decodedDoi
     );
     if (foundArticle) {
