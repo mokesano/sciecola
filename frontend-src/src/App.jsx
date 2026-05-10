@@ -54,6 +54,7 @@ import History from './pages/History';
 import Teams from './pages/Teams';
 import Sponsors from './pages/Sponsors';
 import BecomeSponsor from './pages/BecomeSponsor';
+import Partners from './pages/Partners';
 
 // Impor Halaman Syarat dan Ketentuan
 import Terms from './pages/Terms';
@@ -208,6 +209,7 @@ function App() {
           <Route path="/teams" element={<Teams />} />
           <Route path="/sponsors" element={<Sponsors />} />
           <Route path="/become-sponsor" element={<BecomeSponsor />} />
+          <Route path="/partners" element={<Partners />} />
 
           {/* Rute Syarat dan Ketentuan */}
           <Route path="/terms" element={<Terms />} />
