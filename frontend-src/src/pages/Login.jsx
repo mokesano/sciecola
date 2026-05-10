@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login, user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState(null);
   const [turnstileLoaded, setTurnstileLoaded] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -18,6 +20,13 @@ const Login = () => {
   const [errors, setErrors] = useState({});
 
   const turnstileContainerRef = useRef(null);
+
+  // Redirect to dashboard if already logged in
+  useEffect(() => {
+    if (user?.orcid) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   // Load & Initialize Cloudflare Turnstile
   useEffect(() => {
@@ -105,35 +114,38 @@ const Login = () => {
       });
 
       // 2. Prepare payload
-      const payload = {
-        ...formData,
-        turnstileToken,
-        recaptchaToken,
-        userAgent: navigator.userAgent,
-        timestamp: new Date().toISOString()
-      };
+      const payload = new FormData();
+      payload.append('action', 'login');
+      payload.append('email', formData.email);
+      payload.append('password', formData.password);
+      payload.append('turnstileToken', turnstileToken);
+      payload.append('recaptchaToken', recaptchaToken);
 
-      // 3. Simulate API Call
-      await new Promise(resolve => setTimeout(resolve, 1200));
-      
-      // TODO: Ganti dengan actual fetch/axios ke backend Anda
-      // const response = await fetch('/api/auth/login', { 
-      //   method: 'POST', 
-      //   headers: { 'Content-Type': 'application/json' }, 
-      //   body: JSON.stringify(payload) 
-      // });
-      // const data = await response.json();
-      // if (data.token) localStorage.setItem('auth_token', data.token);
+      // 3. Call authentication API
+      const response = await fetch('/api/auth.php', {
+        method: 'POST',
+        body: payload
+      });
+      const data = await response.json();
 
-      // 4. Success Flow - Reset captcha & redirect
+      if (!data.status || data.status !== 'success') {
+        throw new Error(data.message || 'Login gagal');
+      }
+
+      // 4. Store user session in AuthContext
+      const { token, user } = data;
+      login(user, token);
+
+      // 5. Success Flow - Reset captcha & redirect
       window.turnstile?.reset();
       toast.success('Berhasil masuk!');
       navigate('/dashboard');
 
     } catch (error) {
       console.error('Login failed:', error);
-      toast.error('Email atau password salah. Silakan periksa kembali.');
-      setErrors({ submit: 'Email atau password salah. Silakan periksa kembali.' });
+      const errorMsg = error.message || 'Email atau password salah. Silakan periksa kembali.';
+      toast.error(errorMsg);
+      setErrors({ submit: errorMsg });
     } finally {
       setLoading(false);
     }
