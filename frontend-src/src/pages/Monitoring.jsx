@@ -1,15 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
+import { MapContainer, CircleMarker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-
-// Fix untuk default icon Leaflet yang hilang di React
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
 
 const Monitoring = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState('24h');
@@ -277,7 +268,7 @@ const Monitoring = () => {
               zoom={2}
               minZoom={2}
               maxZoom={5}
-              style={{ height: '100%', width: '100%' }}
+              style={{ height: '100%', width: '100%', background: '#dbeafe' }}
               scrollWheelZoom={false}
               dragging={false}
               zoomControl={false}
@@ -286,11 +277,6 @@ const Monitoring = () => {
               keyboard={false}
               attributionControl={false}
             >
-              {/* Monochrome tile layer (CartoDB Positron – light grey) */}
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
-                url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
-              />
               {geoData.map((location) => (
                 <PulseMarker
                   key={location.id}

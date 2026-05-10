@@ -130,9 +130,9 @@ const Home = () => {
       <div id="cta-section"><CallToAction /></div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-        <SdgDistributionChart 
-            data={chartData.length > 0 ? chartData : null} 
-            totalArticles={summaryStats ? summaryStats.totalArticles : "0"} 
+        <SdgDistributionChart
+            data={chartData.length > 0 ? chartData : null}
+            totalArticles={summaryStats ? summaryStats.totalArticles : null}
         />
         <SdgTrendChart rawData={rawApiData} />
       </div>
