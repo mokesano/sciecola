@@ -1,147 +1,74 @@
-import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line, AreaChart, Area
 } from 'recharts';
 
+// Helper function to extract ISSN from journal ID
+const extractISSNFromId = (journalId) => {
+  if (!journalId) return null;
+
+  // If format is XXXX-XXXX (ISSN format), use directly
+  if (/^\d{4}-\d{4}$/.test(journalId)) {
+    return journalId;
+  }
+
+  // If format is XXXXXXXX (ISSN without dashes), format it
+  if (/^\d{8}$/.test(journalId)) {
+    return journalId.slice(0, 4) + '-' + journalId.slice(4);
+  }
+
+  // For slug format, we'd need a mapping (for now return null)
+  // In the future, could query an API to resolve slug to ISSN
+  return null;
+};
+
 const JournalProfile = () => {
   const { journalId } = useParams();
-
-  const [journal] = useState({
-    id: "jess-2024",
-    name: "Journal of Environmental Science and Sustainability",
-    eissn: "1234-5678",
-    pissn: "1234-5679",
-    publisher: "Sangia Research Media and Publishing",
-    website: "https://journals.sangia.org/jess",
-    subject: "Environmental Science",
-    country: "Indonesia",
-    language: "English",
-    established: "2018",
-    frequency: "4 issue / tahun",
-    coverImage: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=300&h=400&fit=crop&q=80",
-    scope: "Jurnal ini mempublikasikan penelitian orisinal dan review artikel dalam bidang ilmu lingkungan, keberlanjutan, dan tujuan pembangunan berkelanjutan (SDGs). Jurnal menerima naskah dalam bahasa Inggris dari seluruh penjuru dunia dengan fokus utama pada kawasan Asia Tenggara.",
-    editorialBoard: [
-      { name: "Prof. Dr. Ahmad Fauzi", role: "Editor-in-Chief", institution: "Universitas Indonesia" },
-      { name: "Dr. Siti Rahayu", role: "Managing Editor", institution: "Institut Teknologi Bandung" },
-      { name: "Prof. John Smith", role: "Associate Editor", institution: "University of Melbourne" },
-      { name: "Dr. Li Wei", role: "Associate Editor", institution: "Tsinghua University" }
-    ],
-
-    // Stats
-    totalArticles: 356,
-    totalAuthors: 1248,
-    totalCitations: 5732,
-    totalViews: 98732,
-    impactScore: 2.48,
-    sdgsCovered: 15,
-
-    // Performance metrics
-    acceptanceRate: "24%",
-    avgReviewTime: "28 Hari",
-    avgPublishTime: "4 Hari",
-    citationsPerArticle: "16.1",
-    hIndex: "17",
-
-    // SDG Distribution
-    sdgDistribution: [
-      { name: "Climate Action", value: 28, color: "#10b981" },
-      { name: "Sustainable Cities", value: 20, color: "#f59e0b" },
-      { name: "Good Health", value: 16, color: "#ef4444" },
-      { name: "Clean Energy", value: 12, color: "#fbbf24" },
-      { name: "Quality Education", value: 10, color: "#3b82f6" },
-      { name: "Industry, Innovation", value: 8, color: "#8b5cf6" },
-      { name: "Lainnya", value: 6, color: "#6b7280" }
-    ],
-
-    // Publication trend
-    publicationTrend: [
-      { year: "2018", count: 45 },
-      { year: "2019", count: 48 },
-      { year: "2020", count: 52 },
-      { year: "2021", count: 58 },
-      { year: "2022", count: 65 },
-      { year: "2023", count: 68 },
-      { year: "2024", count: 85 }
-    ],
-
-    // Citation trend
-    citationTrend: [
-      { year: "2018", citations: 450 },
-      { year: "2019", citations: 520 },
-      { year: "2020", citations: 780 },
-      { year: "2021", citations: 1050 },
-      { year: "2022", citations: 1280 },
-      { year: "2023", citations: 1450 },
-      { year: "2024", citations: 1680 }
-    ],
-
-    // Top articles
-    topArticles: [
-      {
-        id: 1,
-        doi: "10.1234/jess.2024.1002",
-        title: "Climate Change Adaptation in Coastal Communities",
-        volume: "Vol. 6 No. 2 (2020)",
-        citations: 124,
-        thumbnail: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=60&h=60&fit=crop&q=80"
-      },
-      {
-        id: 2,
-        doi: "10.1234/jess.2024.1003",
-        title: "Sustainable Urban Transport Systems in Indonesia",
-        volume: "Vol. 5 No. 1 (2019)",
-        citations: 98,
-        thumbnail: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=60&h=60&fit=crop&q=80"
-      },
-      {
-        id: 3,
-        doi: "10.1234/jess.2023.2001",
-        title: "Renewable Energy Policy and Its Impact",
-        volume: "Vol. 4 No. 2 (2018)",
-        citations: 76,
-        thumbnail: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=60&h=60&fit=crop&q=80"
-      },
-      {
-        id: 4,
-        doi: "10.1234/jess.2020.1044",
-        title: "Mangrove Restoration and Coastal Resilience",
-        volume: "Vol. 6 No. 3 (2020)",
-        citations: 65,
-        thumbnail: "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=60&h=60&fit=crop&q=80"
-      },
-      {
-        id: 5,
-        doi: "10.1234/jess.2022.0889",
-        title: "Waste Management Strategies for Sustainable Cities",
-        volume: "Vol. 8 No. 2 (2022)",
-        citations: 59,
-        thumbnail: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=60&h=60&fit=crop&q=80"
-      }
-    ],
-
-    // Access stats monthly
-    accessStats: [
-      { month: "Jan", views: 6500 },
-      { month: "Feb", views: 7200 },
-      { month: "Mar", views: 8100 },
-      { month: "Apr", views: 9800 },
-      { month: "Mei", views: 11200 },
-      { month: "Jun", views: 13500 },
-      { month: "Jul", views: 12800 },
-      { month: "Agu", views: 14200 },
-      { month: "Sep", views: 15800 },
-      { month: "Okt", views: 17200 },
-      { month: "Nov", views: 16500 },
-      { month: "Des", views: 15900 }
-    ],
-
-    // Indexing databases
-    indexing: ["Scopus", "DOAJ", "Dimensions", "Google Scholar", "Crossref", "GARUDA", "Sinta"]
-  });
-
+  const navigate = useNavigate();
+  const [journal, setJournal] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('ringkasan');
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+
+    const fetchProfile = async () => {
+      try {
+        // Extract ISSN from journalId (format: issn or journal slug)
+        // If journalId looks like ISSN (contains digits/dashes), use it directly
+        // Otherwise treat it as a slug that needs to be resolved
+        const issn = extractISSNFromId(journalId);
+
+        if (!issn) {
+          throw new Error('Format ISSN tidak valid');
+        }
+
+        const response = await fetch(`/api/journal_profile.php?issn=${encodeURIComponent(issn)}`);
+
+        if (!response.ok) {
+          throw new Error(response.status === 404 ? 'Jurnal tidak ditemukan' : 'Gagal memuat jurnal');
+        }
+
+        const data = await response.json();
+        if (data.status === 'success') {
+          setJournal(data);
+        } else {
+          setError(data.message || 'Gagal memuat jurnal');
+        }
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching journal:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [journalId]);
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -156,6 +83,51 @@ const JournalProfile = () => {
     }
     return null;
   };
+
+  if (loading) {
+    return (
+      <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Memuat jurnal...</p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (error || !journal) {
+    return (
+      <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <div className="text-center py-20">
+          <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Jurnal Tidak Ditemukan</h2>
+          <p className="text-gray-600 mb-6">
+            {error || `Maaf, jurnal dengan ID ${journalId} tidak tersedia.`}
+          </p>
+          <div className="flex gap-4 justify-center">
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors"
+            >
+              Coba Lagi
+            </button>
+            <button
+              onClick={() => navigate('/')}
+              className="px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
+            >
+              Ke Beranda
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
@@ -176,9 +148,9 @@ const JournalProfile = () => {
 
             {/* Journal Details */}
             <div className="flex-grow">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{journal.name}</h1>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{journal.name ?? 'Unknown Journal'}</h1>
               <p className="text-gray-600 mb-4">
-                EISSN: {journal.eissn} | PISSN: {journal.pissn}
+                ISSN: {journal.issn ?? 'N/A'}
               </p>
 
               <div className="space-y-2 text-sm">
@@ -186,16 +158,18 @@ const JournalProfile = () => {
                   <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
-                  <span className="text-gray-600">Penerbit: <span className="font-medium text-gray-900">{journal.publisher}</span></span>
+                  <span className="text-gray-600">Penerbit: <span className="font-medium text-gray-900">{journal.publisher ?? 'Unknown'}</span></span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                  </svg>
-                  <a href={journal.website} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-700 font-medium">
-                    Website: {journal.website}
-                  </a>
-                </div>
+                {journal.website && (
+                  <div className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                    </svg>
+                    <a href={journal.website} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-700 font-medium">
+                      Website: {journal.website}
+                    </a>
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
                   <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
@@ -220,25 +194,29 @@ const JournalProfile = () => {
                   </svg>
                   <span className="text-gray-600">Terbit Sejak: <span className="font-medium text-gray-900">{journal.established}</span></span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span className="text-gray-600">Frekuensi Terbit: <span className="font-medium text-gray-900">{journal.frequency}</span></span>
-                </div>
+                {journal.frequency && (
+                  <div className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span className="text-gray-600">Frekuensi Terbit: <span className="font-medium text-gray-900">{journal.frequency}</span></span>
+                  </div>
+                )}
               </div>
 
-              <a
-                href={journal.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 px-6 py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors inline-flex items-center gap-2"
-              >
-                <span>Kunjungi Website</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-              </a>
+              {journal.website && (
+                <a
+                  href={journal.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 px-6 py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors inline-flex items-center gap-2"
+                >
+                  <span>Kunjungi Website</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -247,27 +225,27 @@ const JournalProfile = () => {
         <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
           <div className="grid grid-cols-2 gap-4">
             <div className="text-center p-4 bg-gray-50 rounded-xl">
-              <p className="text-2xl font-bold text-gray-900">{journal.totalArticles}</p>
+              <p className="text-2xl font-bold text-gray-900">{journal.totalArticles ?? 0}</p>
               <p className="text-sm text-gray-600 mt-1">Artikel</p>
             </div>
             <div className="text-center p-4 bg-gray-50 rounded-xl">
-              <p className="text-2xl font-bold text-gray-900">{journal.totalAuthors.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-gray-900">{(journal.totalAuthors ?? 0).toLocaleString()}</p>
               <p className="text-sm text-gray-600 mt-1">Penulis</p>
             </div>
             <div className="text-center p-4 bg-gray-50 rounded-xl">
-              <p className="text-2xl font-bold text-gray-900">{journal.totalCitations.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-gray-900">{(journal.totalCitations ?? 0).toLocaleString()}</p>
               <p className="text-sm text-gray-600 mt-1">Sitasi</p>
             </div>
             <div className="text-center p-4 bg-gray-50 rounded-xl">
-              <p className="text-2xl font-bold text-gray-900">{journal.totalViews.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-gray-900">{(journal.totalViews ?? 0).toLocaleString()}</p>
               <p className="text-sm text-gray-600 mt-1">Views</p>
             </div>
             <div className="text-center p-4 bg-gray-50 rounded-xl">
-              <p className="text-2xl font-bold text-gray-900">{journal.impactScore}</p>
-              <p className="text-sm text-gray-600 mt-1">Impact Score</p>
+              <p className="text-2xl font-bold text-gray-900">{(journal.citescore ?? journal.impactScore ?? 0).toFixed(2)}</p>
+              <p className="text-sm text-gray-600 mt-1">CiteScore</p>
             </div>
             <div className="text-center p-4 bg-gray-50 rounded-xl">
-              <p className="text-2xl font-bold text-gray-900">{journal.sdgsCovered}</p>
+              <p className="text-2xl font-bold text-gray-900">{journal.sdgsCovered ?? 0}</p>
               <p className="text-sm text-gray-600 mt-1">SDGs Tercakup</p>
             </div>
           </div>
