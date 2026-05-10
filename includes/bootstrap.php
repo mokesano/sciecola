@@ -35,26 +35,29 @@ if (file_exists($functionsFile)) {
 // =========================================================================
 
 if (is_api_request()) {
-    /* 
-     * JALUR A: REQUEST API / PROXY
-     * Masuk ke mode Anti-Timeout dan batching.
+    /*
+     * JALUR A: SDG CLASSIFICATION PROXY
+     * Request dengan ?_sdg= atau ?proxy_action= → SDG Classification API
      */
-    
-    // File API tetap berada di luar folder includes
     $apiFile = ROOT_PATH . '/api/SDG_Classification_API.php';
-    
+
     if (file_exists($apiFile)) {
-        // Eksekusi fungsi proxy yang ada di functions.php
         handle_api_proxy_request($apiFile);
     } else {
         send_json_response(['status' => 'error', 'message' => 'Endpoint API Sicola tidak ditemukan.'], 404);
     }
 
-} else {
-    /* 
-     * JALUR B: REQUEST TAMPILAN / FRONTEND (HTML)
+} elseif (is_wrapper_api_request()) {
+    /*
+     * JALUR B: API WRAPPER ENDPOINTS
+     * Request /api/*.php → /api/wrapper/*.php (private, di luar public/)
      */
-     
+    route_api_wrapper();
+
+} else {
+    /*
+     * JALUR C: FRONTEND (HTML)
+     */
     $uiFile = __DIR__ . '/sicolaUI.php';
 
     if (file_exists($uiFile)) {
