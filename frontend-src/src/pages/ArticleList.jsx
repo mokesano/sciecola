@@ -199,7 +199,7 @@ const ArticleList = () => {
 
       {/* Results Count */}
       {!loading && !error && (
-      <div className="mb-6 flex justify-between items-center">
+        <div className="mb-6 flex justify-between items-center">
         <p className="text-gray-600 text-sm">
           Menampilkan <span className="font-bold text-gray-900">{articles.length}</span> dari <span className="font-bold text-gray-900">{totalResults}</span> artikel
         </p>
@@ -221,17 +221,17 @@ const ArticleList = () => {
             </svg>
           </button>
         </div>
-      </div>
+        </div>
 
-      {/* Grid Daftar Artikel */}
-      {articles.length > 0 ? (
-      <div className={`${viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid grid-cols-1'} gap-6`}>
-        {articles.map((article) => (
-          <Link
-            key={article.id}
-            to={`/doi/${encodeURIComponent(article.id)}`}
-            className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-indigo-300 transition-all"
-          >
+        {/* Grid Daftar Artikel */}
+        {articles.length > 0 ? (
+          <div className={`${viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid grid-cols-1'} gap-6`}>
+            {articles.map((article) => (
+              <Link
+                key={article.id}
+                to={`/doi/${encodeURIComponent(article.id)}`}
+                className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-indigo-300 transition-all"
+              >
             <div className={`${viewMode === 'grid' ? 'flex flex-col' : 'flex flex-col md:flex-row'} gap-6`}>
               {/* Thumbnail */}
               <div className="shrink-0">
@@ -323,20 +323,19 @@ const ArticleList = () => {
               </div>
             </div>
           </Link>
-        ))}
-      </div>
+          ))}
+          </div>
 
-      {/* Empty State */}
-      ) : !loading && !error && (
-      <div className="text-center py-20">
-        <p className="text-gray-600 text-lg">Tidak ada artikel yang ditemukan</p>
-      </div>
-      )}
+          ) : !loading && !error && (
+          <div className="text-center py-20">
+            <p className="text-gray-600 text-lg">Tidak ada artikel yang ditemukan</p>
+          </div>
+        )}
       </div>
 
       {/* Pagination */}
       {!loading && !error && articles.length > 0 && (
-      <div className="mt-10 flex justify-center items-center gap-2">
+        <div className="mt-10 flex justify-center items-center gap-2">
         <button
           onClick={() => setPage(Math.max(1, page - 1))}
           disabled={page === 1}
@@ -375,7 +374,7 @@ const ArticleList = () => {
         >
           Selanjutnya
         </button>
-      </div>
+        </div>
       )}
     </main>
   );
