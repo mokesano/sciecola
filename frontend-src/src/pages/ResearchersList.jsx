@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const ResearchersList = () => {
@@ -6,213 +6,106 @@ const ResearchersList = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('all');
   const [selectedSdg, setSelectedSdg] = useState('all');
-  const [sortBy, setSortBy] = useState('relevance');
+  const [sortBy, setSortBy] = useState('citations');
+  const [page, setPage] = useState(1);
 
-  // Mock Database Peneliti (Enriched Data)
-  const researchers = [
+  // API State
+  const [researchers, setResearchers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalResults, setTotalResults] = useState(0);
+
+  // Fetch data from API
+  useEffect(() => {
+    const fetchResearchers = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const params = new URLSearchParams({
+          page: page,
+          limit: 20,
+          sort: sortBy === 'relevance' ? 'citations' : sortBy,
+          search: searchQuery,
+          sdg: selectedSdg === 'all' ? 0 : selectedSdg,
+        });
+
+        const response = await fetch(`/api/researchers.php?${params}`);
+        if (!response.ok) throw new Error('Failed to fetch researchers');
+
+        const data = await response.json();
+        if (data.status === 'success') {
+          const transformedResearchers = data.data.map(researcher => ({
+            id: researcher.id,
+            name: researcher.name,
+            orcid: researcher.orcid,
+            avatar: researcher.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(researcher.name)}&background=random&size=128`,
+            title: 'Researcher',
+            univ: researcher.affiliation || '',
+            country: 'Indonesia',
+            department: '',
+            email: '',
+            citations: researcher.citations || 0,
+            hIndex: researcher.hindex || 0,
+            publications: researcher.publications || 0,
+            collaborators: 0,
+            views: 0,
+            researchInterests: [],
+            sdgFocus: researcher.focus_sdgs || [],
+            topKeywords: [],
+            recentPublications: [],
+            topCollaborators: [],
+            institutions: [],
+            yearsActive: '',
+            firstPublication: 0,
+            latestPublication: 0
+          }));
+
+          setResearchers(transformedResearchers);
+          setTotalPages(data.total_pages || 1);
+          setTotalResults(data.total || 0);
+        }
+      } catch (err) {
+        setError(err.message);
+        setResearchers([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchResearchers();
+  }, [page, sortBy, searchQuery, selectedSdg]);
+
+  // Hardcoded sample list for countries and SDGs extraction (temporary, until we populate database)
+  const mockResearchers = [
     {
       id: 1,
       name: "Dr. Andi Rahman",
       orcid: "0000-0002-1825-0097",
-      avatar: "https://ui-avatars.com/api/?name=Andi+Rahman&background=6366f1&color=fff&size=128",
-      title: "Associate Professor",
-      univ: "Universitas Indonesia",
       country: "Indonesia",
-      department: "Department of Environmental Science",
-      email: "andi.rahman@ui.ac.id",
-      
-      // Metrics
-      citations: 3245,
-      hIndex: 28,
-      publications: 42,
-      collaborators: 156,
-      views: 125000,
-      
-      // Research Focus
-      researchInterests: ["Climate Change Adaptation", "Coastal Ecology", "Environmental Policy", "Sustainable Development"],
       sdgFocus: [13, 14, 15],
-      topKeywords: ["climate resilience", "mangrove restoration", "carbon sequestration"],
-      
-      // Recent Activity
-      recentPublications: [
-        { title: "Coastal adaptation strategies in Southeast Asia", year: 2024, citations: 45 },
-        { title: "Ecosystem-based approaches to climate resilience", year: 2023, citations: 78 }
-      ],
-      
-      // Collaboration Network
-      topCollaborators: ["Prof. Budi Santoso", "Dr. Siti Nurhaliza", "Dr. Maria Garcia"],
-      institutions: ["Universitas Indonesia", "BRIN", "ASEAN Centre for Biodiversity"],
-      
-      // Timeline
-      yearsActive: "2015 - Present",
-      firstPublication: 2015,
-      latestPublication: 2024
     },
     {
       id: 2,
       name: "Prof. Budi Santoso",
       orcid: "0000-0001-5543-2210",
-      avatar: "https://ui-avatars.com/api/?name=Budi+Santoso&background=10b981&color=fff&size=128",
-      title: "Full Professor",
-      univ: "Universitas Gadjah Mada",
       country: "Indonesia",
-      department: "Faculty of Geography",
-      email: "budi.santoso@ugm.ac.id",
-      
-      citations: 5678,
-      hIndex: 42,
-      publications: 89,
-      collaborators: 234,
-      views: 287000,
-      
-      researchInterests: ["Urban Sustainability", "GIS & Remote Sensing", "Transport Planning", "Smart Cities"],
       sdgFocus: [11, 9, 13],
-      topKeywords: ["urban mobility", "spatial analysis", "green infrastructure"],
-      
-      recentPublications: [
-        { title: "Smart city frameworks for developing nations", year: 2024, citations: 92 },
-        { title: "GIS-based urban heat island mapping", year: 2023, citations: 67 }
-      ],
-      
-      topCollaborators: ["Dr. Andi Rahman", "Prof. Ahmad Fauzi", "Dr. Lisa Wong"],
-      institutions: ["Universitas Gadjah Mada", "ITB", "World Bank"],
-      
-      yearsActive: "2008 - Present",
-      firstPublication: 2008,
-      latestPublication: 2024
     },
     {
       id: 3,
       name: "Dr. Siti Nurhaliza",
       orcid: "0000-0003-9981-4456",
-      avatar: "https://ui-avatars.com/api/?name=Siti+Nurhaliza&background=f59e0b&color=fff&size=128",
-      title: "Senior Researcher",
-      univ: "Institut Teknologi Bandung",
       country: "Indonesia",
-      department: "Research Center for Climate Change",
-      email: "siti.nurhaliza@itb.ac.id",
-      
-      citations: 2156,
-      hIndex: 22,
-      publications: 34,
-      collaborators: 98,
-      views: 98000,
-      
-      researchInterests: ["Renewable Energy", "Energy Policy", "Climate Mitigation", "Just Transition"],
       sdgFocus: [7, 13, 1],
-      topKeywords: ["solar energy", "energy access", "policy analysis"],
-      
-      recentPublications: [
-        { title: "Renewable energy transition in Indonesia", year: 2024, citations: 34 },
-        { title: "Community-based solar microgrids", year: 2023, citations: 56 }
-      ],
-      
-      topCollaborators: ["Dr. Andi Rahman", "Prof. Hendra Gunawan", "Dr. Yuki Tanaka"],
-      institutions: ["Institut Teknologi Bandung", "BRIN", "IRENA"],
-      
-      yearsActive: "2018 - Present",
-      firstPublication: 2018,
-      latestPublication: 2024
     },
     {
       id: 4,
       name: "Dr. Maria Garcia",
       orcid: "0000-0004-1122-3344",
-      avatar: "https://ui-avatars.com/api/?name=Maria+Garcia&background=ef4444&color=fff&size=128",
-      title: "Research Fellow",
-      univ: "University of the Philippines",
       country: "Philippines",
-      department: "Institute of Environmental Science",
-      email: "maria.garcia@up.edu.ph",
-      
-      citations: 1890,
-      hIndex: 19,
-      publications: 28,
-      collaborators: 67,
-      views: 76000,
-      
-      researchInterests: ["Marine Conservation", "Biodiversity", "Fisheries Management", "Blue Economy"],
       sdgFocus: [14, 15, 2],
-      topKeywords: ["coral reefs", "sustainable fisheries", "marine protected areas"],
-      
-      recentPublications: [
-        { title: "Coral reef resilience in the Coral Triangle", year: 2024, citations: 28 },
-        { title: "Community-based marine conservation", year: 2023, citations: 41 }
-      ],
-      
-      topCollaborators: ["Dr. Andi Rahman", "Prof. Juan dela Cruz", "Dr. Lisa Wong"],
-      institutions: ["University of the Philippines", "ASEAN Centre for Biodiversity", "WWF"],
-      
-      yearsActive: "2019 - Present",
-      firstPublication: 2019,
-      latestPublication: 2024
     },
-    {
-      id: 5,
-      name: "Prof. Ahmad Fauzi",
-      orcid: "0000-0005-6677-8899",
-      avatar: "https://ui-avatars.com/api/?name=Ahmad+Fauzi&background=8b5cf6&color=fff&size=128",
-      title: "Full Professor",
-      univ: "Universitas Gadjah Mada",
-      country: "Indonesia",
-      department: "School of Architecture",
-      email: "ahmad.fauzi@ugm.ac.id",
-      
-      citations: 4321,
-      hIndex: 35,
-      publications: 67,
-      collaborators: 189,
-      views: 198000,
-      
-      researchInterests: ["Sustainable Architecture", "Green Building", "Urban Design", "Cultural Heritage"],
-      sdgFocus: [11, 12, 13],
-      topKeywords: ["passive design", "vernacular architecture", "low-carbon building"],
-      
-      recentPublications: [
-        { title: "Vernacular architecture for climate adaptation", year: 2024, citations: 56 },
-        { title: "Green building certification in tropical climates", year: 2023, citations: 73 }
-      ],
-      
-      topCollaborators: ["Prof. Budi Santoso", "Dr. Dewi Lestari", "Prof. Kenji Yamamoto"],
-      institutions: ["Universitas Gadjah Mada", "IABSE", "UNESCO"],
-      
-      yearsActive: "2010 - Present",
-      firstPublication: 2010,
-      latestPublication: 2024
-    },
-    {
-      id: 6,
-      name: "Dr. Lisa Wong",
-      orcid: "0000-0006-9988-7766",
-      avatar: "https://ui-avatars.com/api/?name=Lisa+Wong&background=06b6d4&color=fff&size=128",
-      title: "Associate Professor",
-      univ: "National University of Singapore",
-      country: "Singapore",
-      department: "Department of Biological Sciences",
-      email: "lisa.wong@nus.edu.sg",
-      
-      citations: 3567,
-      hIndex: 31,
-      publications: 52,
-      collaborators: 145,
-      views: 156000,
-      
-      researchInterests: ["Conservation Biology", "Ecological Modeling", "Species Distribution", "Climate Impacts"],
-      sdgFocus: [15, 13, 6],
-      topKeywords: ["species extinction", "habitat fragmentation", "conservation planning"],
-      
-      recentPublications: [
-        { title: "Modeling species distribution under climate change", year: 2024, citations: 67 },
-        { title: "Connectivity conservation in Southeast Asia", year: 2023, citations: 89 }
-      ],
-      
-      topCollaborators: ["Prof. Budi Santoso", "Dr. Maria Garcia", "Dr. Yuki Tanaka"],
-      institutions: ["National University of Singapore", "ASEAN Centre for Biodiversity", "IUCN"],
-      
-      yearsActive: "2016 - Present",
-      firstPublication: 2016,
-      latestPublication: 2024
-    }
   ];
 
   // SDG Mapping untuk tampilan visual
@@ -230,73 +123,11 @@ const ResearchersList = () => {
     15: { name: "Life on Land", color: "bg-green-500" }
   };
 
-  // Extract unique countries for filter
-  const countries = useMemo(() => {
-    const unique = [...new Set(researchers.map(r => r.country))];
-    return ['all', ...unique.sort()];
-  }, []);
+  // Extract unique countries from mock data for filter
+  const countries = ['all', ...new Set(mockResearchers.map(r => r.country))];
 
-  // Extract unique SDGs for filter
-  const sdgs = useMemo(() => {
-    const unique = [...new Set(researchers.flatMap(r => r.sdgFocus))];
-    return ['all', ...unique.sort((a, b) => a - b)];
-  }, []);
-
-  // Filter & Sort Logic
-  const filteredResearchers = useMemo(() => {
-    let result = [...researchers];
-
-    // Search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(r => 
-        r.name.toLowerCase().includes(query) ||
-        r.univ.toLowerCase().includes(query) ||
-        r.researchInterests.some(i => i.toLowerCase().includes(query)) ||
-        r.topKeywords.some(k => k.toLowerCase().includes(query))
-      );
-    }
-
-    // Country filter
-    if (selectedCountry !== 'all') {
-      result = result.filter(r => r.country === selectedCountry);
-    }
-
-    // SDG filter
-    if (selectedSdg !== 'all') {
-      result = result.filter(r => r.sdgFocus.includes(Number(selectedSdg)));
-    }
-
-    // Sorting
-    switch (sortBy) {
-      case 'citations':
-        result.sort((a, b) => b.citations - a.citations);
-        break;
-      case 'publications':
-        result.sort((a, b) => b.publications - a.publications);
-        break;
-      case 'hIndex':
-        result.sort((a, b) => b.hIndex - a.hIndex);
-        break;
-      case 'name':
-        result.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      default:
-        // relevance: simple scoring based on search match + metrics
-        if (searchQuery) {
-          result.sort((a, b) => {
-            const scoreA = (a.name.toLowerCase().includes(searchQuery.toLowerCase()) ? 10 : 0) + 
-                          (a.citations / 100);
-            const scoreB = (b.name.toLowerCase().includes(searchQuery.toLowerCase()) ? 10 : 0) + 
-                          (b.citations / 100);
-            return scoreB - scoreA;
-          });
-        }
-        break;
-    }
-
-    return result;
-  }, [searchQuery, selectedCountry, selectedSdg, sortBy]);
+  // Extract unique SDGs from mock data for filter
+  const sdgs = ['all', ...new Set(mockResearchers.flatMap(r => r.sdgFocus)).sort((a, b) => a - b)];
 
   // Helper: Format angka besar
   const formatNumber = (num) => {
@@ -421,10 +252,31 @@ const ResearchersList = () => {
         </div>
       </div>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-6 mb-8">
+          <p className="text-red-700 font-medium">Error loading researchers: {error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+          >
+            Coba Lagi
+          </button>
+        </div>
+      )}
+
       {/* Results Count */}
+      {!loading && !error && (
       <div className="mb-6 flex justify-between items-center">
         <p className="text-gray-600 text-sm">
-          Menampilkan <span className="font-bold text-gray-900">{filteredResearchers.length}</span> dari {researchers.length} peneliti
+          Menampilkan <span className="font-bold text-gray-900">{researchers.length}</span> dari <span className="font-bold text-gray-900">{totalResults}</span> peneliti
         </p>
         <div className="flex gap-2">
           <button className="p-2 border border-gray-200 rounded-lg bg-indigo-50 text-indigo-600">
@@ -441,8 +293,9 @@ const ResearchersList = () => {
       </div>
 
       {/* Grid Daftar Peneliti */}
+      {researchers.length > 0 ? (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredResearchers.map((pro) => (
+        {researchers.map((pro) => (
           <Link 
             key={pro.orcid} 
             to={`/orcid/${pro.orcid}`}
@@ -528,15 +381,14 @@ const ResearchersList = () => {
         ))}
       </div>
 
-      {/* Empty State */}
-      {filteredResearchers.length === 0 && (
-        <div className="text-center py-20">
-          <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">Tidak ada peneliti ditemukan</h3>
+      ) : !loading && !error && (
+      <div className="text-center py-20">
+        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-1">Tidak ada peneliti ditemukan</h3>
           <p className="text-gray-500 text-sm mb-4">Coba ubah filter atau kata kunci pencarian Anda.</p>
           <button 
             onClick={() => {setSearchQuery(''); setSelectedCountry('all'); setSelectedSdg('all');}}
@@ -546,18 +398,47 @@ const ResearchersList = () => {
           </button>
         </div>
       )}
+      </div>
 
-      {/* Pagination (Placeholder) */}
-      {filteredResearchers.length > 0 && (
+      {/* Pagination */}
+      {!loading && !error && researchers.length > 0 && (
         <div className="mt-10 flex justify-center items-center gap-2">
-          <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-50" disabled>
+          <button
+            onClick={() => setPage(Math.max(1, page - 1))}
+            disabled={page === 1}
+            className="px-4 py-2 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             Sebelumnya
           </button>
-          <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium">1</button>
-          <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 font-medium">2</button>
-          <span className="px-2 text-gray-400">...</span>
-          <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 font-medium">5</button>
-          <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">
+          {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+            const pageNum = i + 1;
+            return (
+              <button
+                key={pageNum}
+                onClick={() => setPage(pageNum)}
+                className={`px-4 py-2 rounded-lg font-medium ${
+                  page === pageNum
+                    ? 'bg-indigo-600 text-white'
+                    : 'border border-gray-200 text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                {pageNum}
+              </button>
+            );
+          })}
+          {totalPages > 5 && (
+            <>
+              <span className="px-2 text-gray-400">...</span>
+              <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 font-medium">
+                {totalPages}
+              </button>
+            </>
+          )}
+          <button
+            onClick={() => setPage(Math.min(totalPages, page + 1))}
+            disabled={page === totalPages}
+            className="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             Selanjutnya
           </button>
         </div>

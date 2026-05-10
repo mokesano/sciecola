@@ -1,106 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const ArticleList = () => {
-  // Simulasi data artikel
-  const [articles] = useState([
-    {
-      id: "10.1234/jess.2024.1002",
-      title: "Climate Change Adaptation in Coastal Communities: A Systematic Review",
-      authors: ["Andi Rahman", "Budi Santoso", "Siti Nurhaliza"],
-      journal: "Journal of Environmental Science and Sustainability",
-      volume: "Vol. 10 No. 2 (2024)",
-      publishedDate: "15 Mei 2024",
-      citations: 652,
-      views: 98732,
-      downloads: 12843,
-      sdgFocus: [13, 11, 15],
-      articleType: "Review Article",
-      openAccess: true,
-      thumbnail: "https://via.placeholder.com/300x200/1e40af/ffffff?text=Article+1"
-    },
-    {
-      id: "10.1234/jess.2024.1003",
-      title: "Sustainable Urban Transport Systems in Indonesia: Challenges and Opportunities",
-      authors: ["Dewi Lestari", "Ahmad Fauzi"],
-      journal: "Journal of Environmental Science and Sustainability",
-      volume: "Vol. 10 No. 1 (2024)",
-      publishedDate: "10 Maret 2024",
-      citations: 428,
-      views: 76543,
-      downloads: 9876,
-      sdgFocus: [11, 13, 9],
-      articleType: "Research Article",
-      openAccess: true,
-      thumbnail: "https://via.placeholder.com/300x200/059669/ffffff?text=Article+2"
-    },
-    {
-      id: "10.5678/sustain.2024.2045",
-      title: "Renewable Energy Policy and Its Impact on Rural Development",
-      authors: ["Rina Wijaya", "Hendra Gunawan", "Maya Kusuma"],
-      journal: "Sustainability",
-      volume: "Vol. 16 No. 8 (2024)",
-      publishedDate: "22 April 2024",
-      citations: 315,
-      views: 54321,
-      downloads: 7654,
-      sdgFocus: [7, 1, 13],
-      articleType: "Research Article",
-      openAccess: true,
-      thumbnail: "https://via.placeholder.com/300x200/d97706/ffffff?text=Article+3"
-    },
-    {
-      id: "10.9012/marine.2024.3012",
-      title: "Mangrove Restoration and Coastal Resilience in Southeast Asia",
-      authors: ["Agus Setiawan", "Lina Marlina"],
-      journal: "Marine Policy",
-      volume: "Vol. 162 (2024)",
-      publishedDate: "5 Februari 2024",
-      citations: 287,
-      views: 45678,
-      downloads: 6543,
-      sdgFocus: [14, 15, 13],
-      articleType: "Research Article",
-      openAccess: false,
-      thumbnail: "https://via.placeholder.com/300x200/0891b2/ffffff?text=Article+4"
-    },
-    {
-      id: "10.3456/climate.2024.4089",
-      title: "Nature-based Solutions for Urban Heat Island Mitigation",
-      authors: ["Putri Andini", "Rudi Hartono", "Sri Wahyuni"],
-      journal: "Nature Climate Change",
-      volume: "Vol. 14 No. 3 (2024)",
-      publishedDate: "18 Januari 2024",
-      citations: 542,
-      views: 87654,
-      downloads: 11234,
-      sdgFocus: [11, 13, 15],
-      articleType: "Review Article",
-      openAccess: true,
-      thumbnail: "https://via.placeholder.com/300x200/7c3aed/ffffff?text=Article+5"
-    },
-    {
-      id: "10.7890/water.2024.5067",
-      title: "Water Resource Management in Drought-Prone Areas",
-      authors: ["Bambang Sutrisno", "Nurul Hidayah"],
-      journal: "Water Resources Management",
-      volume: "Vol. 38 No. 4 (2024)",
-      publishedDate: "12 Maret 2024",
-      citations: 198,
-      views: 34567,
-      downloads: 5432,
-      sdgFocus: [6, 2, 13],
-      articleType: "Research Article",
-      openAccess: false,
-      thumbnail: "https://via.placeholder.com/300x200/2563eb/ffffff?text=Article+6"
-    }
-  ]);
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalResults, setTotalResults] = useState(0);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSDG, setSelectedSDG] = useState('all');
   const [selectedYear, setSelectedYear] = useState('all');
-  const [sortBy, setSortBy] = useState('relevance');
+  const [sortBy, setSortBy] = useState('recent');
   const [viewMode, setViewMode] = useState('list');
+
+  useEffect(() => {
+    const fetchArticles = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const params = new URLSearchParams({
+          page: page,
+          limit: 20,
+          sort: sortBy === 'relevance' ? 'recent' : sortBy === 'date' ? 'recent' : sortBy,
+          search: searchQuery,
+          sdg: selectedSDG === 'all' ? 0 : selectedSDG,
+        });
+
+        const response = await fetch(`/api/articles.php?${params}`);
+        if (!response.ok) throw new Error('Failed to fetch articles');
+
+        const data = await response.json();
+        if (data.status === 'success') {
+          const transformedArticles = data.data.map(article => ({
+            id: article.doi,
+            title: article.title,
+            authors: article.authors || [],
+            journal: article.journal,
+            volume: '',
+            publishedDate: article.published_date ? new Date(article.published_date).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : '',
+            citations: article.citations || 0,
+            views: article.views || 0,
+            downloads: article.downloads || 0,
+            sdgFocus: article.sdgs || [],
+            articleType: 'Research Article',
+            openAccess: true,
+            thumbnail: article.thumbnail || '/assets/img/article-default.svg',
+          }));
+
+          setArticles(transformedArticles);
+          setTotalPages(data.total_pages || 1);
+          setTotalResults(data.total || 0);
+        }
+      } catch (err) {
+        setError(err.message);
+        setArticles([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArticles();
+  }, [page, sortBy, searchQuery, selectedSDG]);
 
   // SDG mapping
   const sdgMap = {
@@ -215,10 +177,31 @@ const ArticleList = () => {
         )}
       </div>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-6 mb-8">
+          <p className="text-red-700 font-medium">Error loading articles: {error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+          >
+            Coba Lagi
+          </button>
+        </div>
+      )}
+
       {/* Results Count */}
+      {!loading && !error && (
       <div className="mb-6 flex justify-between items-center">
         <p className="text-gray-600 text-sm">
-          Menampilkan <span className="font-bold text-gray-900">{articles.length}</span> artikel
+          Menampilkan <span className="font-bold text-gray-900">{articles.length}</span> dari <span className="font-bold text-gray-900">{totalResults}</span> artikel
         </p>
         <div className="flex gap-2">
           <button
@@ -241,6 +224,7 @@ const ArticleList = () => {
       </div>
 
       {/* Grid Daftar Artikel */}
+      {articles.length > 0 ? (
       <div className={`${viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid grid-cols-1'} gap-6`}>
         {articles.map((article) => (
           <Link
@@ -342,20 +326,57 @@ const ArticleList = () => {
         ))}
       </div>
 
+      {/* Empty State */}
+      ) : !loading && !error && (
+      <div className="text-center py-20">
+        <p className="text-gray-600 text-lg">Tidak ada artikel yang ditemukan</p>
+      </div>
+      )}
+      </div>
+
       {/* Pagination */}
+      {!loading && !error && articles.length > 0 && (
       <div className="mt-10 flex justify-center items-center gap-2">
-        <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-50" disabled>
+        <button
+          onClick={() => setPage(Math.max(1, page - 1))}
+          disabled={page === 1}
+          className="px-4 py-2 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           Sebelumnya
         </button>
-        <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium">1</button>
-        <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 font-medium">2</button>
-        <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 font-medium">3</button>
-        <span className="px-2 text-gray-400">...</span>
-        <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 font-medium">12</button>
-        <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">
+        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+          const pageNum = i + 1;
+          return (
+            <button
+              key={pageNum}
+              onClick={() => setPage(pageNum)}
+              className={`px-4 py-2 rounded-lg font-medium ${
+                page === pageNum
+                  ? 'bg-indigo-600 text-white'
+                  : 'border border-gray-200 text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              {pageNum}
+            </button>
+          );
+        })}
+        {totalPages > 5 && (
+          <>
+            <span className="px-2 text-gray-400">...</span>
+            <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 font-medium">
+              {totalPages}
+            </button>
+          </>
+        )}
+        <button
+          onClick={() => setPage(Math.min(totalPages, page + 1))}
+          disabled={page === totalPages}
+          className="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           Selanjutnya
         </button>
       </div>
+      )}
     </main>
   );
 };
