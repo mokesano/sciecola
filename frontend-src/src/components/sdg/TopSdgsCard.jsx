@@ -1,57 +1,25 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+const SDG_BG_COLORS = {
+  1: 'bg-[#E5243B]', 2: 'bg-[#DDA63A]', 3: 'bg-[#4C9F38]', 4: 'bg-[#C5192D]',
+  5: 'bg-[#FF3A21]', 6: 'bg-[#26BDE2]', 7: 'bg-[#FCC30B]', 8: 'bg-[#A21942]',
+  9: 'bg-[#FD6925]', 10: 'bg-[#DD1367]', 11: 'bg-[#FD9D24]', 12: 'bg-[#BF8B2E]',
+  13: 'bg-[#3F7E44]', 14: 'bg-[#0A97D9]', 15: 'bg-[#56C02B]', 16: 'bg-[#00689D]',
+  17: 'bg-[#19486A]',
+};
+
 const TopSdgsCard = () => {
-  const sdgsData = [
-    {
-      id: 3,
-      name: 'Good Health & Well-being',
-      count: '4,623',
-      trend: '18.7%',
-      color: 'bg-[#4C9F38]',
-      iconSrc: '/assets/sdgs/icons/sdg-3.svg' 
-    },
-    {
-      id: 4,
-      name: 'Quality Education',
-      count: '3,812',
-      trend: '15.4%',
-      color: 'bg-[#C5192D]',
-      iconSrc: '/assets/sdgs/icons/sdg-4.svg'
-    },
-    {
-      id: 13,
-      name: 'Climate Action',
-      count: '3,263',
-      trend: '13.2%',
-      color: 'bg-[#3F7E44]',
-      iconSrc: '/assets/sdgs/icons/sdg-13.svg'
-    },
-    {
-      id: 9,
-      name: 'Industry, Innovation & Infrastructure',
-      count: '2,865',
-      trend: '11.6%',
-      color: 'bg-[#FD6925]',
-      iconSrc: '/assets/sdgs/icons/sdg-9.svg'
-    },
-    {
-      id: 11,
-      name: 'Sustainable Cities & Communities',
-      count: '2,421',
-      trend: '9.8%',
-      color: 'bg-[#FD9D24]',
-      iconSrc: '/assets/sdgs/icons/sdg-11.svg'
-    },
-    {
-      id: 17,
-      name: 'Partnerships for the Goals',
-      count: '1,957',
-      trend: '7.2%',
-      color: 'bg-[#19486A]',
-      iconSrc: '/assets/sdgs/icons/sdg-17.svg'
-    }
-  ];
+  const [sdgsData, setSdgsData] = useState([]);
+
+  useEffect(() => {
+    fetch('/api/sdg_distribution.php?limit=6')
+      .then(r => r.json())
+      .then(json => {
+        if (json.status === 'success') setSdgsData(json.data);
+      })
+      .catch(() => {});
+  }, []);
 
   const scrollContainerRef = useRef(null);
   
@@ -132,7 +100,7 @@ const TopSdgsCard = () => {
               to="/sdgs"
               className="flex bg-white rounded-xl shadow-[0_2px_8px_-3px_rgba(0,0,0,0.1)] border border-gray-100 overflow-hidden shrink-0 snap-start w-[230px] hover:border-indigo-200 transition-colors"
             >
-              <div className={`w-[60px] shrink-0 flex flex-col items-center justify-center py-4 ${sdg.color} text-white`}>
+              <div className={`w-[60px] shrink-0 flex flex-col items-center justify-center py-4 ${SDG_BG_COLORS[sdg.id] || 'bg-gray-500'} text-white`}>
                 <span className="text-2xl font-bold leading-none">{sdg.id}</span>
                 <div className="w-5 h-[1.5px] bg-white/50 my-2.5 rounded-full"></div>
                 <img 

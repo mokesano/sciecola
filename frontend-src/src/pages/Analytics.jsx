@@ -1,28 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, BarChart, Bar, LineChart, Line
 } from 'recharts';
-
-import {
-  ANALYTICS_SUMMARY_STATS, PUBLICATION_TREND, SDG_DISTRIBUTION, ANALYTICS_TOPICS,
-  COMPARISON_DATA, TOP_RESEARCHERS_ANALYTICS, CITATION_TREND, TOP_JOURNALS, DOCUMENT_TYPES
-} from '../data/mock/analyticsMock';
 
 const Analytics = () => {
   const [activeTab, setActiveTab] = useState('ringkasan');
   const [selectedPeriod, setSelectedPeriod] = useState('1 Jan 2024 - 31 Mei 2024');
+  const [analyticsData, setAnalyticsData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const summaryStats = ANALYTICS_SUMMARY_STATS;
-  const publicationTrend = PUBLICATION_TREND;
-  const sdgDistribution = SDG_DISTRIBUTION;
-  const topics = ANALYTICS_TOPICS;
-  const comparisonData = COMPARISON_DATA;
-  const topResearchers = TOP_RESEARCHERS_ANALYTICS;
-  const citationTrend = CITATION_TREND;
-  const topJournals = TOP_JOURNALS;
-  const documentTypes = DOCUMENT_TYPES;
+  useEffect(() => {
+    fetch('/api/analytics.php')
+      .then(r => r.json())
+      .then(json => {
+        if (json.status === 'success') setAnalyticsData(json.data);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const summaryStats    = analyticsData?.summary         ?? [];
+  const publicationTrend = analyticsData?.publication_trend ?? [];
+  const sdgDistribution  = analyticsData?.sdg_distribution  ?? [];
+  const topics           = analyticsData?.topics            ?? [];
+  const topResearchers   = analyticsData?.top_researchers   ?? [];
+  const citationTrend    = analyticsData?.citation_trend    ?? [];
+  const topJournals      = analyticsData?.top_journals      ?? [];
+  const documentTypes    = analyticsData?.document_types    ?? [];
+  const comparisonData   = [];
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
