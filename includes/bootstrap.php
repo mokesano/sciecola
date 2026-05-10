@@ -55,14 +55,12 @@ if (is_api_request()) {
      * JALUR B: REQUEST TAMPILAN / FRONTEND (HTML)
      */
      
-    // Memanggil sicola.php yang SEKARANG ada di folder yang sama (__DIR__)
-    $uiFile = __DIR__ . '/sicola.php';
-    
+    $uiFile = __DIR__ . '/sicolaUI.php';
+
     if (file_exists($uiFile)) {
-        // Panggil cangkang HTML yang memuat file hasil kompilasi React
         require_once $uiFile;
     } else {
         http_response_code(404);
-        echo '<h1>404 - Antarmuka Tidak Ditemukan</h1><p>File sicola.php hilang dari direktori includes.</p>';
+        echo '<h1>404 - Antarmuka Tidak Ditemukan</h1><p>File sicolaUI.php hilang dari direktori includes.</p>';
     }
 }
