@@ -274,25 +274,26 @@ const ResearchersList = () => {
 
       {/* Results Count */}
       {!loading && !error && (
-        <div className="mb-6 flex justify-between items-center">
-        <p className="text-gray-600 text-sm">
-          Menampilkan <span className="font-bold text-gray-900">{researchers.length}</span> dari <span className="font-bold text-gray-900">{totalResults}</span> peneliti
-        </p>
-        <div className="flex gap-2">
-          <button className="p-2 border border-gray-200 rounded-lg bg-indigo-50 text-indigo-600">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-            </svg>
-          </button>
-          <button className="p-2 border border-gray-200 rounded-lg text-gray-400 hover:text-gray-600">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-            </svg>
-          </button>
-        </div>
-        </div>
+        <>
+          <div className="mb-6 flex justify-between items-center">
+            <p className="text-gray-600 text-sm">
+              Menampilkan <span className="font-bold text-gray-900">{researchers.length}</span> dari <span className="font-bold text-gray-900">{totalResults}</span> peneliti
+            </p>
+            <div className="flex gap-2">
+              <button className="p-2 border border-gray-200 rounded-lg bg-indigo-50 text-indigo-600">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+              </button>
+              <button className="p-2 border border-gray-200 rounded-lg text-gray-400 hover:text-gray-600">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+              </button>
+            </div>
+          </div>
 
-        {/* Grid Daftar Peneliti */}
+          {/* Grid Daftar Peneliti */}
         {researchers.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {researchers.map((pro) => (
@@ -395,10 +396,10 @@ const ResearchersList = () => {
             >
               Reset Filter
             </button>
-          </div>
-        )}
+            </div>
+          )}
+        </>
       )}
-      </div>
 
       {/* Pagination */}
       {!loading && !error && researchers.length > 0 && (
