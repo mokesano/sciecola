@@ -100,6 +100,7 @@ const ArticleList = () => {
   const [selectedSDG, setSelectedSDG] = useState('all');
   const [selectedYear, setSelectedYear] = useState('all');
   const [sortBy, setSortBy] = useState('relevance');
+  const [viewMode, setViewMode] = useState('list');
 
   // SDG mapping
   const sdgMap = {
@@ -220,12 +221,18 @@ const ArticleList = () => {
           Menampilkan <span className="font-bold text-gray-900">{articles.length}</span> artikel
         </p>
         <div className="flex gap-2">
-          <button className="p-2 border border-gray-200 rounded-lg bg-indigo-50 text-indigo-600">
+          <button
+            onClick={() => setViewMode('list')}
+            className={`p-2 border rounded-lg transition-colors ${viewMode === 'list' ? 'bg-indigo-50 text-indigo-600 border-indigo-200' : 'border-gray-200 text-gray-400 hover:text-gray-600'}`}
+          >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
             </svg>
           </button>
-          <button className="p-2 border border-gray-200 rounded-lg text-gray-400 hover:text-gray-600">
+          <button
+            onClick={() => setViewMode('grid')}
+            className={`p-2 border rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-indigo-50 text-indigo-600 border-indigo-200' : 'border-gray-200 text-gray-400 hover:text-gray-600'}`}
+          >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
             </svg>
@@ -234,14 +241,14 @@ const ArticleList = () => {
       </div>
 
       {/* Grid Daftar Artikel */}
-      <div className="grid grid-cols-1 gap-6">
+      <div className={`${viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid grid-cols-1'} gap-6`}>
         {articles.map((article) => (
           <Link
             key={article.id}
             to={`/doi/${encodeURIComponent(article.id)}`}
             className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-indigo-300 transition-all"
           >
-            <div className="flex flex-col md:flex-row gap-6">
+            <div className={`${viewMode === 'grid' ? 'flex flex-col' : 'flex flex-col md:flex-row'} gap-6`}>
               {/* Thumbnail */}
               <div className="shrink-0">
                 <img 
@@ -290,7 +297,7 @@ const ArticleList = () => {
               </div>
               
               {/* Metrics */}
-              <div className="flex md:flex-col items-center md:items-end justify-between gap-4 md:gap-3 pt-4 md:pt-0 border-t md:border-0 border-gray-50 shrink-0">
+              <div className={`${viewMode === 'grid' ? 'flex flex-row' : 'flex md:flex-col'} items-center ${viewMode === 'grid' ? 'justify-start' : 'md:items-end justify-between'} gap-4 ${viewMode === 'grid' ? '' : 'md:gap-3'} pt-4 ${viewMode === 'grid' ? '' : 'md:pt-0'} border-t ${viewMode === 'grid' ? '' : 'md:border-0'} border-gray-50 shrink-0`}>
                 <div className="text-center md:text-right">
                   <div className="flex items-center md:justify-end gap-1.5 mb-1">
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
