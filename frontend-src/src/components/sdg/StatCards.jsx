@@ -1,5 +1,4 @@
-import React from 'react';
-import { STATS_MOCK } from '../../data/mock/statsMock';
+import React, { useState, useEffect } from 'react';
 
 const SDG_WHEEL_ICON = (
   <svg className="w-14 h-14 overflow-visible" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
@@ -50,16 +49,31 @@ const STAT_ICONS = [
   },
 ];
 
-/**
- * StatCards — global platform statistics bar.
- * Accepts optional `data` prop from API: [{ label, value }]
- * Falls back to STATS_MOCK when omitted or null.
- */
-const StatCards = ({ data }) => {
-  const stats = (data && data.length > 0 ? data : STATS_MOCK).map((s, i) => ({
+const STATS_FALLBACK = [
+  { label: 'Artikel Terklasifikasi', value: '—' },
+  { label: 'Peneliti',               value: '—' },
+  { label: 'Jurnal',                 value: '—' },
+  { label: 'SDGs Terwakili',         value: '—' },
+  { label: 'Total Sitasi',           value: '—' },
+];
+
+const StatCards = ({ data: propData }) => {
+  const [apiData, setApiData] = useState(null);
+
+  useEffect(() => {
+    if (propData) return;
+    fetch('/api/platform_stats.php')
+      .then(r => r.json())
+      .then(json => { if (json.status === 'success') setApiData(json.data); })
+      .catch(() => {});
+  }, [propData]);
+
+  const source = propData || apiData || STATS_FALLBACK;
+  const stats = source.map((s, i) => ({
     ...s,
     ...STAT_ICONS[i] || STAT_ICONS[0],
   }));
+
 
   return (
     <div className="max-w-7xl mx-auto mb-12 relative z-20">

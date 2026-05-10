@@ -4,29 +4,45 @@ import {
   PieChart, Pie, Cell, LineChart, Line, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, AreaChart, Area
 } from 'recharts';
-import { ARTICLES } from '../data/mock/articles';
 
 const ArticleProfile = () => {
   const location = useLocation();
-  const doi = location.pathname.replace('/doi/', '');
+  const doiCode = location.pathname.replace('/doi/', '');
   const navigate = useNavigate();
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('ringkasan');
 
   useEffect(() => {
     setLoading(true);
-    const decodedDoi = decodeURIComponent(doi);
-    const foundArticle = ARTICLES.find(art =>
-      art.doi === decodedDoi || art.id === decodedDoi
-    );
-    if (foundArticle) {
-      setArticle(foundArticle);
-    } else {
-      console.error(`Artikel dengan DOI ${decodedDoi} tidak ditemukan`);
-    }
-    setLoading(false);
-  }, [doi]);
+    setError(null);
+
+    const fetchProfile = async () => {
+      try {
+        const decodedDoi = decodeURIComponent(doiCode);
+        const response = await fetch(`/api/article_profile.php?doi=${encodeURIComponent(decodedDoi)}`);
+
+        if (!response.ok) {
+          throw new Error(response.status === 404 ? 'Artikel tidak ditemukan' : 'Gagal memuat artikel');
+        }
+
+        const data = await response.json();
+        if (data.status === 'success') {
+          setArticle(data);
+        } else {
+          setError(data.message || 'Gagal memuat artikel');
+        }
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching article:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [doiCode]);
 
   // Custom tooltip
   const CustomTooltip = ({ active, payload, label }) => {
@@ -58,7 +74,7 @@ const ArticleProfile = () => {
     );
   }
 
-  if (!article) {
+  if (error || !article) {
     return (
       <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
         <div className="text-center py-20">
@@ -68,13 +84,15 @@ const ArticleProfile = () => {
             </svg>
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Artikel Tidak Ditemukan</h2>
-          <p className="text-gray-600 mb-6">Maaf, artikel dengan DOI {doi} tidak tersedia dalam database kami.</p>
+          <p className="text-gray-600 mb-6">
+            {error || `Maaf, artikel dengan DOI ${decodeURIComponent(doiCode)} tidak tersedia.`}
+          </p>
           <div className="flex gap-4 justify-center">
             <button
-              onClick={() => navigate('/articles')}
+              onClick={() => window.location.reload()}
               className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors"
             >
-              Kembali ke Daftar Artikel
+              Coba Lagi
             </button>
             <button
               onClick={() => navigate('/')}
@@ -98,8 +116,8 @@ const ArticleProfile = () => {
             {/* Cover Image */}
             <div className="shrink-0">
               <img
-                src={article.coverImage}
-                alt={article.title}
+                src={article.coverImage ?? '/assets/img/article-default.svg'}
+                alt={article.title ?? 'Article'}
                 className="w-full sm:w-48 h-64 object-cover rounded-xl shadow-lg"
                 onError={(e) => { e.target.src = '/assets/img/article-default.svg'; }}
               />
@@ -115,25 +133,35 @@ const ArticleProfile = () => {
                   Artikel Terklasifikasi
                 </span>
               </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-4 leading-tight">{article.title}</h1>
+              <h1 className="text-3xl font-bold text-gray-900 mb-4 leading-tight">
+                {article.title ?? 'Untitled Article'}
+              </h1>
 
               {/* Authors */}
               <div className="mb-4">
-                {article.authors.map((author, idx) => (
-                  <div key={author.id} className="flex items-start gap-2 mb-1">
-                    <span className="font-semibold text-gray-900 text-sm">{author.name}</span>
-                    <span className="text-xs text-gray-500">⁰{idx + 1}</span>
-                  </div>
-                ))}
-                {article.authors.map((author, idx) => (
-                  <div key={idx} className="text-xs text-gray-600 ml-4">
-                    <span className="text-gray-400 mr-1">{idx + 1}</span>
-                    {author.affiliation}
-                  </div>
-                ))}
-                <button className="text-indigo-600 text-sm font-medium mt-2 hover:text-indigo-700">
-                  + Lihat semua penulis
-                </button>
+                {article.authors && article.authors.length > 0 ? (
+                  <>
+                    {article.authors.map((author, idx) => (
+                      <div key={author.id ?? idx} className="flex items-start gap-2 mb-1">
+                        <span className="font-semibold text-gray-900 text-sm">{author.name}</span>
+                        <span className="text-xs text-gray-500">⁰{idx + 1}</span>
+                      </div>
+                    ))}
+                    {article.authors.map((author, idx) => (
+                      <div key={`aff-${idx}`} className="text-xs text-gray-600 ml-4">
+                        <span className="text-gray-400 mr-1">{idx + 1}</span>
+                        {author.affiliation ?? 'Unknown Affiliation'}
+                      </div>
+                    ))}
+                    {article.authors.length > 1 && (
+                      <button className="text-indigo-600 text-sm font-medium mt-2 hover:text-indigo-700">
+                        + Lihat semua penulis
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-gray-500 text-sm">No authors information available</p>
+                )}
               </div>
 
               {/* Action Buttons */}
@@ -162,19 +190,19 @@ const ArticleProfile = () => {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
                 <div>
                   <p className="text-gray-500 text-xs mb-1">Jenis Artikel</p>
-                  <p className="font-semibold text-gray-900">{article.articleType}</p>
+                  <p className="font-semibold text-gray-900">{article.articleType ?? 'Research Article'}</p>
                 </div>
                 <div>
                   <p className="text-gray-500 text-xs mb-1">Bahasa</p>
-                  <p className="font-semibold text-gray-900">{article.language}</p>
+                  <p className="font-semibold text-gray-900">{article.language ?? 'English'}</p>
                 </div>
                 <div>
                   <p className="text-gray-500 text-xs mb-1">Diterbitkan</p>
-                  <p className="font-semibold text-gray-900">{article.publishedDate}</p>
+                  <p className="font-semibold text-gray-900">{article.publishedDate ?? 'N/A'}</p>
                 </div>
                 <div>
                   <p className="text-gray-500 text-xs mb-1">Penerbit</p>
-                  <p className="font-semibold text-gray-900 text-xs">{article.publisher}</p>
+                  <p className="font-semibold text-gray-900 text-xs">{article.publisher ?? 'CrossRef'}</p>
                 </div>
               </div>
             </div>
@@ -189,12 +217,12 @@ const ArticleProfile = () => {
                 <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                 </svg>
-                <p className="text-2xl font-bold text-gray-900">{article.citations}</p>
+                <p className="text-2xl font-bold text-gray-900">{article.citations ?? 0}</p>
               </div>
               <p className="text-xs text-gray-600">Sitasi</p>
               <div className="mt-2 h-8">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={article.citationTrend.slice(-5)}>
+                  <LineChart data={(article.citationTrend ?? []).slice(-5)}>
                     <Line type="monotone" dataKey="citations" stroke="#6366f1" strokeWidth={2} dot={false} />
                   </LineChart>
                 </ResponsiveContainer>
@@ -206,12 +234,12 @@ const ArticleProfile = () => {
                 <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
-                <p className="text-2xl font-bold text-gray-900">{article.hIndex}</p>
+                <p className="text-2xl font-bold text-gray-900">{article.hIndex ?? 0}</p>
               </div>
               <p className="text-xs text-gray-600">h-Index</p>
               <div className="mt-2 h-8">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={article.citationTrend.slice(-5)}>
+                  <LineChart data={(article.citationTrend ?? []).slice(-5)}>
                     <Line type="monotone" dataKey="citations" stroke="#8b5cf6" strokeWidth={2} dot={false} />
                   </LineChart>
                 </ResponsiveContainer>
@@ -224,12 +252,12 @@ const ArticleProfile = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                 </svg>
-                <p className="text-2xl font-bold text-gray-900">{article.views.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-gray-900">{(article.views ?? 0).toLocaleString()}</p>
               </div>
               <p className="text-xs text-gray-600">Views</p>
               <div className="mt-2 h-8">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={article.performanceMetrics.slice(-5)}>
+                  <LineChart data={(article.performanceMetrics ?? []).slice(-5)}>
                     <Line type="monotone" dataKey="views" stroke="#3b82f6" strokeWidth={2} dot={false} />
                   </LineChart>
                 </ResponsiveContainer>
@@ -241,12 +269,12 @@ const ArticleProfile = () => {
                 <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
-                <p className="text-2xl font-bold text-gray-900">{article.downloads.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-gray-900">{(article.downloads ?? 0).toLocaleString()}</p>
               </div>
               <p className="text-xs text-gray-600">Downloads</p>
               <div className="mt-2 h-8">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={article.performanceMetrics.slice(-5)}>
+                  <LineChart data={(article.performanceMetrics ?? []).slice(-5)}>
                     <Line type="monotone" dataKey="downloads" stroke="#10b981" strokeWidth={2} dot={false} />
                   </LineChart>
                 </ResponsiveContainer>
@@ -258,7 +286,7 @@ const ArticleProfile = () => {
             <div className="flex justify-between items-center mb-3">
               <div>
                 <p className="text-xs text-gray-500 mb-1">Altmetric Score</p>
-                <p className="text-2xl font-bold text-gray-900">{article.altmetricScore}</p>
+                <p className="text-2xl font-bold text-gray-900">{article.altmetricScore ?? 0}</p>
               </div>
               <div className="w-12 h-12 rounded-full border-4 border-indigo-200 border-t-indigo-600 transform rotate-45"></div>
             </div>
@@ -300,23 +328,28 @@ const ArticleProfile = () => {
 
       {/* Navigation Tabs */}
       <div className="border-b border-gray-200 mb-8">
-        <nav className="flex gap-6 overflow-x-auto">
+        <nav className="flex gap-1 overflow-x-auto">
           {[
-            { id: 'ringkasan', label: 'Ringkasan' },
-            { id: 'sitasi', label: 'Sitasi' },
-            { id: 'metrik', label: 'Metrik' },
-            { id: 'versi', label: 'Versi' },
-            { id: 'terkait', label: 'Artikel Terkait' }
+            { id: 'ringkasan',    label: 'Ringkasan',      icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z' },
+            { id: 'teks-kutipan', label: 'Teks & Kutipan', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+            { id: 'sdgs',         label: 'SDGs',           icon: 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+            { id: 'metrik',       label: 'Metrik',         icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+            { id: 'kolaborasi',   label: 'Kolaborasi',     icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
+            { id: 'versi',        label: 'Versi',          icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
+            { id: 'informasi',    label: 'Informasi',      icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-3 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
+              className={`flex items-center gap-1.5 px-3 py-3 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
                 activeTab === tab.id
                   ? 'border-indigo-600 text-indigo-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={tab.icon} />
+              </svg>
               {tab.label}
             </button>
           ))}
@@ -330,17 +363,21 @@ const ArticleProfile = () => {
             {/* Abstract & Keywords */}
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
               <h3 className="text-lg font-bold text-gray-900 mb-4">Abstrak</h3>
-              <p className="text-gray-600 text-sm leading-relaxed mb-4">{article.abstract}</p>
-              <div className="mt-6">
-                <h4 className="font-semibold text-gray-900 mb-3 text-sm">Kata Kunci</h4>
-                <div className="flex flex-wrap gap-2">
-                  {article.keywords.map((keyword, idx) => (
-                    <span key={idx} className="px-3 py-1.5 bg-gray-50 text-gray-700 rounded-lg text-xs font-medium border border-gray-200 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 transition-colors cursor-pointer">
-                      {keyword}
-                    </span>
-                  ))}
+              <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                {article.abstract ?? 'No abstract available'}
+              </p>
+              {article.keywords && article.keywords.length > 0 && (
+                <div className="mt-6">
+                  <h4 className="font-semibold text-gray-900 mb-3 text-sm">Kata Kunci</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {article.keywords.map((keyword, idx) => (
+                      <span key={idx} className="px-3 py-1.5 bg-gray-50 text-gray-700 rounded-lg text-xs font-medium border border-gray-200 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 transition-colors cursor-pointer">
+                        {keyword}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* SDG Classification */}
@@ -349,31 +386,32 @@ const ArticleProfile = () => {
                 <h3 className="text-lg font-bold text-gray-900">Klasifikasi SDGs</h3>
                 <button className="text-sm text-indigo-600 font-medium hover:text-indigo-700">Lihat detail</button>
               </div>
-              <div className="flex flex-col sm:flex-row items-center gap-6">
-                <ResponsiveContainer width="100%" height={200}>
-                  <PieChart>
-                    <Pie
-                      data={article.sdgDistribution}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={80}
-                      paddingAngle={5}
-                      dataKey="value"
-                    >
-                      {article.sdgDistribution.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="flex-grow space-y-3">
-                  <div className="text-center mb-4">
-                    <p className="text-3xl font-bold text-gray-900">{article.sdgDistribution.length}</p>
-                    <p className="text-xs text-gray-500">SDGs</p>
-                  </div>
-                  {article.sdgDistribution.map((sdg, idx) => (
+              {article.sdgDistribution && article.sdgDistribution.length > 0 ? (
+                <div className="flex flex-col sm:flex-row items-center gap-6">
+                  <ResponsiveContainer width="100%" height={200}>
+                    <PieChart>
+                      <Pie
+                        data={article.sdgDistribution}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={80}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        {article.sdgDistribution.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="flex-grow space-y-3">
+                    <div className="text-center mb-4">
+                      <p className="text-3xl font-bold text-gray-900">{article.sdgDistribution.length}</p>
+                      <p className="text-xs text-gray-500">SDGs</p>
+                    </div>
+                    {article.sdgDistribution.map((sdg, idx) => (
                     <div key={idx} className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: sdg.color }}>
                         {sdg.sdg}
@@ -384,8 +422,11 @@ const ArticleProfile = () => {
                       </div>
                     </div>
                   ))}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <p className="text-gray-500 text-sm">No SDG classification available</p>
+              )}
             </div>
           </div>
 
@@ -396,26 +437,30 @@ const ArticleProfile = () => {
               <h3 className="text-lg font-bold text-gray-900 mb-4">Jurnal & Penerbit</h3>
               <div className="flex gap-4 mb-4">
                 <img
-                  src={article.coverImage}
-                  alt={article.journal.name}
+                  src={article.coverImage ?? '/assets/img/journal-default.svg'}
+                  alt={article.journal?.name ?? 'Journal'}
                   className="w-20 h-24 object-cover rounded-lg"
                   onError={(e) => { e.target.src = '/assets/img/journal-default.svg'; }}
                 />
                 <div>
-                  <h4 className="font-bold text-gray-900 text-sm mb-1">{article.journal.name}</h4>
-                  <p className="text-xs text-gray-600 mb-1">EISSN: {article.journal.eissn}</p>
-                  <p className="text-xs text-gray-600 mb-1">PISSN: {article.journal.pissn}</p>
-                  <p className="text-xs text-gray-600 mb-1">Penerbit: {article.publisher}</p>
-                  <p className="text-xs text-gray-600">Negara: {article.journal.country}</p>
+                  <h4 className="font-bold text-gray-900 text-sm mb-1">
+                    {article.journal?.name ?? 'Unknown Journal'}
+                  </h4>
+                  {article.journal?.issn && (
+                    <p className="text-xs text-gray-600 mb-1">ISSN: {article.journal.issn}</p>
+                  )}
+                  <p className="text-xs text-gray-600 mb-1">Penerbit: {article.publisher ?? 'CrossRef'}</p>
                 </div>
               </div>
-              <div className="pt-4 border-t border-gray-100">
-                <p className="text-xs text-gray-600">
-                  <span className="font-semibold">Quartile:</span> {article.journal.quartile}
-                </p>
-              </div>
+              {article.journal?.quartile && (
+                <div className="pt-4 border-t border-gray-100">
+                  <p className="text-xs text-gray-600">
+                    <span className="font-semibold">Quartile:</span> {article.journal.quartile}
+                  </p>
+                </div>
+              )}
               <Link
-                to="/journals/jess-2024"
+                to="/journals"
                 className="mt-4 w-full py-2.5 border-2 border-indigo-600 text-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition-colors text-sm text-center block"
               >
                 Lihat Profil Jurnal
@@ -501,18 +546,46 @@ const ArticleProfile = () => {
       )}
 
       {/* Tab: Sitasi */}
-      {activeTab === 'sitasi' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Citation Trend Chart */}
+      {/* Tab: Teks & Kutipan */}
+      {activeTab === 'teks-kutipan' && (
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Abstrak Lengkap</h3>
+            <p className="text-gray-700 leading-relaxed text-sm">{article.abstract}</p>
+            <div className="mt-6 pt-4 border-t border-gray-100">
+              <h4 className="font-semibold text-gray-900 mb-3">Kata Kunci</h4>
+              <div className="flex flex-wrap gap-2">
+                {article.keywords.map((kw, i) => (
+                  <span key={i} className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm">{kw}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-bold text-gray-900">Tren Sitasi per Tahun</h3>
-              <select className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                <option>Semua Tahun</option>
-                <option>5 Tahun Terakhir</option>
-              </select>
+              <h3 className="text-lg font-bold text-gray-900">Kutipan Teratas</h3>
+              <span className="text-sm text-gray-500">{article.citations} total sitasi</span>
             </div>
-            <ResponsiveContainer width="100%" height={280}>
+            <div className="space-y-4">
+              {article.topCitations.map((citation, idx) => (
+                <div key={idx} className="flex gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors border border-gray-100">
+                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center shrink-0">
+                    <span className="text-indigo-700 font-bold text-sm">#{idx + 1}</span>
+                  </div>
+                  <div className="flex-grow">
+                    <h4 className="font-semibold text-gray-900 text-sm mb-1">{citation.title}</h4>
+                    <p className="text-xs text-gray-500 mb-2">{citation.journal}</p>
+                    <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded text-xs font-semibold">{citation.citations} Sitasi</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <h3 className="text-lg font-bold text-gray-900 mb-6">Tren Sitasi per Tahun</h3>
+            <ResponsiveContainer width="100%" height={260}>
               <LineChart data={article.citationTrend}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis dataKey="year" stroke="#6b7280" fontSize={12} />
@@ -521,42 +594,87 @@ const ArticleProfile = () => {
                 <Line type="monotone" dataKey="citations" stroke="#6366f1" strokeWidth={3} dot={{ fill: '#6366f1', r: 4 }} name="Sitasi" />
               </LineChart>
             </ResponsiveContainer>
-            <div className="mt-4 grid grid-cols-3 gap-3 text-center">
-              <div className="bg-indigo-50 rounded-xl p-3">
-                <p className="text-xl font-bold text-indigo-700">{article.citations}</p>
-                <p className="text-xs text-gray-600">Total Sitasi</p>
-              </div>
-              <div className="bg-purple-50 rounded-xl p-3">
-                <p className="text-xl font-bold text-purple-700">{article.hIndex}</p>
-                <p className="text-xs text-gray-600">h-Index</p>
-              </div>
-              <div className="bg-green-50 rounded-xl p-3">
-                <p className="text-xl font-bold text-green-700">{article.citationTrend.length}</p>
-                <p className="text-xs text-gray-600">Tahun Data</p>
+          </div>
+        </div>
+      )}
+
+      {/* Tab: SDGs */}
+      {activeTab === 'sdgs' && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <h3 className="text-lg font-bold text-gray-900 mb-6">Klasifikasi SDGs</h3>
+              <ResponsiveContainer width="100%" height={260}>
+                <PieChart>
+                  <Pie data={article.sdgDistribution} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={3} dataKey="value">
+                    {article.sdgDistribution.map((entry, index) => (
+                      <Cell key={index} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => [`${value}%`, 'Proporsi']} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <h3 className="text-lg font-bold text-gray-900 mb-6">Detail Kontribusi SDG</h3>
+              <div className="space-y-4">
+                {article.sdgDistribution.map((sdg, idx) => (
+                  <div key={idx}>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full shrink-0" style={{ background: sdg.color }} />
+                        <span className="text-sm font-medium text-gray-800">SDG {sdg.sdg} — {sdg.name}</span>
+                      </div>
+                      <span className="text-sm font-bold text-gray-700">{sdg.value}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-gray-100 rounded-full">
+                      <div className="h-2 rounded-full transition-all" style={{ width: `${sdg.value}%`, background: sdg.color }} />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
+          <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6">
+            <h3 className="font-bold text-indigo-900 mb-2">Tentang Klasifikasi Ini</h3>
+            <p className="text-sm text-indigo-700 leading-relaxed">Klasifikasi SDG dilakukan menggunakan model AI Wizdam yang menganalisis judul, abstrak, dan kata kunci artikel. Skor mencerminkan relevansi konten terhadap masing-masing tujuan pembangunan berkelanjutan PBB.</p>
+          </div>
+        </div>
+      )}
 
-          {/* Top Citations List */}
+      {/* Tab: Kolaborasi */}
+      {activeTab === 'kolaborasi' && (
+        <div className="space-y-6">
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-bold text-gray-900">Kutipan Teratas</h3>
-              <button className="text-sm text-indigo-600 font-medium hover:text-indigo-700">Lihat semua</button>
-            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-6">Penulis & Afiliasi</h3>
             <div className="space-y-4">
-              {article.topCitations.map((citation, idx) => (
-                <div key={idx} className="flex gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors border border-gray-100">
-                  <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center shrink-0">
-                    <span className="text-indigo-700 font-bold text-sm">#{idx + 1}</span>
+              {article.authors.map((author, idx) => (
+                <div key={idx} className="flex items-start gap-4 p-4 rounded-xl border border-gray-100 hover:bg-gray-50">
+                  <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center shrink-0">
+                    <span className="text-indigo-700 font-bold text-sm">{idx + 1}</span>
                   </div>
-                  <div className="flex-grow">
-                    <h4 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{citation.title}</h4>
-                    <p className="text-xs text-gray-500 mb-2">{citation.journal}</p>
-                    <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-xs font-semibold">
-                      {citation.citations} Sitasi
-                    </span>
+                  <div>
+                    <p className="font-semibold text-gray-900">{author.name}</p>
+                    <p className="text-sm text-gray-500 mt-0.5">{author.affiliation}</p>
                   </div>
                 </div>
+              ))}
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <h3 className="text-lg font-bold text-gray-900 mb-6">Artikel Terkait</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {article.relatedArticles.map((related, idx) => (
+                <Link key={idx} to={`/doi/${encodeURIComponent(related.doi)}`}
+                  className="block p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:shadow-md transition-all group">
+                  <div className="flex gap-2 mb-2">
+                    {related.sdgs.map(s => (
+                      <span key={s} className="px-2 py-0.5 bg-indigo-50 text-indigo-700 text-xs font-bold rounded">SDG {s}</span>
+                    ))}
+                  </div>
+                  <h4 className="font-semibold text-gray-900 text-sm group-hover:text-indigo-600 transition-colors line-clamp-2">{related.title}</h4>
+                  <p className="text-xs text-gray-500 mt-1">{related.journal}</p>
+                </Link>
               ))}
             </div>
           </div>
@@ -664,53 +782,56 @@ const ArticleProfile = () => {
         </div>
       )}
 
-      {/* Tab: Artikel Terkait */}
-      {activeTab === 'terkait' && (
-        <div>
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Artikel Terkait ({article.relatedArticles.length})</h2>
-            <Link to="/articles" className="text-sm text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
-              Jelajahi semua artikel
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
+      {/* Tab: Informasi */}
+      {activeTab === 'informasi' && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <h3 className="text-lg font-bold text-gray-900 mb-5">Informasi Artikel</h3>
+            <dl className="space-y-3 text-sm">
+              {[
+                { label: 'DOI', value: article.doi },
+                { label: 'EISSN', value: article.journal.eissn },
+                { label: 'PISSN', value: article.journal.pissn },
+                { label: 'Volume', value: article.journal.volume },
+                { label: 'Issue', value: article.journal.issue },
+                { label: 'Halaman', value: article.journal.pages },
+                { label: 'Tipe Artikel', value: article.articleType },
+                { label: 'Bahasa', value: article.language },
+                { label: 'Diterbitkan', value: article.publishedDate },
+                { label: 'Penerbit', value: article.publisher },
+              ].map(({ label, value }) => (
+                <div key={label} className="flex gap-4 py-2 border-b border-gray-50 last:border-0">
+                  <dt className="w-28 shrink-0 text-gray-500">{label}</dt>
+                  <dd className="font-medium text-gray-800">{value}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {article.relatedArticles.map((related, idx) => (
-              <Link
-                key={idx}
-                to={`/doi/${related.doi}`}
-                className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all block"
-              >
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center shrink-0">
-                    <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                  </div>
-                  <div className="flex-grow min-w-0">
-                    <h4 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2 hover:text-indigo-700 transition-colors">{related.title}</h4>
-                    <p className="text-xs text-gray-500 mb-3">{related.journal}</p>
-                    <div className="flex gap-1 flex-wrap">
-                      {related.sdgs.map((sdg) => (
-                        <span key={sdg} className="px-2 py-0.5 bg-green-50 text-green-700 rounded text-[10px] font-bold">
-                          SDG {sdg}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
+          <div className="space-y-6">
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <h3 className="text-lg font-bold text-gray-900 mb-5">Jurnal & Penerbit</h3>
+              <Link to={`/journals/${article.journal.name.toLowerCase().replace(/\s+/g,'-')}`}
+                className="flex items-start gap-4 p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:shadow-md transition-all group">
+                <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center shrink-0">
+                  <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-900 group-hover:text-indigo-600 text-sm">{article.journal.name}</p>
+                  <p className="text-xs text-gray-500 mt-1">EISSN: {article.journal.eissn} | PISSN: {article.journal.pissn}</p>
+                  <p className="text-xs text-gray-500">{article.publisher} · {article.journal.country}</p>
+                  <span className="inline-block mt-1.5 px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-xs font-medium">{article.journal.quartile}</span>
                 </div>
               </Link>
-            ))}
-          </div>
-          <div className="mt-8 text-center">
-            <Link to="/articles" className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors">
-              Lihat semua artikel
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
+            </div>
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Hak Cipta & Lisensi</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex gap-3"><span className="text-gray-500 w-24 shrink-0">Hak Cipta</span><span className="font-medium text-gray-800">© {new Date().getFullYear()} Penulis</span></div>
+                <div className="flex gap-3"><span className="text-gray-500 w-24 shrink-0">Lisensi</span><a href="https://creativecommons.org/licenses/by/4.0/" className="font-medium text-indigo-600 hover:underline">CC BY 4.0</a></div>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -53,6 +53,18 @@ const Admin = () => {
     maxApiCallsPerHour: 60, sessionTimeoutMinutes: 120
   });
 
+  // State: Crawl Queue
+  const [crawlStatus, setCrawlStatus] = useState(null);
+  const [crawlQueue, setCrawlQueue] = useState([]);
+  const [crawlInput, setCrawlInput] = useState('');
+  const [crawlLog, setCrawlLog] = useState([]);
+  const [crawlLoading, setCrawlLoading] = useState(false);
+
+  // State: Cache Migration
+  const [cacheStatus, setCacheStatus] = useState(null);
+  const [cacheLoading, setCacheLoading] = useState(false);
+  const [cacheLog, setCacheLog] = useState([]);
+
   // Toast Handler
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
@@ -82,6 +94,15 @@ const Admin = () => {
     } else if (action === 'promoteToCoAdmin') {
       setUsers(prev => prev.map(u => u.id === target ? { ...u, role: 'co-admin' } : u));
       showToast('Pengguna dipromosikan menjadi Co-Admin');
+    } else if (action === 'clearCache') {
+      try {
+        const r = await fetch('/api/cache_to_db.php?action=clear_cache', { method: 'POST' });
+        const d = await r.json();
+        setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: d.message || 'Cache file dihapus', type: d.status === 'ok' ? 'success' : 'error' }, ...prev.slice(0, 19)]);
+        showToast(d.message || 'Cache dibersihkan');
+      } catch {
+        setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal membersihkan cache', type: 'error' }, ...prev.slice(0, 19)]);
+      }
     }
     
     setConfirmModal({ show: false, action: null, target: null });
@@ -111,6 +132,8 @@ const Admin = () => {
     { id: 'content-moderation', label: 'Konten', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
     { id: 'ui-customization', label: 'Tampilan', icon: 'M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7.343 11L5.686 9.343a2 2 0 010-2.828l2.829-2.829a2 2 0 012.828 0l8.486 8.485' },
     { id: 'system', label: 'Sistem', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z' },
+    { id: 'crawl-queue', label: 'Crawl Queue', icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15' },
+    { id: 'cache-migration', label: 'Cache & DB', icon: 'M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4' },
     { id: 'audit', label: 'Audit Log', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2' }
   ];
 
@@ -399,6 +422,238 @@ const Admin = () => {
           </div>
         );
 
+      case 'crawl-queue':
+        return (
+          <div className="space-y-6">
+            <SectionHeader
+              title="Crawl Queue"
+              description="Kelola antrian pengambilan data ORCID dan DOI dari API eksternal."
+              action={
+                <button
+                  onClick={async () => {
+                    setCrawlLoading(true);
+                    try {
+                      const r = await fetch('/api/crawl_queue.php?action=status');
+                      const d = await r.json();
+                      setCrawlStatus(d);
+                      const r2 = await fetch('/api/crawl_queue.php?action=list');
+                      const d2 = await r2.json();
+                      setCrawlQueue(d2.jobs || []);
+                      setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Status antrian diperbarui', type: 'info' }, ...prev.slice(0, 19)]);
+                    } catch {
+                      setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal terhubung ke API crawl', type: 'error' }, ...prev.slice(0, 19)]);
+                    }
+                    setCrawlLoading(false);
+                  }}
+                  disabled={crawlLoading}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2"
+                >
+                  {crawlLoading ? <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg> : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>}
+                  Refresh Status
+                </button>
+              }
+            />
+            {crawlStatus && (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {[
+                  { label: 'Total', value: crawlStatus.total ?? '—', color: 'bg-gray-50 text-gray-700' },
+                  { label: 'Pending', value: crawlStatus.pending ?? '—', color: 'bg-amber-50 text-amber-700' },
+                  { label: 'Selesai', value: crawlStatus.done ?? '—', color: 'bg-green-50 text-green-700' },
+                  { label: 'Gagal', value: crawlStatus.failed ?? '—', color: 'bg-red-50 text-red-700' },
+                ].map((s, i) => (
+                  <div key={i} className={`p-4 rounded-xl border ${s.color} border-current/20`}>
+                    <p className="text-2xl font-bold">{s.value}</p>
+                    <p className="text-sm mt-1">{s.label}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
+              <h3 className="font-bold text-gray-900">Tambah ke Antrian</h3>
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  value={crawlInput}
+                  onChange={e => setCrawlInput(e.target.value)}
+                  placeholder="ORCID (0000-0000-0000-0000) atau DOI (10.xxx/...)"
+                  className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono"
+                />
+                <button
+                  onClick={async () => {
+                    if (!crawlInput.trim()) return;
+                    setCrawlLoading(true);
+                    try {
+                      const id = crawlInput.trim();
+                      const inferredType = /^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/i.test(id) ? 'orcid' : 'doi';
+                      const r = await fetch('/api/crawl_queue.php?action=enqueue', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ type: inferredType, identifier: id }),
+                      });
+                      const d = await r.json();
+                      setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: d.message || `Ditambahkan: ${crawlInput}`, type: d.status === 'ok' ? 'success' : 'error' }, ...prev.slice(0, 19)]);
+                      if (d.status === 'ok') setCrawlInput('');
+                    } catch {
+                      setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal menambahkan ke antrian', type: 'error' }, ...prev.slice(0, 19)]);
+                    }
+                    setCrawlLoading(false);
+                  }}
+                  disabled={crawlLoading || !crawlInput.trim()}
+                  className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors whitespace-nowrap"
+                >
+                  Tambah
+                </button>
+              </div>
+              <button
+                onClick={async () => {
+                  setCrawlLoading(true);
+                  try {
+                    const r = await fetch('/api/crawl_queue.php?action=process', { method: 'POST' });
+                    const d = await r.json();
+                    setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: d.message || 'Proses antrian dijalankan', type: d.status === 'ok' ? 'success' : 'error' }, ...prev.slice(0, 19)]);
+                    showToast(d.message || 'Crawl dijalankan');
+                  } catch {
+                    setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal menjalankan proses crawl', type: 'error' }, ...prev.slice(0, 19)]);
+                  }
+                  setCrawlLoading(false);
+                }}
+                disabled={crawlLoading}
+                className="w-full py-2.5 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-60 transition-colors flex items-center justify-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                Proses Antrian Sekarang
+              </button>
+            </div>
+            {crawlQueue.length > 0 && (
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div className="px-6 py-4 border-b border-gray-100"><h3 className="font-bold text-gray-900">Item dalam Antrian</h3></div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50 text-gray-600">
+                      <tr><th className="px-4 py-3 text-left font-medium">Identifier</th><th className="px-4 py-3 text-left font-medium">Tipe</th><th className="px-4 py-3 text-left font-medium">Status</th><th className="px-4 py-3 text-left font-medium">Ditambahkan</th></tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {crawlQueue.map((item, idx) => (
+                        <tr key={idx} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 font-mono text-xs text-gray-700">{item.identifier}</td>
+                          <td className="px-4 py-3"><span className="px-2 py-1 rounded text-xs font-medium bg-indigo-100 text-indigo-700">{item.type || 'unknown'}</span></td>
+                          <td className="px-4 py-3"><span className={`px-2 py-1 rounded-full text-xs font-medium ${item.status === 'done' ? 'bg-green-100 text-green-700' : item.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>{item.status}</span></td>
+                          <td className="px-4 py-3 text-gray-500 text-xs">{item.created_at || '—'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+            {crawlLog.length > 0 && (
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <h3 className="font-bold text-gray-900 mb-3">Log Aktivitas</h3>
+                <div className="space-y-2 max-h-48 overflow-y-auto font-mono text-xs">
+                  {crawlLog.map((entry, idx) => (
+                    <div key={idx} className={`flex gap-3 ${entry.type === 'error' ? 'text-red-600' : entry.type === 'success' ? 'text-green-600' : 'text-gray-600'}`}>
+                      <span className="text-gray-400 shrink-0">[{entry.time}]</span>
+                      <span>{entry.msg}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
+      case 'cache-migration':
+        return (
+          <div className="space-y-6">
+            <SectionHeader
+              title="Cache & Migrasi Database"
+              description="Migrasikan cache file legacy ke database dan kelola status cache aktif."
+              action={
+                <button
+                  onClick={async () => {
+                    setCacheLoading(true);
+                    try {
+                      const r = await fetch('/api/cache_to_db.php?action=status');
+                      const d = await r.json();
+                      setCacheStatus(d);
+                      setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Status cache diperbarui', type: 'info' }, ...prev.slice(0, 19)]);
+                    } catch {
+                      setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal terhubung ke API cache', type: 'error' }, ...prev.slice(0, 19)]);
+                    }
+                    setCacheLoading(false);
+                  }}
+                  disabled={cacheLoading}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2"
+                >
+                  {cacheLoading ? <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg> : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" /></svg>}
+                  Cek Status Cache
+                </button>
+              }
+            />
+            {cacheStatus && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {[
+                  { label: 'File Cache Legacy', value: cacheStatus.file_cache_count ?? '—', color: 'bg-amber-50 text-amber-700' },
+                  { label: 'Sudah Migrasi (DB)', value: cacheStatus.db_cache_count ?? '—', color: 'bg-green-50 text-green-700' },
+                  { label: 'DB Tersedia', value: cacheStatus.db_available ? 'Ya' : 'Tidak', color: cacheStatus.db_available ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700' },
+                ].map((s, i) => (
+                  <div key={i} className={`p-4 rounded-xl border ${s.color} border-current/20`}>
+                    <p className="text-2xl font-bold">{s.value}</p>
+                    <p className="text-sm mt-1">{s.label}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
+              <h3 className="font-bold text-gray-900">Aksi Migrasi</h3>
+              <p className="text-sm text-gray-600">Migrasikan semua cache file legacy ke tabel <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs font-mono">api_cache</code> di database. Proses ini tidak menghapus file asli.</p>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  onClick={async () => {
+                    setCacheLoading(true);
+                    try {
+                      const r = await fetch('/api/cache_to_db.php?action=migrate', { method: 'POST' });
+                      const d = await r.json();
+                      setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: d.message || `Migrasi: ${d.migrated ?? 0} item berhasil`, type: d.status === 'ok' ? 'success' : 'error' }, ...prev.slice(0, 19)]);
+                      setCacheStatus(prev => prev ? { ...prev, db_cache_count: (prev.db_cache_count || 0) + (d.migrated || 0) } : prev);
+                      showToast(d.message || 'Migrasi selesai');
+                    } catch {
+                      setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal menjalankan migrasi', type: 'error' }, ...prev.slice(0, 19)]);
+                    }
+                    setCacheLoading(false);
+                  }}
+                  disabled={cacheLoading}
+                  className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+                  Jalankan Migrasi
+                </button>
+                <button
+                  onClick={() => confirmAction('clearCache', null)}
+                  disabled={cacheLoading}
+                  className="px-5 py-2.5 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-60 transition-colors flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                  Bersihkan Cache File
+                </button>
+              </div>
+            </div>
+            {cacheLog.length > 0 && (
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+                <h3 className="font-bold text-gray-900 mb-3">Log Migrasi</h3>
+                <div className="space-y-2 max-h-48 overflow-y-auto font-mono text-xs">
+                  {cacheLog.map((entry, idx) => (
+                    <div key={idx} className={`flex gap-3 ${entry.type === 'error' ? 'text-red-600' : entry.type === 'success' ? 'text-green-600' : 'text-gray-600'}`}>
+                      <span className="text-gray-400 shrink-0">[{entry.time}]</span>
+                      <span>{entry.msg}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+
       default: return null;
     }
   };
@@ -411,6 +666,7 @@ const Admin = () => {
       suspendUser: { title: 'Tangguhkan Akun?', message: 'Pengguna tidak dapat login hingga ditinjau.', confirmText: 'Ya, Tangguhkan', confirmClass: 'bg-amber-600' },
       deleteUser: { title: 'Hapus Akun Permanen?', message: 'SEMUA data akan dihapus permanen. TIDAK DAPAT DIBATALKAN.', confirmText: 'Ya, Hapus', confirmClass: 'bg-red-700' },
       promoteToCoAdmin: { title: 'Promosikan ke Co-Admin?', message: 'Pengguna akan memiliki akses administratif terbatas.', confirmText: 'Ya, Promosikan', confirmClass: 'bg-indigo-600' },
+      clearCache: { title: 'Bersihkan Cache File?', message: 'Semua file cache legacy akan dihapus. Pastikan migrasi ke DB sudah selesai.', confirmText: 'Ya, Bersihkan', confirmClass: 'bg-red-600' },
     }[confirmModal.action] || { title: 'Konfirmasi', message: 'Lanjutkan?', confirmText: 'Ya', confirmClass: 'bg-indigo-600' };
     return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">

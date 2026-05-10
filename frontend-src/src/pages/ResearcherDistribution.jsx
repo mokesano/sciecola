@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
@@ -6,13 +6,25 @@ import 'leaflet/dist/leaflet.css';
 
 const ResearcherDistribution = () => {
   const [activeTab, setActiveTab] = useState('researcherMap');
-  // State
   const [mapView, setMapView] = useState('province');
   const [selectedField, setSelectedField] = useState('all');
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [loading, setLoading] = useState(false);
-  
-  // Data untuk peta peneliti
+  const [totalResearchers, setTotalResearchers] = useState(null);
+
+  useEffect(() => {
+    fetch('/api/platform_stats.php')
+      .then(r => r.json())
+      .then(json => {
+        if (json.status === 'success') {
+          const researcherStat = json.data.find(s => s.label === 'Peneliti');
+          if (researcherStat) setTotalResearchers(researcherStat.value);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Geographic data with static coordinates (province boundaries are geographic facts)
   const provinceResearcherData = [
     { province: 'DKI Jakarta', researchers: 2584, avgImpact: 82.4, institutions: 58, topField: 'Teknologi Informasi', lat: -6.2, lng: 106.8 },
     { province: 'Jawa Barat', researchers: 2150, avgImpact: 79.2, institutions: 72, topField: 'Teknik', lat: -6.9, lng: 107.6 },

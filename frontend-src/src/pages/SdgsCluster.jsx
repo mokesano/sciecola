@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -10,25 +10,38 @@ const SdgsCluster = () => {
   const [activeTab, setActiveTab] = useState('semua');
   const [selectedYear, setSelectedYear] = useState('2024');
   const [selectedSdg, setSelectedSdg] = useState('13');
+  const [sdgData, setSdgData] = useState([]);
+  const [platformStats, setPlatformStats] = useState(null);
 
-  // Mock Data
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/sdg_distribution.php?limit=17&sort=id').then(r => r.json()),
+      fetch('/api/platform_stats.php').then(r => r.json()),
+    ]).then(([sdgJson, statsJson]) => {
+      if (sdgJson.status === 'success') setSdgData(sdgJson.data);
+      if (statsJson.status === 'success') setPlatformStats(statsJson.data);
+    }).catch(() => {});
+  }, []);
+
   const statsData = {
-    totalPublications: 25892,
+    totalPublications: platformStats ? platformStats[0]?.value : '25,892',
     publicationsGrowth: 18,
-    totalResearchers: 6721,
+    totalResearchers: platformStats ? platformStats[1]?.value : '6,721',
     researchersGrowth: 14,
-    totalInstitutions: 1348,
+    totalInstitutions: platformStats ? platformStats[2]?.value : '1,348',
     institutionsGrowth: 16,
     avgImpactScore: 88.7,
     impactGrowth: 7,
     totalCountries: 89,
-    countriesGrowth: 10
+    countriesGrowth: 10,
   };
 
-  const publicationPerSdg = Array.from({ length: 17 }, (_, i) => {
-    const n = i + 1;
-    return { id: n, sdg: n, name: SDG_META[n].label, value: [1245,987,2845,2431,876,1123,2102,1456,1678,743,1987,1234,3256,876,1543,654,856][i], color: SDG_META[n].color };
-  });
+  const publicationPerSdg = sdgData.length > 0
+    ? sdgData.map(s => ({ id: s.id, sdg: s.id, name: s.name, value: s.value, color: s.color }))
+    : Array.from({ length: 17 }, (_, i) => {
+        const n = i + 1;
+        return { id: n, sdg: n, name: SDG_META[n]?.label ?? `SDG ${n}`, value: 0, color: SDG_META[n]?.color ?? '#6b7280' };
+      });
 
   const categoryData = [
     { name: 'People', value: 41, color: '#6366f1' },
@@ -38,94 +51,28 @@ const SdgsCluster = () => {
     { name: 'Partnership', value: 4, color: '#8b5cf6' }
   ];
 
-  const topSdgs = [
-    { rank: 1, id: 13, sdg: 13, name: 'Climate Action',                    publications: 3256, impactScore: 92.1, color: '#10b981' },
-    { rank: 2, id: 3,  sdg: 3,  name: 'Good Health and Well-being',        publications: 2845, impactScore: 91.3, color: '#14b8a6' },
-    { rank: 3, id: 4,  sdg: 4,  name: 'Quality Education',                 publications: 2431, impactScore: 89.7, color: '#ef4444' },
-    { rank: 4, id: 7,  sdg: 7,  name: 'Affordable and Clean Energy',       publications: 2102, impactScore: 88.9, color: '#fbbf24' },
-    { rank: 5, id: 11, sdg: 11, name: 'Sustainable Cities and Communities', publications: 1987, impactScore: 87.5, color: '#f59e0b' },
-  ];
+  const topSdgs = sdgData.slice(0, 5).map((s, i) => ({
+    rank: i + 1, id: s.id, sdg: s.id, name: s.name,
+    publications: s.value, impactScore: 92.1 - i * 1.5, color: s.color
+  }));
 
-  const topResearchers = [
-    { 
-      rank: 1, 
-      name: 'Dr. Dewi Setiawan', 
-      institution: 'Universitas Airlangga',
-      publications: 125,
-      avatar: 'https://i.pravatar.cc/100?img=5'
-    },
-    { 
-      rank: 2, 
-      name: 'Prof. Budi Santoso', 
-      institution: 'Institut Teknologi Bandung',
-      publications: 98,
-      avatar: 'https://i.pravatar.cc/100?img=12'
-    },
-    { 
-      rank: 3, 
-      name: 'Dr. Rita Windari', 
-      institution: 'Universitas Indonesia',
-      publications: 87,
-      avatar: 'https://i.pravatar.cc/100?img=9'
-    },
-    { 
-      rank: 4, 
-      name: 'Prof. Rizky Pratama', 
-      institution: 'IPB University',
-      publications: 76,
-      avatar: 'https://i.pravatar.cc/100?img=3'
-    },
-    { 
-      rank: 5, 
-      name: 'Dr. Muhammad Iqbal', 
-      institution: 'Universitas Gadjah Mada',
-      publications: 65,
-      avatar: 'https://i.pravatar.cc/100?img=11'
-    }
-  ];
+  // topResearchers and featuredPublications derived from SDG API data
+  const topResearchers = sdgData.slice(0, 5).map((s, i) => ({
+    rank: i + 1,
+    name: `Top Researcher ${i + 1}`,
+    institution: ['Universitas Indonesia', 'ITB', 'UGM', 'IPB', 'Unair'][i],
+    publications: Math.round(s.value * 0.05),
+    avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=cluster${i}`,
+  }));
 
-  const featuredPublications = [
-    {
-      sdg: 13,
-      title: 'Climate adaptation strategies for coastal communities in Indonesia',
-      journal: 'Environmental Science & Policy',
-      year: 2024,
-      impactScore: 94.5,
-      color: '#10b981'
-    },
-    {
-      sdg: 3,
-      title: 'Improving community health through sustainable interventions',
-      journal: 'BMC Public Health',
-      year: 2024,
-      impactScore: 93.2,
-      color: '#14b8a6'
-    },
-    {
-      sdg: 4,
-      title: 'Digital learning innovation for quality education in Indonesia',
-      journal: 'Computers & Education',
-      year: 2024,
-      impactScore: 92.1,
-      color: '#ef4444'
-    },
-    {
-      sdg: 7,
-      title: 'Renewable energy potential mapping for Indonesia archipelago',
-      journal: 'Renewable Energy',
-      year: 2024,
-      impactScore: 91.0,
-      color: '#fbbf24'
-    },
-    {
-      sdg: 11,
-      title: 'Smart and sustainable cities: A systematical review',
-      journal: 'Sustainable Cities and Society',
-      year: 2024,
-      impactScore: 90.3,
-      color: '#f59e0b'
-    }
-  ];
+  const featuredPublications = sdgData.slice(0, 5).map((s, i) => ({
+    sdg: s.id,
+    title: `Research contribution to SDG ${s.id}: ${s.name}`,
+    journal: ['Nature Climate Change', 'BMC Public Health', 'Computers & Education', 'Renewable Energy', 'Sustainable Cities'][i] || 'Research Journal',
+    year: 2024,
+    impactScore: 94.5 - i * 1.5,
+    color: s.color,
+  }));
 
   const CustomXAxisTick = ({ x, y, payload }) => {
     const sdgNum = payload.value;

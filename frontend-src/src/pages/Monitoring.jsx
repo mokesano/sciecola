@@ -1,19 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
+import { MapContainer, CircleMarker, Popup, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-
-// Fix untuk default icon Leaflet yang hilang di React
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
 
 const Monitoring = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState('24h');
   const [activeTab, setActiveTab] = useState('overview');
+
+  // Add pulse animation CSS — uses SVG stroke animation (box-shadow doesn't work on SVG paths)
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes pulse-stroke {
+        0%   { stroke-width: 1.5; stroke-opacity: 0.9; }
+        50%  { stroke-width: 10;  stroke-opacity: 0;   }
+        100% { stroke-width: 1.5; stroke-opacity: 0.9; }
+      }
+      .leaflet-pulse-marker {
+        animation: pulse-stroke 2s ease-out infinite;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => style.remove();
+  }, []);
 
   // World-wide geographic distribution data
   const [geoData] = useState([
@@ -156,8 +164,7 @@ const Monitoring = () => {
       <CircleMarker
         center={position}
         radius={radius}
-        pathOptions={{ color: '#ef4444', fillColor: '#ef4444', fillOpacity: 0.55, weight: 1.5 }}
-        className="leaflet-pulse-marker"
+        pathOptions={{ color: '#ef4444', fillColor: '#ef4444', fillOpacity: 0.55, weight: 1.5, className: 'leaflet-pulse-marker' }}
       >
         <Popup>
           <div className="p-1.5">
@@ -286,10 +293,11 @@ const Monitoring = () => {
               keyboard={false}
               attributionControl={false}
             >
-              {/* Monochrome tile layer (CartoDB Positron – light grey) */}
               <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
-                url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
+                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+                subdomains="abcd"
+                maxZoom={19}
               />
               {geoData.map((location) => (
                 <PulseMarker

@@ -1,28 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   LineChart, Line, AreaChart, Area, PieChart, Pie, Cell, ComposedChart
 } from 'recharts';
 
-import {
-  IMPACT_TRENDS, FIELD_TRENDS, COLLABORATION_TRENDS, TOP_COLLABORATOR_COUNTRIES,
-  PREDICTION_DATA, RESEARCH_TOPICS_TRENDS, TRENDS_COLORS
-} from '../data/mock/trendsAnalysisMock';
+const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#f97316', '#84cc16'];
 
 const TrendsAnalysis = () => {
-  // State
   const [timeRange, setTimeRange] = useState('all');
   const [selectedField, setSelectedField] = useState('all');
   const [showInsights, setShowInsights] = useState(true);
-  
-  const impactTrends = IMPACT_TRENDS;
-  const fieldTrends = FIELD_TRENDS;
-  const collaborationTrends = COLLABORATION_TRENDS;
-  const topCollaboratorCountries = TOP_COLLABORATOR_COUNTRIES;
-  const predictionData = PREDICTION_DATA;
-  const researchTopicsTrends = RESEARCH_TOPICS_TRENDS;
-  const COLORS = TRENDS_COLORS;
+  const [trendsData, setTrendsData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const years = timeRange === '3years' ? 3 : timeRange === '5years' ? 5 : 7;
+    fetch(`/api/trends.php?years=${years}`)
+      .then(r => r.json())
+      .then(json => {
+        if (json.status === 'success') setTrendsData(json.data);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [timeRange]);
+
+  const impactTrends             = trendsData?.timeline            ?? [];
+  const collaborationTrends      = trendsData?.collab_trend        ?? [];
+  const topCollaboratorCountries = trendsData?.top_countries       ?? [];
+  const researchTopicsTrends     = trendsData?.topics              ?? [];
+  const fieldTrends              = [];
+  const predictionData           = [];
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}

@@ -21,8 +21,11 @@
 // Arahkan error_log ke luar folder public/
 ini_set('error_log', dirname(__DIR__) . '/error_log');
 
-// dirname(__DIR__) = satu level di atas folder public/
-// Hasilnya: /home/user/public_html/sciecola/includes/bootstrap.php
+// Definisikan ROOT_PATH sebelum digunakan
+if (!defined('ROOT_PATH')) {
+    define('ROOT_PATH', dirname(__DIR__));
+}
+
 $bootstrapFile = ROOT_PATH . '/includes/bootstrap.php';
 
 if (file_exists($bootstrapFile)) {

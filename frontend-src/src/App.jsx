@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import ScrollToTop from './components/shared/ScrollToTop';
 
 // Komponen Layout Global
@@ -131,9 +132,9 @@ const Home = () => {
       <div id="cta-section"><CallToAction /></div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-        <SdgDistributionChart 
-            data={chartData.length > 0 ? chartData : null} 
-            totalArticles={summaryStats ? summaryStats.totalArticles : "0"} 
+        <SdgDistributionChart
+            data={chartData.length > 0 ? chartData : null}
+            totalArticles={summaryStats ? summaryStats.totalArticles : null}
         />
         <SdgTrendChart rawData={rawApiData} />
       </div>
@@ -162,8 +163,9 @@ const Home = () => {
 // =====================================================================
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
+    <AuthProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
         
         {/* Navbar selalu tampil di semua halaman */}
         <Navbar />
@@ -259,9 +261,10 @@ function App() {
 
         {/* Floating Chatbot */}
         <Chatbot />
-        
+
       </div>
-    </Router>
+      </Router>
+    </AuthProvider>
   );
 }
 

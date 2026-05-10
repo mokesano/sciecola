@@ -1,22 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const LogHistory = () => {
+  const { user } = useAuth();
+
   // State Management
   const [timeRange, setTimeRange] = useState('all');
-  const [activityTypes, setActivityTypes] = useState(['all', 'view', 'search', 'bookmark', 'download', 'share', 'comment']);
+  const [activityTypes, setActivityTypes] = useState(['all']);
   const [contentTypes, setContentTypes] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
-
-  // Mock Data
-  const summaryStats = [
+  const [logHistory, setLogHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [summaryStats, setSummaryStats] = useState([
     { label: 'Dilihat', value: 126, change: '+12%', icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z', color: 'text-indigo-600 bg-indigo-50' },
     { label: 'Pencarian', value: 84, change: '+8%', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z', color: 'text-purple-600 bg-purple-50' },
     { label: 'Disimpan', value: 32, change: '+15%', icon: 'M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z', color: 'text-blue-600 bg-blue-50' },
     { label: 'Diunduh', value: 18, change: '+5%', icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4', color: 'text-green-600 bg-green-50' },
     { label: 'Dibagikan', value: 9, change: '+3%', icon: 'M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z', color: 'text-orange-600 bg-orange-50' }
-  ];
+  ]);
+
+  // Fetch log history from API
+  useEffect(() => {
+    if (!user?.orcid) { setLoading(false); return; }
+    setLoading(true);
+    setError(null);
+
+    const params = new URLSearchParams({
+      orcid: user.orcid,
+      range: timeRange,
+      type: activityTypes.includes('all') ? 'all' : activityTypes.join(','),
+      search: searchQuery
+    });
+
+    fetch(`/api/log_history.php?${params}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.status === 'success') {
+          setLogHistory(data.logs ?? []);
+          if (data.summary) {
+            setSummaryStats([
+              { label: 'Dilihat', value: data.summary.views || 0, change: '+0%', icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z', color: 'text-indigo-600 bg-indigo-50' },
+              { label: 'Pencarian', value: data.summary.searches || 0, change: '+0%', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z', color: 'text-purple-600 bg-purple-50' },
+              { label: 'Disimpan', value: data.summary.saves || 0, change: '+0%', icon: 'M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z', color: 'text-blue-600 bg-blue-50' },
+              { label: 'Diunduh', value: data.summary.downloads || 0, change: '+0%', icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4', color: 'text-green-600 bg-green-50' },
+              { label: 'Dibagikan', value: data.summary.shares || 0, change: '+0%', icon: 'M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z', color: 'text-orange-600 bg-orange-50' }
+            ]);
+          }
+        } else {
+          setError(data.message || 'Gagal memuat riwayat log');
+        }
+      })
+      .catch(err => setError('Gagal memuat: ' + err.message))
+      .finally(() => setLoading(false));
+  }, [user?.orcid, timeRange, activityTypes, searchQuery]);
 
   const activities = [
     {
@@ -75,17 +114,44 @@ const LogHistory = () => {
     }
   };
 
+  if (!user?.orcid && !loading) {
+    return (
+      <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <div className="text-center py-20">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">ORCID Belum Terhubung</h2>
+          <p className="text-gray-600 mb-6">Hubungkan ORCID Anda untuk melihat riwayat log.</p>
+          <Link to="/settings" className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700">
+            Hubungkan ORCID
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-red-700">{error}</div>
+      )}
+
+      {loading && (
+        <div className="flex items-center justify-center py-20">
+          <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mr-3" />
+          <span className="text-gray-600">Memuat riwayat log…</span>
+        </div>
+      )}
+
+      {!loading && !error && (
+      <>
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-4">
         <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
         <span className="text-gray-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
         <Link to="/dashboard" className="hover:text-indigo-600 transition-colors">Dashboard</Link>
         <span className="text-gray-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
         <span className="text-gray-900 font-medium">Log History</span>
       </nav>
@@ -237,7 +303,7 @@ const LogHistory = () => {
           </div>
 
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            {activities.map((group, gIdx) => (
+            {logHistory.length > 0 ? logHistory.map((group, gIdx) => (
               <div key={gIdx} className={gIdx > 0 ? 'border-t border-gray-100' : ''}>
                 <div className="px-6 py-3 bg-gray-50 border-b border-gray-100">
                   <h3 className="text-sm font-bold text-indigo-600">{group.date}</h3>
@@ -290,10 +356,14 @@ const LogHistory = () => {
                   ))}
                 </div>
               </div>
-            ))}
+            )) : (
+              <div className="px-6 py-12 text-center text-gray-500">
+                <p>Tidak ada log history untuk periode ini.</p>
+              </div>
+            )}
           </div>
 
-          {/* Load More */}
+          {logHistory.length > 0 && (
           <div className="mt-6 text-center">
             <button className="px-6 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 hover:border-gray-300 transition-all inline-flex items-center gap-2 shadow-sm">
               Muat Lebih Banyak
@@ -302,8 +372,11 @@ const LogHistory = () => {
               </svg>
             </button>
           </div>
+          )}
         </div>
       </div>
+      </>
+      )}
     </main>
   );
 };

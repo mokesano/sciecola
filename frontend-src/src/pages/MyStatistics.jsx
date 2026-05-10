@@ -1,51 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend,
-  LineChart, Line
-} from 'recharts';
+import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Line, Legend } from 'recharts';
+import { useAuth } from '../context/AuthContext';
 
 const MyStatistics = () => {
-  const [timeRange, setTimeRange] = useState('12 Months');
+  const { user } = useAuth();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [timeRange, setTimeRange] = useState('12');
 
-  // Mock Data: Impact Trends
-  const impactTrends = [
-    { month: 'Jan', views: 1200, citations: 45, downloads: 120 },
-    { month: 'Feb', views: 1500, citations: 52, downloads: 140 },
-    { month: 'Mar', views: 1800, citations: 60, downloads: 160 },
-    { month: 'Apr', views: 1600, citations: 55, downloads: 130 },
-    { month: 'Mei', views: 2100, citations: 70, downloads: 190 },
-    { month: 'Jun', views: 2400, citations: 85, downloads: 210 },
-    { month: 'Jul', views: 2200, citations: 78, downloads: 180 },
-    { month: 'Agu', views: 2800, citations: 95, downloads: 240 },
-    { month: 'Sep', views: 3100, citations: 110, downloads: 270 },
-    { month: 'Okt', views: 2900, citations: 98, downloads: 250 },
-    { month: 'Nov', views: 3500, citations: 125, downloads: 310 },
-    { month: 'Des', views: 3800, citations: 140, downloads: 340 },
-  ];
+  useEffect(() => {
+    if (!user?.orcid) { setLoading(false); return; }
+    setLoading(true);
+    setError(null);
+    fetch(`/api/my_statistics.php?orcid=${encodeURIComponent(user.orcid)}&range=${timeRange}`)
+      .then(r => r.json())
+      .then(resp => {
+        if (resp.status === 'success') {
+          setData(resp);
+        } else {
+          setError(resp.message || 'Gagal memuat statistik');
+        }
+      })
+      .catch(err => setError('Gagal memuat: ' + err.message))
+      .finally(() => setLoading(false));
+  }, [user?.orcid, timeRange]);
 
-  // Mock Data: SDG Radar
-  const sdgData = [
-    { subject: 'SDG 13\nClimate', A: 95, fullMark: 100 },
+  if (!user?.orcid && !loading) {
+    return (
+      <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <div className="text-center py-20">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">ORCID Belum Terhubung</h2>
+          <Link to="/settings" className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold">Hubungkan ORCID</Link>
+        </div>
+      </main>
+    );
+  }
+
+  if (loading) {
+    return (
+      <main className="pt-28 pb-12 px-4 flex items-center justify-center py-32">
+        <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mr-3" />
+        <span className="text-gray-600">Memuat statistik…</span>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="pt-28 pb-12 px-4">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-center">{error}</div>
+      </main>
+    );
+  }
+
+  const impactTrends = data?.impactTrends || [];
+  const sdgData = data?.sdgRadar || [
     { subject: 'SDG 11\nCities', A: 78, fullMark: 100 },
     { subject: 'SDG 7\nEnergy', A: 65, fullMark: 100 },
     { subject: 'SDG 4\nEducation', A: 40, fullMark: 100 },
     { subject: 'SDG 3\nHealth', A: 30, fullMark: 100 },
     { subject: 'SDG 14\nWater', A: 20, fullMark: 100 },
   ];
-
-  // Mock Data: Audience Demographics
-  const demographics = [
+  const demographics = data?.demographics || [
     { country: 'Indonesia', views: 12500 },
     { country: 'Malaysia', views: 4200 },
     { country: 'Singapore', views: 3100 },
     { country: 'Thailand', views: 2400 },
     { country: 'Philippines', views: 1800 },
   ];
-
-  // Mock Data: Citation Sources
-  const sources = [
+  const sources = data?.citationSources || [
     { source: 'Google Scholar', count: 4500 },
     { source: 'Scopus', count: 2100 },
     { source: 'Web of Science', count: 1200 },
@@ -74,11 +99,11 @@ const MyStatistics = () => {
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
         <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
         <span className="text-gray-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
         <Link to="/dashboard" className="hover:text-indigo-600 transition-colors">Dashboard</Link>
         <span className="text-gray-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
         <span className="text-gray-900 font-medium">Statistik</span>
       </nav>
@@ -90,15 +115,15 @@ const MyStatistics = () => {
           <p className="text-gray-600 mt-1">Analisis mendalam mengenai dampak dan jangkauan publikasi Anda.</p>
         </div>
         <div className="flex gap-3">
-          <select 
+          <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
             className="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
           >
-            <option>12 Bulan Terakhir</option>
-            <option>6 Bulan Terakhir</option>
-            <option>30 Hari Terakhir</option>
-            <option>Semua Waktu</option>
+            <option value="12">12 Bulan Terakhir</option>
+            <option value="6">6 Bulan Terakhir</option>
+            <option value="1">30 Hari Terakhir</option>
+            <option value="all">Semua Waktu</option>
           </select>
           <button className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-sm">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
@@ -110,10 +135,10 @@ const MyStatistics = () => {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
-          { label: 'Total Views', value: '28,900', growth: '+18%', icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z', color: 'bg-indigo-50 text-indigo-600' },
-          { label: 'Total Citations', value: '1,248', growth: '+12%', icon: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z', color: 'bg-purple-50 text-purple-600' },
-          { label: 'h-Index', value: '24', growth: '+2', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6', color: 'bg-amber-50 text-amber-600' },
-          { label: 'Avg. Impact Score', value: '87.4', growth: '+4.2', icon: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z', color: 'bg-green-50 text-green-600' }
+          { label: 'Total Views', value: (data?.summary?.views || 0).toLocaleString(), growth: data?.summary?.viewsGrowth || '+0%', icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z', color: 'bg-indigo-50 text-indigo-600' },
+          { label: 'Total Citations', value: (data?.summary?.citations || 0).toLocaleString(), growth: data?.summary?.citationsGrowth || '+0%', icon: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z', color: 'bg-purple-50 text-purple-600' },
+          { label: 'h-Index', value: data?.summary?.hIndex || '0', growth: data?.summary?.hIndexGrowth || '+0', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6', color: 'bg-amber-50 text-amber-600' },
+          { label: 'Avg. Impact Score', value: (data?.summary?.avgImpactScore || 0).toFixed(1), growth: data?.summary?.impactGrowth || '+0%', icon: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z', color: 'bg-green-50 text-green-600' }
         ].map((stat, idx) => (
           <div key={idx} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
             <div className="flex items-center gap-3 mb-3">
@@ -125,7 +150,7 @@ const MyStatistics = () => {
             <div className="flex items-end gap-2">
               <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
               <span className="text-xs flex items-end gap-1 font-bold text-green-600">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg> 
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg> 
                 {stat.growth}
               </span>
             </div>
@@ -232,19 +257,14 @@ const MyStatistics = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {[
-                  { title: 'Climate Change Adaptation...', views: 652, citations: 24, score: 92.4 },
-                  { title: 'Sustainable Urban Transport...', views: 210, citations: 18, score: 85.1 },
-                  { title: 'Renewable Energy Policy...', views: 411, citations: 32, score: 88.7 },
-                  { title: 'Digital Learning Innovation...', views: 150, citations: 12, score: 78.3 },
-                ].map((article, idx) => (
+                {(data?.topArticles || []).slice(0, 4).map((article, idx) => (
                   <tr key={idx} className="hover:bg-gray-50">
                     <td className="px-4 py-3 font-medium text-gray-900 max-w-[200px] truncate">{article.title}</td>
-                    <td className="px-4 py-3 text-center text-gray-600">{article.views}</td>
-                    <td className="px-4 py-3 text-center text-gray-600">{article.citations}</td>
+                    <td className="px-4 py-3 text-center text-gray-600">{(article.views || 0).toLocaleString()}</td>
+                    <td className="px-4 py-3 text-center text-gray-600">{(article.citations || 0).toLocaleString()}</td>
                     <td className="px-4 py-3 text-center">
-                      <span className={`px-2 py-1 rounded text-xs font-bold ${article.score >= 85 ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
-                        {article.score}
+                      <span className={`px-2 py-1 rounded text-xs font-bold ${(article.impactScore || 0) >= 85 ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                        {(article.impactScore || 0).toFixed(1)}
                       </span>
                     </td>
                   </tr>

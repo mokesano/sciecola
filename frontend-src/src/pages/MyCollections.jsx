@@ -1,8 +1,14 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const MyCollections = () => {
+  const { user } = useAuth();
+
   // State Management
+  const [collections, setCollections] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [privacyFilter, setPrivacyFilter] = useState('All');
   const [sortBy, setSortBy] = useState('updated');
@@ -10,7 +16,7 @@ const MyCollections = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isToastVisible, setIsToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
-  
+
   const [newCollection, setNewCollection] = useState({
     name: '',
     description: '',
@@ -18,8 +24,26 @@ const MyCollections = () => {
     tags: ''
   });
 
-  // Mock Data
-  const collections = [
+  // Fetch collections from API
+  useEffect(() => {
+    if (!user?.orcid) { setLoading(false); return; }
+    setLoading(true);
+    setError(null);
+    fetch(`/api/my_collections.php?orcid=${encodeURIComponent(user.orcid)}&action=list`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.status === 'success') {
+          setCollections(data.collections ?? []);
+        } else {
+          setError(data.message || 'Gagal memuat koleksi');
+        }
+      })
+      .catch(err => setError('Gagal memuat: ' + err.message))
+      .finally(() => setLoading(false));
+  }, [user?.orcid]);
+
+  // Mock Data Fallback
+  const mockCollections = [
     {
       id: 1,
       name: 'Climate Change Adaptation',
@@ -114,29 +138,47 @@ const MyCollections = () => {
   const handleCreateCollection = (e) => {
     e.preventDefault();
     if (!newCollection.name.trim()) return;
-    
-    collections.unshift({
-      id: Date.now(),
-      name: newCollection.name,
-      description: newCollection.description || 'Tidak ada deskripsi',
-      itemCount: 0,
-      lastUpdated: new Date().toISOString().split('T')[0],
-      privacy: newCollection.privacy,
-      tags: newCollection.tags ? newCollection.tags.split(',').map(t => t.trim()) : [],
-      preview: []
-    });
 
-    setNewCollection({ name: '', description: '', privacy: 'private', tags: '' });
-    setIsModalOpen(false);
-    showToast('Koleksi berhasil dibuat!');
+    const formData = new FormData();
+    formData.append('orcid', user.orcid);
+    formData.append('action', 'create');
+    formData.append('name', newCollection.name);
+    formData.append('description', newCollection.description);
+    formData.append('privacy', newCollection.privacy);
+    formData.append('tags', newCollection.tags);
+
+    fetch('/api/my_collections.php', { method: 'POST', body: formData })
+      .then(r => r.json())
+      .then(data => {
+        if (data.status === 'success') {
+          setCollections([data.collection, ...collections]);
+          setNewCollection({ name: '', description: '', privacy: 'private', tags: '' });
+          setIsModalOpen(false);
+          showToast('Koleksi berhasil dibuat!');
+        } else {
+          showToast(data.message || 'Gagal membuat koleksi');
+        }
+      })
+      .catch(err => showToast('Error: ' + err.message));
   };
 
   const handleDelete = (id) => {
-    const index = collections.findIndex(c => c.id === id);
-    if (index > -1) {
-      collections.splice(index, 1);
-      showToast('Koleksi berhasil dihapus');
-    }
+    const formData = new FormData();
+    formData.append('orcid', user.orcid);
+    formData.append('action', 'delete');
+    formData.append('collection_id', id);
+
+    fetch('/api/my_collections.php', { method: 'POST', body: formData })
+      .then(r => r.json())
+      .then(data => {
+        if (data.status === 'success') {
+          setCollections(collections.filter(c => c.id !== id));
+          showToast('Koleksi berhasil dihapus');
+        } else {
+          showToast(data.message || 'Gagal menghapus koleksi');
+        }
+      })
+      .catch(err => showToast('Error: ' + err.message));
   };
 
   const formatDate = (dateStr) => {
@@ -149,17 +191,31 @@ const MyCollections = () => {
     return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
+  if (!user?.orcid && !loading) {
+    return (
+      <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <div className="text-center py-20">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">ORCID Belum Terhubung</h2>
+          <p className="text-gray-600 mb-6">Hubungkan ORCID Anda untuk mengelola koleksi.</p>
+          <Link to="/settings" className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700">
+            Hubungkan ORCID
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
         <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
         <span className="text-gray-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
         <Link to="/dashboard" className="hover:text-indigo-600 transition-colors">Dashboard</Link>
         <span className="text-gray-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
         <span className="text-gray-900 font-medium">Koleksi Saya</span>
       </nav>
@@ -179,6 +235,19 @@ const MyCollections = () => {
         </button>
       </div>
 
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-red-700">{error}</div>
+      )}
+
+      {loading && (
+        <div className="flex items-center justify-center py-20">
+          <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mr-3" />
+          <span className="text-gray-600">Memuat koleksi…</span>
+        </div>
+      )}
+
+      {!loading && !error && (
+      <>
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
@@ -426,6 +495,8 @@ const MyCollections = () => {
           <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
           <span className="text-sm font-medium">{toastMessage}</span>
         </div>
+      )}
+      </>
       )}
     </main>
   );

@@ -1,138 +1,52 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis
 } from 'recharts';
 
 const TopResearchers = () => {
-  // State management
   const [selectedField, setSelectedField] = useState('all');
   const [selectedProvince, setSelectedProvince] = useState('');
-  const [sortBy, setSortBy] = useState('impactScore');
+  const [sortBy, setSortBy] = useState('citations');
   const [sortDirection, setSortDirection] = useState('desc');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedResearcher, setSelectedResearcher] = useState(null);
-  
-  // Data for top researchers
-  const topResearchersData = [
-    {
-      id: 1,
-      name: 'Prof. Dr. Slamet Wijaya',
-      affiliation: 'Universitas Indonesia',
-      department: 'Fakultas Ilmu Komputer',
-      field: 'Teknologi Informasi',
-      location: 'Jakarta',
-      province: 'DKI Jakarta',
-      hIndex: 28,
-      i10Index: 42,
-      citations: 3240,
-      publications: 87,
-      collaborations: 34,
-      domesticCollabs: 25,
-      internationalCollabs: 9,
-      researchGrants: 12,
-      impactScore: 92.5,
-      topPublications: [
-        { title: 'Implementasi Deep Learning untuk Pengenalan Pola Batik Indonesia', journal: 'Jurnal Informatika Indonesia', year: 2023, citations: 28 },
-        { title: 'Optimasi Jaringan Saraf Tiruan untuk Klasifikasi Citra Medis', journal: 'Jurnal Ilmu Komputer', year: 2022, citations: 42 },
-        { title: 'Analisis Big Data untuk Prediksi Penyebaran Penyakit Menular', journal: 'Jurnal Kesehatan Digital', year: 2021, citations: 35 }
-      ]
-    },
-    {
-      id: 2,
-      name: 'Dr. Ratna Handayani',
-      affiliation: 'Institut Teknologi Bandung',
-      department: 'Fakultas Ekonomi dan Bisnis',
-      field: 'Sosial Ekonomi',
-      location: 'Bandung',
-      province: 'Jawa Barat',
-      hIndex: 24,
-      i10Index: 36,
-      citations: 2850,
-      publications: 74,
-      collaborations: 29,
-      domesticCollabs: 22,
-      internationalCollabs: 7,
-      researchGrants: 9,
-      impactScore: 89.7,
-      topPublications: [
-        { title: 'Analisis Ketahanan Pangan di Wilayah Pesisir Menghadapi Perubahan Iklim', journal: 'Jurnal Ketahanan Nasional', year: 2023, citations: 22 },
-        { title: 'Ekonomi Kerakyatan dalam Pembangunan Daerah Tertinggal', journal: 'Jurnal Ekonomi Indonesia', year: 2021, citations: 38 },
-        { title: 'Model Pengembangan UMKM Berbasis Teknologi Digital', journal: 'Jurnal Manajemen Bisnis', year: 2022, citations: 27 }
-      ]
-    },
-    {
-      id: 3,
-      name: 'Prof. Dr. Budi Santoso',
-      affiliation: 'Universitas Gadjah Mada',
-      department: 'Fakultas Kedokteran',
-      field: 'Kedokteran',
-      location: 'Yogyakarta',
-      province: 'DI Yogyakarta',
-      hIndex: 26,
-      i10Index: 39,
-      citations: 3120,
-      publications: 82,
-      collaborations: 41,
-      domesticCollabs: 27,
-      internationalCollabs: 14,
-      researchGrants: 15,
-      impactScore: 88.3,
-      topPublications: [
-        { title: 'Deteksi Dini Penyakit Tropis Menggunakan Algoritma Machine Learning', journal: 'Jurnal Kedokteran Indonesia', year: 2024, citations: 19 },
-        { title: 'Pola Resistensi Antibiotik pada Bakteri Patogen di Indonesia', journal: 'Jurnal Mikrobiologi Kedokteran', year: 2022, citations: 45 },
-        { title: 'Epidemiologi Penyakit Dengue di Kawasan Urban Indonesia', journal: 'Jurnal Epidemiologi Nasional', year: 2021, citations: 38 }
-      ]
-    },
-    {
-      id: 4,
-      name: 'Dr. Tri Kusuma',
-      affiliation: 'Institut Pertanian Bogor',
-      department: 'Fakultas Pertanian',
-      field: 'Pertanian',
-      location: 'Bogor',
-      province: 'Jawa Barat',
-      hIndex: 21,
-      i10Index: 32,
-      citations: 2340,
-      publications: 65,
-      collaborations: 27,
-      domesticCollabs: 22,
-      internationalCollabs: 5,
-      researchGrants: 8,
-      impactScore: 85.9,
-      topPublications: [
-        { title: 'Pengembangan Material Nano-komposit dari Limbah Pertanian untuk Filtrasi Air', journal: 'Jurnal Teknik Kimia Indonesia', year: 2024, citations: 15 },
-        { title: 'Optimasi Hasil Panen Padi dengan Pendekatan Pertanian Presisi', journal: 'Jurnal Agronomi Indonesia', year: 2022, citations: 32 },
-        { title: 'Penggunaan Drone untuk Monitoring Kesehatan Tanaman Pangan', journal: 'Jurnal Teknologi Pertanian', year: 2023, citations: 24 }
-      ]
-    },
-    {
-      id: 5,
-      name: 'Prof. Dr. Hadi Wijaya',
-      affiliation: 'Universitas Airlangga',
-      department: 'Fakultas Teknik Kimia',
-      field: 'Kimia',
-      location: 'Surabaya',
-      province: 'Jawa Timur',
-      hIndex: 23,
-      i10Index: 35,
-      citations: 2680,
-      publications: 71,
-      collaborations: 32,
-      domesticCollabs: 24,
-      internationalCollabs: 8,
-      researchGrants: 10,
-      impactScore: 84.2,
-      topPublications: [
-        { title: 'Sintesis Bioplastik dari Pati Singkong dengan Penambahan Kitosan', journal: 'Jurnal Polimer Indonesia', year: 2023, citations: 21 },
-        { title: 'Ekstraksi dan Karakterisasi Senyawa Bioaktif dari Tanaman Obat Indonesia', journal: 'Jurnal Bahan Alam Indonesia', year: 2022, citations: 36 },
-        { title: 'Pengembangan Katalis Heterogen untuk Produksi Biodiesel', journal: 'Jurnal Energi Terbarukan', year: 2021, citations: 29 }
-      ]
-    }
-  ];
-  
+  const [topResearchersData, setTopResearchersData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const sortParam = sortBy === 'impactScore' ? 'citations' : sortBy === 'hIndex' ? 'hindex' : sortBy;
+    fetch(`/api/researchers.php?limit=20&sort=${sortParam}`)
+      .then(r => r.json())
+      .then(json => {
+        if (json.status === 'success') {
+          setTopResearchersData(json.data.map((r, idx) => ({
+            id: r.id ?? idx + 1,
+            name: r.name,
+            affiliation: r.affiliation,
+            department: '',
+            field: 'Penelitian',
+            location: '',
+            province: '',
+            hIndex: r.hindex ?? 0,
+            i10Index: 0,
+            citations: r.citations ?? 0,
+            publications: r.publications ?? 0,
+            collaborations: 0,
+            domesticCollabs: 0,
+            internationalCollabs: 0,
+            researchGrants: 0,
+            impactScore: Math.min(99, 50 + (r.citations ?? 0) * 0.015),
+            orcid: r.orcid,
+            topPublications: [],
+          })));
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [sortBy]);
+
   // Distribution data for statistics
   const researcherDistributionByField = [
     { field: 'Teknologi Informasi', count: 1246, avgImpact: 82.4 },

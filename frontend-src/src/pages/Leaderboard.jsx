@@ -1,19 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-import {
-  LEADERBOARD_STATS, LEADERBOARD_RESEARCHERS, IMPACT_FACTORS, RESEARCH_FIELDS, FASTEST_GROWING
-} from '../data/mock/leaderboardMock';
+const IMPACT_FACTORS_STATIC = [
+  { label: 'Kuantitas Publikasi', weight: 30, icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+  { label: 'Kualitas Sitasi',     weight: 30, icon: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z' },
+  { label: 'h-Index',             weight: 20, icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+  { label: 'Dampak SDGs',         weight: 20, icon: 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+];
 
 const Leaderboard = () => {
   const [activeCategory, setActiveCategory] = useState('peneliti');
   const [activeRankType, setActiveRankType] = useState('global');
+  const [researchers, setResearchers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const stats = LEADERBOARD_STATS;
-  const researchers = LEADERBOARD_RESEARCHERS;
-  const impactFactors = IMPACT_FACTORS;
-  const fields = RESEARCH_FIELDS;
-  const achievements = FASTEST_GROWING;
+  useEffect(() => {
+    setLoading(true);
+    fetch(`/api/leaderboard.php?type=${activeCategory === 'peneliti' ? 'researchers' : activeCategory === 'jurnal' ? 'journals' : 'institutions'}&limit=10`)
+      .then(r => r.json())
+      .then(json => {
+        if (json.status === 'success') setResearchers(json.data);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [activeCategory]);
+
+  const stats = {
+    peneliti:  { value: '10,892', growth: '+12%' },
+    publikasi: { value: '98,732', growth: '+18%' },
+    sitasi:    { value: '21,897', growth: '+22%' },
+  };
+  const impactFactors = IMPACT_FACTORS_STATIC;
+  const fields = [
+    { name: 'Environmental Science', count: 1245, color: 'bg-emerald-100 text-emerald-700' },
+    { name: 'Social Sciences',       count:  982, color: 'bg-blue-100 text-blue-700'       },
+    { name: 'Engineering',           count: 1023, color: 'bg-amber-100 text-amber-700'     },
+    { name: 'Health Sciences',       count:  876, color: 'bg-red-100 text-red-700'         },
+    { name: 'Lainnya',               count: 6766, color: 'bg-purple-100 text-purple-700'   },
+  ];
+  const achievements = researchers.slice(0, 3).map(r => ({
+    name: r.name, institution: r.institution, growth: Math.round(r.impact ?? 0),
+    avatar: r.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${r.name}`,
+  }));
   const categories = ['Peneliti', 'Institusi', 'Jurnal'];
   const rankTypes = ['Peringkat Global', 'Peringkat Nasional'];
   return (
