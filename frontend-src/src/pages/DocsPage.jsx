@@ -3,10 +3,10 @@ import { useParams, Link, Navigate } from 'react-router-dom';
 
 // Lazy-load each MDX document
 const DOC_MODULES = {
-  help:          lazy(() => import('../../docs/help.mdx')),
-  faq:           lazy(() => import('../../docs/faq.mdx')),
-  'api-reference': lazy(() => import('../../docs/api-reference.mdx')),
-  documentation: lazy(() => import('../../docs/documentation.mdx')),
+  help:          lazy(() => import('../docs/help.mdx')),
+  faq:           lazy(() => import('../docs/faq.mdx')),
+  'api-reference': lazy(() => import('../docs/api-reference.mdx')),
+  documentation: lazy(() => import('../docs/documentation.mdx')),
 };
 
 // Tailwind prose-like MDX component overrides

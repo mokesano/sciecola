@@ -11,5 +11,13 @@
     "dev:frontend": "npm run dev -w frontend-src",
     "build:frontend": "npm run build -w frontend-src",
     "install-ui": "npm install -w frontend-src"
+  },
+  "dependencies": {
+    "@mdx-js/react": "^3.1.1",
+    "react-hot-toast": "^2.6.0"
+  },
+  "devDependencies": {
+    "@mdx-js/rollup": "^3.1.1",
+    "@types/mdx": "^2.0.13"
   }
 }

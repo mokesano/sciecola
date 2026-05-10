@@ -1,9 +1,10 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import mdx from '@mdx-js/rollup'; 
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => ({
-  plugins: [react()],
+  plugins: [react(), mdx()],
   
   // 1. KUNCI UTAMA: Beri tahu Vite bahwa source code React ada di folder ini
   root: 'frontend-src',
@@ -27,5 +28,9 @@ export default defineConfig(({ command }) => ({
         chunkFileNames: 'sicola-app-chunk.js',
       }
     }
-  }
-}))
+  },
+  // ← Tambahkan resolve extensions untuk MDX
+  resolve: {
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.mdx', '.md'],
+  },
+}));
