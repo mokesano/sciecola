@@ -68,6 +68,7 @@ import Faq from './pages/Faq';
 import TutorialOrcid from './pages/TutorialOrcid';
 import TutorialDOI from './pages/TutorialDOI';
 import TutorialResults from './pages/TutorialResults';
+import TutorialExport from './pages/TutorialExport';
 
 // Impor Halaman Dokumentasi
 import Doc from './pages/Doc';
@@ -226,6 +227,7 @@ function App() {
           <Route path="/tutorial-orcid" element={<TutorialOrcid />} />
           <Route path="/tutorial-doi" element={<TutorialDOI />} />
           <Route path="/tutorial-results" element={<TutorialResults />} />
+          <Route path="/tutorial-export" element={<TutorialExport />} />
 
           {/* Rute Dokumentasi — MDX-based */}
           <Route path="/docs/documentation" element={<Doc />} />
