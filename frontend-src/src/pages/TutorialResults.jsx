@@ -301,7 +301,7 @@ const TutorialResults = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              to="/analyze"
+              to="/"
               className="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors shadow-lg"
             >
               <BarChart3 className="w-5 h-5 mr-2" />

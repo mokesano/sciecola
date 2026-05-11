@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, BookOpen, ExternalLink, Copy, CheckCircle, AlertCircle, ChevronRight } from 'lucide-react';
+import { Search, BookOpen, ExternalLink, Copy, CheckCircle, AlertCircle, ChevronRight, ArrowRight } from 'lucide-react';
 
 const TutorialDOI = () => {
   const [activeStep, setActiveStep] = useState(1);
@@ -211,7 +211,7 @@ const TutorialDOI = () => {
             Mulai analisis sekarang dan temukan klasifikasi SDG dari artikel penelitian Anda
           </p>
           <Link
-            to="/doi"
+            to="/"
             className="inline-flex items-center px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transition-all transform hover:scale-105 shadow-lg"
           >
             Coba Analisis DOI Sekarang
