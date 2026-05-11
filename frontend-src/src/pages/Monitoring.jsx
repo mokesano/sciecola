@@ -1,27 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import { MapContainer, CircleMarker, Popup, TileLayer } from 'react-leaflet';
+import React, { useState, useEffect, useRef } from 'react';
+import { MapContainer, CircleMarker, Popup, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
 const Monitoring = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState('24h');
   const [activeTab, setActiveTab] = useState('overview');
+  const mapRef = useRef(null);
 
   // Add pulse animation CSS — uses SVG stroke animation (box-shadow doesn't work on SVG paths)
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `
-      @keyframes pulse-stroke {
+      @keyframes pulse-stroke-brute {
         0%   { stroke-width: 1.5; stroke-opacity: 0.9; }
-        50%  { stroke-width: 10;  stroke-opacity: 0;   }
+        50%  { stroke-width: 12;  stroke-opacity: 0;   }
         100% { stroke-width: 1.5; stroke-opacity: 0.9; }
       }
-      .leaflet-pulse-marker {
-        animation: pulse-stroke 2s ease-out infinite;
+      @keyframes pulse-stroke-bot {
+        0%   { stroke-width: 1.5; stroke-opacity: 0.9; }
+        50%  { stroke-width: 12;  stroke-opacity: 0;   }
+        100% { stroke-width: 1.5; stroke-opacity: 0.9; }
+      }
+      .leaflet-pulse-brute {
+        animation: pulse-stroke-brute 3s ease-out infinite;
+      }
+      .leaflet-pulse-bot {
+        animation: pulse-stroke-bot 3s ease-out infinite;
       }
     `;
     document.head.appendChild(style);
     return () => style.remove();
   }, []);
+
+  // Fix map rendering issue - invalidate size after mount
+  const MapSizeFixer = () => {
+    const map = useMap();
+    useEffect(() => {
+      const timeout = setTimeout(() => {
+        map.invalidateSize();
+      }, 250); // Sedikit diperlama agar animasi render Tailwind selesai
+      return () => clearTimeout(timeout);
+    }, [map]);
+    return null;
+  };
 
   // World-wide geographic distribution data
   const [geoData] = useState([
@@ -122,31 +143,17 @@ const Monitoring = () => {
       { name: 'Mobile',  value: 3456, percentage: 29 },
       { name: 'Tablet',  value: 701,  percentage: 6  },
     ],
-    screens: [
-      { resolution: '1920x1080', value: 4567, percentage: 39 },
-      { resolution: '1366x768', value: 3456, percentage: 29 },
-      { resolution: '1440x900', value: 1876, percentage: 16 },
-      { resolution: '360x640', value: 1234, percentage: 10 },
-      { resolution: 'Others', value: 678, percentage: 6 },
-    ],
     os: [
       { name: 'Windows', value: 6789, percentage: 58 },
       { name: 'macOS', value: 2345, percentage: 20 },
       { name: 'Android', value: 1567, percentage: 13 },
       { name: 'iOS', value: 987, percentage: 8 },
       { name: 'Linux', value: 123, percentage: 1 },
-    ],
-    devices: [
-      { name: 'Desktop', value: 7654, percentage: 65 },
-      { name: 'Smartphone', value: 3234, percentage: 27 },
-      { name: 'Tablet', value: 701, percentage: 6 },
-      { name: 'Smart TV', value: 123, percentage: 1 },
-      { name: 'Console', value: 99, percentage: 1 },
     ]
   };
 
   // Mock Data: Page View Activity (Detail)
-  const [pageViewActivity, setPageViewActivity] = useState([
+  const [pageViewActivity] = useState([
     { id: 1, timestamp: '2024-05-25 14:32:15', page: '/dashboard/analytics', source: 'google.com', location: 'Jakarta', device: 'Chrome/Windows', duration: '4m 32s' },
     { id: 2, timestamp: '2024-05-25 14:31:48', page: '/researchers/profile', source: 'Direct', location: 'Surabaya', device: 'Firefox/macOS', duration: '3m 18s' },
     { id: 3, timestamp: '2024-05-25 14:30:22', page: '/sdgs/explorer', source: 'linkedin.com', location: 'Bandung', device: 'Chrome/Android', duration: '5m 12s' },
@@ -157,19 +164,25 @@ const Monitoring = () => {
     { id: 8, timestamp: '2024-05-25 14:25:18', page: '/researchers', source: 'google.com', location: 'Jakarta', device: 'Firefox/Linux', duration: '3m 56s' },
   ]);
 
-  // Pulsing red heatmap marker
-  const PulseMarker = ({ position, city, visitors }) => {
+  // Pulsing heatmap marker with color based on visitor type
+  const PulseMarker = ({ position, city, visitors, type = 'normal' }) => {
     const radius = Math.max(6, Math.min(18, Math.floor(visitors / 80)));
+    const color = type === 'brute' ? '#ef4444' : '#3b82f6';
+    const className = type === 'brute' ? 'leaflet-pulse-brute' : 'leaflet-pulse-bot';
+
     return (
       <CircleMarker
         center={position}
         radius={radius}
-        pathOptions={{ color: '#ef4444', fillColor: '#ef4444', fillOpacity: 0.55, weight: 1.5, className: 'leaflet-pulse-marker' }}
+        pathOptions={{ color: color, fillColor: color, fillOpacity: 0.55, weight: 1.5, className: className }}
       >
         <Popup>
           <div className="p-1.5">
             <p className="font-bold text-gray-900 text-sm">{city}</p>
             <p className="text-xs text-gray-600">{visitors.toLocaleString()} visitors</p>
+            <p className="text-xs font-semibold" style={{ color: color }}>
+              {type === 'brute' ? 'Brute Force' : type === 'bot' ? 'Bot Visit' : 'Normal Visit'}
+            </p>
           </div>
         </Popup>
       </CircleMarker>
@@ -278,33 +291,38 @@ const Monitoring = () => {
             <h2 className="text-lg font-bold text-gray-900">Geographic Distribution</h2>
             <p className="text-sm text-gray-600 mt-1">Distribusi pengunjung berdasarkan lokasi geografis</p>
           </div>
-          <div className="h-96">
+          {/* Diperbarui: Mengubah h-96 (384px) menjadi h-[500px] dan mengatur z-index untuk keamanan stacking context */}
+          <div className="h-[500px] w-full z-0 relative">
             <MapContainer
-              center={[20, 0]}
-              zoom={2}
+              ref={mapRef}
+              center={[20, 0]}         // Posisikan sedikit ke utara ekuator
+              zoom={2}                 // Optimal untuk menampilkan keseluruhan peta dunia
               minZoom={2}
-              maxZoom={5}
-              style={{ height: '100%', width: '100%' }}
-              scrollWheelZoom={false}
-              dragging={false}
-              zoomControl={false}
-              doubleClickZoom={false}
-              touchZoom={false}
-              keyboard={false}
+              maxZoom={6}
+              style={{ height: '100%', width: '100%', zIndex: 0 }}
+              scrollWheelZoom={false}  // Biarkan false agar tidak ter-zoom otomatis saat user scroll halaman ke bawah
+              dragging={true}          // Diperbarui: Mengizinkan user menggeser peta
+              zoomControl={true}       // Diperbarui: Menampilkan tombol +/- (Zoom Control)
+              doubleClickZoom={true}   // Diperbarui: Mengizinkan double klik untuk zoom
+              touchZoom={true}         // Diperbarui: Mengizinkan pinch zoom di layar sentuh
+              worldCopyJump={true}     // Tambahan: Melakukan looping map yang lebih mulus di sumbu horizontal
               attributionControl={false}
             >
               <TileLayer
                 url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-                attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 subdomains="abcd"
                 maxZoom={19}
+                noWrap={false}
               />
+              <MapSizeFixer />
               {geoData.map((location) => (
                 <PulseMarker
                   key={location.id}
                   position={[location.lat, location.lng]}
                   city={location.city}
                   visitors={location.visitors}
+                  type={location.visitors > 1000 ? 'brute' : location.visitors > 500 ? 'bot' : 'normal'}
                 />
               ))}
             </MapContainer>
@@ -395,7 +413,6 @@ const Monitoring = () => {
               {systemData.browsers.map((browser, idx) => (
                 <div key={idx} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">{browser.icon}</span>
                     <span className="text-sm text-gray-700">{browser.name}</span>
                   </div>
                   <span className="text-sm font-medium text-gray-900">{browser.percentage}%</span>
@@ -411,7 +428,6 @@ const Monitoring = () => {
               {systemData.platforms.map((platform, idx) => (
                 <div key={idx} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">{platform.icon}</span>
                     <span className="text-sm text-gray-700">{platform.name}</span>
                   </div>
                   <span className="text-sm font-medium text-gray-900">{platform.percentage}%</span>
@@ -427,7 +443,6 @@ const Monitoring = () => {
               {systemData.os.map((os, idx) => (
                 <div key={idx} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">{os.icon}</span>
                     <span className="text-sm text-gray-700">{os.name}</span>
                   </div>
                   <span className="text-sm font-medium text-gray-900">{os.percentage}%</span>

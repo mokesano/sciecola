@@ -127,7 +127,7 @@ const ResearchersList = () => {
   const countries = ['all', ...new Set(mockResearchers.map(r => r.country))];
 
   // Extract unique SDGs from mock data for filter
-  const sdgs = ['all', ...new Set(mockResearchers.flatMap(r => r.sdgFocus)).sort((a, b) => a - b)];
+  const sdgs = ['all', ...[...new Set(mockResearchers.flatMap(r => r.sdgFocus))].sort((a, b) => a - b)];
 
   // Helper: Format angka besar
   const formatNumber = (num) => {
@@ -141,18 +141,20 @@ const ResearchersList = () => {
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600">Beranda</Link>
-        <span>›</span>
-        <span className="text-gray-900">Database Peneliti</span>
+        <span className="text-gray-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </span>
+        <span className="text-gray-900">Data Peneliti</span>
       </div>
       
       {/* Header Halaman */}
       <div className="mb-10">
-        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Database Peneliti</h1>
+        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Data Peneliti</h1>
         <p className="text-lg font-semibold text-gray-600 mt-1 max-w-2xl">Jelajahi profil peneliti dan kontribusi mereka terhadap target SDGs.</p>
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm mb-8">
+      <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm mb-8">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Search Input */}
           <div className="flex-grow relative">
@@ -209,47 +211,47 @@ const ResearchersList = () => {
         </div>
         
         {/* Active Filters */}
-        <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100 flex-wrap">
-          <span className="text-sm text-gray-500">Filter aktif:</span>
-          {selectedCountry !== 'all' && (
-            <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold flex items-center gap-1">
-              {selectedCountry}
-              <button onClick={() => setSelectedCountry('all')} className="hover:text-indigo-900">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </span>
-          )}
-          {selectedSdg !== 'all' && (
-            <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold flex items-center gap-1">
-              SDG {selectedSdg}
-              <button onClick={() => setSelectedSdg('all')} className="hover:text-indigo-900">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </span>
-          )}
-          {searchQuery && (
-            <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold flex items-center gap-1">
-              "{searchQuery}"
-              <button onClick={() => setSearchQuery('')} className="hover:text-indigo-900">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </span>
-          )}
-          {(selectedCountry !== 'all' || selectedSdg !== 'all' || searchQuery) && (
-            <button 
+        {(selectedCountry !== 'all' || selectedSdg !== 'all' || searchQuery) && (
+          <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100 flex-wrap">
+            <span className="text-sm text-gray-500">Filter aktif:</span>
+            {selectedCountry !== 'all' && (
+              <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold flex items-center gap-1">
+                {selectedCountry}
+                <button onClick={() => setSelectedCountry('all')} className="hover:text-indigo-900">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </span>
+            )}
+            {selectedSdg !== 'all' && (
+              <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold flex items-center gap-1">
+                SDG {selectedSdg}
+                <button onClick={() => setSelectedSdg('all')} className="hover:text-indigo-900">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </span>
+            )}
+            {searchQuery && (
+              <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold flex items-center gap-1">
+                "{searchQuery}"
+                <button onClick={() => setSearchQuery('')} className="hover:text-indigo-900">
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </span>
+            )}
+            <button
               onClick={() => {setSelectedCountry('all'); setSelectedSdg('all'); setSearchQuery('');}}
               className="text-xs text-gray-500 hover:text-gray-700 font-medium ml-2"
             >
               Reset semua
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Loading State */}
