@@ -241,7 +241,7 @@ const TutorialExport = () => {
               Lakukan analisis SDGs sekarang dan ekspor hasilnya dalam berbagai format untuk kebutuhan penelitian dan pelaporan Anda.
             </p>
             <Link
-              to="/analyze"
+              to="/"
               className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               <Printer className="w-5 h-5" />
