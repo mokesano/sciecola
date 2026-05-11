@@ -1,43 +1,80 @@
-```gitignore
-# Dependencies
-node_modules/
+# Sicola .gitignore
 
-# Build artifacts
+# Database
+/database/sciecola.db
+/database/*.db
+/database/*.sqlite
+
+# Runtime / Storage
+/storage/
+/api/cache/
+/logs/*.log
+!/logs/.gitkeep
+
+# Dependencies
+/vendor/
+/node_modules/
+node_modules/
+frontend-src/node_modules/
+.pnpm/
+.yarn/
+yarn.lock
+package-lock.json
+
+# Vite/Rollup
 dist/
 build/
-*.js
+.vite/
+*.map
 
 # Environment
-.env
 .env.local
-*.env.*
+.env*.local
+*.env
+.env
+.env.*
+!.env.example
 
-# Editors
-.vscode/
+# Testing
+coverage/
+.nyc_output/
+*.test.*
+*.spec.*
+
+# IDE
 .idea/
+.vscode/
 *.swp
 *.swo
 
-# Logs and temp files
-*.log
-*.tmp
+# Build artifacts
+/dist/
+/public/build/
+/public/assets/sicola-ui/
 
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Coverage
-coverage/
-htmlcov/
-.coverage
-
-# IDE
-.jupyter/
-.ipynb_checkpoints/
-
-# OS
+# Editor / OS
 .DS_Store
+.DS_Store?
+desktop.ini
 Thumbs.db
-```
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# PHP
+*.phar
+/composer.lock
+/package-lock.json
+
+# Optional: Jika pakai TypeScript
+*.tsbuildinfo
+
+# Debug files
+/public/debug.php
