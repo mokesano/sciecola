@@ -66,13 +66,15 @@ const JournalList = () => {
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600">Beranda</Link>
-        <span>›</span>
-        <span className="text-gray-900">Database Jurnal</span>
+        <span className="text-gray-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </span>
+        <span className="text-gray-900">Data Jurnal</span>
       </div>
 
       {/* Header Halaman */}
       <div className="mb-10">
-        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Database Jurnal</h1>
+        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Data Jurnal</h1>
         <p className="text-lg font-semibold text-gray-600 mt-1 max-w-2xl">Temukan jurnal bereputasi berdasarkan kesesuaian target SDGs.</p>
       </div>
 

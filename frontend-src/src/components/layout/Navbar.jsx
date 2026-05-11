@@ -17,7 +17,7 @@ const Navbar = () => {
   const isAuthenticated = false; 
 
   // Logika Cerdas: Tab aktif berdasarkan pathname
-  const isJournalsActive = location.pathname === '/journals' || location.pathname.startsWith('/journals/');
+  const isJournalsActive = location.pathname === '/journals' || location.pathname.startsWith('/journal/');
   const isResearchersActive = location.pathname === '/researchers' || location.pathname.startsWith('/orcid/');
   const isArticlesActive = location.pathname === '/articles' || location.pathname.startsWith('/doi/');
 
@@ -88,7 +88,7 @@ const Navbar = () => {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                 </svg>
-                <span className="uppercase text-xs font-bold">{currentLang}</span>
+                <span className="uppercase text-sm font-bold">{currentLang}</span>
                 <svg className="w-3 h-3 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
                 </svg>
@@ -115,20 +115,12 @@ const Navbar = () => {
             {/* Conditional Rendering: Auth Buttons vs User Menu */}
             {!isAuthenticated ? (
               <>
-                {/* Tombol Masuk (Login) */}
+                {/* Tombol Login */}
                 <Link 
-                  to="/login" 
-                  className="text-indigo-600 font-medium px-4 py-2 rounded-xl hover:bg-indigo-50 transition-all"
-                >
-                  Masuk
-                </Link>
-                
-                {/* Tombol Daftar (Register) */}
-                <Link 
-                  to="/register" 
+                  to="/login?register=true" 
                   className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-medium shadow-md shadow-indigo-200 transition-all"
                 >
-                  Daftar
+                  Login
                 </Link>
               </>
             ) : (
