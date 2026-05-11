@@ -65,6 +65,7 @@ import Privacy from './pages/Privacy';
 import Contact from './pages/Contact';
 import Help from './pages/Help';
 import Faq from './pages/Faq';
+import TutorialOrcid from './pages/TutorialOrcid';
 
 // Impor Halaman Dokumentasi
 import Doc from './pages/Doc';
@@ -220,6 +221,7 @@ function App() {
           {/* Rute Kontak dan Bantuan */}
           <Route path="/contact" element={<Contact />} />
           <Route path="/help" element={<Help />} />
+          <Route path="/tutorial-orcid" element={<TutorialOrcid />} />
 
           {/* Rute Dokumentasi — MDX-based */}
           <Route path="/docs/documentation" element={<Doc />} />
