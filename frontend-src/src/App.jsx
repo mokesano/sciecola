@@ -87,6 +87,7 @@ import Messages from './pages/Messages';
 import Notifications from './pages/Notifications';
 import MyArticles from './pages/MyArticles';
 import MyCollections from './pages/MyCollections';
+import CollectionDetail from './pages/CollectionDetail';
 import MyStatistics from './pages/MyStatistics';
 import Settings from './pages/Settings';
 
@@ -238,6 +239,7 @@ function App() {
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/my-articles" element={<MyArticles />} />
           <Route path="/my-collections" element={<MyCollections />} />
+          <Route path="/collections/:id" element={<CollectionDetail />} />
           <Route path="/my-statistics" element={<MyStatistics />} />
           <Route path="/settings" element={<Settings />} />
           
