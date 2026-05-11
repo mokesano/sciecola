@@ -1,12 +1,1 @@
-```
-# Dependencies
-node_modules/
-
-# Editors
-.vscode/
-
-# Environment
-.env
-.env.local
-.env.*
-```
+(frontend-src/src/pages/TutorialDOI.jsx)
