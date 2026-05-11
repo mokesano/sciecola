@@ -89,28 +89,27 @@ const TutorialExport = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full">
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
+        <span className="text-gray-400">›</span>
+        <Link to="/help" className="hover:text-indigo-600 transition-colors">Bantuan</Link>
+        <span className="text-gray-400">›</span>
+        <span className="text-gray-900 font-medium">Tutorial Ekspor</span>
+      </nav>
+
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-6xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Tutorial Ekspor Hasil
-              </h1>
-              <p className="text-gray-600">
-                Panduan lengkap mengekspor hasil analisis SDGs ke berbagai format
-              </p>
-            </div>
-            <Link
-              to="/help"
-              className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <ArrowRight className="w-4 h-4 rotate-180" />
-              Kembali ke Bantuan
-            </Link>
-          </div>
+      <div className="text-center mb-12">
+        <div className="inline-flex p-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl mb-4">
+          <Download className="w-8 h-8 text-white" />
         </div>
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          Tutorial Ekspor Hasil
+        </h1>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          Panduan lengkap mengekspor hasil analisis SDGs ke berbagai format
+        </p>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-8">
@@ -252,7 +251,7 @@ const TutorialExport = () => {
           </div>
         </section>
       </div>
-    </div>
+    </main>
   );
 };
 
