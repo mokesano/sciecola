@@ -47,30 +47,27 @@ const TutorialDOI = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full">
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
+        <span className="text-gray-400">›</span>
+        <Link to="/help" className="hover:text-indigo-600 transition-colors">Bantuan</Link>
+        <span className="text-gray-400">›</span>
+        <span className="text-gray-900 font-medium">Tutorial DOI</span>
+      </nav>
+
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <Link to="/help" className="text-gray-600 hover:text-gray-900 transition-colors">
-                <ChevronRight className="w-5 h-5 transform rotate-180" />
-              </Link>
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <BookOpen className="w-6 h-6 text-blue-600" />
-                </div>
-                <h1 className="text-2xl font-bold text-gray-900">Tutorial DOI</h1>
-              </div>
-            </div>
-            <Link
-              to="/help"
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              Kembali ke Bantuan
-            </Link>
-          </div>
+      <div className="text-center mb-12">
+        <div className="inline-flex p-3 bg-blue-100 rounded-xl mb-4">
+          <BookOpen className="w-8 h-8 text-blue-600" />
         </div>
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          Tutorial Analisis DOI
+        </h1>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          Panduan langkah demi langkah untuk menganalisis artikel penelitian menggunakan Digital Object Identifier (DOI)
+        </p>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -205,7 +202,24 @@ const TutorialDOI = () => {
           </ul>
         </div>
       </div>
-    </div>
+
+      {/* Call to Action */}
+      <div className="mt-12 text-center">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
+          <h2 className="text-2xl font-bold mb-4">Siap Menganalisis DOI Artikel Anda?</h2>
+          <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
+            Mulai analisis sekarang dan temukan klasifikasi SDG dari artikel penelitian Anda
+          </p>
+          <Link
+            to="/doi"
+            className="inline-flex items-center px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transition-all transform hover:scale-105 shadow-lg"
+          >
+            Coba Analisis DOI Sekarang
+            <ArrowRight className="w-5 h-5 ml-2" />
+          </Link>
+        </div>
+      </div>
+    </main>
   );
 };
 

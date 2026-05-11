@@ -99,32 +99,27 @@ const TutorialResults = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full">
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
+        <span className="text-gray-400">›</span>
+        <Link to="/help" className="hover:text-indigo-600 transition-colors">Bantuan</Link>
+        <span className="text-gray-400">›</span>
+        <span className="text-gray-900 font-medium">Tutorial Hasil</span>
+      </nav>
+
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center space-x-4 mb-4">
-            <div className="p-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl">
-              <BarChart3 className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                Tutorial: Membaca Hasil Pemetaan SDGs
-              </h1>
-              <p className="text-gray-600 mt-1">
-                Panduan lengkap interpretasi hasil analisis penelitian Anda
-              </p>
-            </div>
-          </div>
-          
-          <nav className="flex items-center space-x-2 text-sm text-gray-500">
-            <Link to="/help" className="hover:text-blue-600 transition-colors">
-              Bantuan
-            </Link>
-            <ArrowRight className="w-4 h-4" />
-            <span className="text-gray-900 font-medium">Tutorial Hasil</span>
-          </nav>
+      <div className="text-center mb-12">
+        <div className="inline-flex p-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl mb-4">
+          <BarChart3 className="w-8 h-8 text-white" />
         </div>
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          Tutorial: Membaca Hasil Pemetaan SDGs
+        </h1>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          Panduan lengkap interpretasi hasil analisis penelitian Anda
+        </p>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -323,7 +318,7 @@ const TutorialResults = () => {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 
