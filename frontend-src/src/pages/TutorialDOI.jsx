@@ -58,99 +58,98 @@ const TutorialDOI = () => {
       </nav>
 
       {/* Header */}
-      <div className="text-center mb-12">
-        <div className="inline-flex p-3 bg-blue-100 rounded-xl mb-4">
-          <BookOpen className="w-8 h-8 text-blue-600" />
+      <div className="mb-10">
+        <div className="flex items-start gap-4 mb-6">
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+            <BookOpen className="w-8 h-8 text-white" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Tutorial Analisis DOI</h1>
+            <p className="text-lg text-gray-600">
+              Panduan langkah demi langkah untuk menganalisis artikel penelitian menggunakan Digital Object Identifier (DOI)
+            </p>
+            <div className="flex items-center gap-4 mt-4">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                5 menit
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm font-medium">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Pemula
+              </span>
+            </div>
+          </div>
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          Tutorial Analisis DOI
-        </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Panduan langkah demi langkah untuk menganalisis artikel penelitian menggunakan Digital Object Identifier (DOI)
+      </div>
+
+      {/* Introduction Card */}
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 mb-10 border border-blue-100">
+        <h2 className="text-xl font-bold text-gray-900 mb-3">Tentang Tutorial Ini</h2>
+        <p className="text-gray-700 leading-relaxed">
+          Tutorial ini akan memandu Anda langkah demi langkah untuk menganalisis artikel penelitian menggunakan DOI. 
+          DOI (Digital Object Identifier) adalah sistem identifikasi unik yang memungkinkan sistem untuk mengambil 
+          metadata lengkap dari artikel ilmiah secara otomatis.
         </p>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Intro Section */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-          <div className="flex items-start space-x-4">
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <BookOpen className="w-6 h-6 text-blue-600" />
+      {/* Example DOI Box */}
+      <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl p-6 mb-10 text-white">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Contoh Format DOI yang Benar</h3>
+            <div className="flex items-center space-x-3 bg-white/20 backdrop-blur-sm rounded-lg p-3">
+              <code className="text-lg font-mono">10.1038/s41586-021-03616-x</code>
+              <button
+                onClick={handleCopyExample}
+                className="p-2 hover:bg-white/30 rounded-lg transition-colors"
+                title="Salin contoh DOI"
+              >
+                {copiedExample ? (
+                  <CheckCircle className="w-5 h-5" />
+                ) : (
+                  <Copy className="w-5 h-5" />
+                )}
+              </button>
             </div>
-            <div className="flex-1">
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                Panduan Lengkap Menggunakan DOI untuk Analisis Profil Penelitian
-              </h2>
-              <p className="text-gray-600 leading-relaxed">
-                DOI (Digital Object Identifier) adalah sistem identifikasi unik untuk dokumen digital yang memungkinkan 
-                peneliti untuk dengan mudah menemukan, mengutip, dan menganalisis publikasi ilmiah. Tutorial ini akan 
-                memandu Anda langkah demi langkah dalam menggunakan DOI untuk analisis profil penelitian di Sicola.
+            {copiedExample && (
+              <p className="text-sm mt-2 text-blue-100 flex items-center">
+                <CheckCircle className="w-4 h-4 mr-1" />
+                DOI contoh berhasil disalin!
               </p>
-            </div>
+            )}
           </div>
+          <ExternalLink className="w-16 h-16 opacity-20" />
         </div>
+      </div>
 
-        {/* Example DOI Box */}
-        <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl shadow-lg p-6 mb-8 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Contoh Format DOI yang Benar</h3>
-              <div className="flex items-center space-x-3 bg-white/20 backdrop-blur-sm rounded-lg p-3">
-                <code className="text-lg font-mono">10.1038/s41586-021-03616-x</code>
-                <button
-                  onClick={handleCopyExample}
-                  className="p-2 hover:bg-white/30 rounded-lg transition-colors"
-                  title="Salin contoh DOI"
-                >
-                  {copiedExample ? (
-                    <CheckCircle className="w-5 h-5" />
-                  ) : (
-                    <Copy className="w-5 h-5" />
-                  )}
-                </button>
-              </div>
-              {copiedExample && (
-                <p className="text-sm mt-2 text-blue-100 flex items-center">
-                  <CheckCircle className="w-4 h-4 mr-1" />
-                  DOI contoh berhasil disalin!
-                </p>
-              )}
-            </div>
-            <ExternalLink className="w-16 h-16 opacity-20" />
-          </div>
-        </div>
-
-        {/* Steps */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      {/* Steps */}
+      <div className="mb-10">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Langkah-langkah</h2>
+        <div className="space-y-6">
           {steps.map((step) => (
-            <div
+            <div 
               key={step.id}
-              className={`bg-white rounded-xl shadow-sm border-2 transition-all duration-300 cursor-pointer ${
-                activeStep === step.id
-                  ? 'border-blue-500 shadow-md'
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
-              onClick={() => setActiveStep(step.id)}
+              className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-md transition-shadow"
             >
-              <div className="p-6">
-                <div className="flex items-start space-x-4">
-                  <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-                    activeStep === step.id
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-gray-200 text-gray-600'
-                  }`}>
+              <div className="flex gap-5">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
                     {step.id}
                   </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{step.title}</h3>
-                    <p className="text-gray-600 mb-3 leading-relaxed">{step.content}</p>
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                      <div className="flex items-start space-x-2">
-                        <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <p className="text-sm font-medium text-yellow-800">Tips Penting:</p>
-                          <p className="text-sm text-yellow-700">{step.tips}</p>
-                        </div>
+                </div>
+                <div className="flex-grow">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3">{step.title}</h3>
+                  <p className="text-gray-600 leading-relaxed mb-4">{step.content}</p>
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                    <div className="flex items-start space-x-2">
+                      <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium text-amber-800">Tips Penting:</p>
+                        <p className="text-sm text-amber-700">{step.tips}</p>
                       </div>
                     </div>
                   </div>
@@ -159,34 +158,33 @@ const TutorialDOI = () => {
             </div>
           ))}
         </div>
+      </div>
 
-        {/* Common Errors */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-            <AlertCircle className="w-6 h-6 text-red-500 mr-2" />
-            Kesalahan Umum dan Solusinya
-          </h3>
-          <div className="space-y-4">
-            {commonErrors.map((item, index) => (
-              <div key={index} className="border border-gray-200 rounded-lg p-4">
-                <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
-                    <span className="text-red-600 font-bold text-sm">!</span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900 mb-1">Kesalahan: {item.error}</p>
-                    <p className="text-gray-600 text-sm">Solusi: {item.solution}</p>
-                  </div>
+      {/* Common Errors */}
+      <div className="mb-10">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Kesalahan Umum dan Solusinya</h2>
+        <div className="space-y-4">
+          {commonErrors.map((item, index) => (
+            <div key={index} className="bg-white rounded-2xl border border-red-200 p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <span className="text-red-600 font-bold text-lg">!</span>
+                </div>
+                <div className="flex-grow">
+                  <p className="font-bold text-gray-900 mb-2">Kesalahan: {item.error}</p>
+                  <p className="text-gray-600">Solusi: {item.solution}</p>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
+      </div>
 
-        {/* Additional Resources */}
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">Sumber Daya Tambahan</h3>
-          <ul className="space-y-2 text-gray-700">
+      {/* Additional Resources */}
+      <div className="mb-10">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Sumber Daya Tambahan</h2>
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-200 p-6">
+          <ul className="space-y-3 text-gray-700">
             <li className="flex items-center space-x-2">
               <ExternalLink className="w-4 h-4 text-green-600" />
               <span>DOI Handbook: <a href="https://www.doi.org/hb.html" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">doi.org/hb.html</a></span>
@@ -203,19 +201,21 @@ const TutorialDOI = () => {
         </div>
       </div>
 
-      {/* Call to Action */}
-      <div className="mt-12 text-center">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
-          <h2 className="text-2xl font-bold mb-4">Siap Menganalisis DOI Artikel Anda?</h2>
-          <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-            Mulai analisis sekarang dan temukan klasifikasi SDG dari artikel penelitian Anda
-          </p>
-          <Link
+      {/* CTA Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 text-white shadow-xl">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h2 className="text-2xl font-bold mb-2">Siap Menganalisis DOI Artikel Anda?</h2>
+            <p className="text-blue-100">
+              Mulai analisis sekarang dan temukan klasifikasi SDG dari artikel penelitian Anda
+            </p>
+          </div>
+          <Link 
             to="/"
-            className="inline-flex items-center px-8 py-4 bg-white text-blue-600 font-semibold rounded-xl hover:bg-blue-50 transition-all transform hover:scale-105 shadow-lg"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors shadow-lg"
           >
             Coba Analisis DOI Sekarang
-            <ArrowRight className="w-5 h-5 ml-2" />
+            <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
       </div>

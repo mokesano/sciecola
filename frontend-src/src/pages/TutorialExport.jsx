@@ -100,24 +100,46 @@ const TutorialExport = () => {
       </nav>
 
       {/* Header */}
-      <div className="text-center mb-12">
-        <div className="inline-flex p-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl mb-4">
-          <Download className="w-8 h-8 text-white" />
+      <div className="mb-10">
+        <div className="flex items-start gap-4 mb-6">
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+            <Download className="w-8 h-8 text-white" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Tutorial Ekspor Hasil</h1>
+            <p className="text-lg text-gray-600">
+              Panduan lengkap mengekspor hasil analisis SDGs ke berbagai format
+            </p>
+            <div className="flex items-center gap-4 mt-4">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                4 menit
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm font-medium">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Pemula
+              </span>
+            </div>
+          </div>
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          Tutorial Ekspor Hasil
-        </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Panduan lengkap mengekspor hasil analisis SDGs ke berbagai format
-        </p>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      {/* Introduction Card */}
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 mb-10 border border-blue-100">
+        <h2 className="text-xl font-bold text-gray-900 mb-3">Tentang Tutorial Ini</h2>
+        <p className="text-gray-700 leading-relaxed">
+          Tutorial ini akan memandu Anda langkah demi langkah untuk mengekspor hasil analisis SDGs 
+          ke berbagai format seperti PDF, CSV, Excel, dan JSON. Fitur ekspor memungkinkan Anda menyimpan, 
+          membagikan, dan mengintegrasikan hasil penelitian dengan sistem lain.
+        </p>
+      </div>
         {/* Langkah-langkah */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            Cara Mengekspor Hasil Analisis
-          </h2>
+        <section className="mb-10">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Langkah-langkah</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step) => (
               <div key={step.number} className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
@@ -135,10 +157,8 @@ const TutorialExport = () => {
         </section>
 
         {/* Format Ekspor */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            Format Ekspor Tersedia
-          </h2>
+        <section className="mb-10">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Format Ekspor Tersedia</h2>
           <div className="grid md:grid-cols-2 gap-6">
             {exportFormats.map((format, index) => (
               <div key={index} className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
@@ -166,7 +186,7 @@ const TutorialExport = () => {
         </section>
 
         {/* Tips Profesional */}
-        <section className="mb-12">
+        <section className="mb-10">
           <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-8 text-white">
             <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
               <Save className="w-6 h-6" />
@@ -212,10 +232,8 @@ const TutorialExport = () => {
         </section>
 
         {/* Masalah Umum */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            Masalah Umum & Solusi
-          </h2>
+        <section className="mb-10">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Masalah Umum & Solusi</h2>
           <div className="space-y-4">
             {commonIssues.map((issue, index) => (
               <div key={index} className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
@@ -231,23 +249,24 @@ const TutorialExport = () => {
           </div>
         </section>
 
-        {/* Call to Action */}
-        <section className="text-center">
-          <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Siap Mengekspor Hasil Analisis Anda?
-            </h2>
-            <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-              Lakukan analisis SDGs sekarang dan ekspor hasilnya dalam berbagai format untuk kebutuhan penelitian dan pelaporan Anda.
-            </p>
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            >
-              <Printer className="w-5 h-5" />
-              Coba Ekspor Hasil
-              <ArrowRight className="w-5 h-5" />
-            </Link>
+        {/* CTA Section */}
+        <section>
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 text-white shadow-xl">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div>
+                <h2 className="text-2xl font-bold mb-2">Siap Mengekspor Hasil Analisis Anda?</h2>
+                <p className="text-blue-100">
+                  Lakukan analisis SDGs sekarang dan ekspor hasilnya dalam berbagai format untuk kebutuhan penelitian dan pelaporan Anda
+                </p>
+              </div>
+              <Link
+                to="/"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors shadow-lg"
+              >
+                Coba Ekspor Hasil
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </div>
           </div>
         </section>
       </div>
