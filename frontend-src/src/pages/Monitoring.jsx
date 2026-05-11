@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, CircleMarker, Popup, TileLayer, useMap } from 'react-leaflet';
+// Perubahan: Mengganti Popup dengan Tooltip
+import { MapContainer, Marker, Tooltip, TileLayer, useMap } from 'react-leaflet';
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 const Monitoring = () => {
@@ -7,44 +9,45 @@ const Monitoring = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const mapRef = useRef(null);
 
-  // Add pulse animation CSS — uses SVG stroke animation (box-shadow doesn't work on SVG paths)
+  // Animasi pulse halus (subtle)
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `
-      @keyframes pulse-stroke-brute {
-        0%   { stroke-width: 1.5; stroke-opacity: 0.9; }
-        50%  { stroke-width: 12;  stroke-opacity: 0;   }
-        100% { stroke-width: 1.5; stroke-opacity: 0.9; }
+      @keyframes subtle-pulse {
+        0% { transform: scale(1); opacity: 0.6; }
+        100% { transform: scale(2.5); opacity: 0; }
       }
-      @keyframes pulse-stroke-bot {
-        0%   { stroke-width: 1.5; stroke-opacity: 0.9; }
-        50%  { stroke-width: 12;  stroke-opacity: 0;   }
-        100% { stroke-width: 1.5; stroke-opacity: 0.9; }
+      .pulse-wrapper { position: relative; width: 100%; height: 100%; }
+      .pulse-core { position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 50%; }
+      .pulse-ring { position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 50%; animation: subtle-pulse 2.5s ease-out infinite; }
+      .leaflet-div-icon-transparent { background: transparent !important; border: none !important; }
+      
+      .leaflet-tooltip.custom-map-tooltip {
+        background-color: rgba(255, 255, 255, 0.4) !important;
+        backdrop-filter: blur(6px); /* Efek blur pada peta di belakangnya */
+        -webkit-backdrop-filter: blur(6px); /* Dukungan untuk Safari */
+        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+        border-radius: 0.75rem; 
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
+        padding: 0.5rem 0.75rem;
       }
-      .leaflet-pulse-brute {
-        animation: pulse-stroke-brute 3s ease-out infinite;
-      }
-      .leaflet-pulse-bot {
-        animation: pulse-stroke-bot 3s ease-out infinite;
-      }
+      .leaflet-tooltip.custom-map-tooltip::before { display: none; }
     `;
     document.head.appendChild(style);
     return () => style.remove();
   }, []);
 
-  // Fix map rendering issue - invalidate size after mount
   const MapSizeFixer = () => {
     const map = useMap();
     useEffect(() => {
       const timeout = setTimeout(() => {
         map.invalidateSize();
-      }, 250); // Sedikit diperlama agar animasi render Tailwind selesai
+      }, 250);
       return () => clearTimeout(timeout);
     }, [map]);
     return null;
   };
 
-  // World-wide geographic distribution data
   const [geoData] = useState([
     { id: 1,  lat: -6.21,  lng: 106.85, city: 'Jakarta',        visitors: 1247 },
     { id: 2,  lat: -7.26,  lng: 112.75, city: 'Surabaya',       visitors: 856  },
@@ -64,7 +67,7 @@ const Monitoring = () => {
     { id: 16, lat: 52.52,  lng: 13.40,  city: 'Berlin',         visitors: 245  },
     { id: 17, lat: 40.71,  lng: -74.01, city: 'New York',       visitors: 523  },
     { id: 18, lat: 34.05,  lng: -118.24,city: 'Los Angeles',    visitors: 412  },
-    { id: 19, lat: -33.87, lng: 151.21, city: 'Sydney',         visitors: 198  },
+    { id: 19, lat: -33.87, lng: 151.21, city: 'Sydney',         visitors: 98   },
     { id: 20, lat: -23.55, lng: -46.63, city: 'São Paulo',      visitors: 187  },
     { id: 21, lat: -34.60, lng: -58.38, city: 'Buenos Aires',   visitors: 156  },
     { id: 22, lat: 30.05,  lng: 31.25,  city: 'Cairo',          visitors: 143  },
@@ -73,7 +76,6 @@ const Monitoring = () => {
     { id: 25, lat: 55.75,  lng: 37.62,  city: 'Moscow',         visitors: 118  },
   ]);
 
-  // Mock Data: Traffic Sources
   const trafficSources = {
     sources: [
       { name: 'Direct', value: 4523, percentage: 35, color: 'bg-indigo-500' },
@@ -104,7 +106,6 @@ const Monitoring = () => {
     ]
   };
 
-  // Mock Data: Pages Analytics
   const pagesData = {
     entryPages: [
       { path: '/dashboard', views: 3456, percentage: 32, bounceRate: '24%' },
@@ -129,7 +130,6 @@ const Monitoring = () => {
     ]
   };
 
-  // Mock Data: System Analytics
   const systemData = {
     browsers: [
       { name: 'Chrome',  value: 6789, percentage: 58 },
@@ -152,7 +152,6 @@ const Monitoring = () => {
     ]
   };
 
-  // Mock Data: Page View Activity (Detail)
   const [pageViewActivity] = useState([
     { id: 1, timestamp: '2024-05-25 14:32:15', page: '/dashboard/analytics', source: 'google.com', location: 'Jakarta', device: 'Chrome/Windows', duration: '4m 32s' },
     { id: 2, timestamp: '2024-05-25 14:31:48', page: '/researchers/profile', source: 'Direct', location: 'Surabaya', device: 'Firefox/macOS', duration: '3m 18s' },
@@ -164,32 +163,48 @@ const Monitoring = () => {
     { id: 8, timestamp: '2024-05-25 14:25:18', page: '/researchers', source: 'google.com', location: 'Jakarta', device: 'Firefox/Linux', duration: '3m 56s' },
   ]);
 
-  // Pulsing heatmap marker with color based on visitor type
   const PulseMarker = ({ position, city, visitors, type = 'normal' }) => {
-    const radius = Math.max(6, Math.min(18, Math.floor(visitors / 80)));
+    // Menggunakan Opsi 1 (Seimbang) untuk visual ukuran pulse
+    const radius = Math.max(5, Math.min(14, Math.floor(visitors / 90))); 
     const color = type === 'brute' ? '#ef4444' : '#3b82f6';
-    const className = type === 'brute' ? 'leaflet-pulse-brute' : 'leaflet-pulse-bot';
+    const size = radius * 2;
+
+    const customIcon = L.divIcon({
+      className: 'leaflet-div-icon-transparent',
+      html: `
+        <div class="pulse-wrapper">
+          <div class="pulse-ring" style="background-color: ${color};"></div>
+          <div class="pulse-core" style="background-color: ${color};"></div>
+        </div>
+      `,
+      iconSize: [size, size],
+      iconAnchor: [size / 2, size / 2], 
+      tooltipAnchor: [0, -size / 2] // Mengganti popupAnchor menjadi tooltipAnchor
+    });
 
     return (
-      <CircleMarker
-        center={position}
-        radius={radius}
-        pathOptions={{ color: color, fillColor: color, fillOpacity: 0.55, weight: 1.5, className: className }}
-      >
-        <Popup>
-          <div className="p-1.5">
-            <p className="font-bold text-gray-900 text-sm">{city}</p>
-            <p className="text-xs text-gray-600">{visitors.toLocaleString()} visitors</p>
-            <p className="text-xs font-semibold" style={{ color: color }}>
-              {type === 'brute' ? 'Brute Force' : type === 'bot' ? 'Bot Visit' : 'Normal Visit'}
-            </p>
+      <Marker position={position} icon={customIcon}>
+        {/* Menggunakan Tooltip: Muncul saat hover, tidak menggeser layar, dan arah auto menyesuaikan batas tepi layar */}
+        <Tooltip 
+          direction="auto" 
+          opacity={1} 
+          className="custom-map-tooltip"
+        >
+          <div className="min-w-[120px]">
+            <p className="font-bold text-gray-900 text-sm mb-0.5">{city}</p>
+            <p className="text-xs text-gray-600 mb-1">{visitors.toLocaleString()} visitors</p>
+            <div className="flex items-center gap-1.5 mt-1">
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: color }}></span>
+              <p className="text-[11px] font-medium text-gray-700">
+                {type === 'brute' ? 'Brute Force' : type === 'bot' ? 'Bot Visit' : 'Normal Visit'}
+              </p>
+            </div>
           </div>
-        </Popup>
-      </CircleMarker>
+        </Tooltip>
+      </Marker>
     );
   };
 
-  // Progress Bar Component
   const ProgressBar = ({ percentage, color }) => (
     <div className="w-full bg-gray-200 rounded-full h-2">
       <div 
@@ -199,7 +214,6 @@ const Monitoring = () => {
     </div>
   );
 
-  // Card Component
   const StatCard = ({ title, value, change, icon, color }) => (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
       <div className="flex items-center justify-between">
@@ -221,7 +235,6 @@ const Monitoring = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -253,7 +266,6 @@ const Monitoring = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         
-        {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard 
             title="Total Page Views"
@@ -285,27 +297,25 @@ const Monitoring = () => {
           />
         </div>
 
-        {/* Geographic Map */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           <div className="p-5 border-b border-gray-100">
             <h2 className="text-lg font-bold text-gray-900">Geographic Distribution</h2>
             <p className="text-sm text-gray-600 mt-1">Distribusi pengunjung berdasarkan lokasi geografis</p>
           </div>
-          {/* Diperbarui: Mengubah h-96 (384px) menjadi h-[500px] dan mengatur z-index untuk keamanan stacking context */}
           <div className="h-[500px] w-full z-0 relative">
             <MapContainer
               ref={mapRef}
-              center={[20, 0]}         // Posisikan sedikit ke utara ekuator
-              zoom={2}                 // Optimal untuk menampilkan keseluruhan peta dunia
+              center={[20, 0]}
+              zoom={2}
               minZoom={2}
               maxZoom={6}
               style={{ height: '100%', width: '100%', zIndex: 0 }}
-              scrollWheelZoom={false}  // Biarkan false agar tidak ter-zoom otomatis saat user scroll halaman ke bawah
-              dragging={true}          // Diperbarui: Mengizinkan user menggeser peta
-              zoomControl={true}       // Diperbarui: Menampilkan tombol +/- (Zoom Control)
-              doubleClickZoom={true}   // Diperbarui: Mengizinkan double klik untuk zoom
-              touchZoom={true}         // Diperbarui: Mengizinkan pinch zoom di layar sentuh
-              worldCopyJump={true}     // Tambahan: Melakukan looping map yang lebih mulus di sumbu horizontal
+              scrollWheelZoom={false}
+              dragging={true}
+              zoomControl={true}
+              doubleClickZoom={true}
+              touchZoom={true}
+              worldCopyJump={true}
               attributionControl={false}
             >
               <TileLayer
@@ -329,10 +339,7 @@ const Monitoring = () => {
           </div>
         </div>
 
-        {/* Traffic Sources & Pages Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
-          {/* By Traffic Source */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h3 className="font-bold text-gray-900 mb-4">By Traffic Source</h3>
             <div className="space-y-4">
@@ -368,7 +375,6 @@ const Monitoring = () => {
             </div>
           </div>
 
-          {/* By Pages */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h3 className="font-bold text-gray-900 mb-4">By Pages</h3>
             <div className="space-y-4">
@@ -403,10 +409,7 @@ const Monitoring = () => {
           </div>
         </div>
 
-        {/* System Analytics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          
-          {/* Browsers */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h3 className="font-bold text-gray-900 mb-4">Browsers</h3>
             <div className="space-y-3">
@@ -421,7 +424,6 @@ const Monitoring = () => {
             </div>
           </div>
 
-          {/* Platforms */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h3 className="font-bold text-gray-900 mb-4">Platforms</h3>
             <div className="space-y-3">
@@ -436,7 +438,6 @@ const Monitoring = () => {
             </div>
           </div>
 
-          {/* OS */}
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h3 className="font-bold text-gray-900 mb-4">Operating Systems</h3>
             <div className="space-y-3">
@@ -452,7 +453,6 @@ const Monitoring = () => {
           </div>
         </div>
 
-        {/* Page View Activity Table */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           <div className="p-5 border-b border-gray-100 flex justify-between items-center">
             <div>
