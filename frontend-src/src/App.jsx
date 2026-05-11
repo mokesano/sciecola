@@ -69,7 +69,6 @@ import Faq from './pages/Faq';
 // Impor Halaman Dokumentasi
 import Doc from './pages/Doc';
 import Api from './pages/Api';
-import DocsPage from './pages/DocsPage';
 
 // Impor Halaman Register
 import Register from './pages/Register';
@@ -222,9 +221,7 @@ function App() {
           <Route path="/help" element={<Help />} />
 
           {/* Rute Dokumentasi — MDX-based */}
-          <Route path="/docs/:slug" element={<DocsPage />} />
-          {/* Legacy routes (redirect via DocsPage fallback) */}
-          <Route path="/docs" element={<DocsPage />} />
+          <Route path="/docs/documentation" element={<Doc />} />
           <Route path="/docs/faq" element={<Faq />} />
           <Route path="/docs/api-reference" element={<Api />} />
 
