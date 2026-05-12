@@ -137,8 +137,9 @@ const TutorialExport = () => {
           membagikan, dan mengintegrasikan hasil penelitian dengan sistem lain.
         </p>
       </div>
-        {/* Langkah-langkah */}
-        <section className="mb-10">
+
+      {/* Langkah-langkah */}
+      <section className="mb-10">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Langkah-langkah</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((step) => (
@@ -269,7 +270,6 @@ const TutorialExport = () => {
             </div>
           </div>
         </section>
-      </div>
     </main>
   );
 };
