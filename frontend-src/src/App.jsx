@@ -112,6 +112,12 @@ import MaintenanceMode from './pages/MaintenanceMode';
 import OfflineError from './pages/OfflineError';
 import ErrorBoundary from './components/shared/ErrorBoundary';
 
+// Impor Halaman Collaboration & Networking
+import CollaborationHub from './pages/CollaborationHub';
+import ProjectManagement from './pages/ProjectManagement';
+import ResearchMatching from './pages/ResearchMatching';
+import InnovationMarketplace from './pages/InnovationMarketplace';
+
 // =====================================================================
 // KOMPONEN BERANDA (HOME)
 // =====================================================================
@@ -275,6 +281,12 @@ function App() {
             <Route path="/500" element={<ServerError500 />} />
             <Route path="/maintenance" element={<MaintenanceMode />} />
             <Route path="/offline" element={<OfflineError />} />
+
+            {/* Rute Collaboration & Networking */}
+            <Route path="/collaboration" element={<CollaborationHub />} />
+            <Route path="/projects" element={<ProjectManagement />} />
+            <Route path="/research-matching" element={<ResearchMatching />} />
+            <Route path="/innovation-marketplace" element={<InnovationMarketplace />} />
             
             {/* Catch-all route untuk 404 */}
             <Route path="*" element={<NotFound404 />} />

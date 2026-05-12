@@ -1,80 +1,70 @@
-# Sicola .gitignore
-
-# Database
-/database/sciecola.db
-/database/*.db
-/database/*.sqlite
-
-# Runtime / Storage
-/storage/
-/api/cache/
-/logs/*.log
-!/logs/.gitkeep
-
+```gitignore
 # Dependencies
-/vendor/
-/node_modules/
 node_modules/
-frontend-src/node_modules/
-.pnpm/
-.yarn/
-yarn.lock
-package-lock.json
-
-# Vite/Rollup
-dist/
-build/
-.vite/
-*.map
-
-# Environment
-.env.local
-.env*.local
-*.env
-.env
-.env.*
-!.env.example
-
-# Testing
-coverage/
-.nyc_output/
-*.test.*
-*.spec.*
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
 
 # Build artifacts
-/dist/
-/public/build/
-/public/assets/sicola-ui/
+dist/
+build/
+target/
 
-# Editor / OS
-.DS_Store
-.DS_Store?
-desktop.ini
-Thumbs.db
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py.class
+venv/
+.venv/
+.env
+.env.local
+.env.*
 
 # Logs
 *.log
-npm-debug.log*
-yarn-debug.log*
 
-# PHP
-*.phar
-/composer.lock
-/package-lock.json
+# Coverage
+coverage/
+htmlcov/
+.coverage
 
-# Optional: Jika pakai TypeScript
-*.tsbuildinfo
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
 
-# Debug files
-/public/debug.php
+# OS
+.DS_Store
+Thumbs.db
+
+# MyPy
+.mypy_cache/
+
+# Pytest
+.pytest_cache/
+
+# Compressed files
+*.zip
+*.gz
+*.tar
+*.tgz
+*.bz2
+*.xz
+*.7z
+*.rar
+*.zst
+*.lz4
+*.lzh
+*.cab
+*.arj
+*.rpm
+*.deb
+*.Z
+*.lz
+*.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst
+```
