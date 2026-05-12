@@ -148,8 +148,8 @@ const TutorialResults = () => {
         </p>
       </div>
 
-        {/* Steps */}
-        <div className="mb-10">
+      {/* Steps */}
+      <div className="mb-10">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Langkah-langkah</h2>
           <div className="grid md:grid-cols-2 gap-8">
             {steps.map((step) => (
@@ -295,8 +295,7 @@ const TutorialResults = () => {
               <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
-        </div>
-      </div>
+        </section>
     </main>
   );
 };
