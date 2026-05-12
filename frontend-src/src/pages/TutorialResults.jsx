@@ -175,127 +175,127 @@ const TutorialResults = () => {
           </div>
         </div>
 
-        {/* Example Section */}
-        <div className="mb-10">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-            <Lightbulb className="w-6 h-6 text-yellow-500 mr-3" />
-            Contoh Interpretasi Hasil
-          </h2>
+      {/* Example Section */}
+      <div className="mb-10">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+          <Lightbulb className="w-6 h-6 text-yellow-500 mr-3" />
+          Contoh Interpretasi Hasil
+        </h2>
           
-          <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200">
-            <h3 className="font-semibold text-gray-900 mb-2">Judul Artikel:</h3>
-            <p className="text-gray-700 italic mb-4">Implementasi Teknologi Blockchain untuk Transparansi Rantai Pasok Pangan Berkelanjutan</p>
+        <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200">
+          <h3 className="font-semibold text-gray-900 mb-2">Judul Artikel:</h3>
+          <p className="text-gray-700 italic mb-4">Implementasi Teknologi Blockchain untuk Transparansi Rantai Pasok Pangan Berkelanjutan</p>
             
-            <h3 className="font-semibold text-gray-900 mb-3">SDGs Terdeteksi:</h3>
-            <div className="grid md:grid-cols-3 gap-4 mb-4">
-              {[
-                { goal: 2, name: "Tanpa Kelaparan", score: 85 },
-                { goal: 9, name: "Industri, Inovasi dan Infrastruktur", score: 92 },
-                { goal: 12, name: "Konsumsi dan Produksi yang Bertanggung Jawab", score: 78 }
-              ].map((sdg) => (
-                <div key={sdg.goal} className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-semibold text-blue-600">SDG {sdg.goal}</span>
-                    <span className={`text-sm font-bold px-2 py-1 rounded ${
-                      sdg.score >= 80 ? 'bg-green-100 text-green-700' :
-                      sdg.score >= 60 ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-red-100 text-red-700'
-                    }`}>
-                      {sdg.score}%
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-700">{sdg.name}</p>
-                </div>
-              ))}
-            </div>
-            
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-gray-900 mb-2 flex items-center">
-                <BookOpen className="w-4 h-4 mr-2" />
-                Interpretasi:
-              </h3>
-              <p className="text-gray-700 text-sm mb-3">Artikel ini menunjukkan keterkaitan kuat dengan SDG 9 (teknologi blockchain) dan SDG 2 (ketahanan pangan), serta kontribusi moderat pada SDG 12 (keberlanjutan rantai pasok).</p>
-              <button
-                onClick={copyExample}
-                className="flex items-center space-x-2 text-sm text-blue-600 hover:text-blue-700 transition-colors"
-              >
-                <Copy className="w-4 h-4" />
-                <span>Salin interpretasi</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Common Mistakes */}
-        <div className="mb-10">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-            <AlertCircle className="w-6 h-6 text-orange-500 mr-3" />
-            Kesalahan Umum dan Solusinya
-          </h2>
-          <div className="grid md:grid-cols-2 gap-6">
+          <h3 className="font-semibold text-gray-900 mb-3">SDGs Terdeteksi:</h3>
+          <div className="grid md:grid-cols-3 gap-4 mb-4">
             {[
-              { mistake: "Mengabaikan skor rendah", solution: "Skor rendah bukan berarti penelitian tidak berharga. Gunakan sebagai peluang untuk mengidentifikasi aspek SDGs yang belum tersentuh." },
-              { mistake: "Fokus hanya pada satu SDGs", solution: "Penelitian berkualitas sering kali berkontribusi pada multiple SDGs. Eksplorasi semua keterkaitan yang terdeteksi." },
-              { mistake: "Tidak memvalidasi kata kunci", solution: "Selalu periksa apakah kata kunci yang diekstrak sesuai dengan konteks penelitian Anda. Koreksi jika diperlukan." },
-              { mistake: "Mengabaikan tren temporal", solution: "Gunakan filter waktu untuk memahami bagaimana fokus penelitian Anda berkembang dan sesuaikan dengan prioritas SDGs terkini." }
-            ].map((item, index) => (
-              <div key={index} className="border border-gray-200 rounded-xl p-5 hover:border-orange-200 transition-colors">
-                <h3 className="font-semibold text-gray-900 mb-2 flex items-center">
-                  <AlertCircle className="w-5 h-5 text-orange-500 mr-2" />
-                  {item.mistake}
-                </h3>
-                <p className="text-gray-600 text-sm">{item.solution}</p>
+              { goal: 2, name: "Tanpa Kelaparan", score: 85 },
+              { goal: 9, name: "Industri, Inovasi dan Infrastruktur", score: 92 },
+              { goal: 12, name: "Konsumsi dan Produksi yang Bertanggung Jawab", score: 78 }
+            ].map((sdg) => (
+              <div key={sdg.goal} className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-semibold text-blue-600">SDG {sdg.goal}</span>
+                  <span className={`text-sm font-bold px-2 py-1 rounded ${
+                    sdg.score >= 80 ? 'bg-green-100 text-green-700' :
+                    sdg.score >= 60 ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-red-100 text-red-700'
+                  }`}>
+                    {sdg.score}%
+                  </span>
+                </div>
+                <p className="text-sm text-gray-700">{sdg.name}</p>
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Additional Resources */}
-        <div className="mb-10">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Sumber Daya Tambahan</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { title: "SDG Tracker", description: "Data global terbaru untuk setiap tujuan SDGs", url: "https://sdg-tracker.org" },
-              { title: "UN SDG Knowledge Platform", description: "Panduan resmi dan dokumentasi SDGs", url: "https://sustainabledevelopment.un.org" },
-              { title: "SciVal SDGs", description: "Benchmarking penelitian berbasis SDGs", url: "https://www.scival.com" }
-            ].map((resource, index) => (
-              <a
-                key={index}
-                href={resource.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block bg-white rounded-xl p-5 hover:shadow-lg transition-all border border-green-100 group"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-gray-900 group-hover:text-green-600 transition-colors">
-                    {resource.title}
-                  </h3>
-                  <ExternalLink className="w-5 h-5 text-green-600" />
-                </div>
-                <p className="text-sm text-gray-600">{resource.description}</p>
-              </a>
-            ))}
-          </div>
-        </div>
-
-        {/* CTA Section */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 text-white shadow-xl">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <h2 className="text-2xl font-bold mb-2">Siap Menganalisis Penelitian Anda?</h2>
-              <p className="text-blue-100">
-                Terapkan pengetahuan dari tutorial ini untuk menginterpretasikan hasil pemetaan SDGs dari penelitian Anda
-              </p>
-            </div>
-            <Link 
-              to="/"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors shadow-lg"
+            
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="font-semibold text-gray-900 mb-2 flex items-center">
+              <BookOpen className="w-4 h-4 mr-2" />
+              Interpretasi:
+            </h3>
+            <p className="text-gray-700 text-sm mb-3">Artikel ini menunjukkan keterkaitan kuat dengan SDG 9 (teknologi blockchain) dan SDG 2 (ketahanan pangan), serta kontribusi moderat pada SDG 12 (keberlanjutan rantai pasok).</p>
+            <button
+              onClick={copyExample}
+              className="flex items-center space-x-2 text-sm text-blue-600 hover:text-blue-700 transition-colors"
             >
-              Coba Analisis Sekarang
-              <ArrowRight className="w-5 h-5" />
-            </Link>
+              <Copy className="w-4 h-4" />
+               <span>Salin interpretasi</span>
+            </button>
           </div>
-        </section>
+        </div>
+      </div>
+
+      {/* Common Mistakes */}
+      <div className="mb-10">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+          <AlertCircle className="w-6 h-6 text-orange-500 mr-3" />
+          Kesalahan Umum dan Solusinya
+        </h2>
+        <div className="grid md:grid-cols-2 gap-6">
+          {[
+            { mistake: "Mengabaikan skor rendah", solution: "Skor rendah bukan berarti penelitian tidak berharga. Gunakan sebagai peluang untuk mengidentifikasi aspek SDGs yang belum tersentuh." },
+            { mistake: "Fokus hanya pada satu SDGs", solution: "Penelitian berkualitas sering kali berkontribusi pada multiple SDGs. Eksplorasi semua keterkaitan yang terdeteksi." },
+            { mistake: "Tidak memvalidasi kata kunci", solution: "Selalu periksa apakah kata kunci yang diekstrak sesuai dengan konteks penelitian Anda. Koreksi jika diperlukan." },
+            { mistake: "Mengabaikan tren temporal", solution: "Gunakan filter waktu untuk memahami bagaimana fokus penelitian Anda berkembang dan sesuaikan dengan prioritas SDGs terkini." }
+          ].map((item, index) => (
+            <div key={index} className="border border-gray-200 rounded-xl p-5 hover:border-orange-200 transition-colors">
+              <h3 className="font-semibold text-gray-900 mb-2 flex items-center">
+                <AlertCircle className="w-5 h-5 text-orange-500 mr-2" />
+                {item.mistake}
+              </h3>
+              <p className="text-gray-600 text-sm">{item.solution}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Additional Resources */}
+      <div className="mb-10">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Sumber Daya Tambahan</h2>
+        <div className="grid md:grid-cols-3 gap-6">
+          {[
+            { title: "SDG Tracker", description: "Data global terbaru untuk setiap tujuan SDGs", url: "https://sdg-tracker.org" },
+            { title: "UN SDG Knowledge Platform", description: "Panduan resmi dan dokumentasi SDGs", url: "https://sustainabledevelopment.un.org" },
+            { title: "SciVal SDGs", description: "Benchmarking penelitian berbasis SDGs", url: "https://www.scival.com" }
+          ].map((resource, index) => (
+            <a
+              key={index}
+              href={resource.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block bg-white rounded-xl p-5 hover:shadow-lg transition-all border border-green-100 group"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold text-gray-900 group-hover:text-green-600 transition-colors">
+                  {resource.title}
+                </h3>
+                <ExternalLink className="w-5 h-5 text-green-600" />
+              </div>
+              <p className="text-sm text-gray-600">{resource.description}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* CTA Section */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 text-white shadow-xl">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h2 className="text-2xl font-bold mb-2">Siap Menganalisis Penelitian Anda?</h2>
+            <p className="text-blue-100">
+              Terapkan pengetahuan dari tutorial ini untuk menginterpretasikan hasil pemetaan SDGs dari penelitian Anda
+            </p>
+          </div>
+          <Link 
+            to="/"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-colors shadow-lg"
+          >
+            Coba Analisis Sekarang
+            <ArrowRight className="w-5 h-5" />
+          </Link>
+        </div>
+      </div>
     </main>
   );
 };
