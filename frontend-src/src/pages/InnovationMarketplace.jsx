@@ -25,7 +25,7 @@ import {
   Clock,
   Briefcase
 } from 'lucide-react';
-import Header from '../components/layout/Header';
+import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
 const InnovationMarketplace = () => {
@@ -223,7 +223,7 @@ const InnovationMarketplace = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50 to-yellow-50">
-      <Header />
+      <Navbar />
       
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-orange-600 via-yellow-600 to-amber-600 text-white py-20 overflow-hidden">
