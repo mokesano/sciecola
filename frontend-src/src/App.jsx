@@ -105,6 +105,12 @@ import InsightsPage from './pages/InsightsPage';
 // Impor Chatbot
 import Chatbot from './components/layout/Chatbot';
 
+// Impor Halaman Error
+import NotFound404 from './pages/NotFound404';
+import ServerError500 from './pages/ServerError500';
+import MaintenanceMode from './pages/MaintenanceMode';
+import OfflineError from './pages/OfflineError';
+
 // =====================================================================
 // KOMPONEN BERANDA (HOME)
 // =====================================================================
@@ -261,6 +267,15 @@ function App() {
           {/* Rute Register */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+
+          {/* Rute Error Pages */}
+          <Route path="/404" element={<NotFound404 />} />
+          <Route path="/500" element={<ServerError500 />} />
+          <Route path="/maintenance" element={<MaintenanceMode />} />
+          <Route path="/offline" element={<OfflineError />} />
+          
+          {/* Catch-all route untuk 404 */}
+          <Route path="*" element={<NotFound404 />} />
         </Routes>
 
         {/* Footer selalu tampil di semua halaman */}
