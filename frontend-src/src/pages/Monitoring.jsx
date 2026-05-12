@@ -266,37 +266,6 @@ const Monitoring = () => {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard 
-            title="Total Page Views"
-            value="12,847"
-            change={12.5}
-            icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>}
-            color="bg-indigo-500"
-          />
-          <StatCard 
-            title="Unique Visitors"
-            value="3,456"
-            change={8.3}
-            icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>}
-            color="bg-purple-500"
-          />
-          <StatCard 
-            title="Avg. Session"
-            value="4m 32s"
-            change={-2.1}
-            icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
-            color="bg-green-500"
-          />
-          <StatCard 
-            title="Bounce Rate"
-            value="32.4%"
-            change={-5.7}
-            icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>}
-            color="bg-amber-500"
-          />
-        </div>
-
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           <div className="p-5 border-b border-gray-100">
             <h2 className="text-lg font-bold text-gray-900">Geographic Distribution</h2>
@@ -339,6 +308,37 @@ const Monitoring = () => {
           </div>
         </div>
 
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatCard 
+            title="Total Page Views"
+            value="12,847"
+            change={12.5}
+            icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>}
+            color="bg-indigo-500"
+          />
+          <StatCard 
+            title="Unique Visitors"
+            value="3,456"
+            change={8.3}
+            icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>}
+            color="bg-purple-500"
+          />
+          <StatCard 
+            title="Avg. Session"
+            value="4m 32s"
+            change={-2.1}
+            icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+            color="bg-green-500"
+          />
+          <StatCard 
+            title="Bounce Rate"
+            value="32.4%"
+            change={-5.7}
+            icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>}
+            color="bg-amber-500"
+          />
+        </div>
+        
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
             <h3 className="font-bold text-gray-900 mb-4">By Traffic Source</h3>
@@ -484,7 +484,7 @@ const Monitoring = () => {
               <tbody className="divide-y divide-gray-100">
                 {pageViewActivity.map((activity) => (
                   <tr key={activity.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 text-gray-900 font-mono text-xs">{activity.timestamp}</td>
+                    <td className="px-4 py-3 text-gray-900 font-mono text-sm">{activity.timestamp}</td>
                     <td className="px-4 py-3">
                       <span className="text-indigo-600 font-medium">{activity.page}</span>
                     </td>
@@ -500,7 +500,7 @@ const Monitoring = () => {
                     </td>
                     <td className="px-4 py-3 text-gray-600">{activity.device}</td>
                     <td className="px-4 py-3">
-                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-medium">
+                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm font-medium">
                         {activity.duration}
                       </span>
                     </td>

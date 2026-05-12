@@ -1,30 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  FolderOpen, 
-  Users, 
-  Calendar, 
-  CheckCircle, 
-  Clock, 
-  AlertCircle,
-  Plus,
-  Search,
-  Filter,
-  MoreVertical,
-  Edit2,
-  Trash2,
-  Share2,
-  Download,
-  MessageSquare,
-  FileText,
-  BarChart3,
-  Settings,
-  Eye,
-  Star,
-  Zap,
-  Target,
-  TrendingUp,
-  Award
+import { FolderOpen, Users, Calendar, CheckCircle, Clock, AlertCircle, Plus,
+  Search, Filter, MoreVertical, Edit2, Trash2, Share2, Download, MessageSquare,
+  FileText, BarChart3, Settings, Eye, Star, Zap, Target, TrendingUp, Award
 } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
@@ -203,13 +181,12 @@ const ProjectManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <Navbar />
+    <main className="min-h-screen pt-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white py-16 overflow-hidden">
+      <section className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white py-20 overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
-        <div className="container mx-auto px-6 relative z-10">
+        <div className="container px-8 max-w-7xl mx-auto relative z-10">
           <div className="flex justify-between items-center">
             <div>
               <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-4">
@@ -233,8 +210,8 @@ const ProjectManagement = () => {
       </section>
 
       {/* Stats Overview */}
-      <section className="py-8 -mt-6">
-        <div className="container mx-auto px-6">
+      <section className="py-8">
+        <div className="container px-8 max-w-7xl mx-auto relative z-10">
           <div className="bg-white rounded-2xl shadow-xl p-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {[
               { label: 'Total Projects', value: stats.total, icon: FolderOpen, color: 'from-blue-500 to-indigo-600' },
@@ -258,7 +235,7 @@ const ProjectManagement = () => {
 
       {/* Tabs & Search */}
       <section className="py-6">
-        <div className="container mx-auto px-6">
+        <div className="container px-8 max-w-7xl mx-auto relative z-10">
           <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
             <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
               <div className="flex gap-2 overflow-x-auto pb-2">
@@ -437,7 +414,7 @@ const ProjectManagement = () => {
 
       {/* Quick Actions */}
       <section className="py-12 bg-white">
-        <div className="container mx-auto px-6">
+        <div className="container px-8 max-w-7xl mx-auto relative z-10">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
@@ -460,9 +437,7 @@ const ProjectManagement = () => {
           </div>
         </div>
       </section>
-
-      <Footer />
-    </div>
+    </main>
   );
 };
 
