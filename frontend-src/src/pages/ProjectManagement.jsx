@@ -26,7 +26,7 @@ import {
   TrendingUp,
   Award
 } from 'lucide-react';
-import Header from '../components/layout/Header';
+import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
 const ProjectManagement = () => {
@@ -204,7 +204,7 @@ const ProjectManagement = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <Header />
+      <Navbar />
       
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white py-16 overflow-hidden">

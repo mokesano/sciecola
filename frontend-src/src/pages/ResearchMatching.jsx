@@ -24,7 +24,7 @@ import {
   MessageSquare,
   Share2
 } from 'lucide-react';
-import Header from '../components/layout/Header';
+import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
 const ResearchMatching = () => {
@@ -191,7 +191,7 @@ const ResearchMatching = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50">
-      <Header />
+      <Navbar />
       
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white py-20 overflow-hidden">

@@ -23,7 +23,7 @@ import {
   Lightbulb,
   Handshake
 } from 'lucide-react';
-import Header from '../components/layout/Header';
+import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
 const CollaborationHub = () => {
@@ -173,7 +173,7 @@ const CollaborationHub = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <Header />
+      <Navbar />
       
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white py-20 overflow-hidden">
