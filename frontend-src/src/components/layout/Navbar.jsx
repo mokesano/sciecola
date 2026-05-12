@@ -50,16 +50,12 @@ const Navbar = () => {
               {({ isActive }) => <span className={isActive ? activeClass : inactiveClass}>Beranda</span>}
             </NavLink>
             
-            <NavLink to="/journals" className="px-3 py-2 group">
-              {({ isActive }) => <span className={isActive ? activeClass : inactiveClass}>Journals</span>}
-            </NavLink>
-
             <NavLink to="/researchers" className="px-3 py-2 group">
               <span className={isResearchersActive ? activeClass : inactiveClass}>Researchers</span>
             </NavLink>
 
-            <NavLink to="/institutions" className="px-3 py-2 group">
-              {({ isActive }) => <span className={isActive ? activeClass : inactiveClass}>Institutions</span>}
+            <NavLink to="/articles" className="px-3 py-2 group">
+              {({ isActive }) => <span className={isActive ? activeClass : inactiveClass}>Articles</span>}
             </NavLink>
 
             <NavLink to="/sdgs" className="px-3 py-2 group">
