@@ -271,7 +271,7 @@ const Monitoring = () => {
             <h2 className="text-lg font-bold text-gray-900">Geographic Distribution</h2>
             <p className="text-sm text-gray-600 mt-1">Distribusi pengunjung berdasarkan lokasi geografis</p>
           </div>
-          <div className="h-[500px] w-full z-0 relative">
+          <div className="h-[580px] w-full z-0 relative">
             <MapContainer
               ref={mapRef}
               center={[20, 0]}
