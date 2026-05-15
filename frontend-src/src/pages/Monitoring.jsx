@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-// Perubahan: Mengganti Popup dengan Tooltip
 import { MapContainer, Marker, Tooltip, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -7,7 +6,35 @@ import 'leaflet/dist/leaflet.css';
 const Monitoring = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState('24h');
   const [activeTab, setActiveTab] = useState('overview');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [monitoringData, setMonitoringData] = useState(null);
   const mapRef = useRef(null);
+
+  useEffect(() => {
+    fetchMonitoringData(selectedTimeRange);
+  }, [selectedTimeRange]);
+
+  const fetchMonitoringData = async (range) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/monitoring.php?range=${range}`);
+      if (!response.ok) throw new Error('Failed to fetch monitoring data');
+      const result = await response.json();
+      if (result.status === 'ok' && result.data) {
+        setMonitoringData(result.data);
+      } else {
+        throw new Error('Invalid response format');
+      }
+    } catch (err) {
+      console.error('Monitoring data fetch error:', err);
+      setError(err.message);
+      // Keep using default mock data on error
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Animasi pulse halus (subtle)
   useEffect(() => {
@@ -48,7 +75,8 @@ const Monitoring = () => {
     return null;
   };
 
-  const [geoData] = useState([
+  // Default mock geo data for development/fallback
+  const DEFAULT_GEO_DATA = [
     { id: 1,  lat: -6.21,  lng: 106.85, city: 'Jakarta',        visitors: 1247 },
     { id: 2,  lat: -7.26,  lng: 112.75, city: 'Surabaya',       visitors: 856  },
     { id: 3,  lat: 1.35,   lng: 103.82, city: 'Singapore',      visitors: 743  },
@@ -74,9 +102,11 @@ const Monitoring = () => {
     { id: 23, lat: 6.52,   lng: 3.38,   city: 'Lagos',          visitors: 132  },
     { id: 24, lat: -26.20, lng: 28.04,  city: 'Johannesburg',   visitors: 121  },
     { id: 25, lat: 55.75,  lng: 37.62,  city: 'Moscow',         visitors: 118  },
-  ]);
+  ];
 
-  const trafficSources = {
+  const geoData = monitoringData?.geoData || DEFAULT_GEO_DATA;
+
+  const DEFAULT_TRAFFIC_SOURCES = {
     sources: [
       { name: 'Direct', value: 4523, percentage: 35, color: 'bg-indigo-500' },
       { name: 'Organic Search', value: 3845, percentage: 30, color: 'bg-purple-500' },
@@ -106,7 +136,9 @@ const Monitoring = () => {
     ]
   };
 
-  const pagesData = {
+  const trafficSources = monitoringData?.trafficSources || DEFAULT_TRAFFIC_SOURCES;
+
+  const DEFAULT_PAGES_DATA = {
     entryPages: [
       { path: '/dashboard', views: 3456, percentage: 32, bounceRate: '24%' },
       { path: '/researchers', views: 2345, percentage: 22, bounceRate: '31%' },
@@ -130,7 +162,9 @@ const Monitoring = () => {
     ]
   };
 
-  const systemData = {
+  const pagesData = monitoringData?.pagesData || DEFAULT_PAGES_DATA;
+
+  const DEFAULT_SYSTEM_DATA = {
     browsers: [
       { name: 'Chrome',  value: 6789, percentage: 58 },
       { name: 'Firefox', value: 2345, percentage: 20 },
@@ -152,7 +186,9 @@ const Monitoring = () => {
     ]
   };
 
-  const [pageViewActivity] = useState([
+  const systemData = monitoringData?.systemData || DEFAULT_SYSTEM_DATA;
+
+  const DEFAULT_PAGE_VIEW_ACTIVITY = [
     { id: 1, timestamp: '2024-05-25 14:32:15', page: '/dashboard/analytics', source: 'google.com', location: 'Jakarta', device: 'Chrome/Windows', duration: '4m 32s' },
     { id: 2, timestamp: '2024-05-25 14:31:48', page: '/researchers/profile', source: 'Direct', location: 'Surabaya', device: 'Firefox/macOS', duration: '3m 18s' },
     { id: 3, timestamp: '2024-05-25 14:30:22', page: '/sdgs/explorer', source: 'linkedin.com', location: 'Bandung', device: 'Chrome/Android', duration: '5m 12s' },
@@ -161,7 +197,16 @@ const Monitoring = () => {
     { id: 6, timestamp: '2024-05-25 14:27:12', page: '/dashboard', source: 'Direct', location: 'Yogyakarta', device: 'Edge/Windows', duration: '1m 23s' },
     { id: 7, timestamp: '2024-05-25 14:26:45', page: '/about', source: 'facebook.com', location: 'Makassar', device: 'Chrome/Android', duration: '0m 45s' },
     { id: 8, timestamp: '2024-05-25 14:25:18', page: '/researchers', source: 'google.com', location: 'Jakarta', device: 'Firefox/Linux', duration: '3m 56s' },
-  ]);
+  ];
+
+  const pageViewActivity = monitoringData?.activity || DEFAULT_PAGE_VIEW_ACTIVITY;
+
+  const formatSeconds = (seconds) => {
+    if (!seconds) return '0s';
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}m ${secs}s`;
+  };
 
   const PulseMarker = ({ position, city, visitors, type = 'normal' }) => {
     // Menggunakan Opsi 1 (Seimbang) untuk visual ukuran pulse
@@ -264,6 +309,21 @@ const Monitoring = () => {
         </div>
       </div>
 
+      {loading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 flex flex-col items-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent mb-4"></div>
+            <p className="text-gray-700 font-medium">Loading monitoring data...</p>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mx-4 mt-4">
+          <p className="text-red-700">Error loading data: {error}. Using cached data.</p>
+        </div>
+      )}
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
@@ -309,30 +369,30 @@ const Monitoring = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard 
+          <StatCard
             title="Total Page Views"
-            value="12,847"
+            value={monitoringData?.summary?.totalPageViews?.toLocaleString() || '12,847'}
             change={12.5}
             icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>}
             color="bg-indigo-500"
           />
-          <StatCard 
+          <StatCard
             title="Unique Visitors"
-            value="3,456"
+            value={monitoringData?.summary?.uniqueVisitors?.toLocaleString() || '3,456'}
             change={8.3}
             icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>}
             color="bg-purple-500"
           />
-          <StatCard 
+          <StatCard
             title="Avg. Session"
-            value="4m 32s"
+            value={formatSeconds(monitoringData?.summary?.avgSessionDuration) || '4m 32s'}
             change={-2.1}
             icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
             color="bg-green-500"
           />
-          <StatCard 
+          <StatCard
             title="Bounce Rate"
-            value="32.4%"
+            value={(monitoringData?.summary?.bounceRate || 32.4).toFixed(1) + '%'}
             change={-5.7}
             icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>}
             color="bg-amber-500"
