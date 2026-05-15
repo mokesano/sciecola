@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'javascript' ]  # Mencakup JS, TS, JSX, TSX
+        language: [ 'javascript-typescript' ]
 
     steps:
     - name: Checkout repository
@@ -41,6 +41,7 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
+        queries: security-extended
 
     # Autobuild akan otomatis menjalankan `npm install` dan `npm run build` (jika ada)
     # untuk membangun proyek React, sehingga analisis bisa mendeteksi dependensi.
@@ -49,3 +50,6 @@ jobs:
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
+      with:
+        upload: true
+        category: "/language:${{matrix.language}}"
