@@ -37,17 +37,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Setup Node.js untuk memastikan tool seperti ESLint dapat berjalan
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
+          cache: 'npm'
+          cache-dependency-path: package.json   # 👈 hanya perlu package.json
 
-      # Instalasi dependensi proyek agar tool analisis tidak gagal
+      # Instal dependensi secara "longgar" (tanpa memaksa lockfile)
       - name: Install dependencies
-        run: npm ci
+        run: npm install --no-fund --no-audit
 
-      # Jalankan Codacy Analysis CLI (versi terbaru)
       - name: Run Codacy Analysis CLI
         uses: codacy/codacy-analysis-cli-action@v4
         with:
@@ -57,7 +57,6 @@ jobs:
           format: sarif
           gh-code-scanning-compat: true
           max-allowed-issues: 2147483647
-          allow-dirty: true         # mencegah error git dirty
 
       - name: Upload SARIF results file
         uses: github/codeql-action/upload-sarif@v3
