@@ -140,16 +140,20 @@ const InstitutionProfile = () => {
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
         <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
-        <span className="text-gray-400">›</span>
+        <span className="text-gray-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </span>
         <Link to="/institutions" className="hover:text-indigo-600 transition-colors">Institutions</Link>
-        <span className="text-gray-400">›</span>
-        <span className="text-gray-900 font-medium">Institusi Profile</span>
+        <span className="text-gray-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </span>
+        <span className="text-gray-900 font-medium">Profile Institusi</span>
       </nav>
 
       {/* Header Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         {/* Left: Logo & Basic Info */}
-        <div className="flex lg:col-span-2">
+        <div className="flex gap-6 lg:col-span-2">
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
             <div className="text-center mb-6">
               <img 
@@ -159,10 +163,10 @@ const InstitutionProfile = () => {
               />
               <h1 className="text-2xl font-bold text-gray-900 mb-1">{institution.name}</h1>
               <div className="flex gap-2 justify-center mt-2">
-                <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-medium">
+                <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-xl text-xs font-medium">
                   {institution.type}
                 </span>
-                <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">
+                <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-xl text-xs font-medium">
                   {institution.country}
                 </span>
               </div>
@@ -170,11 +174,11 @@ const InstitutionProfile = () => {
           </div>
 
           {/* Details */}
-          <div className="p-6">  
-            <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+          <div className="p-2">
+            <p className="text-m text-gray-600 mb-6 leading-relaxed">
               Universitas Indonesia (UI) adalah perguruan tinggi negeri tertua di Indonesia yang berkomitmen untuk menghasilkan penelitian berkualitas dan memberikan kontribusi nyata bagi masyarakat dan pembangunan berkelanjutan.
             </p>
-            <div className="space-y-3 text-sm">
+            <div className="space-y-3 text-m">
               <div className="flex items-center gap-3 text-gray-600">
                 <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
@@ -256,7 +260,7 @@ const InstitutionProfile = () => {
 
         {/* Right: Stats Cards */}
         <div className="lg:col-span-1">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-2">
             <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center">
@@ -376,7 +380,7 @@ const InstitutionProfile = () => {
       </div>
 
       {/* Quick Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 mb-8">
         {[
           { label: 'Total Publikasi', value: institution.publications, icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
           { label: 'Total Sitasi', value: institution.citations, icon: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z' },

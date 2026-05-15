@@ -174,9 +174,9 @@ $SOCIAL_LINKS = [
 
 // Contact Information
 $CONTACT_INFO = [
-    'email' => 'contact@sciecola.sangia.org',
-    'support' => 'support@sciecola.sangia.org',
-    'business' => 'business@sciecola.sangia.org',
+    'email' => 'contact.sciecola@sangia.org',
+    'support' => 'support.sciecola@sangia.org',
+    'business' => 'business.sciecola@sangia.org',
     'phone' => '+1-555-0123',
     'address' => '123 Innovation Street, Tech City, TC 12345'
 ];

@@ -4,7 +4,11 @@ import mdx from '@mdx-js/rollup';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => ({
-  plugins: [react(), mdx()],
+  plugins: [
+    // PERBAIKAN: Beri tahu Vite untuk memproses MDX terlebih dahulu sebelum React
+    { enforce: 'pre', ...mdx() },
+    react(),
+  ],
   
   // 1. KUNCI UTAMA: Beri tahu Vite bahwa source code React ada di folder ini
   root: 'frontend-src',

@@ -16,7 +16,7 @@ export default defineConfig(({ command }) => ({
     react(),
   ],
 
-  publicDir: false,
+  publicDir: command === 'build' ? false : '../public',
 
   base: command === 'build' ? '/assets/sicola-ui/' : '/',
 

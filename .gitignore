@@ -16,6 +16,7 @@
 /node_modules/
 node_modules/
 frontend-src/node_modules/
+frontend-src/package-lock.json
 .pnpm/
 .yarn/
 yarn.lock

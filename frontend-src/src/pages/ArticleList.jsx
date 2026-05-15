@@ -79,15 +79,24 @@ const ArticleList = () => {
   };
 
   return (
-    <main className="pt-32 pb-20 px-6 max-w-7xl mx-auto w-full">
+    <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
+        <span className="text-gray-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </span>
+        <span className="text-gray-900 font-medium">Data Artikel</span>
+      </div>
+
       {/* Header Halaman */}
       <div className="mb-10">
-        <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Database Artikel</h1>
-        <p className="text-gray-500 mt-2 text-lg">Jelajahi artikel penelitian terklasifikasi berdasarkan target SDGs.</p>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">Data Artikel</h1>
+        <p className="text-lg font-semibold text-gray-600 mt-1 max-w-2xl">Jelajahi artikel penelitian terklasifikasi berdasarkan target SDGs.</p>
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm mb-8">
+      <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm mb-8">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Search Input */}
           <div className="flex-grow relative">
@@ -96,9 +105,9 @@ const ArticleList = () => {
               placeholder="Cari judul artikel, DOI, atau kata kunci..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 transition-all"
+              className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 transition-all"
             />
-            <svg className="w-5 h-5 text-gray-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
           </div>

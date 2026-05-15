@@ -83,7 +83,7 @@ const Footer = () => {
             <div className="w-7 h-1 bg-indigo-500 mb-3"></div>
             <ul className="space-y-3 text-sm text-gray-400">
               <li><Link to="/about" className="hover:text-indigo-400 transition-colors">Tentang Kami</Link></li>
-              <li><Link to="/docs" className="hover:text-indigo-400 transition-colors">Dokumentasi Fitur</Link></li>
+              <li><Link to="/docs/documentation" className="hover:text-indigo-400 transition-colors">Dokumentasi Fitur</Link></li>
               <li><Link to="/docs/faq" className="hover:text-indigo-400 transition-colors">FAQ</Link></li>
               <li><Link to="/help" className="hover:text-indigo-400 transition-colors">Bantuan</Link></li>
               <li><Link to="/privacy" className="hover:text-indigo-400 transition-colors">Kebijakan Privasi</Link></li>
