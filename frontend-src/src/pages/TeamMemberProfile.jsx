@@ -69,7 +69,10 @@ const NotFound = ({ slug }) => (
 
 const TeamMemberProfile = () => {
   const { memberSlug } = useParams();
-  const member = teamMembersDatabase[memberSlug];
+  // Guard against prototype pollution: only accept own properties
+  const member = Object.prototype.hasOwnProperty.call(teamMembersDatabase, memberSlug)
+    ? teamMembersDatabase[memberSlug]
+    : null;
 
   if (!member) return <NotFound slug={memberSlug} />;
 
