@@ -1,332 +1,266 @@
--- =============================================================
--- Wizdam Ecosystem — Unified Database Schema
--- Database: wizdam_ecosystem
+-- ═══════════════════════════════════════════════════════════════
+-- wizdam_ecosystem — Canonical Schema
+-- Owner     : sdgs-mapper / db/schema.sql
+-- Digunakan : wizdam-apis · wizdam-sikola · sdgs-analytics · sdg-mono · sdgs-mapper
+-- Engine    : MariaDB 10.6+ / MySQL 8.0+
 --
--- Digunakan bersama oleh:
---   - sdgs-mapper     (SDG classification & researcher mapping)
---   - SDGs-analytics  (analytics & trends)
---   - wizdam-apis     (API gateway & key management)
---   - wizdam-sikola   (core academic platform)
---
--- Engine:  MariaDB 10.6+ / MySQL 8.0+
--- Charset: utf8mb4_unicode_ci
---
--- Cara menjalankan:
---   mysql -u root -p wizdam_ecosystem < db/schema.sql
--- =============================================================
+-- Setup:
+--   mysql -u root -p < db/schema.sql
+-- ═══════════════════════════════════════════════════════════════
+
+CREATE DATABASE IF NOT EXISTS wizdam_ecosystem
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+USE wizdam_ecosystem;
 
 SET FOREIGN_KEY_CHECKS = 0;
-SET NAMES utf8mb4;
 
--- =============================================================
--- LAYER 1: IDENTITY — Pengguna & Institusi
--- =============================================================
+-- ── LAYER 1: Identity ────────────────────────────────────────────────────────
 
 CREATE TABLE IF NOT EXISTS institutions (
-    id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
-    name            VARCHAR(255)    NOT NULL,
-    short_name      VARCHAR(100)    NULL,
-    type            ENUM('university','research_center','government','private','international') NOT NULL DEFAULT 'university',
-    country         VARCHAR(100)    NOT NULL DEFAULT 'Indonesia',
-    province        VARCHAR(100)    NULL,
-    city            VARCHAR(100)    NULL,
-    address         TEXT            NULL,
-    website         VARCHAR(255)    NULL,
-    logo_url        VARCHAR(500)    NULL,
-    latitude        DECIMAL(10,8)   NULL,
-    longitude       DECIMAL(11,8)   NULL,
-    orcid_id        VARCHAR(50)     NULL COMMENT 'Institutional ORCID',
-    ror_id          VARCHAR(50)     NULL COMMENT 'Research Organization Registry',
-    grid_id         VARCHAR(50)     NULL,
-    total_researchers INT UNSIGNED  NOT NULL DEFAULT 0,
-    total_publications INT UNSIGNED NOT NULL DEFAULT 0,
-    wizdam_score    DECIMAL(10,2)   NOT NULL DEFAULT 0,
-    created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_name    (name(100)),
-    INDEX idx_country (country)
+  id                INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  name              VARCHAR(255)    NOT NULL,
+  acronym           VARCHAR(50)     NULL,
+  country           VARCHAR(100)    NULL,
+  city              VARCHAR(100)    NULL,
+  website_url       VARCHAR(512)    NULL,
+  ror_id            VARCHAR(100)    NULL UNIQUE  COMMENT 'Research Organization Registry',
+  scopus_affil_id   VARCHAR(50)     NULL UNIQUE,
+  created_at        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_country (country),
+  INDEX idx_name    (name(100))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE IF NOT EXISTS users (
-    id                  INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
-    email               VARCHAR(255)    NOT NULL,
-    username            VARCHAR(100)    NOT NULL,
-    password_hash       VARCHAR(255)    NOT NULL,
-    full_name           VARCHAR(255)    NULL,
-    avatar_url          VARCHAR(500)    NULL,
-    bio                 TEXT            NULL,
-    institution_id      INT UNSIGNED    NULL,
-    role                ENUM('user','admin','super_admin') NOT NULL DEFAULT 'user',
-    subscription_tier   ENUM('free','pro','enterprise')   NOT NULL DEFAULT 'free',
-    is_verified         TINYINT(1)      NOT NULL DEFAULT 0,
-    is_active           TINYINT(1)      NOT NULL DEFAULT 1,
-    last_login_at       DATETIME        NULL,
-    created_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY uq_email    (email),
-    UNIQUE KEY uq_username (username),
-    FOREIGN KEY fk_users_institution (institution_id) REFERENCES institutions(id) ON DELETE SET NULL,
-    INDEX idx_role (role)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE IF NOT EXISTS user_sessions (
-    id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id     INT UNSIGNED    NOT NULL,
-    token_hash  VARCHAR(255)    NOT NULL,
-    ip_address  VARCHAR(45)     NULL,
-    user_agent  TEXT            NULL,
-    expires_at  DATETIME        NOT NULL,
-    created_at  TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uq_token  (token_hash),
-    FOREIGN KEY fk_sessions_user (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_expires (expires_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE IF NOT EXISTS user_2fa (
-    user_id     INT UNSIGNED    NOT NULL PRIMARY KEY,
-    secret      VARCHAR(64)     NOT NULL,
-    method      ENUM('totp','email') NOT NULL DEFAULT 'totp',
-    is_enabled  TINYINT(1)      NOT NULL DEFAULT 0,
-    backup_codes JSON            NULL,
-    created_at  TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY fk_2fa_user (user_id) REFERENCES users(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- =============================================================
--- LAYER 2: KNOWLEDGE — Peneliti & Publikasi
--- =============================================================
 
 CREATE TABLE IF NOT EXISTS researchers (
-    id                  INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
-    user_id             INT UNSIGNED    NULL COMMENT 'Link ke akun login',
-    institution_id      INT UNSIGNED    NULL,
-    full_name           VARCHAR(255)    NOT NULL,
-    preferred_name      VARCHAR(255)    NULL,
-    email               VARCHAR(255)    NULL,
-    orcid_id            VARCHAR(50)     NULL,
-    scopus_id           VARCHAR(50)     NULL,
-    sinta_id            VARCHAR(50)     NULL,
-    google_scholar_id   VARCHAR(100)    NULL,
-    researchgate_url    VARCHAR(255)    NULL,
-    position_title      VARCHAR(255)    NULL,
-    department          VARCHAR(255)    NULL,
-    field_of_study      JSON            NULL,
-    expertise_tags      JSON            NULL,
-    latitude            DECIMAL(10,8)   NULL,
-    longitude           DECIMAL(11,8)   NULL,
-    total_publications  INT UNSIGNED    NOT NULL DEFAULT 0,
-    total_citations     INT UNSIGNED    NOT NULL DEFAULT 0,
-    h_index             INT UNSIGNED    NOT NULL DEFAULT 0,
-    wizdam_score        DECIMAL(10,2)   NOT NULL DEFAULT 0,
-    sdgs_primary_goals  JSON            NULL COMMENT 'Top SDG goals dari publikasi peneliti',
-    is_claimed          TINYINT(1)      NOT NULL DEFAULT 0 COMMENT 'Apakah profil sudah diklaim pemiliknya',
-    last_sync_at        DATETIME        NULL,
-    created_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY uq_orcid  (orcid_id),
-    FOREIGN KEY fk_researchers_user        (user_id)        REFERENCES users(id)        ON DELETE SET NULL,
-    FOREIGN KEY fk_researchers_institution (institution_id) REFERENCES institutions(id) ON DELETE SET NULL,
-    INDEX idx_full_name (full_name(100))
+  orcid               VARCHAR(20)     NOT NULL PRIMARY KEY  COMMENT 'Format: 0000-0000-0000-000X',
+  name                VARCHAR(255)    NOT NULL,
+  given_names         VARCHAR(150)    NULL,
+  family_name         VARCHAR(150)    NULL,
+  email               VARCHAR(255)    NULL,
+  institution_id      INT UNSIGNED    NULL,
+  scopus_id           VARCHAR(50)     NULL  COMMENT 'Scopus Author ID',
+  researcher_id       VARCHAR(50)     NULL  COMMENT 'ResearcherID / Web of Science',
+  h_index             SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+  citation_count      INT UNSIGNED    NOT NULL DEFAULT 0,
+  sinta_id            VARCHAR(50)     NULL,
+  country             VARCHAR(100)    NULL,
+  profile_cache_json  LONGTEXT        NULL  COMMENT 'Raw profile data dari wizdam-apis ORCID endpoint',
+  cache_expires_at    TIMESTAMP       NULL,
+  created_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY fk_researchers_institution (institution_id) REFERENCES institutions(id) ON DELETE SET NULL,
+  INDEX idx_name        (name(100)),
+  INDEX idx_scopus      (scopus_id),
+  INDEX idx_institution (institution_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── LAYER 2: Knowledge ───────────────────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS journals (
+  id                INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  title             VARCHAR(512)    NOT NULL,
+  issn              VARCHAR(10)     NULL,
+  e_issn            VARCHAR(10)     NULL,
+  publisher         VARCHAR(255)    NULL,
+  country           VARCHAR(100)    NULL,
+  sjr_score         DECIMAL(10,4)   NULL,
+  snip_score        DECIMAL(10,4)   NULL,
+  cite_score        DECIMAL(10,4)   NULL,
+  h_index           SMALLINT UNSIGNED NULL,
+  quartile          TINYINT UNSIGNED  NULL  COMMENT '1–4',
+  sinta_score       DECIMAL(10,4)   NULL,
+  sinta_grade       VARCHAR(5)      NULL    COMMENT 'S1–S6',
+  scopus_source_id  VARCHAR(50)     NULL,
+  created_at        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_issn   (issn),
+  INDEX idx_title      (title(100))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS publications (
-    id                  BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    doi                 VARCHAR(512)    NULL,
-    put_code            VARCHAR(50)     NULL COMMENT 'ORCID put-code untuk kompatibilitas SDGs-analytics',
-    title               TEXT            NOT NULL,
-    abstract            TEXT            NULL,
-    publication_date    DATE            NULL,
-    publication_year    SMALLINT UNSIGNED NULL,
-    journal_title       VARCHAR(512)    NULL,
-    publisher           VARCHAR(255)    NULL,
-    volume              VARCHAR(50)     NULL,
-    issue               VARCHAR(50)     NULL,
-    pages               VARCHAR(50)     NULL,
-    issn                VARCHAR(20)     NULL,
-    document_type       ENUM('article','conference','book','chapter','thesis','report','preprint','other') NOT NULL DEFAULT 'article',
-    access_type         ENUM('open_access','subscription','hybrid') NOT NULL DEFAULT 'subscription',
-    pdf_url             VARCHAR(500)    NULL,
-    fulltext_url        VARCHAR(500)    NULL,
-    cited_by_count      INT UNSIGNED    NOT NULL DEFAULT 0,
-    wizdam_score        DECIMAL(10,2)   NOT NULL DEFAULT 0,
-    sdgs_goals          JSON            NULL COMMENT 'Cache ringkas hasil mapping SDG',
-    created_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY uq_doi      (doi(191)),
-    UNIQUE KEY uq_put_code (put_code),
-    INDEX idx_year         (publication_year),
-    FULLTEXT idx_fts_title_abstract (title, abstract)
+  doi               VARCHAR(512)    NOT NULL PRIMARY KEY  COMMENT 'Lowercase DOI as PK',
+  title             VARCHAR(1024)   NOT NULL,
+  abstract          LONGTEXT        NULL,
+  publication_year  SMALLINT UNSIGNED NULL,
+  type              VARCHAR(50)     NULL  COMMENT 'journal-article | conference-paper | book | etc.',
+  journal_id        INT UNSIGNED    NULL,
+  volume            VARCHAR(20)     NULL,
+  issue             VARCHAR(20)     NULL,
+  pages             VARCHAR(50)     NULL,
+  publisher         VARCHAR(255)    NULL,
+  citation_count    INT UNSIGNED    NOT NULL DEFAULT 0  COMMENT 'Best count dari multi-source',
+  citation_sources  JSON            NULL  COMMENT '{"crossref":12,"openalex":14}',
+  sdg_cache_json    LONGTEXT        NULL  COMMENT 'Cached SDG classification result',
+  raw_data_json     LONGTEXT        NULL  COMMENT 'Raw data dari wizdam-apis',
+  created_at        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY fk_publications_journal (journal_id) REFERENCES journals(id) ON DELETE SET NULL,
+  INDEX idx_year    (publication_year),
+  INDEX idx_journal (journal_id),
+  FULLTEXT INDEX ft_title (title)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS publication_authors (
-    id                  BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    publication_id      BIGINT UNSIGNED NOT NULL,
-    researcher_id       INT UNSIGNED    NULL COMMENT 'NULL jika peneliti belum terdaftar',
-    author_name         VARCHAR(255)    NOT NULL COMMENT 'Nama mentah dari metadata sumber',
-    author_order        TINYINT UNSIGNED NOT NULL DEFAULT 1,
-    is_corresponding    TINYINT(1)      NOT NULL DEFAULT 0,
-    affiliation         VARCHAR(500)    NULL,
-    orcid_id            VARCHAR(50)     NULL,
-    FOREIGN KEY fk_pub_authors_pub  (publication_id) REFERENCES publications(id)  ON DELETE CASCADE,
-    FOREIGN KEY fk_pub_authors_res  (researcher_id)  REFERENCES researchers(id)   ON DELETE SET NULL,
-    INDEX idx_publication (publication_id),
-    INDEX idx_researcher  (researcher_id)
+  id                INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  doi               VARCHAR(512)    NOT NULL,
+  orcid             VARCHAR(20)     NULL,
+  name              VARCHAR(255)    NOT NULL,
+  given_names       VARCHAR(150)    NULL,
+  family_name       VARCHAR(150)    NULL,
+  sequence          TINYINT UNSIGNED NOT NULL DEFAULT 1  COMMENT '1 = first author',
+  is_corresponding  TINYINT(1)      NOT NULL DEFAULT 0,
+  FOREIGN KEY fk_pa_doi   (doi)   REFERENCES publications(doi)  ON DELETE CASCADE,
+  FOREIGN KEY fk_pa_orcid (orcid) REFERENCES researchers(orcid) ON DELETE SET NULL,
+  INDEX idx_doi   (doi(191)),
+  INDEX idx_orcid (orcid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- =============================================================
--- LAYER 3: INTELLIGENCE — SDG Mapping & Citations
--- =============================================================
+-- ── LAYER 3: Intelligence ────────────────────────────────────────────────────
 
 CREATE TABLE IF NOT EXISTS work_sdgs (
-    id                  BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    publication_id      BIGINT UNSIGNED NOT NULL,
-    sdg_code            VARCHAR(10)     NOT NULL COMMENT 'SDG1 s/d SDG17',
-    confidence_score    DECIMAL(5,4)    NULL COMMENT 'Skor kepercayaan 0.0000-1.0000',
-    contributor_type    ENUM('Active Contributor','Relevant Contributor','Discutor','Not Relevant') NULL,
-    keyword_score       DECIMAL(5,4)    NULL,
-    similarity_score    DECIMAL(5,4)    NULL,
-    causal_score        DECIMAL(5,4)    NULL,
-    impact_score        DECIMAL(5,4)    NULL,
-    mapped_by           ENUM('ai_model','manual','keyword_match') NOT NULL DEFAULT 'ai_model',
-    created_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uq_pub_sdg      (publication_id, sdg_code),
-    FOREIGN KEY fk_work_sdgs_pub (publication_id) REFERENCES publications(id) ON DELETE CASCADE,
-    INDEX idx_sdg_code          (sdg_code),
-    INDEX idx_contributor_type  (contributor_type)
+  id                    INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  doi                   VARCHAR(512)    NOT NULL,
+  sdg_number            TINYINT UNSIGNED NOT NULL  COMMENT '1–17',
+  sdg_version           VARCHAR(10)     NOT NULL DEFAULT 'v5'  COMMENT 'SDG classifier version',
+  confidence            DECIMAL(5,4)    NULL  COMMENT '0.0000–1.0000',
+  classification_detail JSON            NULL  COMMENT 'Full result dari wizdam-apis SDG classifier',
+  classified_at         TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_doi_sdg_ver (doi(191), sdg_number, sdg_version),
+  FOREIGN KEY fk_work_sdgs_doi (doi) REFERENCES publications(doi) ON DELETE CASCADE,
+  INDEX idx_sdg (sdg_number),
+  INDEX idx_doi (doi(191))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS citations (
-    id                      BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    citing_publication_id   BIGINT UNSIGNED NULL,
-    cited_publication_id    BIGINT UNSIGNED NOT NULL,
-    citation_source         ENUM('openalex','opencitations','crossref','scopus','manual') NOT NULL,
-    external_id             VARCHAR(100)    NULL,
-    citation_year           SMALLINT UNSIGNED NULL,
-    created_at              TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uq_citation (citing_publication_id, cited_publication_id, citation_source),
-    FOREIGN KEY fk_citations_citing (citing_publication_id) REFERENCES publications(id) ON DELETE SET NULL,
-    FOREIGN KEY fk_citations_cited  (cited_publication_id)  REFERENCES publications(id) ON DELETE CASCADE,
-    INDEX idx_cited    (cited_publication_id),
-    INDEX idx_cit_year (citation_year)
+CREATE TABLE IF NOT EXISTS ecosystem_cache (
+  cache_key   VARCHAR(512)    NOT NULL PRIMARY KEY,
+  payload     LONGTEXT        NOT NULL  COMMENT 'JSON',
+  expires_at  TIMESTAMP       NOT NULL,
+  created_by  VARCHAR(50)     NULL  COMMENT 'mapper | sikola | apis | analytics',
+  created_at  TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_expires (expires_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- =============================================================
--- LAYER 4: PLATFORM — Statistik & Cache Operasional
--- Tabel ini dipertahankan untuk backward compatibility dan performa
--- (sdgs-mapper saat ini menggunakan tabel-tabel ini secara langsung)
--- =============================================================
-
-CREATE TABLE IF NOT EXISTS sdg_cache (
-    id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    cache_key   VARCHAR(512)    NOT NULL,
-    payload     MEDIUMTEXT      NOT NULL,
-    expires_at  DATETIME        NOT NULL,
-    updated_at  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uq_cache_key (cache_key(191)),
-    INDEX idx_expires (expires_at)
+CREATE TABLE IF NOT EXISTS analytics_snapshots (
+  id            INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  snapshot_type VARCHAR(50)     NOT NULL  COMMENT 'institution_impact | researcher_trend | sdg_distribution',
+  entity_type   VARCHAR(30)     NOT NULL  COMMENT 'institution | researcher | journal | global',
+  entity_id     VARCHAR(255)    NOT NULL  COMMENT 'ORCID / institution_id / issn / global',
+  period        VARCHAR(20)     NULL      COMMENT '2024 | 2024-Q1 | all-time',
+  data_json     LONGTEXT        NOT NULL  COMMENT 'Computed result',
+  computed_at   TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_type_entity (snapshot_type, entity_type, entity_id(100)),
+  INDEX idx_period      (period)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS orcid_profiles (
-    id           BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    orcid_id     CHAR(19)        NOT NULL,
-    profile_json MEDIUMTEXT      NOT NULL,
-    expires_at   DATETIME        NOT NULL,
-    updated_at   DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uq_orcid (orcid_id),
-    INDEX idx_expires (expires_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE IF NOT EXISTS doi_results (
-    id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    doi         VARCHAR(512)    NOT NULL,
-    result_json MEDIUMTEXT      NOT NULL,
-    expires_at  DATETIME        NOT NULL,
-    updated_at  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uq_doi (doi(191)),
-    INDEX idx_expires (expires_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE IF NOT EXISTS classified_works (
-    id               BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    doi              VARCHAR(512)    NULL,
-    orcid_id         CHAR(19)        NULL,
-    publication_id   BIGINT UNSIGNED NULL COMMENT 'FK ke publications setelah migrasi',
-    title            TEXT            NOT NULL,
-    abstract_text    TEXT            NULL,
-    journal_title    VARCHAR(512)    NULL,
-    publication_year SMALLINT        NULL,
-    sdgs_json        TEXT            NOT NULL COMMENT 'JSON array ["SDG3","SDG13"]',
-    scores_json      TEXT            NULL     COMMENT 'Score breakdown JSON lengkap',
-    classified_at    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY fk_cw_publication (publication_id) REFERENCES publications(id) ON DELETE SET NULL,
-    INDEX idx_doi    (doi(191)),
-    INDEX idx_orcid  (orcid_id),
-    INDEX idx_year   (publication_year)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE IF NOT EXISTS platform_stats (
-    id          INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
-    stat_key    VARCHAR(100)    NOT NULL,
-    stat_value  BIGINT          NOT NULL DEFAULT 0,
-    updated_at  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY uq_stat_key (stat_key)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT IGNORE INTO platform_stats (stat_key, stat_value) VALUES
-    ('total_articles',    0),
-    ('total_researchers', 0),
-    ('total_journals',    0),
-    ('total_sdg_tags',    0),
-    ('total_citations',   0),
-    ('total_institutions',0);
-
-CREATE TABLE IF NOT EXISTS sdg_trends (
-    id          BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    year        SMALLINT        NOT NULL,
-    sdg_code    VARCHAR(10)     NOT NULL,
-    count       INT UNSIGNED    NOT NULL DEFAULT 0,
-    updated_at  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY uq_year_sdg (year, sdg_code),
-    INDEX idx_year (year)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- =============================================================
--- LAYER 5: INFRASTRUCTURE — API Keys & Jobs
--- (digunakan oleh wizdam-apis)
--- =============================================================
+-- ── LAYER 4: Platform ────────────────────────────────────────────────────────
 
 CREATE TABLE IF NOT EXISTS api_keys (
-    id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
-    user_id         INT UNSIGNED    NOT NULL,
-    name            VARCHAR(255)    NOT NULL,
-    api_key_hash    VARCHAR(255)    NOT NULL,
-    permissions     JSON            NULL,
-    rate_limit      INT UNSIGNED    NOT NULL DEFAULT 1000 COMMENT 'Request per hari',
-    expires_at      DATETIME        NULL,
-    is_active       TINYINT(1)      NOT NULL DEFAULT 1,
-    last_used_at    DATETIME        NULL,
-    created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uq_api_key_hash (api_key_hash),
-    FOREIGN KEY fk_api_keys_user (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_user (user_id)
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  key_hash        VARCHAR(64)     NOT NULL UNIQUE  COMMENT 'sha256(raw_key)',
+  user_id         VARCHAR(255)    NOT NULL          COMMENT 'App-level user ID or app name',
+  is_active       TINYINT(1)      NOT NULL DEFAULT 1,
+  permissions_json JSON           NULL  COMMENT 'Reserved for endpoint-scoping',
+  last_used_at    TIMESTAMP       NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_user   (user_id(100)),
+  INDEX idx_active (is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS api_rate_limits (
+  id            INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  user_id       VARCHAR(255)    NOT NULL,
+  window_start  INT UNSIGNED    NOT NULL  COMMENT 'Unix timestamp of window start',
+  hit_count     INT UNSIGNED    NOT NULL DEFAULT 1,
+  UNIQUE KEY uq_user_window (user_id(100), window_start),
+  INDEX idx_window (window_start)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS jobs (
-    id              BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    job_id          VARCHAR(100)    NOT NULL,
-    class           VARCHAR(255)    NOT NULL,
-    payload         TEXT            NOT NULL,
-    status          ENUM('pending','processing','completed','failed') NOT NULL DEFAULT 'pending',
-    priority        TINYINT UNSIGNED NOT NULL DEFAULT 5,
-    attempts        TINYINT UNSIGNED NOT NULL DEFAULT 0,
-    result          TEXT            NULL,
-    error           TEXT            NULL,
-    created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    completed_at    DATETIME        NULL,
-    UNIQUE KEY uq_job_id (job_id),
-    INDEX idx_status   (status),
-    INDEX idx_priority (priority)
+  id            BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  queue         VARCHAR(100)    NOT NULL DEFAULT 'default',
+  payload       LONGTEXT        NOT NULL,
+  attempts      TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  reserved_at   TIMESTAMP       NULL,
+  available_at  TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_at    TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_queue_available (queue, available_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── LAYER 5: Users ──────────────────────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS user_accounts (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  orcid           VARCHAR(20)     NULL UNIQUE,
+  email           VARCHAR(255)    NOT NULL UNIQUE,
+  password_hash   VARCHAR(255)    NULL  COMMENT 'bcrypt hash; NULL = ORCID-only auth',
+  name            VARCHAR(255)    NOT NULL DEFAULT '',
+  role            VARCHAR(20)     NOT NULL DEFAULT 'user'  COMMENT 'user | admin',
+  is_active       TINYINT(1)      NOT NULL DEFAULT 1,
+  email_verified  TINYINT(1)      NOT NULL DEFAULT 0,
+  last_login_at   TIMESTAMP       NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY fk_ua_orcid (orcid) REFERENCES researchers(orcid) ON DELETE SET NULL,
+  INDEX idx_role  (role),
+  INDEX idx_active (is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS user_external_ids (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  orcid           VARCHAR(20)     NOT NULL,
+  id_type         VARCHAR(30)     NOT NULL  COMMENT 'scopus | researcher_id | sinta | google_scholar | loop',
+  external_id     VARCHAR(100)    NOT NULL,
+  sync_status     VARCHAR(20)     NOT NULL DEFAULT 'pending'  COMMENT 'synced | pending | failed | not_set',
+  last_sync_at    TIMESTAMP       NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_orcid_type (orcid, id_type),
+  FOREIGN KEY fk_uei_orcid (orcid) REFERENCES researchers(orcid) ON DELETE CASCADE,
+  INDEX idx_orcid (orcid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS user_collections (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  orcid           VARCHAR(20)     NOT NULL,
+  name            VARCHAR(100)    NOT NULL,
+  description     TEXT            NULL,
+  privacy         ENUM('public','private') NOT NULL DEFAULT 'private',
+  tags            JSON            NULL,
+  item_count      INT UNSIGNED    NOT NULL DEFAULT 0,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY fk_uc_orcid (orcid) REFERENCES researchers(orcid) ON DELETE CASCADE,
+  INDEX idx_orcid   (orcid),
+  INDEX idx_privacy (privacy)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS collection_items (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  collection_id   INT UNSIGNED    NOT NULL,
+  doi             VARCHAR(512)    NOT NULL,
+  item_type       VARCHAR(30)     NOT NULL DEFAULT 'article',
+  added_at        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_collection_doi (collection_id, doi(191)),
+  FOREIGN KEY fk_ci_collection (collection_id) REFERENCES user_collections(id) ON DELETE CASCADE,
+  FOREIGN KEY fk_ci_doi        (doi)           REFERENCES publications(doi)    ON DELETE CASCADE,
+  INDEX idx_collection (collection_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS user_activity_log (
+  id              BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  orcid           VARCHAR(20)     NOT NULL,
+  activity_type   VARCHAR(30)     NOT NULL  COMMENT 'viewed | saved | downloaded | searched | analyzed | shared | exported',
+  category        VARCHAR(30)     NOT NULL DEFAULT 'article'  COMMENT 'article | researcher | journal | search | system',
+  target_id       VARCHAR(512)    NULL  COMMENT 'DOI, ORCID, ISSN, or search query',
+  title           VARCHAR(300)    NULL,
+  metadata_json   JSON            NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY fk_ual_orcid (orcid) REFERENCES researchers(orcid) ON DELETE CASCADE,
+  INDEX idx_orcid      (orcid),
+  INDEX idx_type       (activity_type),
+  INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 SET FOREIGN_KEY_CHECKS = 1;

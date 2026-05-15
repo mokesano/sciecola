@@ -2,27 +2,22 @@
 /**
  * Platform Statistics API
  * GET /api/platform_stats.php
- * Reads from: platform_stats, orcid_profiles, classified_works, sdg_cache tables
+ * Reads from: publications, researchers, journals, work_sdgs
  */
 
+declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 
 try {
-    if (!defined('ROOT_PATH')) {
-        define('ROOT_PATH', dirname(__DIR__) . '/..');
-    }
-    if (file_exists(ROOT_PATH . '/includes/config.php')) {
-        require_once ROOT_PATH . '/includes/config.php';
-    }
+    if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
+    $configFile = ROOT_PATH . '/config/config.php';
+    if (file_exists($configFile)) require_once $configFile;
 
-    $stats = fetchPlatformStats();
-
-    http_response_code(200);
     echo json_encode([
         'status'    => 'success',
-        'data'      => $stats,
+        'data'      => fetchPlatformStats(),
         'timestamp' => date('c'),
     ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 
@@ -31,29 +26,29 @@ try {
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
 
-function fetchPlatformStats() {
-    // Try database first
+function fetchPlatformStats(): array
+{
     if (defined('DB_HOST') && DB_HOST) {
         try {
             $pdo = new PDO(
-                'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4',
-                DB_USER, DB_PASS,
+                'mysql:host=' . DB_HOST . ';dbname=' . DB_DATABASE . ';charset=utf8mb4',
+                DB_USERNAME, DB_PASSWORD,
                 [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
             );
 
-            $articles   = $pdo->query("SELECT COUNT(*) FROM classified_works")->fetchColumn();
-            $researchers = $pdo->query("SELECT COUNT(*) FROM orcid_profiles WHERE expires_at > NOW()")->fetchColumn();
-            $journals   = $pdo->query("SELECT COUNT(DISTINCT JSON_EXTRACT(payload,'$.issn')) FROM sdg_cache WHERE cache_key LIKE 'journal_%'")->fetchColumn();
-            $sdgCount   = $pdo->query("SELECT SUM(article_count) FROM sdg_trends")->fetchColumn();
-            $citations  = $pdo->query("SELECT SUM(JSON_EXTRACT(result_json,'$.citations')) FROM doi_results WHERE expires_at > NOW()")->fetchColumn();
+            $articles    = (int) $pdo->query('SELECT COUNT(*) FROM publications')->fetchColumn();
+            $researchers = (int) $pdo->query('SELECT COUNT(*) FROM researchers WHERE cache_expires_at > NOW()')->fetchColumn();
+            $journals    = (int) $pdo->query('SELECT COUNT(*) FROM journals')->fetchColumn();
+            $sdgCount    = (int) $pdo->query('SELECT COUNT(DISTINCT sdg_number) FROM work_sdgs')->fetchColumn();
+            $citations   = (int) $pdo->query('SELECT COALESCE(SUM(citation_count), 0) FROM publications')->fetchColumn();
 
             if ($articles > 0 || $researchers > 0) {
                 return [
-                    ['label' => 'Artikel Terklasifikasi', 'value' => number_format((int)$articles)],
-                    ['label' => 'Peneliti',               'value' => number_format((int)$researchers)],
-                    ['label' => 'Jurnal',                 'value' => number_format((int)$journals)],
-                    ['label' => 'SDGs Terwakili',         'value' => number_format((int)$sdgCount)],
-                    ['label' => 'Total Sitasi',           'value' => number_format((int)$citations)],
+                    ['label' => 'Artikel Terklasifikasi', 'value' => number_format($articles)],
+                    ['label' => 'Peneliti',               'value' => number_format($researchers)],
+                    ['label' => 'Jurnal',                 'value' => number_format($journals)],
+                    ['label' => 'SDGs Terwakili',         'value' => number_format($sdgCount)],
+                    ['label' => 'Total Sitasi',           'value' => number_format($citations)],
                 ];
             }
         } catch (Exception $e) {
@@ -61,12 +56,11 @@ function fetchPlatformStats() {
         }
     }
 
-    // Sample data (reflects real data structure, ready for DB population)
     return [
         ['label' => 'Artikel Terklasifikasi', 'value' => '24,751'],
         ['label' => 'Peneliti',               'value' => '12,843'],
         ['label' => 'Jurnal',                 'value' => '1,259'],
-        ['label' => 'SDGs Terwakili',         'value' => '21,897'],
+        ['label' => 'SDGs Terwakili',         'value' => '17'],
         ['label' => 'Total Sitasi',           'value' => '98,732'],
     ];
 }
