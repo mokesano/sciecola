@@ -43,6 +43,8 @@ const AdvisorCard = ({ advisor }) => (
       <img
         src={advisor.avatar}
         alt={advisor.name}
+        width="80"
+        height="80"
         className="w-20 h-20 rounded-full object-cover mx-auto border-4 border-gray-50 group-hover:border-purple-100 transition-colors"
         onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
       />
