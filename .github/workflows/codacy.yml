@@ -19,39 +19,44 @@ on:
   pull_request:
     branches: [ "main", "master", "develop", "production" ]
   schedule:
-    - cron: '33 18 * * 1'
+    - cron: '0 4 * * 1' # Setiap Senin pukul 04:00 UTC
 
 permissions:
   contents: read
+  security-events: write
+  actions: read
 
 jobs:
   codacy-security-scan:
-    permissions:
-      contents: read
-      security-events: write
-      actions: read
     name: Codacy Security Scan
     runs-on: ubuntu-latest
-
+    
     steps:
+      # Langkah 1: Checkout kode
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Penting untuk analisis diff yang akurat
 
-      # Instal dependensi secara "longgar" (tanpa memaksa lockfile)
-      - name: Install dependencies
-        run: npm install --no-fund --no-audit
-
+      # Langkah 2: Jalankan Codacy Analysis CLI
+      # Kita tidak lagi membutuhkan env: CODACY_PROJECT_TOKEN karena menggunakan GitHub App Integration
       - name: Run Codacy Analysis CLI
         uses: codacy/codacy-analysis-cli-action@v4
         with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          verbose: true
-          output: results.sarif
+          # Opsional: Tentukan tool yang ingin dijalankan, atau biarkan kosong untuk semua
+          # tools: eslint,bandit
+          
+          # Opsional: Format output untuk diupload ke GitHub Code Scanning
           format: sarif
-          gh-code-scanning-compat: true
-          max-allowed-issues: 2147483647
+          output: results.sarif
+          
+          # Biarkan verbose untuk debugging jika diperlukan
+          verbose: true
 
-      - name: Upload SARIF results file
+      # Langkah 3: Upload hasil SARIF ke GitHub Code Scanning
+      - name: Upload SARIF results to GitHub
         uses: github/codeql-action/upload-sarif@v3
+        if: always() # Pastikan langkah ini jalan meski analisis sebelumnya ada warning
         with:
           sarif_file: results.sarif
+          category: codacy
