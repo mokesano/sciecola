@@ -37,13 +37,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 'lts/*'
-          cache: 'npm'
-          cache-dependency-path: package.json   # 👈 hanya perlu package.json
-
       # Instal dependensi secara "longgar" (tanpa memaksa lockfile)
       - name: Install dependencies
         run: npm install --no-fund --no-audit
