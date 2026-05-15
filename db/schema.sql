@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS work_sdgs (
   confidence            DECIMAL(5,4)    NULL  COMMENT '0.0000–1.0000',
   classification_detail JSON            NULL  COMMENT 'Full result dari wizdam-apis SDG classifier',
   classified_at         TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE KEY uq_doi_sdg_ver (doi(191), sdg_number, sdg_version),
+  UNIQUE KEY uq_doi_sdg_ver (doi, sdg_number, sdg_version),
   FOREIGN KEY fk_work_sdgs_doi (doi) REFERENCES publications(doi) ON DELETE CASCADE,
   INDEX idx_sdg (sdg_number),
   INDEX idx_doi (doi(191))
@@ -242,7 +242,7 @@ CREATE TABLE IF NOT EXISTS collection_items (
   doi             VARCHAR(512)    NOT NULL,
   item_type       VARCHAR(30)     NOT NULL DEFAULT 'article',
   added_at        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE KEY uq_collection_doi (collection_id, doi(191)),
+  UNIQUE KEY uq_collection_doi (collection_id, doi),
   FOREIGN KEY fk_ci_collection (collection_id) REFERENCES user_collections(id) ON DELETE CASCADE,
   FOREIGN KEY fk_ci_doi        (doi)           REFERENCES publications(doi)    ON DELETE CASCADE,
   INDEX idx_collection (collection_id)
@@ -354,7 +354,7 @@ CREATE TABLE IF NOT EXISTS project_publications (
   doi             VARCHAR(512)    NOT NULL,
   contribution    TEXT            NULL,
   added_at        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE KEY uq_proj_pub (project_id, doi(191)),
+  UNIQUE KEY uq_proj_pub (project_id, doi),
   FOREIGN KEY (project_id) REFERENCES research_projects(id) ON DELETE CASCADE,
   FOREIGN KEY (doi)        REFERENCES publications(doi)     ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -580,7 +580,7 @@ CREATE TABLE IF NOT EXISTS page_analytics (
   exit_rate       DECIMAL(5,2)    NULL,
   date            DATE            NOT NULL,
   created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE KEY uq_page_date (page_path(191), date),
+  UNIQUE KEY uq_page_date (page_path, date),
   INDEX idx_date     (date),
   INDEX idx_path     (page_path(100))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
