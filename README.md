@@ -1,5 +1,7 @@
 # Sciecola
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/dcf536169d5c469ab5bdef5a9a5a0333)](https://app.codacy.com/gh/mokesano/sdgs-mapper/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
 A comprehensive restructuring of the SDG Classification Analysis platform built with PHP, JavaScript, and modern web technologies. This project provides AI-powered analysis of research contributions to the United Nations Sustainable Development Goals (SDGs).
 
 ## 🚀 Features
