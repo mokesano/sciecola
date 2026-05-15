@@ -510,36 +510,39 @@ const ArticleProfile = () => {
               </div>
             </div>
 
-            {/* Version History Preview */}
+            {/* Preprint Links Preview */}
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-bold text-gray-900">Versi & Riwayat</h3>
+                <h3 className="text-lg font-bold text-gray-900">Preprint</h3>
                 <button onClick={() => setActiveTab('versi')} className="text-sm text-indigo-600 font-medium hover:text-indigo-700">Lihat semua</button>
               </div>
               <div className="space-y-4">
-                {article.versions.slice(0, 3).map((version, idx) => (
-                  <div key={idx} className="flex gap-3">
-                    <div className="shrink-0">
-                      <div className={`w-2 h-2 rounded-full mt-2 ${
-                        version.type === 'published' ? 'bg-green-500' :
-                        version.type === 'final' ? 'bg-blue-500' :
-                        version.type === 'revision' ? 'bg-yellow-500' :
-                        version.type === 'review' ? 'bg-purple-500' : 'bg-gray-400'
-                      }`}></div>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">{version.date}</p>
-                      <p className="text-xs text-gray-600">{version.event}</p>
-                    </div>
-                  </div>
-                ))}
+                {article.preprintLinks && article.preprintLinks.length > 0 ? (
+                  article.preprintLinks.slice(0, 3).map((preprint, idx) => (
+                    <a key={idx} href={preprint.preprint_url} target="_blank" rel="noopener noreferrer" className="flex gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors block">
+                      <div className="shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs font-bold flex-shrink-0">
+                          {preprint.preprint_server.slice(0, 2).toUpperCase()}
+                        </div>
+                      </div>
+                      <div className="flex-grow min-w-0">
+                        <p className="text-sm font-medium text-gray-900 line-clamp-1">{preprint.preprint_server}</p>
+                        <p className="text-xs text-gray-500">{preprint.publication_date}</p>
+                      </div>
+                    </a>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-500">Tidak ada preprint yang tersedia</p>
+                )}
               </div>
-              <button
-                onClick={() => setActiveTab('versi')}
-                className="mt-6 w-full py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors text-sm"
-              >
-                Lihat Semua Versi
-              </button>
+              {article.preprintLinks && article.preprintLinks.length > 3 && (
+                <button
+                  onClick={() => setActiveTab('versi')}
+                  className="mt-6 w-full py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors text-sm"
+                >
+                  Lihat Semua Preprint
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -742,42 +745,53 @@ const ArticleProfile = () => {
         </div>
       )}
 
-      {/* Tab: Versi */}
+      {/* Tab: Preprint */}
       {activeTab === 'versi' && (
-        <div className="max-w-2xl mx-auto">
+        <div>
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-            <h3 className="text-lg font-bold text-gray-900 mb-6">Riwayat Versi Artikel</h3>
-            <div className="relative">
-              <div className="absolute left-3 top-0 bottom-0 w-0.5 bg-gray-200"></div>
-              <div className="space-y-6">
-                {article.versions.map((version, idx) => (
-                  <div key={idx} className="flex gap-6 relative">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 z-10 ${
-                      version.type === 'published' ? 'bg-green-500' :
-                      version.type === 'final' ? 'bg-blue-500' :
-                      version.type === 'revision' ? 'bg-yellow-500' :
-                      version.type === 'review' ? 'bg-purple-500' : 'bg-gray-400'
-                    }`}>
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            <h3 className="text-lg font-bold text-gray-900 mb-6">Tautan Preprint</h3>
+            {article.preprintLinks && article.preprintLinks.length > 0 ? (
+              <div className="space-y-4">
+                {article.preprintLinks.map((preprint, idx) => (
+                  <a
+                    key={idx}
+                    href={preprint.preprint_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:bg-indigo-50 transition-all group"
+                  >
+                    <div className="w-12 h-12 rounded-lg bg-indigo-100 flex items-center justify-center shrink-0 group-hover:bg-indigo-200 transition-colors">
+                      <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                       </svg>
                     </div>
-                    <div className="flex-grow pb-6">
-                      <div className="flex items-center justify-between mb-1">
-                        <h4 className="font-semibold text-gray-900">{version.event}</h4>
-                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                          version.type === 'published' ? 'bg-green-50 text-green-700' :
-                          version.type === 'final' ? 'bg-blue-50 text-blue-700' :
-                          version.type === 'revision' ? 'bg-yellow-50 text-yellow-700' :
-                          version.type === 'review' ? 'bg-purple-50 text-purple-700' : 'bg-gray-50 text-gray-700'
-                        }`}>{version.type}</span>
+                    <div className="flex-grow min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h4 className="font-semibold text-gray-900">{preprint.preprint_server.charAt(0).toUpperCase() + preprint.preprint_server.slice(1)}</h4>
+                        <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded text-xs font-medium">Preprint</span>
                       </div>
-                      <p className="text-sm text-gray-500">{version.date}</p>
+                      <p className="text-sm text-gray-600 line-clamp-1">{preprint.preprint_doi || preprint.preprint_url}</p>
+                      <p className="text-xs text-gray-500 mt-1">Sumber: {preprint.source || 'CrossRef'} · {preprint.publication_date}</p>
                     </div>
-                  </div>
+                    <div className="shrink-0 text-indigo-600 group-hover:translate-x-1 transition-transform">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    </div>
+                  </a>
                 ))}
               </div>
-            </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <p className="text-gray-500 font-medium">Tidak ada preprint</p>
+                <p className="text-sm text-gray-400 mt-1">Artikel ini tidak memiliki preprint yang terdaftar di server preprint utama (ArXiv, BioRxiv, MedRxiv, SSRN, OSF)</p>
+              </div>
+            )}
           </div>
         </div>
       )}
