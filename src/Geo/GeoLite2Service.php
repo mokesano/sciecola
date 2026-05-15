@@ -4,109 +4,93 @@ declare(strict_types=1);
 
 namespace Sciecola\Geo;
 
+use MaxMind\Db\Reader;
+use MaxMind\Db\Reader\InvalidDatabaseException;
+
 /**
- * MaxMind GeoLite2 IP lookup service.
- * Priority: PHP geoip2 extension → MaxMind DB Reader → Database fallback
+ * MaxMind GeoLite2 IP geolocation service.
+ * Uses the bundled MaxMind DB Reader at library/MaxMind/ to read the binary .mmdb file directly.
  */
 class GeoLite2Service
 {
+    private static ?Reader $reader = null;
+    private static string  $loadedPath = '';
+
     private string $dbPath;
 
     public function __construct(string $dbPath = '')
     {
-        $this->dbPath = $dbPath ?: ROOT_PATH . '/library/GeoLite2/GeoLite2-City/GeoLite2-City.mmdb';
+        $this->dbPath = $dbPath !== ''
+            ? $dbPath
+            : ROOT_PATH . '/library/GeoLite2/GeoLite2-City/GeoLite2-City.mmdb';
     }
 
     /**
-     * Look up IP address and return geographic data.
-     * Returns: ['latitude' => float, 'longitude' => float, 'city' => string, 'country' => string, 'country_code' => string]
+     * Look up an IP address.
+     *
+     * @return array{city: string|null, country: string|null, country_code: string|null, latitude: float, longitude: float}|null
      */
     public function lookup(string $ipAddress): ?array
     {
-        // Try PHP geoip2 extension first
-        if (extension_loaded('geoip')) {
-            return $this->lookupViaExtension($ipAddress);
+        // Skip private/reserved ranges
+        if ($this->isPrivateIp($ipAddress)) {
+            return null;
         }
 
-        // Try MaxMind DB Reader (if available)
-        if (function_exists('geoip2_country')) {
-            return $this->lookupViaFunction($ipAddress);
-        }
-
-        // Fallback: mock data for development
-        return $this->lookupFallback($ipAddress);
-    }
-
-    private function lookupViaExtension(string $ipAddress): ?array
-    {
         try {
-            // Using php-geoip extension
-            $record = @geoip_record_by_name($ipAddress);
-            if (!$record) {
+            $reader = $this->getReader();
+            if ($reader === null) {
+                return null;
+            }
+
+            $record = $reader->get($ipAddress);
+            if ($record === null) {
                 return null;
             }
 
             return [
-                'city'         => $record['city'] ?? null,
-                'country'      => $record['country_name'] ?? null,
-                'country_code' => $record['country_code'] ?? null,
-                'latitude'     => (float) ($record['latitude'] ?? 0),
-                'longitude'    => (float) ($record['longitude'] ?? 0),
+                'city'         => $record['city']['names']['en'] ?? null,
+                'country'      => $record['country']['names']['en'] ?? null,
+                'country_code' => $record['country']['iso_code'] ?? null,
+                'latitude'     => (float) ($record['location']['latitude'] ?? 0.0),
+                'longitude'    => (float) ($record['location']['longitude'] ?? 0.0),
             ];
+        } catch (InvalidDatabaseException $e) {
+            error_log("GeoLite2 database error: " . $e->getMessage());
+            return null;
         } catch (\Exception $e) {
-            error_log("GeoIP extension error: " . $e->getMessage());
+            error_log("GeoLite2 lookup error for IP {$ipAddress}: " . $e->getMessage());
             return null;
         }
     }
 
-    private function lookupViaFunction(string $ipAddress): ?array
+    private function getReader(): ?Reader
     {
-        // If MaxMind's official PHP library is available
+        if (self::$reader !== null && self::$loadedPath === $this->dbPath) {
+            return self::$reader;
+        }
+
+        if (!file_exists($this->dbPath)) {
+            error_log("GeoLite2 database not found: {$this->dbPath}");
+            return null;
+        }
+
         try {
-            $result = geoip2_country($ipAddress);
-            if (!$result) {
-                return null;
-            }
-
-            // Parse result based on MaxMind City format
-            return [
-                'city'         => $result['city']['name'] ?? null,
-                'country'      => $result['country']['name'] ?? null,
-                'country_code' => $result['country']['iso_code'] ?? null,
-                'latitude'     => (float) ($result['location']['latitude'] ?? 0),
-                'longitude'    => (float) ($result['location']['longitude'] ?? 0),
-            ];
+            self::$reader     = new Reader($this->dbPath);
+            self::$loadedPath = $this->dbPath;
+            return self::$reader;
         } catch (\Exception $e) {
+            error_log("Failed to open GeoLite2 database: " . $e->getMessage());
             return null;
         }
     }
 
-    /**
-     * Fallback: Return mock/default data for development.
-     * In production with GeoLite2 properly installed, this won't be called.
-     */
-    private function lookupFallback(string $ipAddress): ?array
+    private function isPrivateIp(string $ip): bool
     {
-        // Map common Indonesian IPs
-        $fallbackMap = [
-            '203.192.' => ['city' => 'Jakarta', 'country' => 'Indonesia', 'country_code' => 'ID', 'latitude' => -6.21, 'longitude' => 106.85],
-            '36.80.'   => ['city' => 'Surabaya', 'country' => 'Indonesia', 'country_code' => 'ID', 'latitude' => -7.26, 'longitude' => 112.75],
-            '175.184.' => ['city' => 'Bandung', 'country' => 'Indonesia', 'country_code' => 'ID', 'latitude' => -6.92, 'longitude' => 107.61],
-        ];
-
-        foreach ($fallbackMap as $prefix => $data) {
-            if (strpos($ipAddress, $prefix) === 0) {
-                return $data;
-            }
-        }
-
-        // Default: Jakarta for any other IP
-        return [
-            'city'         => 'Unknown',
-            'country'      => 'Unknown',
-            'country_code' => null,
-            'latitude'     => -6.21,
-            'longitude'    => 106.85,
-        ];
+        return !filter_var(
+            $ip,
+            FILTER_VALIDATE_IP,
+            FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
+        );
     }
 }

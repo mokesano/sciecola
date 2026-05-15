@@ -19,6 +19,7 @@ require_once __DIR__ . '/autoload.php';
 
 // 4. Muat Konfigurasi dan Fungsi Global
 $configFile = __DIR__ . '/config.php';
+
 if (file_exists($configFile)) {
     require_once $configFile;
 }
@@ -30,8 +31,18 @@ if (file_exists($functionsFile)) {
     die('System Error: file functions.php tidak ditemukan di folder includes.');
 }
 
+// 5. Start session (required for AccessLogger session_id)
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// 6. Log request ke access_logs (hanya untuk non-bot GET request ke frontend)
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && !str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/api/')) {
+    (new \Sciecola\Middleware\AccessLogger())->log();
+}
+
 // =========================================================================
-// 5. SISTEM ROUTER UTAMA (API vs FRONTEND)
+// 7. SISTEM ROUTER UTAMA (API vs FRONTEND)
 // =========================================================================
 
 if (is_api_request()) {
