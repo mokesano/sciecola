@@ -4,8 +4,8 @@
  *
  * GET /api/journals.php?page=1&limit=20&sort=citescore&search=environmental
  *
- * Reads from: sdg_cache table (cached journal metrics from Scopus)
- * Falls back to: Scopus API for real-time data if needed
+ * Reads from: journals table (with optional ecosystem_cache for metrics)
+ * Falls back to: sample data if DB is unavailable
  *
  * @author Claude Code
  * @version 1.0.0
@@ -65,7 +65,7 @@ try {
  */
 function fetchJournalsList($offset, $limit, $sort, $search, $sdg_filter) {
     // Try to fetch from database first
-    // For now, generate sample data - in production would query sdg_cache + scopus metrics tables
+    // For now, generate sample data - in production would query journals + work_sdgs tables
 
     $sampleJournals = generateSampleJournals();
 

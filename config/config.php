@@ -89,13 +89,24 @@ $LOG_CONFIG = [
 // 6. DATABASE CONFIGURATION
 // ================================================================
 
-define('DB_HOST',    getenv('DB_HOST')    ?: 'localhost');
-define('DB_PORT',    getenv('DB_PORT')    ?: '3306');
-define('DB_USER',    getenv('DB_USER')    ?: 'sicola');
-define('DB_PASS',    getenv('DB_PASS')    ?: '');
-define('DB_NAME',    getenv('DB_NAME')    ?: 'sicola_db');
-define('DB_CHARSET', 'utf8mb4');
-define('DB_DRIVER',  getenv('DB_DRIVER')  ?: 'mysql'); // 'mysql' for MariaDB, 'pgsql' for PostgreSQL
+define('DB_HOST',     getenv('DB_HOST')     ?: 'localhost');
+define('DB_PORT',     getenv('DB_PORT')     ?: '3306');
+define('DB_CHARSET',  'utf8mb4');
+define('DB_DRIVER',   getenv('DB_DRIVER')   ?: 'mysql');
+
+// Canonical names (wizdam_ecosystem schema). Accept both new and legacy env-var names.
+$_db_name = getenv('DB_DATABASE') ?: (getenv('DB_NAME') ?: 'wizdam_ecosystem');
+$_db_user = getenv('DB_USERNAME') ?: (getenv('DB_USER') ?: 'wizdam_app');
+$_db_pass = getenv('DB_PASSWORD') ?: (getenv('DB_PASS') ?: '');
+
+define('DB_DATABASE', $_db_name);  // canonical
+define('DB_USERNAME', $_db_user);  // canonical
+define('DB_PASSWORD', $_db_pass);  // canonical
+define('DB_NAME',     $_db_name);  // alias: legacy code + src/Database/Connection.php
+define('DB_USER',     $_db_user);  // alias
+define('DB_PASS',     $_db_pass);  // alias
+
+unset($_db_name, $_db_user, $_db_pass);
 
 // ================================================================
 // 7. WIZDAM-APIS CONFIGURATION

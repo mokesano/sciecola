@@ -1,10 +1,10 @@
 <?php
 /**
  * My Activity API
- * Stores and retrieves user activity events (file-based per ORCID).
+ * DB-first, file-based fallback.
  *
  * GET  /api/my_activity.php?orcid=...&range=7days&type=all&page=1
- * POST /api/my_activity.php { orcid, type, category, title, target, detail, metadata:{} }
+ * POST /api/my_activity.php { orcid, type, category, title, target_id, detail, metadata:{} }
  */
 
 declare(strict_types=1);
@@ -19,7 +19,7 @@ if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
 $configFile = ROOT_PATH . '/config/config.php';
 if (file_exists($configFile)) require_once $configFile;
 
-$body   = [];
+$body  = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $raw  = file_get_contents('php://input');
     $body = json_decode($raw, true) ?? $_POST;
@@ -32,116 +32,139 @@ if (empty($orcid)) {
     exit;
 }
 
-$activityDir  = ROOT_PATH . '/cache/user_activity';
-if (!is_dir($activityDir)) @mkdir($activityDir, 0750, true);
-$activityFile = $activityDir . '/' . preg_replace('/[^a-zA-Z0-9_-]/', '_', $orcid) . '.json';
+function dbPdo(): ?PDO
+{
+    if (!defined('DB_HOST') || !DB_HOST) return null;
+    try {
+        return new PDO(
+            'mysql:host=' . DB_HOST . ';dbname=' . DB_DATABASE . ';charset=utf8mb4',
+            DB_USERNAME, DB_PASSWORD,
+            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+        );
+    } catch (Exception $e) { return null; }
+}
 
-// ── POST: record a new activity ──────────────────────────────────────────────
+function activityFile(string $orcid): string
+{
+    $dir = ROOT_PATH . '/cache/user_activity';
+    if (!is_dir($dir)) @mkdir($dir, 0750, true);
+    return $dir . '/' . preg_replace('/[^a-zA-Z0-9_-]/', '_', $orcid) . '.json';
+}
+
+// ─── POST: record activity ────────────────────────────────────────────────────
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $allowed_types = ['viewed','saved','downloaded','searched','analyzed','shared','commented','exported','updated','collaborated'];
-    $type = $body['type'] ?? 'viewed';
-    if (!in_array($type, $allowed_types, true)) $type = 'viewed';
+    $type          = in_array($body['type'] ?? '', $allowed_types) ? $body['type'] : 'viewed';
+    $category      = $body['category'] ?? 'article';
+    $title         = substr(htmlspecialchars($body['title'] ?? '', ENT_QUOTES), 0, 300);
+    $targetId      = substr($body['target_id'] ?? $body['target'] ?? '', 0, 512);
+    $metadata      = $body['metadata'] ?? [];
 
+    $pdo = dbPdo();
+    if ($pdo) {
+        try {
+            $pdo->prepare(
+                'INSERT INTO user_activity_log (orcid, activity_type, category, target_id, title, metadata_json)
+                 VALUES (?, ?, ?, ?, ?, ?)'
+            )->execute([$orcid, $type, $category, $targetId ?: null, $title ?: null, $metadata ? json_encode($metadata) : null]);
+            echo json_encode(['status' => 'success']);
+            exit;
+        } catch (Exception $e) { /* fall through to file */ }
+    }
+
+    // File-based fallback
     $event = [
         'id'        => uniqid('act_'),
         'type'      => $type,
-        'category'  => $body['category'] ?? 'article',
-        'title'     => substr(htmlspecialchars($body['title'] ?? '', ENT_QUOTES), 0, 200),
-        'target'    => substr(htmlspecialchars($body['target'] ?? '', ENT_QUOTES), 0, 300),
-        'detail'    => substr(htmlspecialchars($body['detail'] ?? '', ENT_QUOTES), 0, 300),
-        'metadata'  => $body['metadata'] ?? [],
+        'category'  => $category,
+        'title'     => $title,
+        'target_id' => $targetId,
+        'metadata'  => $metadata,
         'timestamp' => date('c'),
         'date_key'  => date('Y-m-d'),
     ];
-
-    $activities = file_exists($activityFile)
-        ? (json_decode(file_get_contents($activityFile), true) ?? [])
-        : [];
-
-    array_unshift($activities, $event); // newest first
-    $activities = array_slice($activities, 0, 1000); // keep max 1000
-    file_put_contents($activityFile, json_encode($activities, JSON_UNESCAPED_UNICODE));
-
-    echo json_encode(['status' => 'success', 'event_id' => $event['id']]);
+    $file       = activityFile($orcid);
+    $activities = file_exists($file) ? (json_decode(file_get_contents($file), true) ?? []) : [];
+    array_unshift($activities, $event);
+    $activities = array_slice($activities, 0, 1000);
+    @file_put_contents($file, json_encode($activities, JSON_UNESCAPED_UNICODE));
+    echo json_encode(['status' => 'success']);
     exit;
 }
 
-// ── GET: list activities ─────────────────────────────────────────────────────
+// ─── GET: retrieve activity ───────────────────────────────────────────────────
 
-$range  = $_GET['range'] ?? '30days';
-$type   = $_GET['type'] ?? 'all';
-$page   = max(1, (int)($_GET['page'] ?? 1));
-$limit  = min(100, max(1, (int)($_GET['limit'] ?? 20)));
+$page       = max(1, (int)($_GET['page'] ?? 1));
+$pageSize   = min(100, max(1, (int)($_GET['limit'] ?? 20)));
+$offset     = ($page - 1) * $pageSize;
+$typeFilter = trim($_GET['type'] ?? 'all');
+$rangeStr   = trim($_GET['range'] ?? '7days');
 
-$activities = file_exists($activityFile)
-    ? (json_decode(file_get_contents($activityFile), true) ?? [])
-    : [];
+$cutoff = match ($rangeStr) {
+    '30days' => date('Y-m-d H:i:s', strtotime('-30 days')),
+    '90days' => date('Y-m-d H:i:s', strtotime('-90 days')),
+    'all'    => '2000-01-01 00:00:00',
+    default  => date('Y-m-d H:i:s', strtotime('-7 days')),
+};
 
-// Also append crawl_queue events as system activities
-$queueFile = ROOT_PATH . '/cache/crawl_queue.json';
-if (file_exists($queueFile)) {
-    $queue = json_decode(file_get_contents($queueFile), true) ?? [];
-    foreach ($queue as $job) {
-        if (($job['type'] ?? '') === 'orcid' && ($job['identifier'] ?? '') === $orcid) {
-            $activities[] = [
-                'id'        => $job['id'] ?? uniqid('sys_'),
-                'type'      => 'analyzed',
-                'category'  => 'system',
-                'title'     => 'Sistem mengantri analisis ORCID',
-                'target'    => $orcid,
-                'detail'    => 'Status: ' . ($job['status'] ?? 'pending') . ' | Attempts: ' . ($job['attempts'] ?? 0),
-                'metadata'  => ['source' => 'crawl_queue', 'job_id' => $job['id'] ?? null],
-                'timestamp' => $job['created_at'] ?? date('c'),
-                'date_key'  => substr($job['created_at'] ?? date('c'), 0, 10),
-            ];
-        }
-    }
-    // Sort by timestamp desc
-    usort($activities, fn($a, $b) => strcmp($b['timestamp'] ?? '', $a['timestamp'] ?? ''));
+$pdo = dbPdo();
+if ($pdo) {
+    try {
+        $where  = ['orcid = ?', 'created_at >= ?'];
+        $params = [$orcid, $cutoff];
+        if ($typeFilter !== 'all') { $where[] = 'activity_type = ?'; $params[] = $typeFilter; }
+
+        $whereClause = 'WHERE ' . implode(' AND ', $where);
+        $total       = (int) $pdo->prepare("SELECT COUNT(*) FROM user_activity_log $whereClause")->execute($params) ? (int) $pdo->prepare("SELECT COUNT(*) FROM user_activity_log $whereClause")->execute($params) : 0;
+
+        $countStmt = $pdo->prepare("SELECT COUNT(*) FROM user_activity_log $whereClause");
+        $countStmt->execute($params);
+        $total = (int) $countStmt->fetchColumn();
+
+        $dataStmt = $pdo->prepare(
+            "SELECT id, activity_type AS type, category, target_id, title, metadata_json, created_at AS timestamp
+             FROM user_activity_log $whereClause
+             ORDER BY created_at DESC
+             LIMIT ? OFFSET ?"
+        );
+        $dataStmt->execute([...$params, $pageSize, $offset]);
+        $rows = $dataStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $items = array_map(fn ($r) => [
+            'id'        => $r['id'],
+            'type'      => $r['type'],
+            'category'  => $r['category'],
+            'target_id' => $r['target_id'],
+            'title'     => $r['title'],
+            'metadata'  => $r['metadata_json'] ? json_decode($r['metadata_json'], true) : [],
+            'timestamp' => $r['timestamp'],
+        ], $rows);
+
+        echo json_encode([
+            'status'      => 'success',
+            'total'       => $total,
+            'page'        => $page,
+            'total_pages' => (int) ceil($total / $pageSize),
+            'data'        => $items,
+        ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        exit;
+    } catch (Exception $e) { /* fall through */ }
 }
 
-// Date filter
-$cutoff = null;
-if ($range === 'today') $cutoff = date('Y-m-d');
-elseif ($range === '7days') $cutoff = date('Y-m-d', strtotime('-7 days'));
-elseif ($range === '30days') $cutoff = date('Y-m-d', strtotime('-30 days'));
-
-if ($cutoff) {
-    $activities = array_filter($activities, fn($a) => ($a['date_key'] ?? '0000') >= $cutoff);
-}
-
-// Type filter
-if ($type !== 'all') {
-    $map = [
-        'viewed'   => ['viewed'],
-        'saved'    => ['saved', 'downloaded'],
-        'shared'   => ['shared', 'commented'],
-        'analysis' => ['analyzed', 'exported'],
-    ];
-    $allowed = $map[$type] ?? [$type];
-    $activities = array_filter($activities, fn($a) => in_array($a['type'] ?? '', $allowed));
-}
-
-$activities = array_values($activities);
-$total      = count($activities);
-$totalPages = max(1, (int)ceil($total / $limit));
-$paginated  = array_slice($activities, ($page - 1) * $limit, $limit);
-
-// Build summary stats
-$typeCounts = [];
-foreach ($activities as $a) {
-    $t = $a['type'] ?? 'other';
-    $typeCounts[$t] = ($typeCounts[$t] ?? 0) + 1;
-}
+// File-based fallback
+$file       = activityFile($orcid);
+$activities = file_exists($file) ? (json_decode(file_get_contents($file), true) ?? []) : [];
+$cutoffTs   = strtotime($cutoff);
+$activities = array_values(array_filter($activities, function ($a) use ($cutoffTs, $typeFilter) {
+    $ts = isset($a['timestamp']) ? strtotime($a['timestamp']) : 0;
+    return $ts >= $cutoffTs && ($typeFilter === 'all' || ($a['type'] ?? '') === $typeFilter);
+}));
 
 echo json_encode([
-    'status'     => 'success',
-    'orcid'      => $orcid,
-    'total'      => $total,
-    'page'       => $page,
-    'limit'      => $limit,
-    'totalPages' => $totalPages,
-    'summary'    => $typeCounts,
-    'activities' => $paginated,
-], JSON_UNESCAPED_UNICODE);
+    'status'      => 'success',
+    'total'       => count($activities),
+    'page'        => $page,
+    'total_pages' => (int) ceil(count($activities) / $pageSize),
+    'data'        => array_slice($activities, $offset, $pageSize),
+], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);

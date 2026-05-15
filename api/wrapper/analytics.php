@@ -2,27 +2,22 @@
 /**
  * Analytics Summary API
  * GET /api/analytics.php
- * Reads from: platform_stats, sdg_trends, classified_works, orcid_profiles tables
+ * Reads from: publications, researchers, journals, work_sdgs, analytics_snapshots
  */
 
+declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 
 try {
-    if (!defined('ROOT_PATH')) {
-        define('ROOT_PATH', dirname(__DIR__) . '/..');
-    }
-    if (file_exists(ROOT_PATH . '/includes/config.php')) {
-        require_once ROOT_PATH . '/includes/config.php';
-    }
+    if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
+    $configFile = ROOT_PATH . '/config/config.php';
+    if (file_exists($configFile)) require_once $configFile;
 
-    $data = fetchAnalyticsData();
-
-    http_response_code(200);
     echo json_encode([
         'status'    => 'success',
-        'data'      => $data,
+        'data'      => fetchAnalyticsData(),
         'timestamp' => date('c'),
     ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 
@@ -31,21 +26,50 @@ try {
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
 
-function fetchAnalyticsData() {
-    // Try database first
+function fetchAnalyticsData(): array
+{
     if (defined('DB_HOST') && DB_HOST) {
         try {
             $pdo = new PDO(
-                'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4',
-                DB_USER, DB_PASS,
+                'mysql:host=' . DB_HOST . ';dbname=' . DB_DATABASE . ';charset=utf8mb4',
+                DB_USERNAME, DB_PASSWORD,
                 [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
             );
 
-            $articles    = (int)$pdo->query("SELECT COUNT(*) FROM classified_works")->fetchColumn();
-            $researchers = (int)$pdo->query("SELECT COUNT(*) FROM orcid_profiles")->fetchColumn();
+            $articles    = (int) $pdo->query('SELECT COUNT(*) FROM publications')->fetchColumn();
+            $researchers = (int) $pdo->query('SELECT COUNT(*) FROM researchers')->fetchColumn();
 
             if ($articles > 0) {
-                return buildAnalyticsResponse($articles, $researchers);
+                $totalCitations = (int) $pdo->query('SELECT COALESCE(SUM(citation_count), 0) FROM publications')->fetchColumn();
+
+                // Publication trend by year
+                $pubTrendRows = $pdo->query(
+                    'SELECT publication_year AS year, COUNT(*) AS articles
+                     FROM publications
+                     WHERE publication_year IS NOT NULL AND publication_year >= YEAR(NOW()) - 5
+                     GROUP BY publication_year ORDER BY publication_year ASC'
+                )->fetchAll(PDO::FETCH_ASSOC);
+
+                // SDG distribution
+                $sdgRows = $pdo->query(
+                    'SELECT sdg_number, COUNT(*) AS value
+                     FROM work_sdgs
+                     GROUP BY sdg_number ORDER BY value DESC LIMIT 8'
+                )->fetchAll(PDO::FETCH_ASSOC);
+
+                // Top journals by publication count
+                $topJournals = $pdo->query(
+                    'SELECT j.title AS name, COUNT(p.doi) AS articles,
+                            j.cite_score AS citescore, j.quartile
+                     FROM journals j
+                     JOIN publications p ON p.journal_id = j.id
+                     GROUP BY j.id ORDER BY articles DESC LIMIT 5'
+                )->fetchAll(PDO::FETCH_ASSOC);
+
+                return buildAnalyticsResponse(
+                    $articles, $researchers, $totalCitations,
+                    $pubTrendRows, $sdgRows, $topJournals
+                );
             }
         } catch (Exception $e) {
             // Fall through to sample data
@@ -55,11 +79,54 @@ function fetchAnalyticsData() {
     return getSampleAnalyticsData();
 }
 
-function buildAnalyticsResponse($articles, $researchers) {
-    return getSampleAnalyticsData(); // extend with real DB aggregations
+function buildAnalyticsResponse(
+    int $articles, int $researchers, int $citations,
+    array $pubTrend, array $sdgDist, array $journals
+): array {
+    $sdgColors = [
+        1 => '#e5243b', 2 => '#dda63a', 3 => '#4c9f38', 4 => '#c5192d',
+        5 => '#ff3a21', 6 => '#26bde2', 7 => '#fcc30b', 8 => '#a21942',
+        9 => '#fd6925', 10 => '#dd1367', 11 => '#fd9d24', 12 => '#bf8b2e',
+        13 => '#3f7e44', 14 => '#0a97d9', 15 => '#56c02b', 16 => '#00689d',
+        17 => '#19486a',
+    ];
+    $sdgNames = [
+        1 => 'No Poverty', 2 => 'Zero Hunger', 3 => 'Good Health', 4 => 'Quality Education',
+        5 => 'Gender Equality', 6 => 'Clean Water', 7 => 'Clean Energy', 8 => 'Decent Work',
+        9 => 'Industry', 10 => 'Reduced Inequality', 11 => 'Sustainable Cities',
+        12 => 'Responsible Consumption', 13 => 'Climate Action', 14 => 'Life Below Water',
+        15 => 'Life on Land', 16 => 'Peace & Justice', 17 => 'Partnerships',
+    ];
+
+    return [
+        'summary' => [
+            ['label' => 'Total Artikel',     'value' => number_format($articles),    'change' => '', 'period' => ''],
+            ['label' => 'Total Peneliti',    'value' => number_format($researchers), 'change' => '', 'period' => ''],
+            ['label' => 'Total Sitasi',      'value' => number_format($citations),   'change' => '', 'period' => ''],
+            ['label' => 'H-Index Rata-rata', 'value' => '—',                         'change' => '', 'period' => ''],
+        ],
+        'publication_trend' => array_map(fn ($r) => [
+            'year'        => (string) $r['year'],
+            'articles'    => (int) $r['articles'],
+            'researchers' => 0,
+        ], $pubTrend),
+        'sdg_distribution' => array_map(fn ($r) => [
+            'name'  => $sdgNames[(int) $r['sdg_number']] ?? 'SDG ' . $r['sdg_number'],
+            'value' => (int) $r['value'],
+            'sdg'   => (int) $r['sdg_number'],
+            'color' => $sdgColors[(int) $r['sdg_number']] ?? '#6b7280',
+        ], $sdgDist),
+        'top_journals' => array_map(fn ($r) => [
+            'name'      => $r['name'],
+            'articles'  => (int) $r['articles'],
+            'citescore' => (float) $r['citescore'],
+            'quartile'  => $r['quartile'] ? 'Q' . $r['quartile'] : 'N/A',
+        ], $journals),
+    ];
 }
 
-function getSampleAnalyticsData() {
+function getSampleAnalyticsData(): array
+{
     return [
         'summary' => [
             ['label' => 'Total Artikel',     'value' => '24,751', 'change' => '+12.4%', 'period' => 'dari bulan lalu'],
@@ -75,14 +142,14 @@ function getSampleAnalyticsData() {
             ['year' => '2024', 'articles' => 9870, 'researchers' => 12843],
         ],
         'sdg_distribution' => [
-            ['name' => 'Good Health',         'value' => 4623, 'sdg' => 3,  'color' => '#4C9F38'],
-            ['name' => 'Quality Education',   'value' => 3812, 'sdg' => 4,  'color' => '#C5192D'],
-            ['name' => 'Climate Action',      'value' => 3263, 'sdg' => 13, 'color' => '#3F7E44'],
-            ['name' => 'Industry',            'value' => 2865, 'sdg' => 9,  'color' => '#FD6925'],
-            ['name' => 'Sustainable Cities',  'value' => 2421, 'sdg' => 11, 'color' => '#FD9D24'],
-            ['name' => 'Partnerships',        'value' => 1957, 'sdg' => 17, 'color' => '#19486A'],
-            ['name' => 'Clean Energy',        'value' => 1842, 'sdg' => 7,  'color' => '#FCC30B'],
-            ['name' => 'Others',              'value' => 3968, 'sdg' => 0,  'color' => '#9CA3AF'],
+            ['name' => 'Good Health',        'value' => 4623, 'sdg' => 3,  'color' => '#4C9F38'],
+            ['name' => 'Quality Education',  'value' => 3812, 'sdg' => 4,  'color' => '#C5192D'],
+            ['name' => 'Climate Action',     'value' => 3263, 'sdg' => 13, 'color' => '#3F7E44'],
+            ['name' => 'Industry',           'value' => 2865, 'sdg' => 9,  'color' => '#FD6925'],
+            ['name' => 'Sustainable Cities', 'value' => 2421, 'sdg' => 11, 'color' => '#FD9D24'],
+            ['name' => 'Partnerships',       'value' => 1957, 'sdg' => 17, 'color' => '#19486A'],
+            ['name' => 'Clean Energy',       'value' => 1842, 'sdg' => 7,  'color' => '#FCC30B'],
+            ['name' => 'Others',             'value' => 3968, 'sdg' => 0,  'color' => '#9CA3AF'],
         ],
         'top_journals' => [
             ['name' => 'Nature Climate Change',         'articles' => 234, 'citescore' => 4.56, 'quartile' => 'Q1'],
@@ -97,26 +164,12 @@ function getSampleAnalyticsData() {
             ['type' => 'Conference',   'count' =>  1987, 'percent' =>  8.0],
             ['type' => 'Book Chapter', 'count' =>   634, 'percent' =>  2.6],
         ],
-        'top_researchers' => [
-            ['name' => 'Dr. Andi Rahman',    'institution' => 'Universitas Indonesia',  'citations' => 1248, 'hIndex' => 17],
-            ['name' => 'Dr. Siti Nurhaliza', 'institution' => 'BRIN',                   'citations' => 1102, 'hIndex' => 15],
-            ['name' => 'Prof. Budi Santoso', 'institution' => 'ITB',                    'citations' =>  982, 'hIndex' => 14],
-            ['name' => 'Dr. Dewi Lestari',   'institution' => 'Universitas Airlangga',  'citations' =>  876, 'hIndex' => 13],
-            ['name' => 'Prof. Maria Santos', 'institution' => 'UP Philippines',         'citations' =>  764, 'hIndex' => 12],
-        ],
         'citation_trend' => [
             ['year' => '2020', 'citations' => 12450],
             ['year' => '2021', 'citations' => 18700],
             ['year' => '2022', 'citations' => 34200],
             ['year' => '2023', 'citations' => 67800],
             ['year' => '2024', 'citations' => 98732],
-        ],
-        'topics' => [
-            ['name' => 'Climate Change Adaptation', 'count' => 3421, 'growth' => 18.4],
-            ['name' => 'Renewable Energy',          'count' => 2876, 'growth' => 22.1],
-            ['name' => 'Sustainable Agriculture',   'count' => 2543, 'growth' => 14.7],
-            ['name' => 'Urban Sustainability',      'count' => 2187, 'growth' => 16.3],
-            ['name' => 'Marine Conservation',       'count' => 1932, 'growth' => 11.9],
         ],
     ];
 }
