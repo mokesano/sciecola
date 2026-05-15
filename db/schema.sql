@@ -263,4 +263,376 @@ CREATE TABLE IF NOT EXISTS user_activity_log (
   INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ── LAYER 6: Collaboration & Networking ─────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS collaboration_requests (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  from_orcid      VARCHAR(20)     NOT NULL,
+  to_orcid        VARCHAR(20)     NOT NULL,
+  message         TEXT            NULL,
+  status          ENUM('pending','accepted','rejected','cancelled') NOT NULL DEFAULT 'pending',
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_collab_req (from_orcid, to_orcid),
+  FOREIGN KEY (from_orcid) REFERENCES researchers(orcid) ON DELETE CASCADE,
+  FOREIGN KEY (to_orcid)   REFERENCES researchers(orcid) ON DELETE CASCADE,
+  INDEX idx_status (status),
+  INDEX idx_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS researcher_connections (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  orcid1          VARCHAR(20)     NOT NULL,
+  orcid2          VARCHAR(20)     NOT NULL,
+  connection_type VARCHAR(30)     NOT NULL  COMMENT 'collaborator | mentor | mentee | colleague',
+  strength        TINYINT UNSIGNED NOT NULL DEFAULT 1  COMMENT '1-5 strength score',
+  shared_projects INT UNSIGNED    NOT NULL DEFAULT 0,
+  shared_publications INT UNSIGNED NOT NULL DEFAULT 0,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_connection (orcid1, orcid2),
+  FOREIGN KEY (orcid1) REFERENCES researchers(orcid) ON DELETE CASCADE,
+  FOREIGN KEY (orcid2) REFERENCES researchers(orcid) ON DELETE CASCADE,
+  INDEX idx_type (connection_type)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── LAYER 7: Research Projects ───────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS research_projects (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  title           VARCHAR(255)    NOT NULL,
+  description     LONGTEXT        NULL,
+  status          ENUM('planning','active','completed','cancelled','paused') NOT NULL DEFAULT 'planning',
+  lead_orcid      VARCHAR(20)     NOT NULL,
+  institution_id  INT UNSIGNED    NULL,
+  sdg_focus       JSON            NULL  COMMENT '[3, 13, 7]',
+  budget          DECIMAL(15,2)   NULL,
+  spent           DECIMAL(15,2)   NULL DEFAULT 0,
+  progress        TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  start_date      DATE            NULL,
+  end_date        DATE            NULL,
+  visibility      ENUM('public','private','restricted') NOT NULL DEFAULT 'private',
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (lead_orcid)      REFERENCES researchers(orcid) ON DELETE CASCADE,
+  FOREIGN KEY (institution_id)  REFERENCES institutions(id)   ON DELETE SET NULL,
+  INDEX idx_status (status),
+  INDEX idx_lead   (lead_orcid),
+  FULLTEXT INDEX ft_title (title)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS project_members (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  project_id      INT UNSIGNED    NOT NULL,
+  orcid           VARCHAR(20)     NOT NULL,
+  role            VARCHAR(100)    NOT NULL DEFAULT 'Member',
+  contribution    TEXT            NULL,
+  joined_at       TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_proj_member (project_id, orcid),
+  FOREIGN KEY (project_id) REFERENCES research_projects(id) ON DELETE CASCADE,
+  FOREIGN KEY (orcid)      REFERENCES researchers(orcid)    ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS project_milestones (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  project_id      INT UNSIGNED    NOT NULL,
+  title           VARCHAR(255)    NOT NULL,
+  description     TEXT            NULL,
+  target_date     DATE            NOT NULL,
+  completion_date DATE            NULL,
+  status          ENUM('planned','in-progress','completed','overdue') NOT NULL DEFAULT 'planned',
+  deliverables    JSON            NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (project_id) REFERENCES research_projects(id) ON DELETE CASCADE,
+  INDEX idx_status (status),
+  INDEX idx_date   (target_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS project_publications (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  project_id      INT UNSIGNED    NOT NULL,
+  doi             VARCHAR(512)    NOT NULL,
+  contribution    TEXT            NULL,
+  added_at        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_proj_pub (project_id, doi(191)),
+  FOREIGN KEY (project_id) REFERENCES research_projects(id) ON DELETE CASCADE,
+  FOREIGN KEY (doi)        REFERENCES publications(doi)     ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── LAYER 8: Research Matching ───────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS researcher_match_criteria (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  orcid           VARCHAR(20)     NOT NULL UNIQUE,
+  research_interests JSON          NULL  COMMENT '["climate", "SDG3", "AI"]',
+  sdg_preferences JSON            NULL  COMMENT '[3, 13, 7]',
+  expertise_areas JSON            NULL,
+  availability    VARCHAR(50)     NULL  COMMENT 'available | selective | unavailable',
+  collaboration_goals TEXT         NULL,
+  preferred_team_size TINYINT UNSIGNED NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (orcid) REFERENCES researchers(orcid) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS research_matches (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  requester_orcid VARCHAR(20)     NOT NULL,
+  matched_orcid   VARCHAR(20)     NOT NULL,
+  match_score     DECIMAL(5,2)    NOT NULL  COMMENT '0.00-1.00',
+  match_reasons   JSON            NULL,
+  status          ENUM('pending','viewed','contacted','rejected') NOT NULL DEFAULT 'pending',
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_match (requester_orcid, matched_orcid),
+  FOREIGN KEY (requester_orcid) REFERENCES researchers(orcid) ON DELETE CASCADE,
+  FOREIGN KEY (matched_orcid)   REFERENCES researchers(orcid) ON DELETE CASCADE,
+  INDEX idx_status (status),
+  INDEX idx_score  (match_score)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── LAYER 9: Innovation & Marketplace ────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS innovation_categories (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  name            VARCHAR(100)    NOT NULL UNIQUE,
+  description     TEXT            NULL,
+  icon_color      VARCHAR(7)      NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS innovation_opportunities (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  title           VARCHAR(255)    NOT NULL,
+  description     LONGTEXT        NOT NULL,
+  category_id     INT UNSIGNED    NOT NULL,
+  status          ENUM('open','in-progress','completed','closed') NOT NULL DEFAULT 'open',
+  posted_by_orcid VARCHAR(20)     NULL,
+  deadline        DATE            NULL,
+  sdg_alignment   JSON            NULL  COMMENT '[3, 13]',
+  budget_range    VARCHAR(50)     NULL,
+  required_skills JSON            NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (category_id)     REFERENCES innovation_categories(id) ON DELETE RESTRICT,
+  FOREIGN KEY (posted_by_orcid) REFERENCES researchers(orcid)        ON DELETE SET NULL,
+  INDEX idx_status   (status),
+  INDEX idx_category (category_id),
+  FULLTEXT INDEX ft_title (title, description)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS innovation_reviews (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  opportunity_id  INT UNSIGNED    NOT NULL,
+  reviewer_orcid  VARCHAR(20)     NOT NULL,
+  rating          TINYINT UNSIGNED NOT NULL  COMMENT '1-5',
+  comment         TEXT            NULL,
+  relevance_score TINYINT UNSIGNED NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (opportunity_id) REFERENCES innovation_opportunities(id) ON DELETE CASCADE,
+  FOREIGN KEY (reviewer_orcid) REFERENCES researchers(orcid)           ON DELETE CASCADE,
+  INDEX idx_opportunity (opportunity_id),
+  INDEX idx_rating      (rating)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── LAYER 10: Sponsorships & Partnerships ────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS sponsor_categories (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  name            VARCHAR(100)    NOT NULL UNIQUE,
+  description     TEXT            NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS sponsors (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  organization    VARCHAR(255)    NOT NULL UNIQUE,
+  category_id     INT UNSIGNED    NULL,
+  tier            ENUM('platinum','gold','silver','bronze') NOT NULL DEFAULT 'bronze',
+  logo_url        VARCHAR(512)    NULL,
+  website         VARCHAR(512)    NULL,
+  description     TEXT            NULL,
+  focus_areas     JSON            NULL,
+  since_date      DATE            NOT NULL,
+  is_active       TINYINT(1)      NOT NULL DEFAULT 1,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (category_id) REFERENCES sponsor_categories(id) ON DELETE SET NULL,
+  INDEX idx_tier     (tier),
+  INDEX idx_active   (is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS sponsorship_applications (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  organization    VARCHAR(255)    NOT NULL,
+  contact_name    VARCHAR(255)    NOT NULL,
+  contact_email   VARCHAR(255)    NOT NULL,
+  contact_phone   VARCHAR(20)     NULL,
+  tier            ENUM('platinum','gold','silver','bronze') NOT NULL,
+  website         VARCHAR(512)    NULL,
+  description     TEXT            NULL,
+  motivation      LONGTEXT        NULL,
+  status          ENUM('pending','reviewing','approved','rejected') NOT NULL DEFAULT 'pending',
+  rejection_reason TEXT            NULL,
+  submitted_at    TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  reviewed_at     TIMESTAMP       NULL,
+  reviewed_by_orcid VARCHAR(20)    NULL,
+  INDEX idx_status (status),
+  INDEX idx_email  (contact_email),
+  INDEX idx_tier   (tier),
+  FOREIGN KEY (reviewed_by_orcid) REFERENCES researchers(orcid) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS sponsor_impact_reports (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  sponsor_id      INT UNSIGNED    NOT NULL,
+  report_period   VARCHAR(20)     NOT NULL  COMMENT '2024-Q1, 2024',
+  metrics_json    LONGTEXT        NOT NULL  COMMENT 'impressions, clicks, engagement',
+  publications_supported INT UNSIGNED NULL,
+  researchers_reached INT UNSIGNED NULL,
+  sdg_contribution TEXT            NULL,
+  report_url      VARCHAR(512)    NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (sponsor_id) REFERENCES sponsors(id) ON DELETE CASCADE,
+  INDEX idx_period   (report_period),
+  INDEX idx_sponsor  (sponsor_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS partner_categories (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  name            VARCHAR(100)    NOT NULL UNIQUE  COMMENT 'data | research | government | technology',
+  description     TEXT            NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS partners (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  organization    VARCHAR(255)    NOT NULL UNIQUE,
+  category_id     INT UNSIGNED    NOT NULL,
+  logo_url        VARCHAR(512)    NULL,
+  website         VARCHAR(512)    NULL,
+  description     LONGTEXT        NULL,
+  type            VARCHAR(50)     NOT NULL  COMMENT 'academic | nonprofit | industry | government',
+  since_date      DATE            NOT NULL,
+  contact_email   VARCHAR(255)    NULL,
+  cooperation_areas JSON           NULL,
+  is_active       TINYINT(1)      NOT NULL DEFAULT 1,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (category_id) REFERENCES partner_categories(id) ON DELETE RESTRICT,
+  INDEX idx_active   (is_active),
+  INDEX idx_category (category_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── LAYER 11: Communication ─────────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS chat_sessions (
+  id              BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_orcid      VARCHAR(20)     NULL  COMMENT 'NULL for anonymous users',
+  session_token   VARCHAR(255)    NOT NULL UNIQUE,
+  topic           VARCHAR(100)    NULL,
+  message_count   INT UNSIGNED    NOT NULL DEFAULT 0,
+  last_message_at TIMESTAMP       NULL,
+  ended_at        TIMESTAMP       NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_orcid) REFERENCES researchers(orcid) ON DELETE SET NULL,
+  INDEX idx_user     (user_orcid),
+  INDEX idx_created  (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS chat_messages (
+  id              BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  session_id      BIGINT UNSIGNED NOT NULL,
+  sender          ENUM('user','bot') NOT NULL,
+  message_text    TEXT            NOT NULL,
+  message_type    VARCHAR(20)     NOT NULL DEFAULT 'text'  COMMENT 'text | suggestion | faq',
+  faq_reference   INT UNSIGNED    NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (session_id)    REFERENCES chat_sessions(id) ON DELETE CASCADE,
+  FOREIGN KEY (faq_reference) REFERENCES chatbot_faq(id)   ON DELETE SET NULL,
+  INDEX idx_session  (session_id),
+  INDEX idx_created  (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS chatbot_faq (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  category        VARCHAR(50)     NOT NULL,
+  question        VARCHAR(255)    NOT NULL,
+  answer          LONGTEXT        NOT NULL,
+  keywords        JSON            NULL,
+  usage_count     INT UNSIGNED    NOT NULL DEFAULT 0,
+  is_active       TINYINT(1)      NOT NULL DEFAULT 1,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_category (category),
+  FULLTEXT INDEX ft_question (question)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── LAYER 12: Analytics & Monitoring ─────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS page_analytics (
+  id              BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  page_path       VARCHAR(512)    NOT NULL,
+  page_title      VARCHAR(255)    NULL,
+  views           INT UNSIGNED    NOT NULL DEFAULT 0,
+  unique_visitors INT UNSIGNED    NOT NULL DEFAULT 0,
+  avg_duration    DECIMAL(10,2)   NULL  COMMENT 'seconds',
+  bounce_rate     DECIMAL(5,2)    NULL  COMMENT '0-100',
+  exit_rate       DECIMAL(5,2)    NULL,
+  date            DATE            NOT NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_page_date (page_path(191), date),
+  INDEX idx_date     (date),
+  INDEX idx_path     (page_path(100))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS access_logs (
+  id              BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_orcid      VARCHAR(20)     NULL,
+  ip_address      VARCHAR(45)     NOT NULL,
+  page_path       VARCHAR(512)    NOT NULL,
+  http_method     VARCHAR(10)     NOT NULL,
+  http_status     SMALLINT UNSIGNED NOT NULL,
+  device_type     VARCHAR(50)     NULL  COMMENT 'desktop | mobile | tablet',
+  browser         VARCHAR(100)    NULL,
+  city            VARCHAR(100)    NULL,
+  country         VARCHAR(100)    NULL,
+  session_duration INT UNSIGNED    NULL  COMMENT 'seconds',
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_orcid) REFERENCES researchers(orcid) ON DELETE SET NULL,
+  INDEX idx_user     (user_orcid),
+  INDEX idx_date     (created_at),
+  INDEX idx_page     (page_path(100))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── LAYER 13: Teams & Editorial ──────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS team_departments (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  name            VARCHAR(100)    NOT NULL UNIQUE,
+  description     TEXT            NULL,
+  lead_orcid      VARCHAR(20)     NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (lead_orcid) REFERENCES researchers(orcid) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS team_members (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  orcid           VARCHAR(20)     NOT NULL,
+  department_id   INT UNSIGNED    NOT NULL,
+  position        VARCHAR(100)    NOT NULL,
+  bio             TEXT            NULL,
+  photo_url       VARCHAR(512)    NULL,
+  expertise       JSON            NULL,
+  social_links    JSON            NULL  COMMENT '{"twitter": "...", "linkedin": "..."}',
+  display_order   INT UNSIGNED    NOT NULL DEFAULT 0,
+  is_visible      TINYINT(1)      NOT NULL DEFAULT 1,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_team_member (orcid, department_id),
+  FOREIGN KEY (orcid)          REFERENCES researchers(orcid)     ON DELETE CASCADE,
+  FOREIGN KEY (department_id)  REFERENCES team_departments(id)   ON DELETE CASCADE,
+  INDEX idx_order    (display_order),
+  INDEX idx_visible  (is_visible)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SET FOREIGN_KEY_CHECKS = 1;
