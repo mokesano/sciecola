@@ -47,15 +47,21 @@ Panduan unified database dan API untuk keempat repository yang terintegrasi dala
         │  wizdam_ecosystem DB       │
         │  (Shared central DB)       │
         │                            │
-        │  10 tables (unified)       │
+        │  16 tables (unified)       │
         │  • institutions            │
         │  • researchers             │
         │  • publications            │
+        │  • publication_authors     │
         │  • work_sdgs               │
         │  • journals                │
         │  • api_keys / rate_limits  │
         │  • analytics_snapshots     │
-        │  • ecosystem_cache         │
+        │  • ecosystem_cache / jobs  │
+        │  • user_accounts           │
+        │  • user_external_ids       │
+        │  • user_collections        │
+        │  • collection_items        │
+        │  • user_activity_log       │
         └────────────────────────────┘
 ```
 
@@ -139,7 +145,7 @@ RATE_LIMIT_WINDOW=60
 
 ---
 
-## Struktur Tabel (10 Entitas Unified)
+## Struktur Tabel (16 Entitas Unified)
 
 ### Layer 1 — Identity (Institusi & Peneliti)
 
@@ -171,6 +177,16 @@ RATE_LIMIT_WINDOW=60
 | `api_keys` | sikola (via wizdam-apis) | apis | API key hashes, revocation status |
 | `api_rate_limits` | apis | apis | Rate limit counters (optional) |
 | `jobs` | semua | semua | Background job queue (future) |
+
+### Layer 5 — Users (Akun & Aktivitas Pengguna)
+
+| Tabel | Ditulis oleh | Dibaca oleh | Keterangan |
+|---|---|---|---|
+| `user_accounts` | mapper | mapper | Akun pengguna (email + optional ORCID auth) |
+| `user_external_ids` | mapper | mapper, sikola | External IDs: Scopus, ResearcherID, SINTA, Loop |
+| `user_collections` | mapper | mapper | Koleksi artikel per pengguna (publik/privat) |
+| `collection_items` | mapper | mapper | Item dalam koleksi (FK ke `publications.doi`) |
+| `user_activity_log` | mapper | mapper | Log aktivitas: viewed, saved, searched, analyzed |
 
 ---
 
@@ -462,8 +478,11 @@ Web Server 1     Web Server 2      Shared MySQL
                                     • work_sdgs
                                     • journals
                                     • api_keys
-                                    • cache
-                                    • snapshots
+                                    • ecosystem_cache
+                                    • analytics_snapshots
+                                    • user_accounts
+                                    • user_collections
+                                    • user_activity_log
 ```
 
 ---
@@ -476,12 +495,17 @@ CREATE USER 'wizdam_apis'@'%' IDENTIFIED BY 'api_password';
 GRANT SELECT, INSERT, UPDATE ON wizdam_ecosystem.api_keys TO 'wizdam_apis'@'%';
 GRANT SELECT, INSERT, UPDATE ON wizdam_ecosystem.api_rate_limits TO 'wizdam_apis'@'%';
 
--- sdgs-mapper: Knowledge base writers
+-- sdgs-mapper: Knowledge base + user layer writers
 CREATE USER 'wizdam_mapper'@'%' IDENTIFIED BY 'mapper_password';
 GRANT SELECT, INSERT, UPDATE ON wizdam_ecosystem.researchers TO 'wizdam_mapper'@'%';
 GRANT SELECT, INSERT, UPDATE ON wizdam_ecosystem.publications TO 'wizdam_mapper'@'%';
 GRANT SELECT, INSERT, UPDATE ON wizdam_ecosystem.work_sdgs TO 'wizdam_mapper'@'%';
 GRANT SELECT, INSERT, UPDATE ON wizdam_ecosystem.ecosystem_cache TO 'wizdam_mapper'@'%';
+GRANT SELECT, INSERT, UPDATE, DELETE ON wizdam_ecosystem.user_accounts TO 'wizdam_mapper'@'%';
+GRANT SELECT, INSERT, UPDATE, DELETE ON wizdam_ecosystem.user_external_ids TO 'wizdam_mapper'@'%';
+GRANT SELECT, INSERT, UPDATE, DELETE ON wizdam_ecosystem.user_collections TO 'wizdam_mapper'@'%';
+GRANT SELECT, INSERT, UPDATE, DELETE ON wizdam_ecosystem.collection_items TO 'wizdam_mapper'@'%';
+GRANT SELECT, INSERT ON wizdam_ecosystem.user_activity_log TO 'wizdam_mapper'@'%';
 
 -- wizdam-sikola: Identity + knowledge base writer
 CREATE USER 'wizdam_sikola'@'%' IDENTIFIED BY 'sikola_password';
@@ -536,7 +560,7 @@ FLUSH PRIVILEGES;
 
 ---
 
-**Schema version**: v2.0-multi-consumer  
+**Schema version**: v2.1-user-layer  
 **Last updated**: 2026-05-15  
 **Canonical authority**: sdgs-mapper/UNIFIED_SCHEMA_GUIDE.md  
 **API version**: v2.0-multisource

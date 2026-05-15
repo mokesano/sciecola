@@ -188,4 +188,79 @@ CREATE TABLE IF NOT EXISTS jobs (
   INDEX idx_queue_available (queue, available_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ── LAYER 5: Users ──────────────────────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS user_accounts (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  orcid           VARCHAR(20)     NULL UNIQUE,
+  email           VARCHAR(255)    NOT NULL UNIQUE,
+  password_hash   VARCHAR(255)    NULL  COMMENT 'bcrypt hash; NULL = ORCID-only auth',
+  name            VARCHAR(255)    NOT NULL DEFAULT '',
+  role            VARCHAR(20)     NOT NULL DEFAULT 'user'  COMMENT 'user | admin',
+  is_active       TINYINT(1)      NOT NULL DEFAULT 1,
+  email_verified  TINYINT(1)      NOT NULL DEFAULT 0,
+  last_login_at   TIMESTAMP       NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY fk_ua_orcid (orcid) REFERENCES researchers(orcid) ON DELETE SET NULL,
+  INDEX idx_role  (role),
+  INDEX idx_active (is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS user_external_ids (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  orcid           VARCHAR(20)     NOT NULL,
+  id_type         VARCHAR(30)     NOT NULL  COMMENT 'scopus | researcher_id | sinta | google_scholar | loop',
+  external_id     VARCHAR(100)    NOT NULL,
+  sync_status     VARCHAR(20)     NOT NULL DEFAULT 'pending'  COMMENT 'synced | pending | failed | not_set',
+  last_sync_at    TIMESTAMP       NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_orcid_type (orcid, id_type),
+  FOREIGN KEY fk_uei_orcid (orcid) REFERENCES researchers(orcid) ON DELETE CASCADE,
+  INDEX idx_orcid (orcid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS user_collections (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  orcid           VARCHAR(20)     NOT NULL,
+  name            VARCHAR(100)    NOT NULL,
+  description     TEXT            NULL,
+  privacy         ENUM('public','private') NOT NULL DEFAULT 'private',
+  tags            JSON            NULL,
+  item_count      INT UNSIGNED    NOT NULL DEFAULT 0,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY fk_uc_orcid (orcid) REFERENCES researchers(orcid) ON DELETE CASCADE,
+  INDEX idx_orcid   (orcid),
+  INDEX idx_privacy (privacy)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS collection_items (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  collection_id   INT UNSIGNED    NOT NULL,
+  doi             VARCHAR(512)    NOT NULL,
+  item_type       VARCHAR(30)     NOT NULL DEFAULT 'article',
+  added_at        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_collection_doi (collection_id, doi(191)),
+  FOREIGN KEY fk_ci_collection (collection_id) REFERENCES user_collections(id) ON DELETE CASCADE,
+  FOREIGN KEY fk_ci_doi        (doi)           REFERENCES publications(doi)    ON DELETE CASCADE,
+  INDEX idx_collection (collection_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS user_activity_log (
+  id              BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  orcid           VARCHAR(20)     NOT NULL,
+  activity_type   VARCHAR(30)     NOT NULL  COMMENT 'viewed | saved | downloaded | searched | analyzed | shared | exported',
+  category        VARCHAR(30)     NOT NULL DEFAULT 'article'  COMMENT 'article | researcher | journal | search | system',
+  target_id       VARCHAR(512)    NULL  COMMENT 'DOI, ORCID, ISSN, or search query',
+  title           VARCHAR(300)    NULL,
+  metadata_json   JSON            NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY fk_ual_orcid (orcid) REFERENCES researchers(orcid) ON DELETE CASCADE,
+  INDEX idx_orcid      (orcid),
+  INDEX idx_type       (activity_type),
+  INDEX idx_created_at (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SET FOREIGN_KEY_CHECKS = 1;
