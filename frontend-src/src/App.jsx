@@ -53,6 +53,7 @@ import Leaderboard from './pages/Leaderboard';
 import About from './pages/About';
 import History from './pages/History';
 import Teams from './pages/Teams';
+import TeamMemberProfile from './pages/TeamMemberProfile';
 import Sponsors from './pages/Sponsors';
 import BecomeSponsor from './pages/BecomeSponsor';
 import Partners from './pages/Partners';
@@ -227,6 +228,7 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/history" element={<History />} />
             <Route path="/teams" element={<Teams />} />
+            <Route path="/teams/:memberSlug" element={<TeamMemberProfile />} />
             <Route path="/sponsors" element={<Sponsors />} />
             <Route path="/become-sponsor" element={<BecomeSponsor />} />
             <Route path="/partners" element={<Partners />} />
