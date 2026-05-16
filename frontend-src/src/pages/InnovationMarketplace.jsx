@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lightbulb, Handshake, Building2, TrendingUp, Search, Filter, ArrowRight,
   DollarSign, Users, Calendar, MapPin, Target, Zap, Award, BookOpen, Globe, MessageSquare,
@@ -12,27 +12,50 @@ const InnovationMarketplace = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOpportunity, setSelectedOpportunity] = useState(null);
+  const [opportunities, setOpportunities] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data untuk innovation opportunities
-  const opportunities = [
+  useEffect(() => {
+    fetchOpportunities();
+  }, []);
+
+  const fetchOpportunities = async () => {
+    try {
+      const response = await fetch('/api/innovation_marketplace.php?action=opportunities');
+      const data = await response.json();
+
+      if (data.status === 'success' && data.opportunities) {
+        const normalizedOpportunities = data.opportunities.map(opp => ({
+          ...opp,
+          sdg_focus: Array.isArray(opp.sdg_focus) ? opp.sdg_focus : JSON.parse(opp.sdg_focus || '[]'),
+          required_skills: Array.isArray(opp.required_skills) ? opp.required_skills : JSON.parse(opp.required_skills || '[]')
+        }));
+        setOpportunities(normalizedOpportunities);
+      } else {
+        setOpportunities(mockOpportunities);
+      }
+    } catch (error) {
+      console.error('Error fetching opportunities:', error);
+      setOpportunities(mockOpportunities);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fallback mock data
+  const mockOpportunities = [
     {
       id: 1,
       title: 'Carbon Capture Technology Partnership',
       organization: 'Tesla Energy',
       type: 'industry',
       category: 'Climate Tech',
-      description: 'Seeking academic partners for next-generation carbon capture and storage solutions. Joint research opportunity with full funding.',
-      sdgFocus: [13, 9, 7],
-      budget: 2500000,
-      duration: '3 years',
-      location: 'Global (Remote + Lab Access)',
-      postedDate: '2024-11-15',
+      description: 'Seeking academic partners for next-generation carbon capture and storage solutions',
+      sdg_focus: [13, 9, 7],
+      budget_range: '$2M - $3M',
       deadline: '2025-02-28',
-      requirements: ['PhD in Environmental Science or Engineering', 'Publication record in carbon capture', 'Lab facilities preferred'],
-      benefits: ['Full funding', 'Patent sharing', 'Industry mentorship', 'Commercialization support'],
-      applicants: 47,
-      status: 'open',
-      logo: 'https://logo.clearbit.com/tesla.com'
+      required_skills: ['Environmental Science', 'Carbon Capture', 'Lab Experience'],
+      status: 'open'
     },
     {
       id: 2,
@@ -40,18 +63,12 @@ const InnovationMarketplace = () => {
       organization: 'Pfizer Research',
       type: 'industry',
       category: 'Healthcare',
-      description: 'Revolutionary AI platform for accelerating drug discovery. Looking for computational biology experts to join our consortium.',
-      sdgFocus: [3, 9],
-      budget: 4200000,
-      duration: '4 years',
-      location: 'New York, USA + Remote',
-      postedDate: '2024-11-10',
+      description: 'Revolutionary AI platform for accelerating drug discovery',
+      sdg_focus: [3, 9],
+      budget_range: '$4M - $5M',
       deadline: '2025-01-31',
-      requirements: ['Expertise in ML/AI', 'Background in pharmacology or bioinformatics', 'Python/TensorFlow proficiency'],
-      benefits: ['$4.2M funding', 'Access to proprietary datasets', 'Co-authorship rights', 'Equity options'],
-      applicants: 89,
-      status: 'open',
-      logo: 'https://logo.clearbit.com/pfizer.com'
+      required_skills: ['Machine Learning', 'Bioinformatics', 'Python'],
+      status: 'open'
     },
     {
       id: 3,
@@ -59,75 +76,12 @@ const InnovationMarketplace = () => {
       organization: 'Bill & Melinda Gates Foundation',
       type: 'foundation',
       category: 'Agriculture',
-      description: 'Supporting breakthrough research in climate-resilient crops for smallholder farmers in developing nations.',
-      sdgFocus: [2, 1, 13],
-      budget: 1800000,
-      duration: '2 years',
-      location: 'Africa, Asia (Field Work Required)',
-      postedDate: '2024-11-20',
+      description: 'Supporting breakthrough research in climate-resilient crops',
+      sdg_focus: [2, 1, 13],
+      budget_range: '$1.5M - $2M',
       deadline: '2025-03-15',
-      requirements: ['Experience in agricultural science', 'Field research capability', 'Developing country partnerships'],
-      benefits: ['Grant funding', 'Network access', 'Policy influence', 'Impact measurement support'],
-      applicants: 156,
-      status: 'open',
-      logo: 'https://logo.clearbit.com/gatesfoundation.org'
-    },
-    {
-      id: 4,
-      title: 'Smart City Infrastructure Project',
-      organization: 'Singapore Government',
-      type: 'government',
-      category: 'Urban Development',
-      description: 'National initiative for IoT-enabled urban infrastructure. Seeking universities for R&D partnership on sustainable smart cities.',
-      sdgFocus: [11, 9, 7],
-      budget: 5600000,
-      duration: '5 years',
-      location: 'Singapore',
-      postedDate: '2024-11-05',
-      deadline: '2025-01-15',
-      requirements: ['Urban planning expertise', 'IoT/sensor technology', 'Data analytics capability'],
-      benefits: ['Government backing', 'Real-world testing environment', 'Policy implementation', 'Long-term partnership'],
-      applicants: 73,
-      status: 'open',
-      logo: 'https://logo.clearbit.com/gov.sg'
-    },
-    {
-      id: 5,
-      title: 'Ocean Plastic Recycling Technology',
-      organization: 'The Ocean Cleanup',
-      type: 'nonprofit',
-      category: 'Environment',
-      description: 'Developing scalable solutions for converting ocean plastic into usable materials. Multi-disciplinary research team needed.',
-      sdgFocus: [14, 12, 13],
-      budget: 980000,
-      duration: '18 months',
-      location: 'Netherlands + Ocean Sites',
-      postedDate: '2024-11-18',
-      deadline: '2025-02-10',
-      requirements: ['Materials science background', 'Chemical engineering', 'Environmental impact assessment'],
-      benefits: ['Mission-driven work', 'Global visibility', 'Patent opportunities', 'Field deployment'],
-      applicants: 112,
-      status: 'open',
-      logo: 'https://logo.clearbit.com/theoceancleanup.com'
-    },
-    {
-      id: 6,
-      title: 'Renewable Energy Storage Breakthrough',
-      organization: 'Siemens Energy',
-      type: 'industry',
-      category: 'Energy',
-      description: 'Next-generation battery technology for grid-scale energy storage. Academic-industry collaboration with commercialization pathway.',
-      sdgFocus: [7, 9, 13],
-      budget: 3300000,
-      duration: '3 years',
-      location: 'Germany + Partner Universities',
-      postedDate: '2024-11-12',
-      deadline: '2025-02-20',
-      requirements: ['Electrochemistry expertise', 'Battery technology experience', 'Scale-up knowledge'],
-      benefits: ['Industry partnership', 'Lab resources', 'IP sharing', 'Career opportunities'],
-      applicants: 64,
-      status: 'open',
-      logo: 'https://logo.clearbit.com/siemens-energy.com'
+      required_skills: ['Agricultural Science', 'Field Research', 'Developing Countries'],
+      status: 'open'
     }
   ];
 
@@ -179,17 +133,17 @@ const InnovationMarketplace = () => {
   };
 
   const filteredOpportunities = opportunities.filter(opp => {
-    const matchesSearch = opp.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         opp.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         opp.organization.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesCategory = activeCategory === 'all' || 
+    const matchesSearch = (opp.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (opp.description || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (opp.organization || '').toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesCategory = activeCategory === 'all' ||
                            (activeCategory === 'climate' && opp.category === 'Climate Tech') ||
                            (activeCategory === 'healthcare' && opp.category === 'Healthcare') ||
                            (activeCategory === 'agriculture' && opp.category === 'Agriculture') ||
                            (activeCategory === 'energy' && opp.category === 'Energy') ||
                            (activeCategory === 'environment' && opp.category === 'Environment');
-    
+
     return matchesSearch && matchesCategory;
   });
 
@@ -305,7 +259,15 @@ const InnovationMarketplace = () => {
 
           {/* Opportunities Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {filteredOpportunities.map((opp) => (
+            {loading ? (
+              <div className="flex justify-center items-center py-12 col-span-full">
+                <div className="w-12 h-12 border-4 border-gray-200 border-t-orange-500 rounded-full animate-spin"></div>
+              </div>
+            ) : filteredOpportunities.length === 0 ? (
+              <div className="text-center py-12 col-span-full">
+                <p className="text-gray-600">No opportunities found</p>
+              </div>
+            ) : (filteredOpportunities.map((opp) => (
               <div
                 key={opp.id}
                 className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer group"
@@ -315,33 +277,27 @@ const InnovationMarketplace = () => {
                 <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-6 text-white">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={opp.logo}
-                        alt={opp.organization}
-                        className="w-12 h-12 rounded-lg bg-white p-1 object-contain"
-                      />
+                      <div className="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center text-lg font-bold">
+                        {opp.organization.charAt(0)}
+                      </div>
                       <div>
                         <div className="text-sm opacity-90">{opp.organization}</div>
                         <div className="font-bold text-lg">{opp.title}</div>
                       </div>
                     </div>
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold border bg-white/20 backdrop-blur-sm`}>
-                      {opp.type.charAt(0).toUpperCase() + opp.type.slice(1)}
+                      {(opp.type || 'other').charAt(0).toUpperCase() + (opp.type || 'other').slice(1)}
                     </span>
                   </div>
-                  
+
                   <div className="flex items-center gap-4 text-sm opacity-90">
                     <span className="flex items-center gap-1">
                       <DollarSign className="w-4 h-4" />
-                      ${(opp.budget / 1000000).toFixed(1)}M
+                      {opp.budget_range || 'TBD'}
                     </span>
                     <span className="flex items-center gap-1">
                       <Clock className="w-4 h-4" />
-                      {opp.duration}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Users className="w-4 h-4" />
-                      {opp.applicants} applicants
+                      {opp.deadline ? new Date(opp.deadline).toLocaleDateString() : 'TBD'}
                     </span>
                   </div>
                 </div>
@@ -349,10 +305,10 @@ const InnovationMarketplace = () => {
                 {/* Body */}
                 <div className="p-6">
                   <p className="text-gray-600 mb-4 line-clamp-3">{opp.description}</p>
-                  
+
                   {/* SDG Badges */}
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {opp.sdgFocus.map(sdg => (
+                    {(opp.sdg_focus || []).map(sdg => (
                       <span
                         key={sdg}
                         className={`w-8 h-8 rounded-full ${sdgColors[sdg]} text-white text-xs font-bold flex items-center justify-center`}
@@ -365,46 +321,29 @@ const InnovationMarketplace = () => {
                       {opp.category}
                     </span>
                   </div>
-                  
+
                   {/* Key Details */}
                   <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
                     <div className="flex items-center gap-2 text-gray-600">
-                      <MapPin className="w-4 h-4 text-orange-500" />
-                      <span className="truncate">{opp.location}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-600">
                       <Calendar className="w-4 h-4 text-orange-500" />
-                      <span>Deadline: {new Date(opp.deadline).toLocaleDateString()}</span>
+                      <span>{opp.deadline ? new Date(opp.deadline).toLocaleDateString() : 'TBD'}</span>
                     </div>
                   </div>
-                  
+
                   {/* Requirements Preview */}
                   <div className="mb-4">
                     <div className="text-xs font-semibold text-gray-500 mb-2">KEY REQUIREMENTS</div>
                     <div className="flex flex-wrap gap-2">
-                      {opp.requirements.slice(0, 2).map((req, idx) => (
+                      {(opp.required_skills || []).slice(0, 2).map((req, idx) => (
                         <span key={idx} className="px-2 py-1 bg-orange-50 text-orange-700 rounded text-xs">
                           {req}
                         </span>
                       ))}
-                      {opp.requirements.length > 2 && (
+                      {(opp.required_skills || []).length > 2 && (
                         <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
-                          +{opp.requirements.length - 2} more
+                          +{(opp.required_skills || []).length - 2} more
                         </span>
                       )}
-                    </div>
-                  </div>
-                  
-                  {/* Benefits Preview */}
-                  <div className="mb-6">
-                    <div className="text-xs font-semibold text-gray-500 mb-2">BENEFITS</div>
-                    <div className="flex flex-wrap gap-2">
-                      {opp.benefits.slice(0, 2).map((benefit, idx) => (
-                        <span key={idx} className="px-2 py-1 bg-green-50 text-green-700 rounded text-xs flex items-center gap-1">
-                          <CheckCircle className="w-3 h-3" />
-                          {benefit}
-                        </span>
-                      ))}
                     </div>
                   </div>
                   
@@ -421,16 +360,16 @@ const InnovationMarketplace = () => {
                       <Star className="w-5 h-5" />
                     </button>
                   </div>
-                  
+
                   {/* Status Badge */}
                   <div className="mt-3 text-center">
                     <span className="text-xs text-gray-500">
-                      Posted {new Date(opp.postedDate).toLocaleDateString()} • Deadline {new Date(opp.deadline).toLocaleDateString()}
+                      Status: {opp.status || 'open'}
                     </span>
                   </div>
                 </div>
               </div>
-            ))}
+            )))}
           </div>
         </div>
       </section>

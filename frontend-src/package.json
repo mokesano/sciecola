@@ -13,8 +13,9 @@
   "dependencies": {
     "@mdx-js/react": "^3.0.1",
     "fuse.js": "^7.0.0",
-    "i18next": "^23.11.5",
+    "i18next": "^26.2.0",
     "leaflet": "^1.9.4",
+    "lucide-react": "^1.16.0",
     "react": "^18.2.0",
     "react-datepicker": "^7.3.0",
     "react-dom": "^19.2.6",
