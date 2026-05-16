@@ -19,44 +19,42 @@ on:
   pull_request:
     branches: [ "main", "master", "develop", "production" ]
   schedule:
-    - cron: '0 4 * * 1' # Setiap Senin pukul 04:00 UTC
+    - cron: '34 19 * * 1'
 
 permissions:
   contents: read
-  security-events: write
-  actions: read
 
 jobs:
   codacy-security-scan:
+    permissions:
+      contents: read # for actions/checkout to fetch code
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
     name: Codacy Security Scan
     runs-on: ubuntu-latest
-    
     steps:
-      # Langkah 1: Checkout kode
+      # Checkout the repository to the GitHub Actions runner
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Penting untuk analisis diff yang akurat
 
-      # Langkah 2: Jalankan Codacy Analysis CLI
-      # Kita tidak lagi membutuhkan env: CODACY_PROJECT_TOKEN karena menggunakan GitHub App Integration
+      # Execute Codacy Analysis CLI and generate a SARIF output with the security issues identified during the analysis
       - name: Run Codacy Analysis CLI
-        uses: codacy/codacy-analysis-cli-action@v4
+        uses: codacy/codacy-analysis-cli-action@d840f886c4bd4edc059706d09c6a1586111c540b
         with:
-          # Opsional: Tentukan tool yang ingin dijalankan, atau biarkan kosong untuk semua
-          # tools: eslint,bandit
-          
-          # Opsional: Format output untuk diupload ke GitHub Code Scanning
-          format: sarif
-          output: results.sarif
-          
-          # Biarkan verbose untuk debugging jika diperlukan
+          # Check https://github.com/codacy/codacy-analysis-cli#project-token to get your project token from your Codacy repository
+          # You can also omit the token and run the tools that support default configurations
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           verbose: true
+          output: results.sarif
+          format: sarif
+          # Adjust severity of non-security issues
+          gh-code-scanning-compat: true
+          # Force 0 exit code to allow SARIF file generation
+          # This will handover control about PR rejection to the GitHub side
+          max-allowed-issues: 2147483647
 
-      # Langkah 3: Upload hasil SARIF ke GitHub Code Scanning
-      - name: Upload SARIF results to GitHub
+      # Upload the SARIF file generated in the previous step
+      - name: Upload SARIF results file
         uses: github/codeql-action/upload-sarif@v3
-        if: always() # Pastikan langkah ini jalan meski analisis sebelumnya ada warning
         with:
           sarif_file: results.sarif
-          category: codacy
