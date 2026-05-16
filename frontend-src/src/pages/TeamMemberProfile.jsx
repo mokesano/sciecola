@@ -6,7 +6,9 @@ import {
   SDG_COLORS,
 } from '../data/teamMembersDatabase';
 
-// ─── Komponen pembantu ────────────────────────────────────────────────────────
+// =====================================================================
+// ─── Komponen pembantu
+// =====================================================================
 
 const StatBox = ({ value, label }) => (
   <div className="text-center p-4 bg-indigo-50 rounded-xl">
@@ -51,6 +53,7 @@ const NotFound = ({ slug }) => (
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
             d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
+      </div>
       <h2 className="text-2xl font-bold text-gray-900 mb-2">Anggota Tidak Ditemukan</h2>
       <p className="text-gray-500 mb-6">
         Profil dengan ID <span className="font-mono text-indigo-600">{slug}</span> tidak ada.
