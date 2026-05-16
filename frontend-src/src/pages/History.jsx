@@ -1,80 +1,74 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { LoadingSpinner } from '../components/shared';
 import { IconSparkles, IconChartBar, IconTrendingUp, IconStar, IconBolt, IconGlobe, IconCalendar, IconOfficeBuilding, IconHandshake, IconUsers } from '../components/shared/icons';
 
 const History = () => {
-  // Enriched Timeline Data with jsDelivr-style structure
-  const timelineData = [
+  const [timelineData, setTimelineData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [, setError] = useState(null);
+
+  // Fetch timeline on mount
+  useEffect(() => {
+    const fetchTimeline = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/platform_timeline.php?limit=50&sort=date');
+        const data = response.json();
+        if (data.status === 'success' && data.timeline) {
+          const groupedByYear = Object.entries(data.timeline).map(([year, events]) => ({
+            year,
+            events: events.map(event => ({
+              month: new Date(event.date).toLocaleDateString('id-ID', { month: 'long' }),
+              type: event.type,
+              title: event.title,
+              description: event.description,
+              side: Math.random() > 0.5 ? 'left' : 'right'
+            }))
+          }));
+          setTimelineData(groupedByYear);
+          setError(null);
+        } else {
+          setTimelineData(getSampleTimelineData());
+        }
+      } catch (err) {
+        console.error('Error fetching timeline:', err);
+        setTimelineData(getSampleTimelineData());
+        setError('Failed to load timeline');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTimeline();
+  }, []);
+
+  const getSampleTimelineData = () => [
+    {
+      year: '2026',
+      events: [
+        {
+          month: 'Mei',
+          type: 'milestone',
+          title: 'Platform Memasuki Beta Phase',
+          description: 'Sciecola/SDGs Mapper resmi memasuki fase beta dengan fitur core lengkap.',
+          side: 'left'
+        }
+      ]
+    },
+    {
+      year: '2025',
+      events: [
+        {
+          month: 'Desember',
+          type: 'feature',
+          title: 'Peluncuran Insights AI',
+          description: 'Fitur analisis berbasis AI untuk mengidentifikasi tren riset.',
+          side: 'right'
+        }
+      ]
+    },
     {
       year: '2024',
-      events: [
-        {
-          month: 'Mei',
-          type: 'launch',
-          icon: 'launch',
-          title: 'Wizdam 2.0 Launch',
-          description: 'Peluncuran platform Wizdam dengan interface yang sepenuhnya dirancang ulang dan fitur analitik yang lebih canggih.',
-          side: 'left'
-        },
-        {
-          month: 'Maret',
-          type: 'milestone',
-          icon: 'chart',
-          title: '5 Juta Publikasi Dianalisis',
-          description: 'Mencapai tonggak sejarah dengan menganalisis lebih dari 5 juta publikasi penelitian dari seluruh dunia.',
-          side: 'right'
-        },
-        {
-          month: 'Januari',
-          type: 'partnership',
-          icon: 'handshake',
-          title: 'Kemitraan dengan BRIN',
-          description: 'Badan Riset dan Inovasi Nasional menjadi mitra strategis untuk pengembangan ekosistem riset Indonesia.',
-          logo: 'BRIN',
-          side: 'left'
-        }
-      ]
-    },
-    {
-      year: '2023',
-      events: [
-        {
-          month: 'November',
-          type: 'launch',
-          icon: 'launch',
-          title: 'Sangia AI Engine v2',
-          description: 'Peluncuran mesin AI generasi kedua dengan akurasi klasifikasi SDG mencapai 95%+.',
-          side: 'right'
-        },
-        {
-          month: 'Agustus',
-          type: 'milestone',
-          icon: 'trend',
-          title: '100 Institusi Mitra',
-          description: 'Seratus universitas dan lembaga penelitian bergabung sebagai mitra Wizdam.',
-          side: 'left'
-        },
-        {
-          month: 'Mei',
-          type: 'partnership',
-          icon: 'star',
-          title: 'Google.org Support',
-          description: 'Mendapatkan dukungan dari Google.org untuk pengembangan AI untuk kebaikan sosial.',
-          logo: 'Google.org',
-          side: 'right'
-        },
-        {
-          month: 'Februari',
-          type: 'launch',
-          icon: 'launch',
-          title: 'API Public Release',
-          description: 'Peluncuran API publik untuk memungkinkan integrasi dengan sistem manajemen penelitian.',
-          side: 'left'
-        }
-      ]
-    },
-    {
-      year: '2022',
       events: [
         {
           month: 'Desember',
@@ -188,10 +182,20 @@ const History = () => {
       milestone: 'bg-green-100 text-green-600 border-green-300',
       award: 'bg-amber-100 text-amber-600 border-amber-300',
       team: 'bg-blue-100 text-blue-600 border-blue-300',
-      foundation: 'bg-gray-100 text-gray-600 border-gray-300'
+      foundation: 'bg-gray-100 text-gray-600 border-gray-300',
+      feature: 'bg-blue-100 text-blue-600 border-blue-300',
+      research: 'bg-green-100 text-green-600 border-green-300'
     };
     return colors[type] || colors.launch;
   };
+
+  if (loading) {
+    return (
+      <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <LoadingSpinner />
+      </main>
+    );
+  }
 
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">

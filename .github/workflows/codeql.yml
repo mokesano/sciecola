@@ -21,7 +21,7 @@ on:
 
 jobs:
   analyze:
-    name: Analyze
+    name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'javascript-typescript' ]
+        language: [ 'javascript-typescript' ] # Bisa ganti ke ['php'] jika proyek PHP
 
     steps:
     - name: Checkout repository
@@ -41,15 +41,12 @@ jobs:
       uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
-        queries: security-extended
+        queries: security-extended,security-and-quality
 
-    # Autobuild akan otomatis menjalankan `npm install` dan `npm run build` (jika ada)
-    # untuk membangun proyek React, sehingga analisis bisa mendeteksi dependensi.
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
       with:
-        upload: true
-        category: "/language:${{matrix.language}}"
+        category: "/language:${{ matrix.language }}"

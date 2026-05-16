@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Brain, 
-  Users, 
-  Target, 
-  Zap, 
-  Search, 
-  Filter, 
+import {
+  Brain,
+  Users,
+  Target,
+  Zap,
+  Search,
+  Filter,
   Sparkles,
   TrendingUp,
   Award,
@@ -39,30 +39,23 @@ const ResearchMatching = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState(null);
+  const [aiMatches, setAiMatches] = useState([]);
 
-  // Mock data untuk AI-powered matches
-  const aiMatches = [
+  // Fallback mock data
+  const mockMatches = [
     {
       id: 1,
       name: 'Dr. Sarah Chen',
       title: 'Professor of Climate Science',
       institution: 'MIT',
       location: 'Cambridge, MA, USA',
-      matchScore: 96,
-      matchReasons: [
-        'Similar research focus on climate change',
-        'Complementary expertise in ocean systems',
-        'Active in SDG 13 & 14',
-        'Previous collaboration success rate: 94%'
-      ],
-      sdgFocus: [13, 14, 15],
-      hIndex: 52,
+      match_score: 96,
+      match_reasons: ['Similar research focus', 'Complementary expertise', 'Active in SDG 13 & 14'],
+      sdg_focus: [13, 14, 15],
+      h_index: 52,
       publications: 234,
       collaborations: 47,
-      avatar: 'https://i.pravatar.cc/150?img=1',
-      availability: 'Available for new projects',
-      responseTime: '< 24 hours',
-      recentWork: ['Ocean Acidification Study', 'Carbon Capture Technology']
+      availability: 'Available for new projects'
     },
     {
       id: 2,
@@ -70,21 +63,13 @@ const ResearchMatching = () => {
       title: 'Director of Renewable Energy Lab',
       institution: 'Cairo University',
       location: 'Cairo, Egypt',
-      matchScore: 93,
-      matchReasons: [
-        'Expertise in sustainable energy systems',
-        'Strong publication record in related fields',
-        'Active collaboration network',
-        'Geographic diversity for global impact'
-      ],
-      sdgFocus: [7, 9, 11],
-      hIndex: 48,
+      match_score: 93,
+      match_reasons: ['Expertise in sustainable energy', 'Strong publication record', 'Active network'],
+      sdg_focus: [7, 9, 11],
+      h_index: 48,
       publications: 189,
       collaborations: 63,
-      avatar: 'https://i.pravatar.cc/150?img=2',
-      availability: 'Available for new projects',
-      responseTime: '< 48 hours',
-      recentWork: ['Solar Grid Optimization', 'Smart City Initiative']
+      availability: 'Available for new projects'
     },
     {
       id: 3,
@@ -92,65 +77,13 @@ const ResearchMatching = () => {
       title: 'AI & Ethics Researcher',
       institution: 'Stanford University',
       location: 'Stanford, CA, USA',
-      matchScore: 89,
-      matchReasons: [
-        'AI methodology expertise complements your work',
-        'Ethics framework alignment',
-        'High citation impact',
-        'Open to interdisciplinary projects'
-      ],
-      sdgFocus: [9, 10, 16],
-      hIndex: 45,
+      match_score: 89,
+      match_reasons: ['AI expertise', 'Ethics alignment', 'High citation impact'],
+      sdg_focus: [9, 10, 16],
+      h_index: 45,
       publications: 178,
       collaborations: 52,
-      avatar: 'https://i.pravatar.cc/150?img=4',
-      availability: 'Limited availability',
-      responseTime: '< 72 hours',
-      recentWork: ['AI Fairness Framework', 'Digital Inclusion']
-    },
-    {
-      id: 4,
-      name: 'Prof. Emma Larsson',
-      title: 'Sustainable Agriculture Expert',
-      institution: 'Swedish University of Agricultural Sciences',
-      location: 'Uppsala, Sweden',
-      matchScore: 87,
-      matchReasons: [
-        'Sustainability focus alignment',
-        'Strong European network',
-        'Funding opportunity potential',
-        'Methodology compatibility'
-      ],
-      sdgFocus: [2, 12, 15],
-      hIndex: 39,
-      publications: 142,
-      collaborations: 41,
-      avatar: 'https://i.pravatar.cc/150?img=5',
-      availability: 'Available for new projects',
-      responseTime: '< 24 hours',
-      recentWork: ['Organic Farming Methods', 'Soil Conservation']
-    },
-    {
-      id: 5,
-      name: 'Dr. Maria Santos',
-      title: 'Head of Public Health Research',
-      institution: 'University of São Paulo',
-      location: 'São Paulo, Brazil',
-      matchScore: 84,
-      matchReasons: [
-        'Public health perspective adds value',
-        'South American representation',
-        'Strong policy impact record',
-        'Interdisciplinary approach'
-      ],
-      sdgFocus: [3, 1, 2],
-      hIndex: 41,
-      publications: 156,
-      collaborations: 38,
-      avatar: 'https://i.pravatar.cc/150?img=3',
-      availability: 'Selective about new projects',
-      responseTime: '< 48 hours',
-      recentWork: ['Vaccine Distribution', 'Nutrition Programs']
+      availability: 'Limited availability'
     }
   ];
 
@@ -181,12 +114,30 @@ const ResearchMatching = () => {
     return 'text-gray-600 bg-gray-50 border-gray-200';
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     setIsSearching(true);
-    setTimeout(() => {
+
+    try {
+      const response = await fetch('/api/research_matching.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(searchCriteria)
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'success' && (data.matches || data.data)) {
+        setAiMatches(data.matches || data.data);
+      } else {
+        setAiMatches(mockMatches);
+      }
+    } catch (error) {
+      console.error('Error fetching matches:', error);
+      setAiMatches(mockMatches);
+    } finally {
       setIsSearching(false);
       setShowResults(true);
-    }, 2000);
+    }
   };
 
   return (
@@ -393,9 +344,10 @@ const ResearchMatching = () => {
 
                       {/* Avatar */}
                       <img
-                        src={match.avatar}
+                        src={match.avatar || `https://i.pravatar.cc/150?u=${match.id}`}
                         alt={match.name}
                         className="w-20 h-20 rounded-2xl object-cover shadow-lg"
+                        onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
                       />
 
                       {/* Main Info */}
@@ -405,29 +357,33 @@ const ResearchMatching = () => {
                             <h3 className="text-2xl font-bold text-gray-900 group-hover:text-purple-600 transition-colors">
                               {match.name}
                             </h3>
-                            <p className="text-gray-600 mb-1">{match.title}</p>
+                            <p className="text-gray-600 mb-1">{match.title || 'Researcher'}</p>
                             <div className="flex items-center gap-4 text-sm text-gray-500">
-                              <span className="flex items-center gap-1">
-                                <Building2 className="w-4 h-4" />
-                                {match.institution}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <MapPin className="w-4 h-4" />
-                                {match.location}
-                              </span>
+                              {match.institution && (
+                                <span className="flex items-center gap-1">
+                                  <Building2 className="w-4 h-4" />
+                                  {match.institution}
+                                </span>
+                              )}
+                              {match.location && (
+                                <span className="flex items-center gap-1">
+                                  <MapPin className="w-4 h-4" />
+                                  {match.location}
+                                </span>
+                              )}
                             </div>
                           </div>
 
                           {/* Match Score */}
-                          <div className={`px-4 py-2 rounded-xl border-2 font-bold ${getMatchScoreColor(match.matchScore)}`}>
-                            <div className="text-2xl">{match.matchScore}%</div>
+                          <div className={`px-4 py-2 rounded-xl border-2 font-bold ${getMatchScoreColor(match.match_score)}`}>
+                            <div className="text-2xl">{match.match_score}%</div>
                             <div className="text-xs uppercase tracking-wide">Match</div>
                           </div>
                         </div>
 
                         {/* SDG Badges */}
                         <div className="flex flex-wrap gap-2 mb-4">
-                          {match.sdgFocus.map(sdg => (
+                          {(match.sdg_focus || []).map(sdg => (
                             <span
                               key={sdg}
                               className={`w-8 h-8 rounded-full ${sdgColors[sdg]} text-white text-xs font-bold flex items-center justify-center`}
@@ -445,7 +401,7 @@ const ResearchMatching = () => {
                             <span className="font-semibold text-purple-900">Why This Match?</span>
                           </div>
                           <ul className="space-y-1">
-                            {match.matchReasons.map((reason, idx) => (
+                            {(match.match_reasons || []).map((reason, idx) => (
                               <li key={idx} className="text-sm text-purple-800 flex items-start gap-2">
                                 <CheckCircle className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
                                 {reason}
@@ -457,7 +413,7 @@ const ResearchMatching = () => {
                         {/* Stats Row */}
                         <div className="grid grid-cols-4 gap-4 mb-4">
                           <div className="text-center">
-                            <div className="text-lg font-bold text-indigo-600">{match.hIndex}</div>
+                            <div className="text-lg font-bold text-indigo-600">{match.h_index}</div>
                             <div className="text-xs text-gray-500">H-Index</div>
                           </div>
                           <div className="text-center">
@@ -470,7 +426,7 @@ const ResearchMatching = () => {
                           </div>
                           <div className="text-center">
                             <div className="text-sm font-semibold text-green-600">{match.availability}</div>
-                            <div className="text-xs text-gray-500">{match.responseTime}</div>
+                            <div className="text-xs text-gray-500">{match.response_time}</div>
                           </div>
                         </div>
 
