@@ -70,6 +70,8 @@ const History = () => {
     {
       year: '2024',
       events: [
+        {
+          month: 'Desember',
           type: 'milestone',
           icon: 'chart',
           title: '1 Juta Publikasi',

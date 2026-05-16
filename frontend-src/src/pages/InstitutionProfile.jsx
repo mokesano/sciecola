@@ -426,6 +426,7 @@ const InstitutionProfile = () => {
           </div>
         </div>
       </div>
+      )}
 
       {/* Navigation Tabs */}
       <div className="border-b border-gray-200 mb-8 overflow-x-auto">
