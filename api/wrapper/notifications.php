@@ -18,28 +18,36 @@ try {
     $method = $_SERVER['REQUEST_METHOD'];
 
     if ($method === 'GET') {
-        $orcid = trim($_GET['orcid'] ?? '');
+        $orcid      = trim($_GET['orcid'] ?? '');
+        $unreadOnly = $_GET['unread_only'] ?? '0';
+        $type       = trim($_GET['type'] ?? '');
+        $limit      = (int)($_GET['limit'] ?? 50);
+
+        if ($limit > 500) $limit = 500;
+        if ($limit < 1)   $limit = 1;
+
         if (!$orcid) {
             http_response_code(400);
             echo json_encode(['status' => 'error', 'message' => 'ORCID required']);
             exit;
         }
-        echo json_encode(getNotifications($orcid));
-    } elseif ($method === 'PUT') {
-        $input = json_decode(file_get_contents('php://input'), true);
-        $id = (int)($input['id'] ?? 0);
-        $action = $input['action'] ?? '';
+        echo json_encode(getNotifications($orcid, $unreadOnly, $type, $limit));
 
-        if (!$id || !$action) {
+    } elseif ($method === 'PUT') {
+        $input    = json_decode(file_get_contents('php://input'), true);
+        $notifId  = (int)($input['id'] ?? 0);
+        $action   = $input['action'] ?? '';
+
+        if (!$notifId || !$action) {
             http_response_code(400);
             echo json_encode(['status' => 'error', 'message' => 'ID and action required']);
             exit;
         }
 
         if ($action === 'read') {
-            echo json_encode(markAsRead($id));
+            echo json_encode(markAsRead($notifId));
         } elseif ($action === 'delete') {
-            echo json_encode(deleteNotification($id));
+            echo json_encode(deleteNotification($notifId));
         } else {
             http_response_code(400);
             echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
@@ -53,15 +61,7 @@ try {
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
 
-function getNotifications(string $orcid): array {
-    $unreadOnly = $_GET['unread_only'] ?? '0';
-    $type = trim($_GET['type'] ?? '');
-    $limit = (int)($_GET['limit'] ?? 50);
-
-    // DoS protection: cap limit
-    if ($limit > 500) $limit = 500;
-    if ($limit < 1) $limit = 1;
-
+function getNotifications(string $orcid, string $unreadOnly, string $type, int $limit): array {
     if (!defined('DB_HOST') || !DB_HOST) {
         return getSampleNotifications();
     }
@@ -73,7 +73,7 @@ function getNotifications(string $orcid): array {
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
         );
 
-        $where = ['recipient_orcid = ?'];
+        $where  = ['recipient_orcid = ?'];
         $params = [$orcid];
 
         if ($unreadOnly === '1') {
@@ -99,24 +99,23 @@ function getNotifications(string $orcid): array {
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $notifications = array_map(function ($row) {
-            $data = json_decode($row['data'] ?? '{}', true);
+            $rowData = json_decode($row['data'] ?? '{}', true);
             return [
-                'id' => (int)$row['id'],
-                'type' => $row['type'],
-                'category' => $row['category'],
-                'title' => $row['title'],
-                'message' => $row['message'],
-                'link' => $row['link'],
-                'data' => is_array($data) ? $data : [],
-                'is_read' => (bool)$row['is_read'],
-                'action_required' => (bool)$row['action_required'],
-                'action_deadline' => $row['action_deadline'],
-                'created_at' => $row['created_at'],
-                'time_ago' => getTimeAgo($row['created_at'])
+                'id'               => (int)$row['id'],
+                'type'             => $row['type'],
+                'category'         => $row['category'],
+                'title'            => $row['title'],
+                'message'          => $row['message'],
+                'link'             => $row['link'],
+                'data'             => is_array($rowData) ? $rowData : [],
+                'is_read'          => (bool)$row['is_read'],
+                'action_required'  => (bool)$row['action_required'],
+                'action_deadline'  => $row['action_deadline'],
+                'created_at'       => $row['created_at'],
+                'time_ago'         => getTimeAgo($row['created_at'])
             ];
         }, $rows);
 
-        // Count unread
         $countStmt = $pdo->prepare("
             SELECT COUNT(*) as count FROM notifications
             WHERE recipient_orcid = ? AND is_read = 0
@@ -125,11 +124,11 @@ function getNotifications(string $orcid): array {
         $unreadCount = (int)$countStmt->fetch(PDO::FETCH_ASSOC)['count'];
 
         return [
-            'status' => 'success',
+            'status'        => 'success',
             'notifications' => $notifications,
-            'unread_count' => $unreadCount,
-            'total' => count($notifications),
-            'timestamp' => date('c')
+            'unread_count'  => $unreadCount,
+            'total'         => count($notifications),
+            'timestamp'     => date('c')
         ];
     } catch (Exception $e) {
         error_log($e->getMessage());
@@ -137,7 +136,7 @@ function getNotifications(string $orcid): array {
     }
 }
 
-function markAsRead(int $id): array {
+function markAsRead(int $notifId): array {
     if (!defined('DB_HOST') || !DB_HOST) {
         return ['status' => 'error', 'message' => 'Database not configured'];
     }
@@ -149,15 +148,14 @@ function markAsRead(int $id): array {
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
         );
 
-        // Verify notification exists
         $checkStmt = $pdo->prepare("SELECT id FROM notifications WHERE id = ?");
-        $checkStmt->execute([$id]);
+        $checkStmt->execute([$notifId]);
         if (!$checkStmt->fetch()) {
             return ['status' => 'error', 'message' => 'Notification not found'];
         }
 
         $stmt = $pdo->prepare("UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ?");
-        $stmt->execute([$id]);
+        $stmt->execute([$notifId]);
 
         return ['status' => 'success', 'message' => 'Notification marked as read'];
     } catch (Exception $e) {
@@ -166,7 +164,7 @@ function markAsRead(int $id): array {
     }
 }
 
-function deleteNotification(int $id): array {
+function deleteNotification(int $notifId): array {
     if (!defined('DB_HOST') || !DB_HOST) {
         return ['status' => 'error', 'message' => 'Database not configured'];
     }
@@ -178,15 +176,14 @@ function deleteNotification(int $id): array {
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
         );
 
-        // Verify notification exists
         $checkStmt = $pdo->prepare("SELECT id FROM notifications WHERE id = ?");
-        $checkStmt->execute([$id]);
+        $checkStmt->execute([$notifId]);
         if (!$checkStmt->fetch()) {
             return ['status' => 'error', 'message' => 'Notification not found'];
         }
 
         $stmt = $pdo->prepare("DELETE FROM notifications WHERE id = ?");
-        $stmt->execute([$id]);
+        $stmt->execute([$notifId]);
 
         return ['status' => 'success', 'message' => 'Notification deleted'];
     } catch (Exception $e) {
@@ -197,12 +194,12 @@ function deleteNotification(int $id): array {
 
 function getTimeAgo(string $timestamp): string {
     $time = strtotime($timestamp);
-    $now = time();
+    $now  = time();
     $diff = $now - $time;
 
-    if ($diff < 60) return 'just now';
-    if ($diff < 3600) return ceil($diff / 60) . 'm ago';
-    if ($diff < 86400) return ceil($diff / 3600) . 'h ago';
+    if ($diff < 60)     return 'just now';
+    if ($diff < 3600)   return ceil($diff / 60) . 'm ago';
+    if ($diff < 86400)  return ceil($diff / 3600) . 'h ago';
     if ($diff < 604800) return ceil($diff / 86400) . 'd ago';
     return ceil($diff / 604800) . 'w ago';
 }
@@ -212,47 +209,47 @@ function getSampleNotifications(): array {
         'status' => 'success',
         'notifications' => [
             [
-                'id' => 1,
-                'type' => 'collaboration_request',
-                'category' => 'Research',
-                'title' => 'Collaboration Request from Dr. Sarah Chen',
-                'message' => 'Dr. Sarah Chen is interested in collaborating on climate research project',
-                'link' => '/#/collaboration-hub',
-                'is_read' => false,
-                'action_required' => true,
-                'action_deadline' => '2024-06-01',
-                'created_at' => date('c', time() - 3600),
-                'time_ago' => '1h ago'
+                'id'               => 1,
+                'type'             => 'collaboration_request',
+                'category'         => 'Research',
+                'title'            => 'Collaboration Request from Dr. Sarah Chen',
+                'message'          => 'Dr. Sarah Chen is interested in collaborating on climate research project',
+                'link'             => '/#/collaboration-hub',
+                'is_read'          => false,
+                'action_required'  => true,
+                'action_deadline'  => '2024-06-01',
+                'created_at'       => date('c', time() - 3600),
+                'time_ago'         => '1h ago'
             ],
             [
-                'id' => 2,
-                'type' => 'opportunity_match',
-                'category' => 'Opportunity',
-                'title' => 'New Research Opportunity: Climate Tech Partnership',
-                'message' => 'You matched with 96% to a carbon capture research opportunity',
-                'link' => '/#/innovation-marketplace',
-                'is_read' => false,
-                'action_required' => true,
-                'action_deadline' => '2024-05-25',
-                'created_at' => date('c', time() - 86400),
-                'time_ago' => '1d ago'
+                'id'               => 2,
+                'type'             => 'opportunity_match',
+                'category'         => 'Opportunity',
+                'title'            => 'New Research Opportunity: Climate Tech Partnership',
+                'message'          => 'You matched with 96% to a carbon capture research opportunity',
+                'link'             => '/#/innovation-marketplace',
+                'is_read'          => false,
+                'action_required'  => true,
+                'action_deadline'  => '2024-05-25',
+                'created_at'       => date('c', time() - 86400),
+                'time_ago'         => '1d ago'
             ],
             [
-                'id' => 3,
-                'type' => 'message',
-                'category' => 'Message',
-                'title' => 'New message from Prof. Ahmed Hassan',
-                'message' => 'New message received in your collaboration chat',
-                'link' => '/#/messages',
-                'is_read' => true,
-                'action_required' => false,
-                'action_deadline' => null,
-                'created_at' => date('c', time() - 172800),
-                'time_ago' => '2d ago'
+                'id'               => 3,
+                'type'             => 'message',
+                'category'         => 'Message',
+                'title'            => 'New message from Prof. Ahmed Hassan',
+                'message'          => 'New message received in your collaboration chat',
+                'link'             => '/#/messages',
+                'is_read'          => true,
+                'action_required'  => false,
+                'action_deadline'  => null,
+                'created_at'       => date('c', time() - 172800),
+                'time_ago'         => '2d ago'
             ]
         ],
         'unread_count' => 2,
-        'total' => 3,
-        'timestamp' => date('c')
+        'total'        => 3,
+        'timestamp'    => date('c')
     ];
 }

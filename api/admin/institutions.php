@@ -16,8 +16,9 @@ try {
     $configFile = ROOT_PATH . '/config/config.php';
     if (file_exists($configFile)) require_once $configFile;
 
-    $method = $_SERVER['REQUEST_METHOD'];
+    $method     = $_SERVER['REQUEST_METHOD'];
     $adminOrcid = $_SERVER['HTTP_X_ADMIN_ORCID'] ?? $_GET['admin_orcid'] ?? '';
+    $ipAddress  = $_SERVER['REMOTE_ADDR'] ?? '';
 
     if (!$adminOrcid) {
         http_response_code(401);
@@ -26,11 +27,11 @@ try {
     }
 
     if ($method === 'POST') {
-        echo json_encode(createInstitution($adminOrcid));
+        echo json_encode(createInstitution($adminOrcid, $ipAddress));
     } elseif ($method === 'PUT') {
-        echo json_encode(updateInstitution($adminOrcid));
+        echo json_encode(updateInstitution($adminOrcid, $ipAddress));
     } elseif ($method === 'DELETE') {
-        echo json_encode(deleteInstitution($adminOrcid));
+        echo json_encode(deleteInstitution($adminOrcid, $ipAddress));
     } else {
         http_response_code(405);
         echo json_encode(['status' => 'error', 'message' => 'Method not allowed']);
@@ -40,26 +41,46 @@ try {
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
 
-function createInstitution(string $adminOrcid): array {
+/**
+ * Validates numeric fields shared by create and update.
+ * Returns an error message string on failure, or null on success.
+ */
+function validateInstitutionNumericFields(array $input): ?string {
+    if (isset($input['established_year'])
+        && (!is_numeric($input['established_year'])
+            || $input['established_year'] < 1000
+            || $input['established_year'] > 2100)
+    ) {
+        return 'Invalid established_year (must be between 1000-2100)';
+    }
+    if (isset($input['faculties_count'])
+        && (!is_numeric($input['faculties_count']) || $input['faculties_count'] < 0)
+    ) {
+        return 'Invalid faculties_count (must be non-negative)';
+    }
+    if (isset($input['students_count'])
+        && (!is_numeric($input['students_count']) || $input['students_count'] < 0)
+    ) {
+        return 'Invalid students_count (must be non-negative)';
+    }
+    if (isset($input['lecturers_count'])
+        && (!is_numeric($input['lecturers_count']) || $input['lecturers_count'] < 0)
+    ) {
+        return 'Invalid lecturers_count (must be non-negative)';
+    }
+    return null;
+}
+
+function createInstitution(string $adminOrcid, string $ipAddress): array {
     $input = json_decode(file_get_contents('php://input'), true);
 
-    // Validate required fields
     if (empty($input['name'])) {
         return ['status' => 'error', 'message' => 'Institution name required'];
     }
 
-    // Validate numeric fields
-    if (isset($input['established_year']) && (!is_numeric($input['established_year']) || $input['established_year'] < 1000 || $input['established_year'] > 2100)) {
-        return ['status' => 'error', 'message' => 'Invalid established_year (must be between 1000-2100)'];
-    }
-    if (isset($input['faculties_count']) && (!is_numeric($input['faculties_count']) || $input['faculties_count'] < 0)) {
-        return ['status' => 'error', 'message' => 'Invalid faculties_count (must be non-negative)'];
-    }
-    if (isset($input['students_count']) && (!is_numeric($input['students_count']) || $input['students_count'] < 0)) {
-        return ['status' => 'error', 'message' => 'Invalid students_count (must be non-negative)'];
-    }
-    if (isset($input['lecturers_count']) && (!is_numeric($input['lecturers_count']) || $input['lecturers_count'] < 0)) {
-        return ['status' => 'error', 'message' => 'Invalid lecturers_count (must be non-negative)'];
+    $validationError = validateInstitutionNumericFields($input);
+    if ($validationError !== null) {
+        return ['status' => 'error', 'message' => $validationError];
     }
 
     if (!defined('DB_HOST') || !DB_HOST) {
@@ -98,20 +119,16 @@ function createInstitution(string $adminOrcid): array {
 
         $institutionId = $pdo->lastInsertId();
 
-        // Create stats record
-        $statsStmt = $pdo->prepare("
-            INSERT INTO institution_stats (institution_id) VALUES (?)
-        ");
+        $statsStmt = $pdo->prepare("INSERT INTO institution_stats (institution_id) VALUES (?)");
         $statsStmt->execute([$institutionId]);
 
-        // Log activity
-        logActivity($adminOrcid, 'CREATE', 'institutions', (string)$institutionId, null, $input);
+        logActivity($adminOrcid, 'CREATE', 'institutions', (string)$institutionId, null, $input, $ipAddress);
 
         return [
-            'status' => 'success',
-            'message' => 'Institution created successfully',
+            'status'         => 'success',
+            'message'        => 'Institution created successfully',
             'institution_id' => (int)$institutionId,
-            'timestamp' => date('c')
+            'timestamp'      => date('c')
         ];
     } catch (Exception $e) {
         error_log($e->getMessage());
@@ -119,25 +136,16 @@ function createInstitution(string $adminOrcid): array {
     }
 }
 
-function updateInstitution(string $adminOrcid): array {
+function updateInstitution(string $adminOrcid, string $ipAddress): array {
     $input = json_decode(file_get_contents('php://input'), true);
 
     if (empty($input['id'])) {
         return ['status' => 'error', 'message' => 'Institution ID required'];
     }
 
-    // Validate numeric fields if provided
-    if (isset($input['established_year']) && (!is_numeric($input['established_year']) || $input['established_year'] < 1000 || $input['established_year'] > 2100)) {
-        return ['status' => 'error', 'message' => 'Invalid established_year (must be between 1000-2100)'];
-    }
-    if (isset($input['faculties_count']) && (!is_numeric($input['faculties_count']) || $input['faculties_count'] < 0)) {
-        return ['status' => 'error', 'message' => 'Invalid faculties_count (must be non-negative)'];
-    }
-    if (isset($input['students_count']) && (!is_numeric($input['students_count']) || $input['students_count'] < 0)) {
-        return ['status' => 'error', 'message' => 'Invalid students_count (must be non-negative)'];
-    }
-    if (isset($input['lecturers_count']) && (!is_numeric($input['lecturers_count']) || $input['lecturers_count'] < 0)) {
-        return ['status' => 'error', 'message' => 'Invalid lecturers_count (must be non-negative)'];
+    $validationError = validateInstitutionNumericFields($input);
+    if ($validationError !== null) {
+        return ['status' => 'error', 'message' => $validationError];
     }
 
     if (!defined('DB_HOST') || !DB_HOST) {
@@ -151,7 +159,6 @@ function updateInstitution(string $adminOrcid): array {
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
         );
 
-        // Get old values for audit
         $oldStmt = $pdo->prepare("SELECT * FROM institutions WHERE id = ?");
         $oldStmt->execute([$input['id']]);
         $oldValues = $oldStmt->fetch(PDO::FETCH_ASSOC);
@@ -161,7 +168,7 @@ function updateInstitution(string $adminOrcid): array {
         }
 
         $updates = [];
-        $params = [];
+        $params  = [];
 
         $fields = ['name', 'acronym', 'country', 'city', 'website_url', 'logo_url',
                    'type', 'established_year', 'rector_name', 'faculties_count',
@@ -170,7 +177,7 @@ function updateInstitution(string $adminOrcid): array {
         foreach ($fields as $field) {
             if (isset($input[$field])) {
                 $updates[] = "$field = ?";
-                $params[] = $input[$field];
+                $params[]  = $input[$field];
             }
         }
 
@@ -179,17 +186,16 @@ function updateInstitution(string $adminOrcid): array {
         }
 
         $params[] = $input['id'];
-        $sql = "UPDATE institutions SET " . implode(', ', $updates) . " WHERE id = ?";
+        $sql      = "UPDATE institutions SET " . implode(', ', $updates) . " WHERE id = ?";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
 
-        // Log activity
-        logActivity($adminOrcid, 'UPDATE', 'institutions', (string)$input['id'], $oldValues, $input);
+        logActivity($adminOrcid, 'UPDATE', 'institutions', (string)$input['id'], $oldValues, $input, $ipAddress);
 
         return [
-            'status' => 'success',
-            'message' => 'Institution updated successfully',
+            'status'    => 'success',
+            'message'   => 'Institution updated successfully',
             'timestamp' => date('c')
         ];
     } catch (Exception $e) {
@@ -198,7 +204,7 @@ function updateInstitution(string $adminOrcid): array {
     }
 }
 
-function deleteInstitution(string $adminOrcid): array {
+function deleteInstitution(string $adminOrcid, string $ipAddress): array {
     $input = json_decode(file_get_contents('php://input'), true);
 
     if (empty($input['id'])) {
@@ -216,7 +222,6 @@ function deleteInstitution(string $adminOrcid): array {
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
         );
 
-        // Get institution data for audit
         $getStmt = $pdo->prepare("SELECT * FROM institutions WHERE id = ?");
         $getStmt->execute([$input['id']]);
         $institution = $getStmt->fetch(PDO::FETCH_ASSOC);
@@ -228,12 +233,11 @@ function deleteInstitution(string $adminOrcid): array {
         $stmt = $pdo->prepare("DELETE FROM institutions WHERE id = ?");
         $stmt->execute([$input['id']]);
 
-        // Log activity
-        logActivity($adminOrcid, 'DELETE', 'institutions', (string)$input['id'], $institution, null);
+        logActivity($adminOrcid, 'DELETE', 'institutions', (string)$input['id'], $institution, null, $ipAddress);
 
         return [
-            'status' => 'success',
-            'message' => 'Institution deleted successfully',
+            'status'    => 'success',
+            'message'   => 'Institution deleted successfully',
             'timestamp' => date('c')
         ];
     } catch (Exception $e) {
@@ -242,7 +246,7 @@ function deleteInstitution(string $adminOrcid): array {
     }
 }
 
-function logActivity(string $adminOrcid, string $action, string $tableName, string $entityId, ?array $oldValues, ?array $newValues): void {
+function logActivity(string $adminOrcid, string $action, string $tableName, string $entityId, ?array $oldValues, ?array $newValues, string $ipAddress): void {
     if (!defined('DB_HOST') || !DB_HOST) {
         return;
     }
@@ -266,7 +270,7 @@ function logActivity(string $adminOrcid, string $action, string $tableName, stri
             $entityId,
             $oldValues ? json_encode($oldValues) : null,
             $newValues ? json_encode($newValues) : null,
-            $_SERVER['REMOTE_ADDR'] ?? null
+            $ipAddress ?: null
         ]);
     } catch (Exception $e) {
         error_log('Failed to log activity: ' . $e->getMessage());

@@ -15,8 +15,9 @@ try {
     $configFile = ROOT_PATH . '/config/config.php';
     if (file_exists($configFile)) require_once $configFile;
 
-    $method = $_SERVER['REQUEST_METHOD'];
+    $method     = $_SERVER['REQUEST_METHOD'];
     $adminOrcid = $_SERVER['HTTP_X_ADMIN_ORCID'] ?? $_GET['admin_orcid'] ?? '';
+    $ipAddress  = $_SERVER['REMOTE_ADDR'] ?? '';
 
     if (!$adminOrcid) {
         http_response_code(401);
@@ -25,9 +26,14 @@ try {
     }
 
     if ($method === 'POST') {
-        echo json_encode(createNotification($adminOrcid));
+        echo json_encode(createNotification($adminOrcid, $ipAddress));
     } elseif ($method === 'GET') {
-        echo json_encode(listNotifications());
+        $limit  = (int)($_GET['limit'] ?? 100);
+        $offset = (int)($_GET['offset'] ?? 0);
+        if ($limit > 500) $limit = 500;
+        if ($limit < 1)   $limit = 1;
+        if ($offset < 0)  $offset = 0;
+        echo json_encode(listNotifications($limit, $offset));
     } else {
         http_response_code(405);
         echo json_encode(['status' => 'error', 'message' => 'Method not allowed']);
@@ -37,10 +43,9 @@ try {
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
 
-function createNotification(string $adminOrcid): array {
+function createNotification(string $adminOrcid, string $ipAddress): array {
     $input = json_decode(file_get_contents('php://input'), true);
 
-    // Validate required fields
     if (empty($input['recipient_orcid'])) {
         return ['status' => 'error', 'message' => 'Recipient ORCID required'];
     }
@@ -54,13 +59,11 @@ function createNotification(string $adminOrcid): array {
         return ['status' => 'error', 'message' => 'Message required'];
     }
 
-    // Validate type
     $validTypes = ['collaboration_request', 'opportunity_match', 'message', 'system', 'achievement', 'announcement'];
     if (!in_array($input['type'], $validTypes)) {
         return ['status' => 'error', 'message' => 'Invalid notification type'];
     }
 
-    // Validate recipient ORCID format
     $recipients = $input['recipient_orcid'];
     if (!is_array($recipients)) {
         $recipients = [$recipients];
@@ -82,14 +85,8 @@ function createNotification(string $adminOrcid): array {
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
         );
 
-        // Handle both single recipient and bulk recipients
-        $recipients = $input['recipient_orcid'];
-        if (!is_array($recipients)) {
-            $recipients = [$recipients];
-        }
-
+        $extraData    = $input['data'] ?? null;
         $createdCount = 0;
-        $data = $input['data'] ?? null;
 
         foreach ($recipients as $orcid) {
             $stmt = $pdo->prepare("
@@ -105,7 +102,7 @@ function createNotification(string $adminOrcid): array {
                 $input['title'],
                 $input['message'],
                 $input['link'] ?? null,
-                $data ? json_encode($data) : null,
+                $extraData ? json_encode($extraData) : null,
                 $input['action_required'] ?? 0,
                 $input['action_deadline'] ?? null
             ]);
@@ -113,14 +110,13 @@ function createNotification(string $adminOrcid): array {
             $createdCount++;
         }
 
-        // Log activity
-        logActivity($adminOrcid, 'CREATE', 'notifications', implode(',', $recipients), null, $input);
+        logActivity($adminOrcid, 'CREATE', 'notifications', implode(',', $recipients), null, $input, $ipAddress);
 
         return [
-            'status' => 'success',
-            'message' => "Notification sent to $createdCount recipient(s)",
+            'status'     => 'success',
+            'message'    => "Notification sent to $createdCount recipient(s)",
             'recipients' => count($recipients),
-            'timestamp' => date('c')
+            'timestamp'  => date('c')
         ];
     } catch (Exception $e) {
         error_log($e->getMessage());
@@ -128,15 +124,7 @@ function createNotification(string $adminOrcid): array {
     }
 }
 
-function listNotifications(): array {
-    $limit = (int)($_GET['limit'] ?? 100);
-    $offset = (int)($_GET['offset'] ?? 0);
-
-    // DoS protection
-    if ($limit > 500) $limit = 500;
-    if ($limit < 1) $limit = 1;
-    if ($offset < 0) $offset = 0;
-
+function listNotifications(int $limit, int $offset): array {
     if (!defined('DB_HOST') || !DB_HOST) {
         return ['status' => 'error', 'message' => 'Database not configured'];
     }
@@ -149,7 +137,7 @@ function listNotifications(): array {
         );
 
         $countStmt = $pdo->query("SELECT COUNT(*) as count FROM notifications");
-        $total = (int)$countStmt->fetch(PDO::FETCH_ASSOC)['count'];
+        $total     = (int)$countStmt->fetch(PDO::FETCH_ASSOC)['count'];
 
         $stmt = $pdo->prepare("
             SELECT n.*, r.name as recipient_name
@@ -162,29 +150,28 @@ function listNotifications(): array {
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $notifications = array_map(function ($row) {
-            $data = json_decode($row['data'] ?? '{}', true);
             return [
-                'id' => (int)$row['id'],
-                'recipient_orcid' => $row['recipient_orcid'],
-                'recipient_name' => $row['recipient_name'],
-                'type' => $row['type'],
-                'category' => $row['category'],
-                'title' => $row['title'],
-                'message' => substr($row['message'], 0, 150),
-                'is_read' => (bool)$row['is_read'],
-                'action_required' => (bool)$row['action_required'],
-                'created_at' => $row['created_at'],
-                'read_at' => $row['read_at']
+                'id'               => (int)$row['id'],
+                'recipient_orcid'  => $row['recipient_orcid'],
+                'recipient_name'   => $row['recipient_name'],
+                'type'             => $row['type'],
+                'category'         => $row['category'],
+                'title'            => $row['title'],
+                'message'          => substr($row['message'], 0, 150),
+                'is_read'          => (bool)$row['is_read'],
+                'action_required'  => (bool)$row['action_required'],
+                'created_at'       => $row['created_at'],
+                'read_at'          => $row['read_at']
             ];
         }, $rows);
 
         return [
-            'status' => 'success',
+            'status'        => 'success',
             'notifications' => $notifications,
-            'total' => $total,
-            'limit' => $limit,
-            'offset' => $offset,
-            'timestamp' => date('c')
+            'total'         => $total,
+            'limit'         => $limit,
+            'offset'        => $offset,
+            'timestamp'     => date('c')
         ];
     } catch (Exception $e) {
         error_log($e->getMessage());
@@ -192,7 +179,7 @@ function listNotifications(): array {
     }
 }
 
-function logActivity(string $adminOrcid, string $action, string $tableName, string $entityId, ?array $oldValues, ?array $newValues): void {
+function logActivity(string $adminOrcid, string $action, string $tableName, string $entityId, ?array $oldValues, ?array $newValues, string $ipAddress): void {
     if (!defined('DB_HOST') || !DB_HOST) {
         return;
     }
@@ -216,7 +203,7 @@ function logActivity(string $adminOrcid, string $action, string $tableName, stri
             $entityId,
             $oldValues ? json_encode($oldValues) : null,
             $newValues ? json_encode($newValues) : null,
-            $_SERVER['REMOTE_ADDR'] ?? null
+            $ipAddress ?: null
         ]);
     } catch (Exception $e) {
         error_log('Failed to log activity: ' . $e->getMessage());
