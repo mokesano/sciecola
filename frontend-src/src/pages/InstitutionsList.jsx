@@ -164,11 +164,11 @@ const InstitutionsList = () => {
   const countries = ['all', 'Indonesia', 'Australia', 'Singapore', 'Malaysia', 'Japan', 'United States', 'United Kingdom'];
 
   // Apply client-side filtering (API already filters, but we apply search)
-  const filteredInstitutions = institutions.filter(inst => {
-    const matchesSearch = inst.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCountry = selectedCountry === 'all' || inst.country === selectedCountry;
+  const filteredInstitutions = Array.isArray(institutions) ? institutions.filter(inst => {
+    const matchesSearch = inst?.name?.toLowerCase()?.includes(searchQuery.toLowerCase()) ?? false;
+    const matchesCountry = selectedCountry === 'all' || inst?.country === selectedCountry;
     return matchesSearch && matchesCountry;
-  });
+  }) : [];
 
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">

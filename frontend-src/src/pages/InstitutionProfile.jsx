@@ -234,10 +234,11 @@ const InstitutionProfile = () => {
         <div className="flex gap-6 lg:col-span-2">
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
             <div className="text-center mb-6">
-              <img 
-                src={institution.logo} 
+              <img
+                src={institution.logo}
                 alt={institution.name}
                 className="w-32 h-32 object-contain mx-auto mb-4"
+                onError={(e) => {e.target.src = '/assets/img/institution-default.svg'}}
               />
               <h1 className="text-2xl font-bold text-gray-900 mb-1">{institution.name}</h1>
               <div className="flex gap-2 justify-center mt-2">
@@ -628,7 +629,12 @@ const InstitutionProfile = () => {
           <div className="space-y-3">
             {topCollaborators.map((collab, idx) => (
               <div key={idx} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors">
-                <img src={collab.logo} alt={collab.name} className="w-10 h-10 rounded-lg object-cover" />
+                <img
+                  src={collab.logo}
+                  alt={collab.name}
+                  className="w-10 h-10 rounded-lg object-cover"
+                  onError={(e) => {e.target.src = '/assets/img/institution-default.svg'}}
+                />
                 <div className="flex-grow min-w-0">
                   <h4 className="font-semibold text-gray-900 text-sm mb-0.5 truncate">{collab.name}</h4>
                   <p className="text-xs text-gray-500 truncate">{collab.country}</p>
@@ -681,7 +687,12 @@ const InstitutionProfile = () => {
           <div className="space-y-4">
             {news.map((item, idx) => (
               <div key={idx} className="flex gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors">
-                <img src={item.image} alt={item.title} className="w-20 h-16 object-cover rounded-lg shrink-0" />
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-20 h-16 object-cover rounded-lg shrink-0"
+                  onError={(e) => {e.target.src = '/assets/img/article-default.svg'}}
+                />
                 <div className="flex-grow min-w-0">
                   <h4 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{item.title}</h4>
                   <p className="text-xs text-gray-500">{item.date}</p>
