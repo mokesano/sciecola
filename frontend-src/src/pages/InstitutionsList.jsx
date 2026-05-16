@@ -163,12 +163,7 @@ const InstitutionsList = () => {
 
   const countries = ['all', 'Indonesia', 'Australia', 'Singapore', 'Malaysia', 'Japan', 'United States', 'United Kingdom'];
 
-  // Apply client-side filtering (API already filters, but we apply search)
-  const filteredInstitutions = Array.isArray(institutions) ? institutions.filter(inst => {
-    const matchesSearch = inst?.name?.toLowerCase()?.includes(searchQuery.toLowerCase()) ?? false;
-    const matchesCountry = selectedCountry === 'all' || inst?.country === selectedCountry;
-    return matchesSearch && matchesCountry;
-  }) : [];
+  const filteredInstitutions = Array.isArray(institutions) ? institutions : [];
 
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
@@ -193,20 +188,24 @@ const InstitutionsList = () => {
           <div className="flex-grow relative">
             <input
               type="text"
+              id="institution-search"
               placeholder="Cari nama institusi..."
               value={searchQueryLocal}
               onChange={handleSearchChange}
+              aria-label="Cari nama institusi"
               className="w-full pl-11 pr-4 py-3 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 transition-all"
             />
-            <svg className="w-5 h-5 text-gray-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-gray-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
           
           <div className="flex gap-3">
             <select
+              id="country-filter"
               value={selectedCountry}
               onChange={(e) => setSelectedCountry(e.target.value)}
+              aria-label="Filter by country"
               className="bg-gray-50 border-none rounded-xl py-3 px-4 text-sm font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
             >
               {countries.map(country => (
@@ -217,8 +216,10 @@ const InstitutionsList = () => {
             </select>
             
             <select
+              id="sort-select"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
+              aria-label="Sort institutions by"
               className="bg-gray-50 border-none rounded-xl py-3 px-4 text-sm font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
             >
               <option value="relevance">Relevansi</option>
