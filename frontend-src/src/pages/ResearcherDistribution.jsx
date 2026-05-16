@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, GeoJSON, CircleMarker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
 const ResearcherDistribution = () => {
@@ -13,6 +13,7 @@ const ResearcherDistribution = () => {
   const [totalResearchers, setTotalResearchers] = useState(null);
   const [provinceResearcherData, setProvinceResearcherData] = useState([]);
   const [institutionData, setInstitutionData] = useState([]);
+  const [worldGeoJson, setWorldGeoJson] = useState(null);
 
   // Fetch data dari database (GLOBAL - semua negara, tidak hanya Indonesia)
   useEffect(() => {
@@ -59,6 +60,11 @@ const ResearcherDistribution = () => {
           const researcherStat = statsJson.data.find(s => s.label === 'Peneliti');
           if (researcherStat) setTotalResearchers(researcherStat.value);
         }
+
+        // Fetch world GeoJSON untuk choropleth
+        const geoRes = await fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson');
+        const geoJson = await geoRes.json();
+        setWorldGeoJson(geoJson);
       } catch (e) {
         console.error('Error fetching data:', e);
       }
@@ -122,31 +128,68 @@ const ResearcherDistribution = () => {
     ? provinceResearcherData.find(p => p.province === selectedProvince)
     : null;
 
-  // Komponen peta Indonesia interaktif
-  // World researcher distribution map (FIX P2: gunakan data yang sudah difilter)
+  // Helper: Warna choropleth berdasarkan jumlah peneliti (skala biru)
+  const getChoroplethColor = (count, maxCount) => {
+    if (!count || count === 0) return '#f5f5f5';
+    const ratio = count / maxCount;
+    if (ratio > 0.8) return '#084594';
+    if (ratio > 0.6) return '#2171b5';
+    if (ratio > 0.4) return '#4292c6';
+    if (ratio > 0.2) return '#6baed6';
+    if (ratio > 0.1) return '#9ecae1';
+    return '#c6dbef';
+  };
+
+  // Komponen untuk update map view ketika mapView berubah
+  const MapViewController = ({ view }) => {
+    const map = useMap();
+    useEffect(() => {
+      if (view === 'province') {
+        map.setView([20, 10], 2); // World overview untuk choropleth
+      }
+    }, [view, map]);
+    return null;
+  };
+
+  // Peta Distribusi: Choropleth (negara) atau Marker (institusi)
   const ResearcherMap = ({ geoData, institutionList }) => {
-    const mapPoints = mapView === 'institution'
-      ? institutionList.map(inst => ({
-          lat: inst.lat, lng: inst.lng,
-          name: inst.name, researchers: inst.researchers, type: 'institution'
-        }))
-      : [
-          ...geoData.map(prov => ({
-            lat: prov.lat, lng: prov.lng,
-            name: prov.province, researchers: prov.researchers, type: 'province'
-          })),
-          { lat: 51.51, lng: -0.13, name: 'UCL (Collaborator)', researchers: 12, type: 'collaborator' },
-          { lat: 35.68, lng: 139.69, name: 'University of Tokyo (Collaborator)', researchers: 8, type: 'collaborator' },
-          { lat: 1.35, lng: 103.82, name: 'NUS (Collaborator)', researchers: 15, type: 'collaborator' },
-          { lat: 40.71, lng: -74.01, name: 'Columbia University (Collaborator)', researchers: 6, type: 'collaborator' },
-        ];
+    // Lookup: nama negara → jumlah peneliti
+    const researcherByCountry = {};
+    geoData.forEach(item => { researcherByCountry[item.province] = item.researchers; });
+    const maxCount = Math.max(...geoData.map(d => d.researchers), 1);
+
+    // Style tiap negara di GeoJSON berdasarkan jumlah peneliti
+    const countryStyle = (feature) => {
+      const name = feature.properties.ADMIN || feature.properties.name || '';
+      const count = researcherByCountry[name] || 0;
+      return {
+        fillColor: getChoroplethColor(count, maxCount),
+        weight: 0.8,
+        opacity: 1,
+        color: '#aaa',
+        fillOpacity: count > 0 ? 0.85 : 0.3,
+      };
+    };
+
+    // Tooltip saat hover negara
+    const onEachCountry = (feature, layer) => {
+      const name = feature.properties.ADMIN || feature.properties.name || 'Unknown';
+      const count = researcherByCountry[name] || 0;
+      layer.bindTooltip(
+        `<div style="font-size:12px"><strong>${name}</strong><br/>${count.toLocaleString('id-ID')} peneliti</div>`,
+        { sticky: true, direction: 'top' }
+      );
+      if (count > 0) {
+        layer.on('click', () => setSelectedProvince(name));
+      }
+    };
 
     return (
       <div className="h-96 rounded-xl overflow-hidden border border-gray-200">
         <MapContainer
-          center={[mapCenter.lat, mapCenter.lng]}
-          zoom={3}
-          minZoom={2}
+          center={[20, 10]}
+          zoom={2}
+          minZoom={1}
           maxZoom={8}
           style={{ height: '100%', width: '100%' }}
           scrollWheelZoom={true}
@@ -154,33 +197,64 @@ const ResearcherDistribution = () => {
           zoomControl={true}
           doubleClickZoom={true}
           touchZoom={true}
-          keyboard={true}
-          attributionControl={true}
+          attributionControl={false}
         >
-          <TileLayer
-            url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
-          />
-          {mapPoints.map((pt, i) => (
+          <TileLayer url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png" />
+          <MapViewController view={mapView} />
+
+          {/* CHOROPLETH: Warna negara berdasarkan jumlah peneliti */}
+          {mapView === 'province' && worldGeoJson && (
+            <GeoJSON
+              key={selectedField}
+              data={worldGeoJson}
+              style={countryStyle}
+              onEachFeature={onEachCountry}
+            />
+          )}
+
+          {/* MARKERS: Titik institusi per negara */}
+          {mapView === 'institution' && institutionList.map((inst, i) => (
             <CircleMarker
               key={i}
-              center={[pt.lat, pt.lng]}
-              radius={Math.max(5, Math.min(16, Math.floor(pt.researchers / 40)))}
+              center={[inst.lat, inst.lng]}
+              radius={Math.max(5, Math.min(20, Math.sqrt(inst.researchers) * 1.5))}
               pathOptions={{
-                color: pt.type === 'collaborator' ? '#6366f1' : '#ef4444',
-                fillColor: pt.type === 'collaborator' ? '#6366f1' : '#ef4444',
-                fillOpacity: 0.6,
+                color: '#1d4ed8',
+                fillColor: '#3b82f6',
+                fillOpacity: 0.75,
                 weight: 1.5,
               }}
             >
               <Popup>
                 <div className="p-1">
-                  <p className="font-bold text-sm text-gray-900">{pt.name}</p>
-                  <p className="text-xs text-gray-600">{pt.researchers} researchers</p>
+                  <p className="font-bold text-sm text-gray-900">{inst.name}</p>
+                  <p className="text-xs text-gray-500">{inst.country}</p>
+                  <p className="text-xs text-gray-600 mt-1">{inst.researchers.toLocaleString('id-ID')} peneliti</p>
+                  <p className="text-xs text-gray-600">{inst.publications?.toLocaleString('id-ID') || 0} publikasi</p>
                 </div>
               </Popup>
             </CircleMarker>
           ))}
         </MapContainer>
+
+        {/* Legend choropleth */}
+        {mapView === 'province' && (
+          <div className="flex items-center gap-2 mt-2 px-1 flex-wrap">
+            <span className="text-xs text-gray-500">Peneliti:</span>
+            {[
+              { color: '#f5f5f5', label: '0' },
+              { color: '#c6dbef', label: 'Sedikit' },
+              { color: '#6baed6', label: 'Sedang' },
+              { color: '#2171b5', label: 'Banyak' },
+              { color: '#084594', label: 'Tertinggi' },
+            ].map(item => (
+              <div key={item.label} className="flex items-center gap-1">
+                <div className="w-4 h-3 rounded-sm border border-gray-300" style={{ backgroundColor: item.color }} />
+                <span className="text-xs text-gray-600">{item.label}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   };
