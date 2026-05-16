@@ -9,7 +9,6 @@ const Feeds = () => {
   const [savedPosts, setSavedPosts] = useState(new Set());
   const [feedPosts, setFeedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   // Fetch feed posts on mount
   useEffect(() => {
@@ -20,14 +19,12 @@ const Feeds = () => {
         const data = await response.json();
         if (data.status === 'success' && data.posts) {
           setFeedPosts(data.posts);
-          setError(null);
         } else {
           setFeedPosts(getSampleFeedPosts());
         }
       } catch (err) {
         console.error('Error fetching feed posts:', err);
         setFeedPosts(getSampleFeedPosts());
-        setError('Failed to load feed');
       } finally {
         setLoading(false);
       }
