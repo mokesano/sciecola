@@ -173,16 +173,17 @@ function send_json_response(array $data, int $status = 200): void {
 
 function is_wrapper_api_request(): bool {
     $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-    return (bool) preg_match('#^/api/[^/]+\.php$#i', $uri);
+    return (bool) preg_match('#^/api/([a-z]+/)?[^/]+\.php$#i', $uri);
 }
 
 function route_api_wrapper(): void {
     $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-    if (!preg_match('#^/api/([^/]+\.php)$#i', $uri, $m)) {
+    if (!preg_match('#^/api/([a-z]+/)?([^/]+\.php)$#i', $uri, $m)) {
         send_json_response(['status' => 'error', 'message' => 'Invalid API path'], 400);
     }
 
-    $filename = basename($m[1]);
+    $subdir = $m[1] ?? '';
+    $filename = basename($m[2]);
 
     static $allowed = [
         'analytics.php', 'article_profile.php', 'articles.php', 'auth.php',
@@ -195,16 +196,27 @@ function route_api_wrapper(): void {
         'research_matching.php', 'sdg_distribution.php', 'trends.php',
     ];
 
-    if (!in_array($filename, $allowed, true)) {
-        send_json_response(['status' => 'error', 'message' => 'Endpoint tidak ditemukan'], 404);
+    static $admin_allowed = [
+        'researchers.php', 'projects.php', 'opportunities.php', 'expertise.php'
+    ];
+
+    if ($subdir === 'admin/') {
+        if (!in_array($filename, $admin_allowed, true)) {
+            send_json_response(['status' => 'error', 'message' => 'Admin endpoint tidak ditemukan'], 404);
+        }
+        $apiFile = ROOT_PATH . '/api/admin/' . $filename;
+    } else {
+        if (!in_array($filename, $allowed, true)) {
+            send_json_response(['status' => 'error', 'message' => 'Endpoint tidak ditemukan'], 404);
+        }
+        $apiFile = ROOT_PATH . '/api/wrapper/' . $filename;
     }
 
-    $wrapperFile = ROOT_PATH . '/api/wrapper/' . $filename;
-    if (!file_exists($wrapperFile)) {
+    if (!file_exists($apiFile)) {
         send_json_response(['status' => 'error', 'message' => 'Endpoint belum tersedia'], 503);
     }
 
-    require $wrapperFile;
+    require $apiFile;
     exit;
 }
 
