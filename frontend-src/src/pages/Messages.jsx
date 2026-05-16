@@ -9,7 +9,6 @@ const Messages = () => {
   const [newMessage, setNewMessage] = useState('');
   const [showMobileChat, setShowMobileChat] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [conversations, setConversations] = useState([]);
   const [currentMessages, setCurrentMessages] = useState([]);
 
@@ -27,14 +26,12 @@ const Messages = () => {
           if (data.conversations.length > 0) {
             setSelectedChatId(data.conversations[0].id);
           }
-          setError(null);
         } else {
           setConversations(getSampleConversations());
         }
       } catch (err) {
         console.error('Error fetching conversations:', err);
         setConversations(getSampleConversations());
-        setError('Failed to load conversations');
       } finally {
         setLoading(false);
       }
