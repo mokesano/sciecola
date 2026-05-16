@@ -11,45 +11,76 @@ const ResearcherDistribution = () => {
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [loading, setLoading] = useState(false);
   const [totalResearchers, setTotalResearchers] = useState(null);
+  const [provinceResearcherData, setProvinceResearcherData] = useState([]);
+  const [institutionData, setInstitutionData] = useState([]);
 
+  // Fetch data dari database
   useEffect(() => {
-    fetch('/api/platform_stats.php')
-      .then(r => r.json())
-      .then(json => {
-        if (json.status === 'success') {
-          const researcherStat = json.data.find(s => s.label === 'Peneliti');
+    const fetchData = async () => {
+      try {
+        // Fetch country-level data
+        const countryRes = await fetch('/api/researcher_distribution.php?groupBy=country');
+        const countryJson = await countryRes.json();
+        if (countryJson.status === 'success') {
+          setProvinceResearcherData(countryJson.data.map(item => ({
+            province: item.name,
+            researchers: item.researchers,
+            avgImpact: item.avgImpact,
+            institutions: item.institutions,
+            topField: item.topField,
+            publications: item.publications,
+            lat: getCoordinate(item.name).lat,
+            lng: getCoordinate(item.name).lng,
+            fields: { ti: 0, med: 0, agr: 0, eng: 0, soc: 0 }
+          })));
+        }
+
+        // Fetch institution-level data
+        const instRes = await fetch('/api/researcher_distribution.php?groupBy=institution');
+        const instJson = await instRes.json();
+        if (instJson.status === 'success') {
+          setInstitutionData(instJson.data.map(item => ({
+            id: item.id,
+            name: item.name,
+            province: item.country,
+            researchers: item.researchers,
+            avgImpact: item.avgImpact,
+            publications: item.publications,
+            topField: item.topField,
+            lat: getCoordinate(item.country).lat,
+            lng: getCoordinate(item.country).lng
+          })));
+        }
+
+        // Fetch total researchers
+        const statsRes = await fetch('/api/platform_stats.php');
+        const statsJson = await statsRes.json();
+        if (statsJson.status === 'success') {
+          const researcherStat = statsJson.data.find(s => s.label === 'Peneliti');
           if (researcherStat) setTotalResearchers(researcherStat.value);
         }
-      })
-      .catch(() => {});
+      } catch (e) {
+        console.error('Error fetching data:', e);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  // Geographic data with static coordinates (province boundaries are geographic facts)
-  const provinceResearcherData = [
-    { province: 'DKI Jakarta', researchers: 2584, avgImpact: 82.4, institutions: 58, topField: 'Teknologi Informasi', lat: -6.2, lng: 106.8, fields: { ti: 850, med: 450, agr: 200, eng: 650, soc: 434 } },
-    { province: 'Jawa Barat', researchers: 2150, avgImpact: 79.2, institutions: 72, topField: 'Teknik', lat: -6.9, lng: 107.6, fields: { ti: 520, med: 380, agr: 650, eng: 510, soc: 90 } },
-    { province: 'Jawa Timur', researchers: 1960, avgImpact: 77.5, institutions: 68, topField: 'Pertanian', lat: -7.5, lng: 112.7, fields: { ti: 450, med: 520, agr: 700, eng: 180, soc: 110 } },
-    { province: 'Jawa Tengah', researchers: 1845, avgImpact: 76.8, institutions: 65, topField: 'Pendidikan', lat: -7.1, lng: 110.4, fields: { ti: 420, med: 650, agr: 380, eng: 250, soc: 145 } },
-    { province: 'DI Yogyakarta', researchers: 1520, avgImpact: 81.2, institutions: 42, topField: 'Sosial Ekonomi', lat: -7.8, lng: 110.3, fields: { ti: 380, med: 590, agr: 200, eng: 200, soc: 150 } },
-    { province: 'Sumatera Utara', researchers: 950, avgImpact: 72.4, institutions: 34, topField: 'Kedokteran', lat: 3.5, lng: 98.7, fields: { ti: 200, med: 550, agr: 100, eng: 80, soc: 20 } },
-    { province: 'Sulawesi Selatan', researchers: 780, avgImpact: 71.5, institutions: 28, topField: 'Pertanian', lat: -5.1, lng: 119.4, fields: { ti: 150, med: 250, agr: 300, eng: 60, soc: 20 } },
-    { province: 'Bali', researchers: 640, avgImpact: 74.8, institutions: 18, topField: 'Pariwisata', lat: -8.4, lng: 115.1, fields: { ti: 120, med: 180, agr: 180, eng: 100, soc: 60 } },
-    { province: 'Sumatera Barat', researchers: 580, avgImpact: 70.2, institutions: 15, topField: 'Pertanian', lat: -0.9, lng: 100.3, fields: { ti: 80, med: 120, agr: 250, eng: 90, soc: 40 } },
-    { province: 'Kalimantan Timur', researchers: 420, avgImpact: 69.5, institutions: 12, topField: 'Lingkungan', lat: 0.5, lng: 116.4, fields: { ti: 100, med: 90, agr: 150, eng: 60, soc: 20 } }
-  ];
-
-  const institutionData = [
-    { id: 1, name: 'Universitas Indonesia', province: 'DKI Jakarta', researchers: 587, avgImpact: 82.3, publications: 4250, topField: 'Teknologi Informasi', lat: -6.36, lng: 106.83 },
-    { id: 2, name: 'Institut Teknologi Bandung', province: 'Jawa Barat', researchers: 521, avgImpact: 80.7, publications: 3980, topField: 'Teknik', lat: -6.89, lng: 107.61 },
-    { id: 3, name: 'Universitas Gadjah Mada', province: 'DI Yogyakarta', researchers: 492, avgImpact: 79.8, publications: 3750, topField: 'Kedokteran', lat: -7.77, lng: 110.38 },
-    { id: 4, name: 'Institut Pertanian Bogor', province: 'Jawa Barat', researchers: 435, avgImpact: 77.2, publications: 3240, topField: 'Pertanian', lat: -6.56, lng: 106.72 },
-    { id: 5, name: 'Universitas Airlangga', province: 'Jawa Timur', researchers: 412, avgImpact: 78.5, publications: 3120, topField: 'Kedokteran', lat: -7.27, lng: 112.78 },
-    { id: 6, name: 'Universitas Hasanuddin', province: 'Sulawesi Selatan', researchers: 374, avgImpact: 74.2, publications: 2840, topField: 'Kesehatan', lat: -5.13, lng: 119.49 },
-    { id: 7, name: 'Universitas Diponegoro', province: 'Jawa Tengah', researchers: 356, avgImpact: 76.8, publications: 2650, topField: 'Teknik', lat: -7.05, lng: 110.44 },
-    { id: 8, name: 'Universitas Padjadjaran', province: 'Jawa Barat', researchers: 340, avgImpact: 77.9, publications: 2580, topField: 'Sosial', lat: -6.92, lng: 107.77 },
-    { id: 9, name: 'Universitas Brawijaya', province: 'Jawa Timur', researchers: 328, avgImpact: 76.3, publications: 2460, topField: 'Pertanian', lat: -7.95, lng: 112.61 },
-    { id: 10, name: 'Universitas Sumatera Utara', province: 'Sumatera Utara', researchers: 287, avgImpact: 74.7, publications: 2180, topField: 'Teknik', lat: 3.56, lng: 98.65 }
-  ];
+  // Pemetaan koordinat untuk negara/wilayah
+  const getCoordinate = (location) => {
+    const coords = {
+      'Indonesia': { lat: -2.5, lng: 113.5 },
+      'Malaysia': { lat: 4.2, lng: 101.6 },
+      'Philippines': { lat: 11.8, lng: 122.9 },
+      'Thailand': { lat: 15.8, lng: 100.9 },
+      'Vietnam': { lat: 14.0, lng: 107.9 },
+      'DKI Jakarta': { lat: -6.2, lng: 106.8 },
+      'Jawa Barat': { lat: -6.9, lng: 107.6 },
+      'Jawa Timur': { lat: -7.5, lng: 112.7 },
+    };
+    return coords[location] || { lat: 0, lng: 0 };
+  };
 
   // Fungsi untuk mengubah tampilan peta
   const toggleMapView = (view) => {
@@ -93,14 +124,14 @@ const ResearcherDistribution = () => {
 
   // Komponen peta Indonesia interaktif
   // World researcher distribution map (FIX P2: gunakan data yang sudah difilter)
-  const ResearcherMap = () => {
+  const ResearcherMap = ({ geoData, institutionList }) => {
     const mapPoints = mapView === 'institution'
-      ? filteredInstitutionData.map(inst => ({
+      ? institutionList.map(inst => ({
           lat: inst.lat, lng: inst.lng,
           name: inst.name, researchers: inst.researchers, type: 'institution'
         }))
       : [
-          ...filteredProvinceData.map(prov => ({
+          ...geoData.map(prov => ({
             lat: prov.lat, lng: prov.lng,
             name: prov.province, researchers: prov.researchers, type: 'province'
           })),
@@ -254,7 +285,7 @@ const ResearcherDistribution = () => {
           </svg>
         </div>
       ) : (
-        <ResearcherMap />
+        <ResearcherMap geoData={filteredProvinceData} institutionList={filteredInstitutionData} />
       )}
 
       {/* Statistik Peneliti */}
@@ -410,20 +441,25 @@ const ResearcherDistribution = () => {
             </div>
             <div>
               <p className="text-sm text-gray-600">
-                <b>Statistik Bidang Penelitian:</b>
+                <b>Statistik Lokasi:</b>
               </p>
-              <div className="mt-1 space-y-2">
-                {Object.entries(selectedProvinceData.fields).map(([field, count]) => {
-                  const total = Object.values(selectedProvinceData.fields).reduce((a, b) => a + b, 0);
-                  const pct = ((count / total) * 100).toFixed(0);
-                  const labels = { ti: 'Teknologi Informasi', med: 'Kedokteran', agr: 'Pertanian', eng: 'Teknik', soc: 'Sosial Ekonomi' };
-                  return (
-                    <div key={field} className="text-sm flex justify-between">
-                      <span>{labels[field]}</span>
-                      <span>{pct}%</span>
-                    </div>
-                  );
-                })}
+              <div className="mt-1 space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Total Peneliti</span>
+                  <span className="font-medium">{selectedProvinceData.researchers}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Jumlah Institusi</span>
+                  <span className="font-medium">{selectedProvinceData.institutions}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Rata-rata Dampak</span>
+                  <span className="font-medium">{selectedProvinceData.avgImpact}%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Total Publikasi</span>
+                  <span className="font-medium">{(selectedProvinceData.publications || 0).toLocaleString()}</span>
+                </div>
               </div>
             </div>
           </div>
