@@ -7,7 +7,6 @@ import 'leaflet/dist/leaflet.css';
 const ResearcherDistribution = () => {
   const [activeTab, setActiveTab] = useState('researcherMap');
   const [mapView, setMapView] = useState('province');
-  const [selectedField, setSelectedField] = useState('all');
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [loading, setLoading] = useState(false);
   const [totalResearchers, setTotalResearchers] = useState(null);
@@ -95,33 +94,9 @@ const ResearcherDistribution = () => {
     setTimeout(() => setLoading(false), 500); // Simulasi loading
   };
 
-  // Fungsi untuk memfilter data berdasarkan bidang
-  const filterByField = (field) => {
-    setSelectedField(field);
-    setSelectedProvince(null);
-  };
-
-  // Filter data berdasarkan selectedField (FIX P2: map dan tabel harus pakai data yang sama)
-  const fieldMap = {
-    ti: ['Teknologi Informasi', 'Informatika'],
-    med: ['Kedokteran', 'Kesehatan', 'Farmasi'],
-    agr: ['Pertanian', 'Peternakan'],
-    eng: ['Teknik', 'Engineering'],
-    soc: ['Sosial', 'Ekonomi', 'Sosial Ekonomi'],
-  };
-
-  const filteredProvinceData = selectedField === 'all'
-    ? provinceResearcherData
-    : provinceResearcherData.map(prov => ({
-        ...prov,
-        researchers: prov.fields[selectedField] || 0,
-      })).filter(p => p.researchers > 0);
-
-  const filteredInstitutionData = selectedField === 'all'
-    ? institutionData
-    : institutionData.filter(inst =>
-        (fieldMap[selectedField] || []).some(f => inst.topField.includes(f))
-      );
+  // Use full data (field filtering disabled - API doesn't provide field-level breakdown)
+  const filteredProvinceData = provinceResearcherData;
+  const filteredInstitutionData = institutionData;
 
   // Data untuk detail panel provinsi
   const selectedProvinceData = selectedProvince
@@ -205,7 +180,7 @@ const ResearcherDistribution = () => {
           {/* CHOROPLETH: Warna negara berdasarkan jumlah peneliti */}
           {mapView === 'province' && worldGeoJson && (
             <GeoJSON
-              key={selectedField}
+              key={mapView}
               data={worldGeoJson}
               style={countryStyle}
               onEachFeature={onEachCountry}
@@ -320,19 +295,6 @@ const ResearcherDistribution = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 space-y-2 md:space-y-0">
         <h2 className="text-lg font-semibold">Peta Distribusi Peneliti Global</h2>
         <div className="flex flex-wrap gap-2">
-          <select
-            className="border rounded px-2 py-1 text-sm"
-            value={selectedField}
-            onChange={(e) => filterByField(e.target.value)}
-          >
-            <option value="all">Semua Bidang</option>
-            <option value="ti">Teknologi Informasi</option>
-            <option value="med">Kedokteran</option>
-            <option value="agr">Pertanian</option>
-            <option value="eng">Teknik</option>
-            <option value="soc">Sosial Ekonomi</option>
-          </select>
-
           <div className="flex">
             <button
               className={`px-3 py-1 text-sm rounded-l-md ${mapView === 'province' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}

@@ -189,8 +189,8 @@ function route_api_wrapper(): void {
         'cache_handler.php', 'journal_profile.php', 'journals.php',
         'leaderboard.php', 'log_history.php', 'my_activity.php',
         'my_articles.php', 'my_collections.php', 'my_profile.php',
-        'my_statistics.php', 'platform_stats.php', 'researcher_profile.php',
-        'researchers.php', 'sdg_distribution.php', 'trends.php',
+        'my_statistics.php', 'platform_stats.php', 'researcher_distribution.php',
+        'researcher_profile.php', 'researchers.php', 'sdg_distribution.php', 'trends.php',
     ];
 
     if (!in_array($filename, $allowed, true)) {

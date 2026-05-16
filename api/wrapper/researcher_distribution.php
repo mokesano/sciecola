@@ -45,11 +45,9 @@ function fetchResearcherDistribution(string $groupBy, int $sdgFilter): array
                 [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
             );
 
-            if ($groupBy === 'institution') {
-                return fetchByInstitution($pdo, $sdgFilter);
-            } else {
-                return fetchByCountry($pdo, $sdgFilter);
-            }
+            return $groupBy === 'institution'
+                ? fetchByInstitution($pdo, $sdgFilter)
+                : fetchByCountry($pdo, $sdgFilter);
         } catch (Exception $e) {
             error_log($e->getMessage());
         }
