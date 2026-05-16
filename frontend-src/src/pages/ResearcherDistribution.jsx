@@ -14,41 +14,41 @@ const ResearcherDistribution = () => {
   const [provinceResearcherData, setProvinceResearcherData] = useState([]);
   const [institutionData, setInstitutionData] = useState([]);
 
-  // Fetch data dari database
+  // Fetch data dari database (GLOBAL - semua negara, tidak hanya Indonesia)
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch country-level data
+        // Fetch country-level data (SEMUA negara di dunia)
         const countryRes = await fetch('/api/researcher_distribution.php?groupBy=country');
         const countryJson = await countryRes.json();
         if (countryJson.status === 'success') {
           setProvinceResearcherData(countryJson.data.map(item => ({
-            province: item.name,
+            province: item.name,  // Nama negara: Indonesia, Malaysia, USA, dll
             researchers: item.researchers,
             avgImpact: item.avgImpact,
             institutions: item.institutions,
             topField: item.topField,
             publications: item.publications,
-            lat: getCoordinate(item.name).lat,
-            lng: getCoordinate(item.name).lng,
+            lat: item.lat,  // Dari API (global coordinates)
+            lng: item.lng,  // Dari API (global coordinates)
             fields: { ti: 0, med: 0, agr: 0, eng: 0, soc: 0 }
           })));
         }
 
-        // Fetch institution-level data
+        // Fetch institution-level data (institusi dari mana saja)
         const instRes = await fetch('/api/researcher_distribution.php?groupBy=institution');
         const instJson = await instRes.json();
         if (instJson.status === 'success') {
           setInstitutionData(instJson.data.map(item => ({
             id: item.id,
             name: item.name,
-            province: item.country,
+            country: item.country,
             researchers: item.researchers,
             avgImpact: item.avgImpact,
             publications: item.publications,
             topField: item.topField,
-            lat: getCoordinate(item.country).lat,
-            lng: getCoordinate(item.country).lng
+            lat: item.lat || 0,
+            lng: item.lng || 0
           })));
         }
 
@@ -67,20 +67,20 @@ const ResearcherDistribution = () => {
     fetchData();
   }, []);
 
-  // Pemetaan koordinat untuk negara/wilayah
-  const getCoordinate = (location) => {
-    const coords = {
-      'Indonesia': { lat: -2.5, lng: 113.5 },
-      'Malaysia': { lat: 4.2, lng: 101.6 },
-      'Philippines': { lat: 11.8, lng: 122.9 },
-      'Thailand': { lat: 15.8, lng: 100.9 },
-      'Vietnam': { lat: 14.0, lng: 107.9 },
-      'DKI Jakarta': { lat: -6.2, lng: 106.8 },
-      'Jawa Barat': { lat: -6.9, lng: 107.6 },
-      'Jawa Timur': { lat: -7.5, lng: 112.7 },
-    };
-    return coords[location] || { lat: 0, lng: 0 };
+  // Hitung center peta berdasarkan distribusi data peneliti global
+  const calculateMapCenter = () => {
+    if (provinceResearcherData.length === 0) {
+      return { lat: 20, lng: 0 }; // Default: pusat Dunia
+    }
+
+    // Rata-rata koordinat dari semua negara dengan peneliti
+    const avgLat = provinceResearcherData.reduce((sum, item) => sum + item.lat, 0) / provinceResearcherData.length;
+    const avgLng = provinceResearcherData.reduce((sum, item) => sum + item.lng, 0) / provinceResearcherData.length;
+
+    return { lat: avgLat, lng: avgLng };
   };
+
+  const mapCenter = calculateMapCenter();
 
   // Fungsi untuk mengubah tampilan peta
   const toggleMapView = (view) => {
@@ -144,18 +144,18 @@ const ResearcherDistribution = () => {
     return (
       <div className="h-96 rounded-xl overflow-hidden border border-gray-200">
         <MapContainer
-          center={[10, 115]}
+          center={[mapCenter.lat, mapCenter.lng]}
           zoom={3}
           minZoom={2}
-          maxZoom={6}
+          maxZoom={8}
           style={{ height: '100%', width: '100%' }}
-          scrollWheelZoom={false}
-          dragging={false}
-          zoomControl={false}
-          doubleClickZoom={false}
-          touchZoom={false}
-          keyboard={false}
-          attributionControl={false}
+          scrollWheelZoom={true}
+          dragging={true}
+          zoomControl={true}
+          doubleClickZoom={true}
+          touchZoom={true}
+          keyboard={true}
+          attributionControl={true}
         >
           <TileLayer
             url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
@@ -191,7 +191,7 @@ const ResearcherDistribution = () => {
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
         <span className="text-gray-400">›</span>
-        <span className="text-gray-900 font-medium">Institusi</span>
+        <span className="text-gray-900 font-medium">Distribusi Peneliti Global</span>
       </nav>
 
       {/* Sub-Navigation */}
@@ -244,7 +244,7 @@ const ResearcherDistribution = () => {
 
     <div className="bg-white rounded-lg shadow-md p-4">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 space-y-2 md:space-y-0">
-        <h2 className="text-lg font-semibold">Peta Distribusi Peneliti Indonesia</h2>
+        <h2 className="text-lg font-semibold">Peta Distribusi Peneliti Global</h2>
         <div className="flex flex-wrap gap-2">
           <select
             className="border rounded px-2 py-1 text-sm"
@@ -291,14 +291,14 @@ const ResearcherDistribution = () => {
       {/* Statistik Peneliti */}
       <div className="mt-6">
         <h3 className="text-md font-semibold mb-4">
-          {mapView === 'province' ? 'Statistik Peneliti per Provinsi' : 'Statistik Peneliti per Institusi'}
+          {mapView === 'province' ? 'Statistik Peneliti per Negara' : 'Statistik Peneliti per Institusi'}
         </h3>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {mapView === 'province' ? 'Provinsi' : 'Institusi'}
+                  {mapView === 'province' ? 'Negara' : 'Institusi'}
                 </th>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Jumlah Peneliti
@@ -407,11 +407,11 @@ const ResearcherDistribution = () => {
         </ResponsiveContainer>
       </div>
 
-      {/* Detail Provinsi yang Dipilih */}
+      {/* Detail Negara yang Dipilih */}
       {selectedProvinceData && (
         <div className="mt-6 bg-blue-50 p-4 rounded-lg">
           <div className="flex justify-between items-start">
-            <h3 className="text-md font-semibold">Detail Provinsi: {selectedProvinceData.province}</h3>
+            <h3 className="text-md font-semibold">Detail Negara: {selectedProvinceData.province}</h3>
             <button
               className="text-gray-500 hover:text-gray-700"
               onClick={() => setSelectedProvince(null)}
