@@ -31,9 +31,11 @@ const CollaborationHub = () => {
         const researchersJson = await researchersRes.json();
         const statsJson = await statsRes.json();
 
-        if (researchersJson.status === 'success' && researchersJson.data?.length > 0) {
-          setResearchers(researchersJson.data);
+        if (researchersJson.status === 'success') {
+          // Set actual API result - preserve empty results as legitimate
+          setResearchers(researchersJson.data || []);
         } else {
+          // Only fallback on API error, not on empty results
           setResearchers(defaultResearchers);
         }
         if (statsJson.status === 'success') {

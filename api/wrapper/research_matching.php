@@ -64,7 +64,7 @@ function calculateMatches(): array {
             LEFT JOIN institutions i ON i.id = r.institution_id
             LEFT JOIN researcher_sdg_expertise rse ON rse.orcid = r.orcid
             LEFT JOIN researcher_expertise re ON re.orcid = r.orcid
-            WHERE r.collaboration_status != 'busy'
+            WHERE r.collaboration_status IS NULL OR r.collaboration_status != 'busy'
             GROUP BY r.orcid
             LIMIT 10
         ");
