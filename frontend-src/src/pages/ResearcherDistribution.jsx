@@ -53,7 +53,7 @@ const regionalDistributionData = [
 
 // ─── Komponen Map (ekstrak keluar fungsi induk) ────────────────────────────────
 
-const ResearcherMap = ({ mapView, selectedField, geoData }) => {
+const ResearcherMap = ({ mapView, selectedField, geoData, filteredInstitutions }) => {
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -75,7 +75,7 @@ const ResearcherMap = ({ mapView, selectedField, geoData }) => {
   }, []);
 
   const mapPoints = mapView === 'institution'
-    ? institutionData.map(inst => ({
+    ? filteredInstitutions.map(inst => ({
         lat: inst.lat,
         lng: inst.lng,
         name: inst.name,
@@ -213,7 +213,7 @@ const ResearcherDistribution = () => {
             {/* Peta */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <h3 className="text-lg font-bold text-gray-900 mb-4">Peta Distribusi Geografis</h3>
-              <ResearcherMap mapView={mapView} selectedField={selectedField} geoData={filteredProvinceData} />
+              <ResearcherMap mapView={mapView} selectedField={selectedField} geoData={filteredProvinceData} filteredInstitutions={filteredInstitutionData} />
             </div>
 
             {/* Tabel data */}
