@@ -1,28 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { LoadingSpinner } from '../components/shared';
 
 const Sponsors = () => {
   const [activeTier, setActiveTier] = useState('all');
+  const [sponsors, setSponsors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Sponsor Tiers Configuration
+  // Sponsor Tiers Configuration with dynamic counts
+  const tierCounts = {
+    all: sponsors.length,
+    platinum: sponsors.filter(s => s.tier === 'platinum').length,
+    gold: sponsors.filter(s => s.tier === 'gold').length,
+    silver: sponsors.filter(s => s.tier === 'silver').length,
+    bronze: sponsors.filter(s => s.tier === 'bronze').length
+  };
+
   const tiers = [
-    { id: 'all', label: 'Semua', count: 24 },
-    { id: 'platinum', label: 'Platinum', count: 3, color: 'bg-gradient-to-r from-gray-300 via-gray-100 to-gray-300 text-gray-800 border-gray-400' },
-    { id: 'gold', label: 'Gold', count: 6, color: 'bg-gradient-to-r from-yellow-200 via-yellow-50 to-yellow-200 text-yellow-800 border-yellow-400' },
-    { id: 'silver', label: 'Silver', count: 8, color: 'bg-gradient-to-r from-gray-200 via-gray-50 to-gray-200 text-gray-700 border-gray-300' },
-    { id: 'bronze', label: 'Bronze', count: 7, color: 'bg-gradient-to-r from-amber-100 via-amber-50 to-amber-100 text-amber-800 border-amber-300' }
+    { id: 'all', label: 'Semua', count: tierCounts.all, color: '' },
+    { id: 'platinum', label: 'Platinum', count: tierCounts.platinum, color: 'bg-gradient-to-r from-gray-300 via-gray-100 to-gray-300 text-gray-800 border-gray-400' },
+    { id: 'gold', label: 'Gold', count: tierCounts.gold, color: 'bg-gradient-to-r from-yellow-200 via-yellow-50 to-yellow-200 text-yellow-800 border-yellow-400' },
+    { id: 'silver', label: 'Silver', count: tierCounts.silver, color: 'bg-gradient-to-r from-gray-200 via-gray-50 to-gray-200 text-gray-700 border-gray-300' },
+    { id: 'bronze', label: 'Bronze', count: tierCounts.bronze, color: 'bg-gradient-to-r from-amber-100 via-amber-50 to-amber-100 text-amber-800 border-amber-300' }
   ];
 
-  // Sponsor Data
-  const sponsors = [
+  // Fetch sponsors from API
+  useEffect(() => {
+    const fetchSponsors = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/sponsors.php?limit=100');
+        const data = await response.json();
+
+        if (data.status === 'success' && data.sponsors) {
+          setSponsors(data.sponsors);
+          setError(null);
+        } else {
+          setSponsors(getDefaultSponsors());
+        }
+      } catch (err) {
+        console.error('Error fetching sponsors:', err);
+        setSponsors(getDefaultSponsors());
+        setError('Failed to load sponsors');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSponsors();
+  }, []);
+
+  // Default/Fallback Sponsor Data
+  const getDefaultSponsors = () => [
     {
       id: 1,
       name: "Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi",
       tier: 'platinum',
       logo: "https://via.placeholder.com/200x80/fbbf24/ffffff?text=Kemdikbudristek",
       description: "Mendukung digitalisasi riset Indonesia dan akselerasi pencapaian SDGs melalui inovasi teknologi.",
-      since: "2021",
-      focus: ["Education", "Research", "SDG 4", "SDG 9"],
+      since: 2021,
       website: "https://www.kemdikbud.go.id",
       type: 'Government'
     },
@@ -32,8 +69,7 @@ const Sponsors = () => {
       tier: 'platinum',
       logo: "https://via.placeholder.com/200x80/6366f1/ffffff?text=BRIN",
       description: "Memperkuat ekosistem riset nasional melalui platform analitik berbasis kecerdasan buatan.",
-      since: "2022",
-      focus: ["Innovation", "AI Research", "SDG 9", "SDG 17"],
+      since: 2022,
       website: "https://www.brin.go.id",
       type: 'Government'
     },
@@ -43,108 +79,8 @@ const Sponsors = () => {
       tier: 'platinum',
       logo: "https://via.placeholder.com/200x80/4285f4/ffffff?text=Google.org",
       description: "Mendukung inisiatif teknologi untuk kebaikan sosial dan pembangunan berkelanjutan di Asia Tenggara.",
-      since: "2023",
-      focus: ["Technology", "AI for Good", "SDG 17"],
+      since: 2023,
       website: "https://www.google.org",
-      type: 'Corporate'
-    },
-    {
-      id: 4,
-      name: "Universitas Indonesia",
-      tier: 'gold',
-      logo: "https://via.placeholder.com/200x80/fbbf24/ffffff?text=UI",
-      description: "Kontributor utama dalam pengembangan metodologi Wizdam Impact Score dan validasi akademik.",
-      since: "2021",
-      focus: ["Academic Research", "SDG Classification", "SDG 4"],
-      website: "https://www.ui.ac.id",
-      type: 'Academic'
-    },
-    {
-      id: 5,
-      name: "Institut Teknologi Bandung",
-      tier: 'gold',
-      logo: "https://via.placeholder.com/200x80/10b981/ffffff?text=ITB",
-      description: "Mitra strategis dalam pengembangan algoritma klasifikasi SDG dan analisis tren riset.",
-      since: "2022",
-      focus: ["Engineering", "Data Science", "SDG 9", "SDG 13"],
-      website: "https://www.itb.ac.id",
-      type: 'Academic'
-    },
-    {
-      id: 6,
-      name: "ASEAN Centre for Biodiversity",
-      tier: 'gold',
-      logo: "https://via.placeholder.com/200x80/22c55e/ffffff?text=ACB",
-      description: "Mendukung integrasi data biodiversitas regional ke dalam platform analisis SDGs.",
-      since: "2023",
-      focus: ["Biodiversity", "Regional Collaboration", "SDG 14", "SDG 15"],
-      website: "https://www.aseanbiodiversity.org",
-      type: 'NGO'
-    },
-    {
-      id: 7,
-      name: "PT Telkom Indonesia",
-      tier: 'silver',
-      logo: "https://via.placeholder.com/200x80/e11d48/ffffff?text=Telkom",
-      description: "Penyedia infrastruktur cloud dan dukungan teknis untuk skalabilitas platform.",
-      since: "2022",
-      focus: ["Infrastructure", "Cloud Services", "SDG 9"],
-      website: "https://www.telkom.co.id",
-      type: 'Corporate'
-    },
-    {
-      id: 8,
-      name: "UNDP Indonesia",
-      tier: 'silver',
-      logo: "https://via.placeholder.com/200x80/0ea5e9/ffffff?text=UNDP",
-      description: "Mitra dalam penyelarasan indikator SDGs dan validasi metodologi impact measurement.",
-      since: "2023",
-      focus: ["SDG Framework", "Policy Alignment", "SDG 17"],
-      website: "https://www.undp.org/indonesia",
-      type: 'International'
-    },
-    {
-      id: 9,
-      name: "PT Pertamina",
-      tier: 'silver',
-      logo: "https://via.placeholder.com/200x80/dc2626/ffffff?text=Pertamina",
-      description: "Dukungan riset transisi energi dan kontribusi terhadap SDG 7 dan SDG 13.",
-      since: "2023",
-      focus: ["Energy Transition", "Sustainability", "SDG 7", "SDG 13"],
-      website: "https://www.pertamina.com",
-      type: 'Corporate'
-    },
-    {
-      id: 10,
-      name: "Universitas Gadjah Mada",
-      tier: 'silver',
-      logo: "https://via.placeholder.com/200x80/7c3aed/ffffff?text=UGM",
-      description: "Kolaborasi dalam pengembangan modul analisis sosial-ekonomi untuk Wizdam Impact Score.",
-      since: "2022",
-      focus: ["Social Science", "Economic Impact", "SDG 1", "SDG 8"],
-      website: "https://www.ugm.ac.id",
-      type: 'Academic'
-    },
-    {
-      id: 11,
-      name: "WWF Indonesia",
-      tier: 'bronze',
-      logo: "https://via.placeholder.com/200x80/000000/ffffff?text=WWF",
-      description: "Kontribusi data konservasi dan validasi indikator SDG 14 & 15.",
-      since: "2023",
-      focus: ["Conservation", "Environmental Data", "SDG 14", "SDG 15"],
-      website: "https://www.wwf.or.id",
-      type: 'NGO'
-    },
-    {
-      id: 12,
-      name: "Bank Mandiri",
-      tier: 'bronze',
-      logo: "https://via.placeholder.com/200x80/0066cc/ffffff?text=Mandiri",
-      description: "Dukungan finansial dan integrasi data impact investing untuk SDGs.",
-      since: "2024",
-      focus: ["Impact Investing", "Financial Inclusion", "SDG 1", "SDG 8"],
-      website: "https://www.bankmandiri.co.id",
       type: 'Corporate'
     }
   ];
@@ -216,10 +152,28 @@ const Sponsors = () => {
           Mitra & Sponsor Wizdam
         </h1>
         <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-          Bersama para mitra strategis, kami mempercepat dampak riset Indonesia terhadap pencapaian 
+          Bersama para mitra strategis, kami mempercepat dampak riset Indonesia terhadap pencapaian
           Tujuan Pembangunan Berkelanjutan (SDGs) global.
         </p>
       </div>
+
+      {/* Loading State */}
+      {loading && (
+        <div className="flex justify-center py-12">
+          <LoadingSpinner />
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+          {error}
+        </div>
+      )}
+
+      {/* Main Content */}
+      {!loading && (
+      <>
 
       {/* Stats Overview */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
@@ -284,10 +238,11 @@ const Sponsors = () => {
             <div className="p-6">
               {/* Logo */}
               <div className="flex items-center justify-center mb-4">
-                <img 
-                  src={sponsor.logo} 
+                <img
+                  src={sponsor.logo}
                   alt={sponsor.name}
                   className="h-16 object-contain group-hover:scale-105 transition-transform"
+                  onError={(e) => {e.target.src = 'https://via.placeholder.com/200x80/9ca3af/ffffff?text=Logo'}}
                 />
               </div>
               
@@ -303,22 +258,10 @@ const Sponsors = () => {
               </div>
               
               {/* Description */}
-              <p className="text-sm text-gray-600 mb-4 text-center leading-relaxed">
+              <p className="text-sm text-gray-600 mb-6 text-center leading-relaxed">
                 {sponsor.description}
               </p>
-              
-              {/* Focus Tags */}
-              <div className="flex flex-wrap justify-center gap-1.5 mb-4">
-                {sponsor.focus.map((tag, idx) => (
-                  <span 
-                    key={idx} 
-                    className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-xs font-medium"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              
+
               {/* Website Link */}
               <a 
                 href={sponsor.website} 
@@ -414,6 +357,9 @@ const Sponsors = () => {
           </div>
         </div>
       </section>
+
+      </>
+      )}
 
       {/* CTA Section */}
       <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-8 text-white shadow-lg">

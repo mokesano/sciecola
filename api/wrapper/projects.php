@@ -73,7 +73,7 @@ function getProjects(): array {
         $sql = "SELECT
                     rp.id, rp.title, rp.description, rp.status, rp.progress,
                     rp.start_date, rp.end_date, rp.budget, rp.spent,
-                    rp.sdg_focus, rp.lead_orcid,
+                    rp.sdg_focus, rp.lead_orcid, rp.updated_at,
                     r.name AS lead_name,
                     i.name AS institution,
                     COUNT(DISTINCT pm.orcid) AS team_size,

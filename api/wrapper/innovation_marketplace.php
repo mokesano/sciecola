@@ -100,11 +100,12 @@ function getOpportunities(): array {
                 'organization' => $row['organization'],
                 'type' => $row['org_type'],
                 'category' => $row['category'],
-                'description' => substr($row['description'], 0, 300) . '...',
+                'description' => substr($row['description'], 0, 300) . (strlen($row['description']) > 300 ? '...' : ''),
                 'sdg_focus' => is_array($sdgs) ? $sdgs : [],
                 'budget_range' => $row['budget_range'],
                 'required_skills' => is_array($skills) ? $skills : [],
                 'deadline' => $row['deadline'],
+                'logo_url' => $row['logo_url'],
                 'status' => 'open'
             ];
         }, $rows);
