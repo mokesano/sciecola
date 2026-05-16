@@ -344,9 +344,10 @@ const ResearchMatching = () => {
 
                       {/* Avatar */}
                       <img
-                        src={match.avatar}
+                        src={match.avatar || `https://i.pravatar.cc/150?u=${match.id}`}
                         alt={match.name}
                         className="w-20 h-20 rounded-2xl object-cover shadow-lg"
+                        onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
                       />
 
                       {/* Main Info */}
@@ -356,16 +357,20 @@ const ResearchMatching = () => {
                             <h3 className="text-2xl font-bold text-gray-900 group-hover:text-purple-600 transition-colors">
                               {match.name}
                             </h3>
-                            <p className="text-gray-600 mb-1">{match.title}</p>
+                            <p className="text-gray-600 mb-1">{match.title || 'Researcher'}</p>
                             <div className="flex items-center gap-4 text-sm text-gray-500">
-                              <span className="flex items-center gap-1">
-                                <Building2 className="w-4 h-4" />
-                                {match.institution}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <MapPin className="w-4 h-4" />
-                                {match.location}
-                              </span>
+                              {match.institution && (
+                                <span className="flex items-center gap-1">
+                                  <Building2 className="w-4 h-4" />
+                                  {match.institution}
+                                </span>
+                              )}
+                              {match.location && (
+                                <span className="flex items-center gap-1">
+                                  <MapPin className="w-4 h-4" />
+                                  {match.location}
+                                </span>
+                              )}
                             </div>
                           </div>
 
