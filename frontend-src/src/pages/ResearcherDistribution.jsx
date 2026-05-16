@@ -1,367 +1,237 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, ComposedChart } from 'recharts';
-import { MapContainer, TileLayer, CircleMarker, Tooltip as LeafletTooltip } from 'react-leaflet';
-import L from 'leaflet';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { MapContainer, TileLayer, GeoJSON, CircleMarker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
-// ─── Data Database (single source of truth) ────────────────────────────────────
+const ResearcherDistribution = () => {
+  const [activeTab, setActiveTab] = useState('researcherMap');
+  const [mapView, setMapView] = useState('province');
+  const [selectedProvince, setSelectedProvince] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [totalResearchers, setTotalResearchers] = useState(null);
+  const [provinceResearcherData, setProvinceResearcherData] = useState([]);
+  const [institutionData, setInstitutionData] = useState([]);
+  const [worldGeoJson, setWorldGeoJson] = useState(null);
 
-const RESEARCH_FIELDS = {
-  all: { label: 'Semua Bidang', value: 'all' },
-  ti: { label: 'Teknologi Informasi', value: 'ti' },
-  med: { label: 'Kedokteran', value: 'med' },
-  agr: { label: 'Pertanian', value: 'agr' },
-  eng: { label: 'Teknik', value: 'eng' },
-  soc: { label: 'Sosial Ekonomi', value: 'soc' },
-};
-
-const provinceResearcherData = [
-  { province: 'DKI Jakarta', researchers: 2584, avgImpact: 82.4, institutions: 58, topField: 'Teknologi Informasi', lat: -6.2, lng: 106.8, fields: { ti: 850, med: 450, agr: 200, eng: 650, soc: 434 } },
-  { province: 'Jawa Barat', researchers: 2150, avgImpact: 79.2, institutions: 72, topField: 'Teknik', lat: -6.9, lng: 107.6, fields: { ti: 520, med: 380, agr: 650, eng: 510, soc: 90 } },
-  { province: 'Jawa Timur', researchers: 1960, avgImpact: 77.5, institutions: 68, topField: 'Pertanian', lat: -7.5, lng: 112.7, fields: { ti: 450, med: 520, agr: 700, eng: 180, soc: 110 } },
-  { province: 'Jawa Tengah', researchers: 1845, avgImpact: 76.8, institutions: 65, topField: 'Pendidikan', lat: -7.1, lng: 110.4, fields: { ti: 420, med: 650, agr: 380, eng: 250, soc: 145 } },
-  { province: 'DI Yogyakarta', researchers: 1520, avgImpact: 81.2, institutions: 42, topField: 'Sosial Ekonomi', lat: -7.8, lng: 110.3, fields: { ti: 380, med: 590, agr: 200, eng: 200, soc: 150 } },
-  { province: 'Sumatera Utara', researchers: 950, avgImpact: 72.4, institutions: 34, topField: 'Kedokteran', lat: 3.5, lng: 98.7, fields: { ti: 200, med: 550, agr: 100, eng: 80, soc: 20 } },
-  { province: 'Sulawesi Selatan', researchers: 780, avgImpact: 71.5, institutions: 28, topField: 'Pertanian', lat: -5.1, lng: 119.4, fields: { ti: 150, med: 250, agr: 300, eng: 60, soc: 20 } },
-  { province: 'Bali', researchers: 640, avgImpact: 74.8, institutions: 18, topField: 'Pariwisata', lat: -8.4, lng: 115.1, fields: { ti: 120, med: 180, agr: 180, eng: 100, soc: 60 } },
-  { province: 'Sumatera Barat', researchers: 580, avgImpact: 70.2, institutions: 15, topField: 'Pertanian', lat: -0.9, lng: 100.3, fields: { ti: 80, med: 120, agr: 250, eng: 90, soc: 40 } },
-  { province: 'Kalimantan Timur', researchers: 420, avgImpact: 69.5, institutions: 12, topField: 'Lingkungan', lat: 0.5, lng: 116.4, fields: { ti: 100, med: 90, agr: 150, eng: 60, soc: 20 } },
-];
-
-const institutionData = [
-  { id: 1, name: 'Universitas Indonesia', province: 'DKI Jakarta', researchers: 587, avgImpact: 82.3, publications: 4250, topField: 'Teknologi Informasi', lat: -6.36, lng: 106.83 },
-  { id: 2, name: 'Institut Teknologi Bandung', province: 'Jawa Barat', researchers: 521, avgImpact: 80.7, publications: 3980, topField: 'Teknik', lat: -6.89, lng: 107.61 },
-  { id: 3, name: 'Universitas Gadjah Mada', province: 'DI Yogyakarta', researchers: 492, avgImpact: 79.8, publications: 3750, topField: 'Kedokteran', lat: -7.77, lng: 110.38 },
-  { id: 4, name: 'Institut Pertanian Bogor', province: 'Jawa Barat', researchers: 435, avgImpact: 77.2, publications: 3240, topField: 'Pertanian', lat: -6.56, lng: 106.72 },
-  { id: 5, name: 'Universitas Airlangga', province: 'Jawa Timur', researchers: 412, avgImpact: 78.5, publications: 3120, topField: 'Kedokteran', lat: -7.27, lng: 112.78 },
-  { id: 6, name: 'Universitas Hasanuddin', province: 'Sulawesi Selatan', researchers: 374, avgImpact: 74.2, publications: 2840, topField: 'Kesehatan', lat: -5.13, lng: 119.49 },
-  { id: 7, name: 'Universitas Diponegoro', province: 'Jawa Tengah', researchers: 356, avgImpact: 76.8, publications: 2650, topField: 'Teknik', lat: -7.05, lng: 110.44 },
-  { id: 8, name: 'Universitas Padjadjaran', province: 'Jawa Barat', researchers: 340, avgImpact: 77.9, publications: 2580, topField: 'Sosial', lat: -6.92, lng: 107.77 },
-  { id: 9, name: 'Universitas Brawijaya', province: 'Jawa Timur', researchers: 328, avgImpact: 76.3, publications: 2460, topField: 'Pertanian', lat: -7.95, lng: 112.61 },
-  { id: 10, name: 'Universitas Sumatera Utara', province: 'Sumatera Utara', researchers: 287, avgImpact: 74.7, publications: 2180, topField: 'Teknik', lat: 3.56, lng: 98.65 },
-];
-
-const regionalDistributionData = [
-  { region: 'Jawa', avgImpact: 78.5, researchers: 9524 },
-  { region: 'Sumatera', avgImpact: 72.4, researchers: 2845 },
-  { region: 'Sulawesi', avgImpact: 70.5, researchers: 1532 },
-  { region: 'Kalimantan', avgImpact: 68.2, researchers: 965 },
-  { region: 'Bali & NT', avgImpact: 74.8, researchers: 842 },
-  { region: 'Maluku & Papua', avgImpact: 65.3, researchers: 398 },
-];
-
-// ─── Komponen Map (ekstrak keluar fungsi induk) ────────────────────────────────
-
-const ResearcherMap = ({ mapView, selectedField, geoData, filteredInstitutions }) => {
-  const mapRef = useRef(null);
-
+  // Fetch data dari database (GLOBAL - semua negara, tidak hanya Indonesia)
   useEffect(() => {
-    if (mapRef.current) {
-      const style = document.createElement('style');
-      style.textContent = `
-        .leaflet-div-icon-transparent { background: transparent !important; border: none !important; }
-        .leaflet-tooltip.researcher-tooltip {
-          background-color: rgba(255, 255, 255, 0.95) !important;
-          border: 1px solid rgba(0, 0, 0, 0.1) !important;
-          border-radius: 0.5rem;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-          padding: 0.75rem;
+    const fetchData = async () => {
+      try {
+        // Fetch country-level data (SEMUA negara di dunia)
+        const countryRes = await fetch('/api/researcher_distribution.php?groupBy=country');
+        const countryJson = await countryRes.json();
+        if (countryJson.status === 'success') {
+          setProvinceResearcherData(countryJson.data.map(item => ({
+            province: item.name,  // Nama negara: Indonesia, Malaysia, USA, dll
+            researchers: item.researchers,
+            avgImpact: item.avgImpact,
+            institutions: item.institutions,
+            topField: item.topField,
+            publications: item.publications,
+            lat: item.lat,  // Dari API (global coordinates)
+            lng: item.lng,  // Dari API (global coordinates)
+            fields: { ti: 0, med: 0, agr: 0, eng: 0, soc: 0 }
+          })));
         }
-        .leaflet-tooltip.researcher-tooltip::before { display: none; }
-      `;
-      document.head.appendChild(style);
-    }
+
+        // Fetch institution-level data (institusi dari mana saja)
+        const instRes = await fetch('/api/researcher_distribution.php?groupBy=institution');
+        const instJson = await instRes.json();
+        if (instJson.status === 'success') {
+          setInstitutionData(instJson.data.map(item => ({
+            id: item.id,
+            name: item.name,
+            country: item.country,
+            researchers: item.researchers,
+            avgImpact: item.avgImpact,
+            publications: item.publications,
+            topField: item.topField,
+            lat: item.lat || 0,
+            lng: item.lng || 0
+          })));
+        }
+
+        // Fetch total researchers
+        const statsRes = await fetch('/api/platform_stats.php');
+        const statsJson = await statsRes.json();
+        if (statsJson.status === 'success') {
+          const researcherStat = statsJson.data.find(s => s.label === 'Peneliti');
+          if (researcherStat) setTotalResearchers(researcherStat.value);
+        }
+
+        // Fetch world GeoJSON untuk choropleth
+        const geoRes = await fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson');
+        const geoJson = await geoRes.json();
+        setWorldGeoJson(geoJson);
+      } catch (e) {
+        console.error('Error fetching data:', e);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  const mapPoints = mapView === 'institution'
-    ? filteredInstitutions.map(inst => ({
-        lat: inst.lat,
-        lng: inst.lng,
-        name: inst.name,
-        value: inst.researchers,
-        type: 'institution',
-        extra: `${inst.province} • ${inst.topField}`,
-      }))
-    : geoData.map(prov => ({
-        lat: prov.lat,
-        lng: prov.lng,
-        name: prov.province,
-        value: prov.researchers,
-        type: 'province',
-        extra: `${prov.institutions} institusi • ${prov.topField}`,
-      }));
+  // Hitung center peta berdasarkan distribusi data peneliti global
+  const calculateMapCenter = () => {
+    if (provinceResearcherData.length === 0) {
+      return { lat: 20, lng: 0 }; // Default: pusat Dunia
+    }
 
-  return (
-    <div className="h-96 rounded-xl overflow-hidden border border-gray-200 bg-white">
-      <MapContainer
-        ref={mapRef}
-        center={[-2.5, 113.5]}
-        zoom={4}
-        minZoom={3}
-        maxZoom={6}
-        style={{ height: '100%', width: '100%', zIndex: 1 }}
-        scrollWheelZoom={true}
-        dragging={true}
-        zoomControl={true}
-        doubleClickZoom={true}
-        touchZoom={true}
-        worldCopyJump={false}
-        attributionControl={false}
-      >
-        <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-          attribution='&copy; OpenStreetMap contributors'
-        />
-        {mapPoints.map((pt, i) => (
-          <CircleMarker
-            key={i}
-            center={[pt.lat, pt.lng]}
-            radius={Math.max(6, Math.min(18, Math.floor(pt.value / 30)))}
-            pathOptions={{
-              color: pt.type === 'institution' ? '#ef4444' : '#3b82f6',
-              fillColor: pt.type === 'institution' ? '#ef4444' : '#3b82f6',
-              fillOpacity: 0.7,
-              weight: 2,
-            }}
-          >
-            <LeafletTooltip className="researcher-tooltip" permanent={false} direction="top">
-              <div className="text-xs">
-                <p className="font-bold text-gray-900">{pt.name}</p>
-                <p className="text-gray-600">{pt.value.toLocaleString('id-ID')} peneliti</p>
-                <p className="text-gray-500">{pt.extra}</p>
-              </div>
-            </LeafletTooltip>
-          </CircleMarker>
-        ))}
-      </MapContainer>
-    </div>
-  );
-};
+    // Rata-rata koordinat dari semua negara dengan peneliti
+    const avgLat = provinceResearcherData.reduce((sum, item) => sum + item.lat, 0) / provinceResearcherData.length;
+    const avgLng = provinceResearcherData.reduce((sum, item) => sum + item.lng, 0) / provinceResearcherData.length;
 
-// ─── Komponen Utama ──────────────────────────────────────────────────────────
-
-const ResearcherDistribution = () => {
-  const [activeTab, setActiveTab] = useState('distribution');
-  const [mapView, setMapView] = useState('province');
-  const [selectedField, setSelectedField] = useState('all');
-  const [selectedProvince, setSelectedProvince] = useState(null);
-
-  // Filter data berdasarkan selectedField
-  const getFilteredProvinceData = () => {
-    if (selectedField === 'all') return provinceResearcherData;
-
-    return provinceResearcherData.map(prov => {
-      const fieldCount = prov.fields[selectedField] || 0;
-      return {
-        ...prov,
-        researchers: fieldCount,
-        avgImpact: prov.avgImpact * (fieldCount / Object.values(prov.fields).reduce((a, b) => a + b, 0)),
-      };
-    }).filter(p => p.researchers > 0);
+    return { lat: avgLat, lng: avgLng };
   };
 
-  const getFilteredInstitutionData = () => {
-    if (selectedField === 'all') return institutionData;
-    // Simulasi: filter institusi yang memiliki bidang yang dipilih
-    const fieldMap = {
-      ti: ['Teknologi Informasi', 'Informatika'],
-      med: ['Kedokteran', 'Kesehatan', 'Farmasi'],
-      agr: ['Pertanian', 'Peternakan'],
-      eng: ['Teknik', 'Engineering'],
-      soc: ['Sosial', 'Ekonomi', 'Sosial Ekonomi'],
-    };
-    const fieldsToMatch = fieldMap[selectedField] || [];
-    return institutionData.filter(inst => fieldsToMatch.some(f => inst.topField.includes(f)));
+  const mapCenter = calculateMapCenter();
+
+  // Fungsi untuk mengubah tampilan peta
+  const toggleMapView = (view) => {
+    setLoading(true);
+    setMapView(view);
+    setTimeout(() => setLoading(false), 500); // Simulasi loading
   };
 
-  const filteredProvinceData = getFilteredProvinceData();
-  const filteredInstitutionData = getFilteredInstitutionData();
-  const displayData = mapView === 'province' ? filteredProvinceData : filteredInstitutionData;
+  // Use full data (field filtering disabled - API doesn't provide field-level breakdown)
+  const filteredProvinceData = provinceResearcherData;
+  const filteredInstitutionData = institutionData;
 
-  // Statistik agregat
-  const totalResearchers = displayData.reduce((sum, item) => sum + item.researchers, 0);
-  const avgImpact = (displayData.reduce((sum, item) => sum + item.avgImpact, 0) / displayData.length).toFixed(1);
-
-  // Data provinsi terpilih untuk detail panel
+  // Data untuk detail panel provinsi
   const selectedProvinceData = selectedProvince
     ? provinceResearcherData.find(p => p.province === selectedProvince)
     : null;
 
-  // Tab content yang berubah berdasarkan activeTab
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'distribution':
-        return (
-          <div className="space-y-6">
-            {/* Stats cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200">
-                <p className="text-sm text-blue-600 font-medium">Total Peneliti</p>
-                <p className="text-3xl font-bold text-blue-900 mt-2">{totalResearchers.toLocaleString('id-ID')}</p>
-              </div>
-              <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border border-green-200">
-                <p className="text-sm text-green-600 font-medium">Rata-rata Dampak</p>
-                <p className="text-3xl font-bold text-green-900 mt-2">{avgImpact}%</p>
-              </div>
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200">
-                <p className="text-sm text-purple-600 font-medium">Total Lokasi</p>
-                <p className="text-3xl font-bold text-purple-900 mt-2">{displayData.length}</p>
-              </div>
-            </div>
+  // Helper: Warna choropleth berdasarkan jumlah peneliti (skala biru)
+  const getChoroplethColor = (count, maxCount) => {
+    if (!count || count === 0) return '#f5f5f5';
+    const ratio = count / maxCount;
+    if (ratio > 0.8) return '#084594';
+    if (ratio > 0.6) return '#2171b5';
+    if (ratio > 0.4) return '#4292c6';
+    if (ratio > 0.2) return '#6baed6';
+    if (ratio > 0.1) return '#9ecae1';
+    return '#c6dbef';
+  };
 
-            {/* Peta */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Peta Distribusi Geografis</h3>
-              <ResearcherMap mapView={mapView} selectedField={selectedField} geoData={filteredProvinceData} filteredInstitutions={filteredInstitutionData} />
-            </div>
+  // Komponen untuk update map view ketika mapView berubah
+  const MapViewController = ({ view }) => {
+    const map = useMap();
+    useEffect(() => {
+      if (view === 'province') {
+        map.setView([20, 10], 2); // World overview untuk choropleth
+      }
+    }, [view, map]);
+    return null;
+  };
 
-            {/* Tabel data */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
-                {mapView === 'province' ? 'Statistik per Provinsi' : 'Statistik per Institusi'}
-              </h3>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">{mapView === 'province' ? 'Provinsi' : 'Institusi'}</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Peneliti</th>
-                      {mapView === 'province' && <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Institusi</th>}
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Bidang Dominan</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Dampak</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {displayData.map((item, idx) => (
-                      <tr
-                        key={idx}
-                        className="hover:bg-blue-50 cursor-pointer transition-colors"
-                        onClick={() => setSelectedProvince(item.province)}
-                      >
-                        <td className="px-4 py-3 font-medium text-gray-900">
-                          {item.name || item.province}
-                          {item.province && <p className="text-xs text-gray-500">{item.province}</p>}
-                        </td>
-                        <td className="px-4 py-3 text-gray-700">{item.researchers.toLocaleString('id-ID')}</td>
-                        {mapView === 'province' && <td className="px-4 py-3 text-gray-700">{item.institutions}</td>}
-                        <td className="px-4 py-3 text-gray-700 text-sm">{item.topField}</td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <div className="w-16 bg-gray-200 rounded-full h-2">
-                              <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${item.avgImpact}%` }} />
-                            </div>
-                            <span className="text-sm font-medium text-gray-700">{item.avgImpact.toFixed(1)}</span>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+  // Peta Distribusi: Choropleth (negara) atau Marker (institusi)
+  const ResearcherMap = ({ geoData, institutionList }) => {
+    // Lookup: nama negara → jumlah peneliti
+    const researcherByCountry = {};
+    geoData.forEach(item => { researcherByCountry[item.province] = item.researchers; });
+    const maxCount = Math.max(...geoData.map(d => d.researchers), 1);
 
-            {/* Detail provinsi */}
-            {selectedProvinceData && (
-              <div className="bg-blue-50 rounded-xl border border-blue-200 p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-bold text-gray-900">Detail: {selectedProvinceData.province}</h3>
-                  <button
-                    onClick={() => setSelectedProvince(null)}
-                    className="text-gray-500 hover:text-gray-700 transition-colors"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
+    // Style tiap negara di GeoJSON berdasarkan jumlah peneliti
+    const countryStyle = (feature) => {
+      const name = feature.properties.ADMIN || feature.properties.name || '';
+      const count = researcherByCountry[name] || 0;
+      return {
+        fillColor: getChoroplethColor(count, maxCount),
+        weight: 0.8,
+        opacity: 1,
+        color: '#aaa',
+        fillOpacity: count > 0 ? 0.85 : 0.3,
+      };
+    };
+
+    // Tooltip saat hover negara
+    const onEachCountry = (feature, layer) => {
+      const name = feature.properties.ADMIN || feature.properties.name || 'Unknown';
+      const count = researcherByCountry[name] || 0;
+      layer.bindTooltip(
+        `<div style="font-size:12px"><strong>${name}</strong><br/>${count.toLocaleString('id-ID')} peneliti</div>`,
+        { sticky: true, direction: 'top' }
+      );
+      if (count > 0) {
+        layer.on('click', () => setSelectedProvince(name));
+      }
+    };
+
+    return (
+      <div className="h-96 rounded-xl overflow-hidden border border-gray-200">
+        <MapContainer
+          center={[20, 10]}
+          zoom={2}
+          minZoom={1}
+          maxZoom={8}
+          style={{ height: '100%', width: '100%' }}
+          scrollWheelZoom={true}
+          dragging={true}
+          zoomControl={true}
+          doubleClickZoom={true}
+          touchZoom={true}
+          attributionControl={false}
+        >
+          <TileLayer url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png" />
+          <MapViewController view={mapView} />
+
+          {/* CHOROPLETH: Warna negara berdasarkan jumlah peneliti */}
+          {mapView === 'province' && worldGeoJson && (
+            <GeoJSON
+              key={mapView}
+              data={worldGeoJson}
+              style={countryStyle}
+              onEachFeature={onEachCountry}
+            />
+          )}
+
+          {/* MARKERS: Titik institusi per negara */}
+          {mapView === 'institution' && institutionList.map((inst, i) => (
+            <CircleMarker
+              key={i}
+              center={[inst.lat, inst.lng]}
+              radius={Math.max(5, Math.min(20, Math.sqrt(inst.researchers) * 1.5))}
+              pathOptions={{
+                color: '#1d4ed8',
+                fillColor: '#3b82f6',
+                fillOpacity: 0.75,
+                weight: 1.5,
+              }}
+            >
+              <Popup>
+                <div className="p-1">
+                  <p className="font-bold text-sm text-gray-900">{inst.name}</p>
+                  <p className="text-xs text-gray-500">{inst.country}</p>
+                  <p className="text-xs text-gray-600 mt-1">{inst.researchers.toLocaleString('id-ID')} peneliti</p>
+                  <p className="text-xs text-gray-600">{inst.publications?.toLocaleString('id-ID') || 0} publikasi</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">Top Institusi</h4>
-                    <ul className="space-y-2">
-                      {institutionData
-                        .filter(inst => inst.province === selectedProvinceData.province)
-                        .slice(0, 5)
-                        .map(inst => (
-                          <li key={inst.id} className="flex justify-between text-sm">
-                            <span className="text-gray-700">{inst.name}</span>
-                            <span className="font-medium text-blue-600">{inst.researchers} peneliti</span>
-                          </li>
-                        ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">Distribusi Bidang</h4>
-                    <div className="space-y-2">
-                      {Object.entries(selectedProvinceData.fields).map(([field, count]) => {
-                        const total = Object.values(selectedProvinceData.fields).reduce((a, b) => a + b, 0);
-                        const pct = ((count / total) * 100).toFixed(1);
-                        return (
-                          <div key={field} className="flex justify-between text-sm items-center">
-                            <span className="text-gray-700 capitalize">{RESEARCH_FIELDS[field]?.label}</span>
-                            <div className="flex items-center gap-2">
-                              <div className="w-16 bg-gray-200 rounded h-2">
-                                <div className="bg-blue-500 h-2 rounded" style={{ width: `${pct}%` }} />
-                              </div>
-                              <span className="font-medium text-gray-700 text-xs">{pct}%</span>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
+              </Popup>
+            </CircleMarker>
+          ))}
+        </MapContainer>
+
+        {/* Legend choropleth */}
+        {mapView === 'province' && (
+          <div className="flex items-center gap-2 mt-2 px-1 flex-wrap">
+            <span className="text-xs text-gray-500">Peneliti:</span>
+            {[
+              { color: '#f5f5f5', label: '0' },
+              { color: '#c6dbef', label: 'Sedikit' },
+              { color: '#6baed6', label: 'Sedang' },
+              { color: '#2171b5', label: 'Banyak' },
+              { color: '#084594', label: 'Tertinggi' },
+            ].map(item => (
+              <div key={item.label} className="flex items-center gap-1">
+                <div className="w-4 h-3 rounded-sm border border-gray-300" style={{ backgroundColor: item.color }} />
+                <span className="text-xs text-gray-600">{item.label}</span>
               </div>
-            )}
+            ))}
           </div>
-        );
-
-      case 'trends':
-        return (
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Tren Regional</h3>
-            <ResponsiveContainer width="100%" height={400}>
-              <ComposedChart data={regionalDistributionData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="region" />
-                <YAxis yAxisId="left" stroke="#3b82f6" />
-                <YAxis yAxisId="right" orientation="right" stroke="#10b981" />
-                <Tooltip />
-                <Legend />
-                <Bar yAxisId="left" dataKey="researchers" fill="#3b82f6" name="Jumlah Peneliti" radius={[8, 8, 0, 0]} />
-                <Line yAxisId="right" type="monotone" dataKey="avgImpact" stroke="#10b981" name="Rata-rata Dampak" strokeWidth={3} />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
-        );
-
-      case 'impact':
-        return (
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Ranking Dampak Peneliti</h3>
-            <div className="space-y-3">
-              {provinceResearcherData
-                .sort((a, b) => b.avgImpact - a.avgImpact)
-                .slice(0, 8)
-                .map((prov, idx) => (
-                  <div key={idx} className="flex items-center gap-4">
-                    <div className="text-2xl font-bold text-gray-300 w-8">{idx + 1}</div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-gray-900">{prov.province}</p>
-                      <p className="text-xs text-gray-500">{prov.researchers} peneliti</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-bold text-lg text-green-600">{prov.avgImpact}%</p>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </div>
-        );
-
-      default:
-        return null;
-    }
+        )}
+      </div>
+    );
   };
 
   return (
@@ -369,84 +239,270 @@ const ResearcherDistribution = () => {
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-        </svg>
-        <span className="text-gray-900 font-medium">Distribusi Peneliti</span>
+        <span className="text-gray-400">›</span>
+        <span className="text-gray-900 font-medium">Distribusi Peneliti Global</span>
       </nav>
 
-      {/* Navigation Tabs */}
-      <div className="bg-white border-b border-gray-200 mb-6 rounded-t-xl sticky top-24 z-10">
-        <div className="flex gap-1 px-6">
-          {[
-            { id: 'distribution', label: 'Distribusi' },
-            { id: 'impact', label: 'Dampak' },
-            { id: 'trends', label: 'Tren' },
-          ].map(tab => (
+      {/* Sub-Navigation */}
+      <nav className="bg-white shadow-sm border-b">
+        <div className="container mx-auto">
+          <ul className="flex flex-wrap space-x-1 md:space-x-8 p-4">
+            <li>
+              <button
+                className={`font-medium ${activeTab === 'dashboard' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-600 hover:text-blue-700'}`}
+                onClick={() => setActiveTab('dashboard')}
+              >
+                Dashboard
+              </button>
+            </li>
+            <li>
+              <button
+                className={`font-medium ${activeTab === 'articleImpact' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-600 hover:text-blue-700'}`}
+                onClick={() => setActiveTab('articleImpact')}
+              >
+                Dampak Artikel
+              </button>
+            </li>
+            <li>
+              <button
+                className={`font-medium ${activeTab === 'researcherImpact' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-600 hover:text-blue-700'}`}
+                onClick={() => setActiveTab('researcherImpact')}
+              >
+                Peneliti Terkemuka
+              </button>
+            </li>
+            <li>
+              <button
+                className={`font-medium ${activeTab === 'researcherMap' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-600 hover:text-blue-700'}`}
+                onClick={() => setActiveTab('researcherMap')}
+              >
+                Peta Distribusi
+              </button>
+            </li>
+            <li>
+              <button
+                className={`font-medium ${activeTab === 'trends' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-600 hover:text-blue-700'}`}
+                onClick={() => setActiveTab('trends')}
+              >
+                Tren & Analisis
+              </button>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+    <div className="bg-white rounded-lg shadow-md p-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 space-y-2 md:space-y-0">
+        <h2 className="text-lg font-semibold">Peta Distribusi Peneliti Global</h2>
+        <div className="flex flex-wrap gap-2">
+          <div className="flex">
             <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-3 font-medium border-b-2 transition-colors ${
-                activeTab === tab.id
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-600 hover:text-blue-600'
-              }`}
+              className={`px-3 py-1 text-sm rounded-l-md ${mapView === 'province' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+              onClick={() => toggleMapView('province')}
             >
-              {tab.label}
+              Provinsi
             </button>
-          ))}
+            <button
+              className={`px-3 py-1 text-sm rounded-r-md ${mapView === 'institution' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+              onClick={() => toggleMapView('institution')}
+            >
+              Institusi
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Filter Bar */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4 mb-6 flex flex-wrap items-center gap-4">
-        <div>
-          <label className="text-sm font-medium text-gray-700 block mb-1">Filter Bidang</label>
-          <select
-            value={selectedField}
-            onChange={(e) => {
-              setSelectedField(e.target.value);
-              setSelectedProvince(null);
-            }}
-            className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            {Object.entries(RESEARCH_FIELDS).map(([key, val]) => (
-              <option key={key} value={key}>{val.label}</option>
-            ))}
-          </select>
+      {/* Peta Interaktif */}
+      {loading ? (
+        <div className="flex justify-center items-center h-96">
+          <svg className="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
         </div>
+      ) : (
+        <ResearcherMap geoData={filteredProvinceData} institutionList={filteredInstitutionData} />
+      )}
 
-        {activeTab === 'distribution' && (
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-1">Tingkat Detail</label>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setMapView('province')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  mapView === 'province'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Provinsi
-              </button>
-              <button
-                onClick={() => setMapView('institution')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  mapView === 'institution'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Institusi
-              </button>
+      {/* Statistik Peneliti */}
+      <div className="mt-6">
+        <h3 className="text-md font-semibold mb-4">
+          {mapView === 'province' ? 'Statistik Peneliti per Negara' : 'Statistik Peneliti per Institusi'}
+        </h3>
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {mapView === 'province' ? 'Negara' : 'Institusi'}
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Jumlah Peneliti
+                </th>
+                {mapView === 'province' && (
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Jumlah Institusi
+                  </th>
+                )}
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Bidang Dominan
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Rata-rata Dampak
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {mapView === 'province' ? (
+                filteredProvinceData.map((province, index) => (
+                  <tr
+                    key={index}
+                    className="hover:bg-gray-50 cursor-pointer"
+                    onClick={() => setSelectedProvince(province.province)}
+                  >
+                    <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {province.province}
+                    </td>
+                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                      {province.researchers.toLocaleString()}
+                    </td>
+                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                      {province.institutions}
+                    </td>
+                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                      {province.topField}
+                    </td>
+                    <td className="px-4 py-2 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="w-full bg-gray-200 rounded-full h-2.5 mr-2">
+                          <div
+                            className="bg-blue-600 h-2.5 rounded-full"
+                            style={{ width: `${province.avgImpact}%` }}
+                          ></div>
+                        </div>
+                        <span className="text-sm font-medium text-gray-900">{province.avgImpact}</span>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                filteredInstitutionData.map((institution) => (
+                  <tr key={institution.id} className="hover:bg-gray-50 cursor-pointer">
+                    <td className="px-4 py-2 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">{institution.name}</div>
+                      <div className="text-xs text-gray-500">{institution.province}</div>
+                    </td>
+                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                      {institution.researchers.toLocaleString()}
+                    </td>
+                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
+                      {institution.topField}
+                    </td>
+                    <td className="px-4 py-2 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="w-full bg-gray-200 rounded-full h-2.5 mr-2">
+                          <div
+                            className="bg-blue-600 h-2.5 rounded-full"
+                            style={{ width: `${institution.avgImpact}%` }}
+                          ></div>
+                        </div>
+                        <span className="text-sm font-medium text-gray-900">{institution.avgImpact}</span>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Grafik Distribusi Regional */}
+      <div className="mt-6">
+        <h3 className="text-md font-semibold mb-4">Distribusi Dampak Regional</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart
+            data={[
+              { region: 'Jawa', avgImpact: 78.5, researchers: 9524 },
+              { region: 'Sumatera', avgImpact: 72.4, researchers: 2845 },
+              { region: 'Sulawesi', avgImpact: 70.5, researchers: 1532 },
+              { region: 'Kalimantan', avgImpact: 68.2, researchers: 965 },
+              { region: 'Bali & NT', avgImpact: 74.8, researchers: 842 },
+              { region: 'Maluku & Papua', avgImpact: 65.3, researchers: 398 }
+            ]}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="region" />
+            <YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
+            <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
+            <Tooltip />
+            <Legend />
+            <Bar yAxisId="left" dataKey="researchers" fill="#8884d8" name="Jumlah Peneliti" />
+            <Bar yAxisId="right" dataKey="avgImpact" fill="#82ca9d" name="Rata-rata Dampak" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Detail Negara yang Dipilih */}
+      {selectedProvinceData && (
+        <div className="mt-6 bg-blue-50 p-4 rounded-lg">
+          <div className="flex justify-between items-start">
+            <h3 className="text-md font-semibold">Detail Negara: {selectedProvinceData.province}</h3>
+            <button
+              className="text-gray-500 hover:text-gray-700"
+              onClick={() => setSelectedProvince(null)}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+
+          <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-gray-600">
+                <b>Top 5 Institusi:</b>
+              </p>
+              <ul className="mt-1 text-sm">
+                {institutionData
+                  .filter(inst => inst.province === selectedProvinceData.province)
+                  .slice(0, 5)
+                  .map(institution => (
+                    <li key={institution.id} className="flex justify-between py-1">
+                      <span>{institution.name}</span>
+                      <span className="font-medium">{institution.researchers} peneliti</span>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">
+                <b>Statistik Lokasi:</b>
+              </p>
+              <div className="mt-1 space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Total Peneliti</span>
+                  <span className="font-medium">{selectedProvinceData.researchers}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Jumlah Institusi</span>
+                  <span className="font-medium">{selectedProvinceData.institutions}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Rata-rata Dampak</span>
+                  <span className="font-medium">{selectedProvinceData.avgImpact}%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Total Publikasi</span>
+                  <span className="font-medium">{(selectedProvinceData.publications || 0).toLocaleString()}</span>
+                </div>
+              </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+    </div>
 
-      {/* Konten Tab */}
-      {renderTabContent()}
     </main>
   );
 };

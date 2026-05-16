@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FolderOpen, Users, Calendar, CheckCircle, Clock, AlertCircle, Plus,
   Search, Filter, MoreVertical, Edit2, Trash2, Share2, Download, MessageSquare,
@@ -13,29 +13,31 @@ const ProjectManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showNewProjectModal, setShowNewProjectModal] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [stats, setStats] = useState({
+    total: 0,
+    active: 0,
+    planning: 0,
+    completed: 0,
+    totalBudget: 0,
+    totalPublications: 0
+  });
+  const [loading, setLoading] = useState(true);
 
-  // Mock data untuk projects
-  const projects = [
+  // Fallback mock data
+  const mockProjects = [
     {
       id: 1,
       title: 'Ocean Acidification Impact Study',
       description: 'Comprehensive analysis of ocean acidification effects on marine ecosystems across Pacific regions',
       status: 'active',
       progress: 67,
-      startDate: '2024-01-15',
-      endDate: '2025-06-30',
-      sdgFocus: [13, 14],
-      team: [
-        { name: 'Dr. Sarah Chen', role: 'PI', avatar: 'https://i.pravatar.cc/150?img=1' },
-        { name: 'Prof. Ahmed Hassan', role: 'Co-PI', avatar: 'https://i.pravatar.cc/150?img=2' },
-        { name: 'Dr. Maria Santos', role: 'Researcher', avatar: 'https://i.pravatar.cc/150?img=3' }
-      ],
+      start_date: '2024-01-15',
+      end_date: '2025-06-30',
+      sdg_focus: [13, 14],
       budget: 450000,
       spent: 287500,
-      publications: 3,
-      collaborators: 12,
-      institution: 'MIT',
-      lastUpdate: '2 days ago'
+      institution: 'MIT'
     },
     {
       id: 2,
@@ -43,19 +45,12 @@ const ProjectManagement = () => {
       description: 'Developing AI-powered optimization algorithms for renewable energy grid distribution',
       status: 'active',
       progress: 45,
-      startDate: '2024-03-01',
-      endDate: '2025-12-31',
-      sdgFocus: [7, 9, 11],
-      team: [
-        { name: 'Prof. Ahmed Hassan', role: 'PI', avatar: 'https://i.pravatar.cc/150?img=2' },
-        { name: 'Dr. James Wong', role: 'AI Specialist', avatar: 'https://i.pravatar.cc/150?img=4' }
-      ],
+      start_date: '2024-03-01',
+      end_date: '2025-12-31',
+      sdg_focus: [7, 9, 11],
       budget: 680000,
       spent: 245000,
-      publications: 1,
-      collaborators: 8,
-      institution: 'Cairo University',
-      lastUpdate: '5 days ago'
+      institution: 'Cairo University'
     },
     {
       id: 3,
@@ -63,19 +58,12 @@ const ProjectManagement = () => {
       description: 'Smart water purification and distribution system for rapidly growing urban areas',
       status: 'planning',
       progress: 15,
-      startDate: '2024-06-01',
-      endDate: '2026-05-31',
-      sdgFocus: [6, 11, 13],
-      team: [
-        { name: 'Dr. Raj Patel', role: 'PI', avatar: 'https://i.pravatar.cc/150?img=6' },
-        { name: 'Dr. Sarah Chen', role: 'Advisor', avatar: 'https://i.pravatar.cc/150?img=1' }
-      ],
+      start_date: '2024-06-01',
+      end_date: '2026-05-31',
+      sdg_focus: [6, 11, 13],
       budget: 520000,
       spent: 45000,
-      publications: 0,
-      collaborators: 6,
-      institution: 'IIT Delhi',
-      lastUpdate: '1 week ago'
+      institution: 'IIT Delhi'
     },
     {
       id: 4,
@@ -83,19 +71,12 @@ const ProjectManagement = () => {
       description: 'Research on organic farming techniques and soil conservation practices for small-scale farmers',
       status: 'completed',
       progress: 100,
-      startDate: '2022-09-01',
-      endDate: '2024-08-31',
-      sdgFocus: [2, 12, 15],
-      team: [
-        { name: 'Prof. Emma Larsson', role: 'PI', avatar: 'https://i.pravatar.cc/150?img=5' },
-        { name: 'Dr. Maria Santos', role: 'Co-PI', avatar: 'https://i.pravatar.cc/150?img=3' }
-      ],
+      start_date: '2022-09-01',
+      end_date: '2024-08-31',
+      sdg_focus: [2, 12, 15],
       budget: 380000,
       spent: 375000,
-      publications: 8,
-      collaborators: 15,
-      institution: 'Swedish University of Agricultural Sciences',
-      lastUpdate: '2 weeks ago'
+      institution: 'Swedish University of Agricultural Sciences'
     },
     {
       id: 5,
@@ -103,21 +84,54 @@ const ProjectManagement = () => {
       description: 'Creating ethical guidelines and technical frameworks for unbiased AI systems in healthcare',
       status: 'active',
       progress: 78,
-      startDate: '2023-11-01',
-      endDate: '2025-04-30',
-      sdgFocus: [9, 10, 16],
-      team: [
-        { name: 'Dr. James Wong', role: 'PI', avatar: 'https://i.pravatar.cc/150?img=4' },
-        { name: 'Dr. Sarah Chen', role: 'Ethics Advisor', avatar: 'https://i.pravatar.cc/150?img=1' }
-      ],
+      start_date: '2023-11-01',
+      end_date: '2025-04-30',
+      sdg_focus: [9, 10, 16],
       budget: 590000,
       spent: 425000,
-      publications: 5,
-      collaborators: 10,
-      institution: 'Stanford University',
-      lastUpdate: '3 days ago'
+      institution: 'Stanford University'
     }
   ];
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      const response = await fetch('/api/projects.php?action=list');
+      const data = await response.json();
+
+      if (data.status === 'success' && data.projects) {
+        const normalizedProjects = data.projects.map(p => ({
+          ...p,
+          sdg_focus: Array.isArray(p.sdg_focus) ? p.sdg_focus : JSON.parse(p.sdg_focus || '[]')
+        }));
+        setProjects(normalizedProjects);
+        updateStats(normalizedProjects);
+      } else {
+        setProjects(mockProjects);
+        updateStats(mockProjects);
+      }
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+      setProjects(mockProjects);
+      updateStats(mockProjects);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateStats = (projectList) => {
+    setStats({
+      total: projectList.length,
+      active: projectList.filter(p => p.status === 'active').length,
+      planning: projectList.filter(p => p.status === 'planning').length,
+      completed: projectList.filter(p => p.status === 'completed').length,
+      totalBudget: projectList.reduce((sum, p) => sum + (p.budget || 0), 0),
+      totalPublications: projectList.reduce((sum, p) => sum + (p.publications || 0), 0)
+    });
+  };
 
   const sdgColors = {
     1: 'bg-red-500',
@@ -154,7 +168,7 @@ const ProjectManagement = () => {
       case 'active': return Zap;
       case 'planning': return Clock;
       case 'completed': return CheckCircle;
-      case 'on-hold': return AlertCircle;
+      case 'paused': return AlertCircle;
       default: return Clock;
     }
   };
@@ -162,23 +176,14 @@ const ProjectManagement = () => {
   const filteredProjects = projects.filter(project => {
     const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          project.description.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     if (activeTab === 'all') return matchesSearch;
     if (activeTab === 'active') return matchesSearch && project.status === 'active';
     if (activeTab === 'planning') return matchesSearch && project.status === 'planning';
     if (activeTab === 'completed') return matchesSearch && project.status === 'completed';
-    
+
     return matchesSearch;
   });
-
-  const stats = {
-    total: projects.length,
-    active: projects.filter(p => p.status === 'active').length,
-    planning: projects.filter(p => p.status === 'planning').length,
-    completed: projects.filter(p => p.status === 'completed').length,
-    totalBudget: projects.reduce((sum, p) => sum + p.budget, 0),
-    totalPublications: projects.reduce((sum, p) => sum + p.publications, 0)
-  };
 
   return (
     <main className="min-h-screen pt-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -289,9 +294,17 @@ const ProjectManagement = () => {
 
           {/* Projects List */}
           <div className="space-y-4">
-            {filteredProjects.map((project) => {
+            {loading ? (
+              <div className="flex justify-center items-center py-12">
+                <div className="w-12 h-12 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin"></div>
+              </div>
+            ) : filteredProjects.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-600">No projects found</p>
+              </div>
+            ) : (filteredProjects.map((project) => {
               const StatusIcon = getStatusIcon(project.status);
-              
+
               return (
                 <div
                   key={project.id}
@@ -314,20 +327,20 @@ const ProjectManagement = () => {
                       <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
                         <span className="flex items-center gap-1">
                           <Calendar className="w-4 h-4" />
-                          {new Date(project.startDate).toLocaleDateString()} - {new Date(project.endDate).toLocaleDateString()}
+                          {new Date(project.start_date).toLocaleDateString()} - {new Date(project.end_date).toLocaleDateString()}
                         </span>
                         <span className="flex items-center gap-1">
                           <Users className="w-4 h-4" />
-                          {project.collaborators} collaborators
+                          {project.collaborators || 0} collaborators
                         </span>
                         <span className="flex items-center gap-1">
                           <FileText className="w-4 h-4" />
-                          {project.publications} publications
+                          {project.publications || 0} publications
                         </span>
                       </div>
-                      
+
                       <div className="flex flex-wrap gap-2 mb-4">
-                        {project.sdgFocus.map(sdg => (
+                        {(project.sdg_focus || []).map(sdg => (
                           <span
                             key={sdg}
                             className={`w-8 h-8 rounded-full ${sdgColors[sdg]} text-white text-xs font-bold flex items-center justify-center`}
@@ -361,20 +374,15 @@ const ProjectManagement = () => {
                   {/* Team & Budget */}
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pt-4 border-t border-gray-100">
                     <div className="flex -space-x-2">
-                      {project.team.slice(0, 4).map((member, idx) => (
-                        <img
+                      {[...Array(Math.min(4, 3))].map((_, idx) => (
+                        <div
                           key={idx}
-                          src={member.avatar}
-                          alt={member.name}
-                          className="w-8 h-8 rounded-full border-2 border-white"
-                          title={`${member.name} - ${member.role}`}
-                        />
-                      ))}
-                      {project.team.length > 4 && (
-                        <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-200 flex items-center justify-center text-xs font-medium text-gray-600">
-                          +{project.team.length - 4}
+                          className="w-8 h-8 rounded-full border-2 border-white bg-indigo-400 flex items-center justify-center text-white text-xs font-bold"
+                          title="Team member"
+                        >
+                          {String.fromCharCode(65 + idx)}
                         </div>
-                      )}
+                      ))}
                     </div>
                     
                     <div className="flex items-center gap-6">
@@ -403,11 +411,11 @@ const ProjectManagement = () => {
                   </div>
                   
                   <div className="text-xs text-gray-400 mt-3 text-right">
-                    Last updated {project.lastUpdate}
+                    Updated {project.updated_at ? new Date(project.updated_at).toLocaleDateString() : 'recently'}
                   </div>
                 </div>
               );
-            })}
+            }))}
           </div>
         </div>
       </section>
