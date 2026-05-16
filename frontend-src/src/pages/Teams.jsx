@@ -53,7 +53,7 @@ const AdvisorCard = ({ advisor }) => (
     <h3 className="font-bold text-gray-900 mb-1 text-sm group-hover:text-purple-700 transition-colors">{advisor.name}</h3>
     <p className="text-xs text-purple-600 font-medium mb-1">{advisor.role}</p>
     <p className="text-xs text-gray-500 mb-1">{advisor.affiliation}</p>
-    <p className="text-xs text-gray-400 mb-3">{advisor.expertise.slice(0, 2).join(' · ')}</p>
+    <p className="text-xs text-gray-400 mb-3">{(advisor.expertise ?? []).slice(0, 2).join(' · ')}</p>
     <span className="inline-block text-xs text-purple-500 font-medium group-hover:underline">
       Lihat Profil →
     </span>
