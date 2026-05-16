@@ -73,28 +73,32 @@ function fetchByCountry(PDO $pdo, int $sdgFilter): array
     $stmt = $pdo->prepare(
         "SELECT
             r.country,
-            COUNT(DISTINCT r.orcid) AS researchers,
-            COUNT(DISTINCT r.institution_id) AS institutions,
-            AVG(r.citation_count) AS avg_impact,
-            COUNT(DISTINCT pa.doi) AS total_publications
+            COUNT(DISTINCT r.orcid) AS researcher_count,
+            COUNT(DISTINCT r.institution_id) AS institution_count,
+            COALESCE(AVG(r.citation_count), 0) AS avg_citations,
+            COUNT(DISTINCT pa.doi) AS publication_count
         FROM researchers r
         LEFT JOIN publication_authors pa ON pa.orcid = r.orcid
         WHERE r.country IS NOT NULL AND r.country != ''
         {$whereClause}
         GROUP BY r.country
-        ORDER BY researchers DESC"
+        ORDER BY researcher_count DESC"
     );
     $stmt->execute($params);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    return array_map(function ($row): array {
+    if (empty($rows)) {
+        return [];
+    }
+
+    return array_map(function ($row) use ($pdo): array {
         return [
             'name'         => $row['country'] ?? 'Unknown',
-            'researchers'  => (int) $row['researchers'],
-            'institutions' => (int) $row['institutions'],
-            'avgImpact'    => round((float) $row['avg_impact'] ?? 0, 1),
-            'publications' => (int) $row['total_publications'],
-            'topField'     => getTopFieldByCountry((string) $row['country']),
+            'researchers'  => (int) $row['researcher_count'],
+            'institutions' => (int) $row['institution_count'],
+            'avgImpact'    => round((float) $row['avg_citations'] ?? 0, 1),
+            'publications' => (int) $row['publication_count'],
+            'topField'     => getTopFieldByCountry($pdo, (string) $row['country']),
         ];
     }, $rows);
 }
@@ -120,75 +124,105 @@ function fetchByInstitution(PDO $pdo, int $sdgFilter): array
             i.name,
             i.country,
             i.city,
-            COUNT(DISTINCT r.orcid) AS researchers,
-            AVG(r.citation_count) AS avg_impact,
-            COUNT(DISTINCT pa.doi) AS publications
+            COUNT(DISTINCT r.orcid) AS researcher_count,
+            COALESCE(AVG(r.citation_count), 0) AS avg_citations,
+            COUNT(DISTINCT pa.doi) AS publication_count,
+            GROUP_CONCAT(DISTINCT r.country SEPARATOR ',') AS countries
         FROM institutions i
         LEFT JOIN researchers r ON r.institution_id = i.id
         LEFT JOIN publication_authors pa ON pa.orcid = r.orcid
         WHERE i.name IS NOT NULL
         {$whereClause}
         GROUP BY i.id
-        HAVING researchers > 0
-        ORDER BY researchers DESC
+        HAVING researcher_count > 0
+        ORDER BY researcher_count DESC
         LIMIT 50"
     );
     $stmt->execute($params);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    return array_map(function ($row): array {
+    if (empty($rows)) {
+        return [];
+    }
+
+    return array_map(function ($row) use ($pdo): array {
+        $institutionId = (int) $row['id'];
+        $topField = getTopFieldForInstitution($pdo, $institutionId);
+
         return [
-            'id'           => (int) $row['id'],
+            'id'           => $institutionId,
             'name'         => $row['name'],
             'country'      => $row['country'] ?? 'Indonesia',
             'city'         => $row['city'],
-            'researchers'  => (int) $row['researchers'],
-            'avgImpact'    => round((float) $row['avg_impact'] ?? 0, 1),
-            'publications' => (int) $row['publications'],
-            'topField'     => getTopFieldByInstitution((int) $row['id']),
+            'researchers'  => (int) $row['researcher_count'],
+            'avgImpact'    => round((float) $row['avg_citations'] ?? 0, 1),
+            'publications' => (int) $row['publication_count'],
+            'topField'     => $topField,
         ];
     }, $rows);
 }
 
-function getTopFieldByCountry(string $country): string
+function getTopFieldByCountry(PDO $pdo, string $country): string
 {
-    $fieldMap = [
-        'Indonesia'  => 'Teknologi Informasi',
-        'Malaysia'   => 'Teknik',
-        'Philippines'=> 'Kedokteran',
-        'Thailand'   => 'Pertanian',
-        'Vietnam'    => 'Sosial Ekonomi',
-    ];
-    return $fieldMap[$country] ?? 'Penelitian Umum';
+    try {
+        $stmt = $pdo->prepare(
+            "SELECT GROUP_CONCAT(DISTINCT j.title SEPARATOR ', ') AS fields
+             FROM researchers r
+             LEFT JOIN publication_authors pa ON pa.orcid = r.orcid
+             LEFT JOIN publications p ON p.doi = pa.doi
+             LEFT JOIN journals j ON j.id = p.journal_id
+             WHERE r.country = ? AND j.title IS NOT NULL
+             LIMIT 1"
+        );
+        $stmt->execute([$country]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($result && !empty($result['fields'])) {
+            $fields = array_slice(explode(', ', $result['fields']), 0, 1);
+            return $fields[0] ?? 'Penelitian Umum';
+        }
+    } catch (Exception $e) {
+        error_log('getTopFieldByCountry error: ' . $e->getMessage());
+    }
+
+    return 'Penelitian Umum';
 }
 
-function getTopFieldByInstitution(int $institutionId): string
+function getTopFieldForInstitution(PDO $pdo, int $institutionId): string
 {
-    return 'Teknologi Informasi';
+    try {
+        $stmt = $pdo->prepare(
+            "SELECT GROUP_CONCAT(DISTINCT j.title SEPARATOR ', ') AS fields
+             FROM researchers r
+             LEFT JOIN publication_authors pa ON pa.orcid = r.orcid
+             LEFT JOIN publications p ON p.doi = pa.doi
+             LEFT JOIN journals j ON j.id = p.journal_id
+             WHERE r.institution_id = ? AND j.title IS NOT NULL
+             LIMIT 1"
+        );
+        $stmt->execute([$institutionId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($result && !empty($result['fields'])) {
+            $fields = array_slice(explode(', ', $result['fields']), 0, 1);
+            return $fields[0] ?? 'Penelitian Umum';
+        }
+    } catch (Exception $e) {
+        error_log('getTopFieldForInstitution error: ' . $e->getMessage());
+    }
+
+    return 'Penelitian Umum';
 }
 
 function getSampleDistribution(string $groupBy): array
 {
+    // FALLBACK ONLY - dikembalikan hanya jika database query gagal sepenuhnya
+    // Idealnya endpoint harus selalu return data dari database, bukan mock
+    error_log('WARNING: ResearcherDistribution API returning fallback sample data - database query may have failed');
+
     if ($groupBy === 'institution') {
-        return [
-            ['id' => 1, 'name' => 'Universitas Indonesia', 'country' => 'Indonesia', 'city' => 'Jakarta', 'researchers' => 587, 'avgImpact' => 82.3, 'publications' => 4250, 'topField' => 'Teknologi Informasi'],
-            ['id' => 2, 'name' => 'Institut Teknologi Bandung', 'country' => 'Indonesia', 'city' => 'Bandung', 'researchers' => 521, 'avgImpact' => 80.7, 'publications' => 3980, 'topField' => 'Teknik'],
-            ['id' => 3, 'name' => 'Universitas Gadjah Mada', 'country' => 'Indonesia', 'city' => 'Yogyakarta', 'researchers' => 492, 'avgImpact' => 79.8, 'publications' => 3750, 'topField' => 'Kedokteran'],
-            ['id' => 4, 'name' => 'Institut Pertanian Bogor', 'country' => 'Indonesia', 'city' => 'Bogor', 'researchers' => 435, 'avgImpact' => 77.2, 'publications' => 3240, 'topField' => 'Pertanian'],
-            ['id' => 5, 'name' => 'Universitas Airlangga', 'country' => 'Indonesia', 'city' => 'Surabaya', 'researchers' => 412, 'avgImpact' => 78.5, 'publications' => 3120, 'topField' => 'Kedokteran'],
-            ['id' => 6, 'name' => 'Universitas Hasanuddin', 'country' => 'Indonesia', 'city' => 'Makassar', 'researchers' => 374, 'avgImpact' => 74.2, 'publications' => 2840, 'topField' => 'Kesehatan'],
-            ['id' => 7, 'name' => 'Universitas Diponegoro', 'country' => 'Indonesia', 'city' => 'Semarang', 'researchers' => 356, 'avgImpact' => 76.8, 'publications' => 2650, 'topField' => 'Teknik'],
-            ['id' => 8, 'name' => 'Universitas Padjadjaran', 'country' => 'Indonesia', 'city' => 'Bandung', 'researchers' => 340, 'avgImpact' => 77.9, 'publications' => 2580, 'topField' => 'Sosial'],
-            ['id' => 9, 'name' => 'Universitas Brawijaya', 'country' => 'Indonesia', 'city' => 'Malang', 'researchers' => 328, 'avgImpact' => 76.3, 'publications' => 2460, 'topField' => 'Pertanian'],
-            ['id' => 10, 'name' => 'Universitas Sumatera Utara', 'country' => 'Indonesia', 'city' => 'Medan', 'researchers' => 287, 'avgImpact' => 74.7, 'publications' => 2180, 'topField' => 'Teknik'],
-        ];
+        return [];
     }
 
-    return [
-        ['name' => 'Indonesia', 'researchers' => 5632, 'institutions' => 145, 'avgImpact' => 78.5, 'publications' => 32450, 'topField' => 'Teknologi Informasi'],
-        ['name' => 'Malaysia', 'researchers' => 1240, 'institutions' => 28, 'avgImpact' => 75.2, 'publications' => 8940, 'topField' => 'Teknik'],
-        ['name' => 'Philippines', 'researchers' => 856, 'institutions' => 18, 'avgImpact' => 72.1, 'publications' => 5230, 'topField' => 'Kedokteran'],
-        ['name' => 'Thailand', 'researchers' => 642, 'institutions' => 15, 'avgImpact' => 71.5, 'publications' => 4120, 'topField' => 'Pertanian'],
-        ['name' => 'Vietnam', 'researchers' => 521, 'institutions' => 12, 'avgImpact' => 70.3, 'publications' => 3650, 'topField' => 'Sosial Ekonomi'],
-    ];
+    return [];
 }
