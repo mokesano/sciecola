@@ -1,23 +1,78 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
-import {
-  FEED_POSTS, RECENT_ACTIVITIES, INVITATIONS, EVENTS, ACTIVE_USERS, GROUPS, POPULAR_TOPICS, CONNECTIONS
-} from '../data/mock/feedsMock';
+import { LoadingSpinner } from '../components/shared';
 
 const Feeds = () => {
   const [activeTab, setActiveTab] = useState('semua');
   const [postContent, setPostContent] = useState('');
   const [likedPosts, setLikedPosts] = useState(new Set());
   const [savedPosts, setSavedPosts] = useState(new Set());
+  const [feedPosts, setFeedPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const toggleLike = (id) => {
+  // Fetch feed posts on mount
+  useEffect(() => {
+    const fetchFeedPosts = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/feeds.php?action=list&visibility=public&limit=20');
+        const data = await response.json();
+        if (data.status === 'success' && data.posts) {
+          setFeedPosts(data.posts);
+          setError(null);
+        } else {
+          setFeedPosts(getSampleFeedPosts());
+        }
+      } catch (err) {
+        console.error('Error fetching feed posts:', err);
+        setFeedPosts(getSampleFeedPosts());
+        setError('Failed to load feed');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFeedPosts();
+  }, []);
+
+  const getSampleFeedPosts = () => [
+    {
+      id: 1,
+      author_id: 1,
+      author_name: 'Dr. Budi Santoso',
+      author_avatar: 'https://via.placeholder.com/40/6366f1/ffffff?text=BS',
+      post_type: 'announcement',
+      title: 'Peluncuran Platform Baru',
+      content: 'Kami dengan bangga mengumumkan peluncuran fitur baru untuk analisis kolaborasi riset.',
+      image_url: null,
+      likes_count: 12,
+      comments_count: 5,
+      is_pinned: true,
+      created_at: '2026-05-16T10:00:00Z'
+    }
+  ];
+
+  const toggleLike = async (id) => {
     setLikedPosts(prev => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
       return next;
     });
+
+    try {
+      await fetch('/api/feeds.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'like',
+          post_id: id,
+          user_id: 1
+        })
+      });
+    } catch (err) {
+      console.error('Error liking post:', err);
+    }
   };
 
   const toggleSave = (id) => {
@@ -28,15 +83,6 @@ const Feeds = () => {
       return next;
     });
   };
-
-  const feedPosts = FEED_POSTS;
-  const recentActivities = RECENT_ACTIVITIES;
-  const invitations = INVITATIONS;
-  const events = EVENTS;
-  const activeUsers = ACTIVE_USERS;
-  const groups = GROUPS;
-  const popularTopics = POPULAR_TOPICS;
-  const connections = CONNECTIONS;
   const getSDGColor = (sdg) => {
     const colors = {
       11: 'bg-amber-100 text-amber-700',
@@ -45,6 +91,14 @@ const Feeds = () => {
     };
     return colors[sdg] || 'bg-gray-100 text-gray-700';
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 pt-28 flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -1,101 +1,144 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { LoadingSpinner } from '../components/shared';
 
 const Messages = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedChatId, setSelectedChatId] = useState(1);
+  const [selectedChatId, setSelectedChatId] = useState(null);
   const [newMessage, setNewMessage] = useState('');
   const [showMobileChat, setShowMobileChat] = useState(false);
-  
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [conversations, setConversations] = useState([]);
+  const [currentMessages, setCurrentMessages] = useState([]);
+
   const messagesEndRef = useRef(null);
 
-  // Mock Conversations
-  const conversations = [
-    { id: 1, name: 'Budi Santoso', avatar: 'https://i.pravatar.cc/150?img=3', lastMsg: 'Terima kasih atas kolaborasinya. Data sudah saya sync ke repository.', time: '10:30', unread: 2, online: true, type: 'direct' },
-    { id: 2, name: 'Siti Nurhaliza', avatar: 'https://i.pravatar.cc/150?img=5', lastMsg: 'Draft Bab 3 sudah selesai. Bisa direview minggu ini?', time: 'Kemarin', unread: 0, online: false, type: 'direct' },
-    { id: 3, name: 'Climate Action Research', avatar: 'https://i.pravatar.cc/150?img=12', lastMsg: '[Pengumuman] Diskusi minggu depan dijadwalkan jam 14.00 WIB. Harap konfirmasi kehadiran.', time: 'Kemarin', unread: 5, online: true, type: 'group', members: 24 },
-    { id: 4, name: 'Fathimah Azzahra', avatar: 'https://i.pravatar.cc/150?img=10', lastMsg: 'Boleh minta revisi methodology section? Ada yang kurang jelas.', time: '2 hari', unread: 0, online: true, type: 'direct' },
-    { id: 5, name: 'Marine Biodiversity Group', avatar: 'https://i.pravatar.cc/150?img=8', lastMsg: '📎 File: Data_Sampling_Teluk_2024.xlsx', time: '3 hari', unread: 1, online: false, type: 'group', members: 18 },
-    { id: 6, name: 'Rizky Pratama', avatar: 'https://i.pravatar.cc/150?img=11', lastMsg: 'Setuju dengan pendekatan mixed-methods. Kapan bisa kick-off?', time: '1 minggu', unread: 0, online: false, type: 'direct' }
+  // Fetch conversations on mount
+  useEffect(() => {
+    const fetchConversations = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/messages.php?action=conversations&limit=20');
+        const data = await response.json();
+        if (data.status === 'success' && data.conversations) {
+          setConversations(data.conversations);
+          if (data.conversations.length > 0) {
+            setSelectedChatId(data.conversations[0].id);
+          }
+          setError(null);
+        } else {
+          setConversations(getSampleConversations());
+        }
+      } catch (err) {
+        console.error('Error fetching conversations:', err);
+        setConversations(getSampleConversations());
+        setError('Failed to load conversations');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchConversations();
+  }, []);
+
+  // Fetch messages when conversation changes
+  useEffect(() => {
+    if (selectedChatId) {
+      fetchMessages(selectedChatId);
+    }
+  }, [selectedChatId]);
+
+  const fetchMessages = async (conversationId) => {
+    try {
+      const response = await fetch(`/api/messages.php?action=list&conversation_id=${conversationId}&limit=50`);
+      const data = await response.json();
+      if (data.status === 'success') {
+        setCurrentMessages(data.messages || []);
+      } else {
+        setCurrentMessages(getSampleMessages());
+      }
+    } catch (err) {
+      console.error('Error fetching messages:', err);
+      setCurrentMessages(getSampleMessages());
+    }
+  };
+
+  // Mock Conversations fallback
+  const getSampleConversations = () => [
+    {
+      id: 1,
+      type: 'direct',
+      name: 'Dr. Budi Santoso',
+      created_by: 1,
+      created_at: '2026-05-10T10:30:00Z',
+      message_count: 5,
+      last_message_at: '2026-05-16T08:15:00Z'
+    }
   ];
 
-  // Mock Messages for selected chat
-  const [chats, setChats] = useState({
-    1: [
-      { id: 1, sender: 'them', text: 'Halo Andi, artikel terbaru tentang adaptasi pesisir sudah publish?', time: '09:15', status: 'read' },
-      { id: 2, sender: 'me', text: 'Halo Pak Budi! Sudah, kemarin sore. Link DOI sudah saya share di grup.', time: '09:20', status: 'read' },
-      { id: 3, sender: 'them', text: 'Bagus sekali. Saya lihat ada bagian yang bisa kita kembangkan untuk joint publication.', time: '09:22', status: 'read' },
-      { id: 4, sender: 'me', text: 'Tentu, sangat terbuka untuk kolaborasi. Nanti saya kirim draft outline-nya.', time: '09:25', status: 'delivered' },
-      { id: 5, sender: 'them', text: 'Terima kasih atas kolaborasinya. Data sudah saya sync ke repository.', time: '10:30', status: 'read' }
-    ],
-    2: [
-      { id: 1, sender: 'them', text: 'Assalamualaikum, progress riset teluk jakarta bagaimana?', time: '14:00', status: 'read' },
-      { id: 2, sender: 'me', text: 'Waalaikumsalam. Alhamdulillah sudah 80%. Tinggal finalisasi data kualitas air.', time: '14:05', status: 'read' },
-      { id: 3, sender: 'them', text: 'Draft Bab 3 sudah selesai. Bisa direview minggu ini?', time: '16:30', status: 'read' }
-    ],
-    3: [
-      { id: 1, sender: 'them', name: 'Admin Grup', text: '[Pengumuman] Agenda rapat koordinasi bulan depan sudah diupload.', time: '08:00', status: 'read' },
-      { id: 2, sender: 'me', text: 'Terima kasih infonya. Saya akan hadir.', time: '08:15', status: 'read' },
-      { id: 3, sender: 'them', name: 'Dewi Setiawan', text: 'Saya juga akan hadir. Ada materi khusus tentang blue carbon?', time: '08:20', status: 'read' },
-      { id: 4, sender: 'them', name: 'Budi Santoso', text: 'Ya, akan ada sesi khusus. Mohon siapkan literatur terkait.', time: '08:25', status: 'read' },
-      { id: 5, sender: 'them', name: 'Admin Grup', text: '[Pengumuman] Diskusi minggu depan dijadwalkan jam 14.00 WIB. Harap konfirmasi kehadiran.', time: '10:00', status: 'read' }
-    ]
-  });
-
-  // Default empty chat for others
-  conversations.forEach(c => {
-    if (!chats[c.id]) chats[c.id] = [];
-  });
+  const getSampleMessages = () => [
+    {
+      id: 1,
+      sender_id: 2,
+      sender_name: 'Dr. Budi Santoso',
+      sender_avatar: 'https://via.placeholder.com/40/6366f1/ffffff?text=BS',
+      message_text: 'Halo, bagaimana progress risetmu?',
+      message_type: 'text',
+      status: 'read',
+      created_at: '2026-05-16T08:15:00Z'
+    }
+  ];
 
   const selectedChat = conversations.find(c => c.id === selectedChatId);
-  const currentMessages = chats[selectedChatId] || [];
 
   // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [currentMessages, selectedChatId]);
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || !selectedChatId) return;
 
-    const newMsg = {
-      id: Date.now(),
-      sender: 'me',
-      text: newMessage.trim(),
-      time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-      status: 'sent'
-    };
+    try {
+      const response = await fetch('/api/messages.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'send',
+          conversation_id: selectedChatId,
+          sender_id: 1,
+          message_text: newMessage.trim(),
+          message_type: 'text'
+        })
+      });
 
-    setChats(prev => ({
-      ...prev,
-      [selectedChatId]: [...(prev[selectedChatId] || []), newMsg]
-    }));
-    setNewMessage('');
-
-    // Simulate reply after 2s
-    setTimeout(() => {
-      setChats(prev => ({
-        ...prev,
-        [selectedChatId]: [
-          ...prev[selectedChatId],
-          { id: Date.now() + 1, sender: 'them', name: selectedChat?.name, text: 'Baik, noted. Saya akan cek dan follow up segera.', time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }), status: 'read' }
-        ]
-      }));
-    }, 2000);
+      const data = await response.json();
+      if (data.status === 'success') {
+        setNewMessage('');
+        fetchMessages(selectedChatId);
+      }
+    } catch (err) {
+      console.error('Error sending message:', err);
+    }
   };
 
   const filteredConversations = conversations.filter(c => {
-    const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) || c.lastMsg.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesTab = activeTab === 'all' || 
-                       (activeTab === 'unread' && c.unread > 0) || 
+    const matchesSearch = c.name && c.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesTab = activeTab === 'all' ||
                        (activeTab === 'groups' && c.type === 'group') ||
-                       (activeTab === 'archived' && false); // Mock
+                       (activeTab === 'direct' && c.type === 'direct');
     return matchesSearch && matchesTab;
   });
 
-  const formatTime = (time) => time; // Already formatted in mock
+  if (loading) {
+    return (
+      <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 h-screen flex items-center justify-center">
+        <LoadingSpinner />
+      </main>
+    );
+  }
 
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
