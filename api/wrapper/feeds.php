@@ -76,14 +76,11 @@ function getFeedPosts(string $visibility, int $limit, int $offset): array {
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
         );
 
-        $whereClause = '';
         $params = [];
-
+        $whereClause = 'WHERE fp.is_deleted = FALSE';
         if ($visibility !== 'all') {
-            $whereClause = 'WHERE fp.visibility = ? AND fp.is_deleted = FALSE';
+            $whereClause .= ' AND fp.visibility = ?';
             $params = [$visibility];
-        } else {
-            $whereClause = 'WHERE fp.is_deleted = FALSE';
         }
 
         $stmt = $pdo->prepare("

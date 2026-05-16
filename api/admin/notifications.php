@@ -46,32 +46,21 @@ try {
 function createNotification(string $adminOrcid, string $ipAddress): array {
     $input = json_decode(file_get_contents('php://input'), true);
 
-    if (empty($input['recipient_orcid'])) {
-        return ['status' => 'error', 'message' => 'Recipient ORCID required'];
-    }
-    if (empty($input['type'])) {
-        return ['status' => 'error', 'message' => 'Notification type required'];
-    }
-    if (empty($input['title'])) {
-        return ['status' => 'error', 'message' => 'Title required'];
-    }
-    if (empty($input['message'])) {
-        return ['status' => 'error', 'message' => 'Message required'];
+    $requiredError = validateNotificationRequiredFields($input);
+    if ($requiredError !== null) {
+        return $requiredError;
     }
 
-    $validTypes = ['collaboration_request', 'opportunity_match', 'message', 'system', 'achievement', 'announcement'];
-    if (!in_array($input['type'], $validTypes)) {
-        return ['status' => 'error', 'message' => 'Invalid notification type'];
+    $typeError = validateNotificationType($input['type']);
+    if ($typeError !== null) {
+        return $typeError;
     }
 
-    $recipients = $input['recipient_orcid'];
-    if (!is_array($recipients)) {
-        $recipients = [$recipients];
-    }
-    foreach ($recipients as $orcid) {
-        if (!preg_match('/^\d{4}-\d{4}-\d{4}-\d{3}[0-9X]$/', $orcid)) {
-            return ['status' => 'error', 'message' => "Invalid ORCID format: $orcid"];
-        }
+    $recipients = is_array($input['recipient_orcid']) ? $input['recipient_orcid'] : [$input['recipient_orcid']];
+
+    $orcidError = validateOrcidFormats($recipients);
+    if ($orcidError !== null) {
+        return $orcidError;
     }
 
     if (!defined('DB_HOST') || !DB_HOST) {
@@ -85,8 +74,7 @@ function createNotification(string $adminOrcid, string $ipAddress): array {
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
         );
 
-        $extraData    = $input['data'] ?? null;
-        $createdCount = 0;
+        $extraData = $input['data'] ?? null;
 
         foreach ($recipients as $orcid) {
             $stmt = $pdo->prepare("
@@ -106,15 +94,13 @@ function createNotification(string $adminOrcid, string $ipAddress): array {
                 $input['action_required'] ?? 0,
                 $input['action_deadline'] ?? null
             ]);
-
-            $createdCount++;
         }
 
         logActivity($adminOrcid, 'CREATE', 'notifications', implode(',', $recipients), null, $input, $ipAddress);
 
         return [
             'status'     => 'success',
-            'message'    => "Notification sent to $createdCount recipient(s)",
+            'message'    => "Notification sent to " . count($recipients) . " recipient(s)",
             'recipients' => count($recipients),
             'timestamp'  => date('c')
         ];
@@ -177,6 +163,39 @@ function listNotifications(int $limit, int $offset): array {
         error_log($e->getMessage());
         return ['status' => 'error', 'message' => 'Failed to fetch notifications'];
     }
+}
+
+function validateNotificationRequiredFields(array $input): ?array {
+    $fields = [
+        'recipient_orcid' => 'Recipient ORCID required',
+        'type'            => 'Notification type required',
+        'title'           => 'Title required',
+        'message'         => 'Message required'
+    ];
+
+    foreach ($fields as $field => $message) {
+        if (empty($input[$field])) {
+            return ['status' => 'error', 'message' => $message];
+        }
+    }
+    return null;
+}
+
+function validateNotificationType(string $type): ?array {
+    $validTypes = ['collaboration_request', 'opportunity_match', 'message', 'system', 'achievement', 'announcement'];
+    if (!in_array($type, $validTypes)) {
+        return ['status' => 'error', 'message' => 'Invalid notification type'];
+    }
+    return null;
+}
+
+function validateOrcidFormats(array $recipients): ?array {
+    foreach ($recipients as $orcid) {
+        if (!preg_match('/^\d{4}-\d{4}-\d{4}-\d{3}[0-9X]$/', $orcid)) {
+            return ['status' => 'error', 'message' => "Invalid ORCID format: $orcid"];
+        }
+    }
+    return null;
 }
 
 function logActivity(string $adminOrcid, string $action, string $tableName, string $entityId, ?array $oldValues, ?array $newValues, string $ipAddress): void {

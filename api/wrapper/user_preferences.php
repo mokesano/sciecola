@@ -109,73 +109,67 @@ function collectPreferenceUpdates(array $input): array {
     $updates = [];
     $params  = [];
 
-    // ── Basic fields ────────────────────────────────────────────────────────
-    foreach (['language', 'timezone', 'theme'] as $field) {
+    $basicFields = ['language', 'timezone', 'theme'];
+    foreach ($basicFields as $field) {
         if (isset($input[$field])) {
             $updates[] = "$field = ?";
             $params[]  = $input[$field];
         }
     }
+
     if (isset($input['newsletter_subscribed'])) {
         $updates[] = 'newsletter_subscribed = ?';
         $params[]  = $input['newsletter_subscribed'] ? 1 : 0;
     }
 
-    // ── Notification delivery flags ─────────────────────────────────────────
-    if (isset($input['notification'])) {
-        $notif = $input['notification'];
-        if (isset($notif['email_digest'])) {
-            $updates[] = 'notification_email_digest = ?';
-            $params[]  = $notif['email_digest'];
-        }
-        foreach ([
-            'push_enabled'   => 'notification_push_enabled',
-            'email_enabled'  => 'notification_email_enabled',
-            'in_app_enabled' => 'notification_in_app_enabled',
-        ] as $inputKey => $dbCol) {
-            if (isset($notif[$inputKey])) {
-                $updates[] = "$dbCol = ?";
-                $params[]  = $notif[$inputKey] ? 1 : 0;
-            }
-        }
-    }
+    $notificationMapping = [
+        'email_digest' => 'notification_email_digest',
+        'push_enabled' => 'notification_push_enabled',
+        'email_enabled' => 'notification_email_enabled',
+        'in_app_enabled' => 'notification_in_app_enabled'
+    ];
+    applyBooleanMapping($input['notification'] ?? [], $notificationMapping, $updates, $params);
 
-    // ── Topic notification toggles ───────────────────────────────────────────
-    if (isset($input['notification_preferences'])) {
-        $topics = $input['notification_preferences'];
-        foreach ([
-            'research_area' => 'research_area_notifications',
-            'collaboration' => 'collaboration_notifications',
-            'opportunity'   => 'opportunity_notifications',
-            'system'        => 'system_notifications',
-        ] as $inputKey => $dbCol) {
-            if (isset($topics[$inputKey])) {
-                $updates[] = "$dbCol = ?";
-                $params[]  = $topics[$inputKey] ? 1 : 0;
-            }
-        }
-    }
+    $topicMapping = [
+        'research_area' => 'research_area_notifications',
+        'collaboration' => 'collaboration_notifications',
+        'opportunity' => 'opportunity_notifications',
+        'system' => 'system_notifications'
+    ];
+    applyBooleanMapping($input['notification_preferences'] ?? [], $topicMapping, $updates, $params);
 
-    // ── Privacy settings ────────────────────────────────────────────────────
-    if (isset($input['privacy'])) {
-        $privacy = $input['privacy'];
-        if (isset($privacy['profile_visibility'])) {
-            $updates[] = 'privacy_profile_visibility = ?';
-            $params[]  = $privacy['profile_visibility'];
-        }
-        foreach ([
-            'show_affiliations'   => 'privacy_show_affiliations',
-            'show_publications'   => 'privacy_show_publications',
-            'show_collaborations' => 'privacy_show_collaborations',
-        ] as $inputKey => $dbCol) {
-            if (isset($privacy[$inputKey])) {
-                $updates[] = "$dbCol = ?";
-                $params[]  = $privacy[$inputKey] ? 1 : 0;
-            }
-        }
-    }
+    $privacyMapping = [
+        'profile_visibility' => 'privacy_profile_visibility',
+        'show_affiliations' => 'privacy_show_affiliations',
+        'show_publications' => 'privacy_show_publications',
+        'show_collaborations' => 'privacy_show_collaborations'
+    ];
+    applyPrivacyMapping($input['privacy'] ?? [], $privacyMapping, $updates, $params);
 
     return ['updates' => $updates, 'params' => $params];
+}
+
+function applyBooleanMapping(array $groupInput, array $mapping, array &$updates, array &$params): void {
+    foreach ($mapping as $inputKey => $dbCol) {
+        if (isset($groupInput[$inputKey])) {
+            $updates[] = "$dbCol = ?";
+            $params[] = $groupInput[$inputKey] ? 1 : 0;
+        }
+    }
+}
+
+function applyPrivacyMapping(array $privacyInput, array $mapping, array &$updates, array &$params): void {
+    if (isset($privacyInput['profile_visibility'])) {
+        $updates[] = 'privacy_profile_visibility = ?';
+        $params[] = $privacyInput['profile_visibility'];
+    }
+
+    foreach ($mapping as $inputKey => $dbCol) {
+        if (isset($privacyInput[$inputKey])) {
+            $updates[] = "$dbCol = ?";
+            $params[] = $privacyInput[$inputKey] ? 1 : 0;
+        }
+    }
 }
 
 function updateUserPreferences(): array {

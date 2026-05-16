@@ -46,27 +46,25 @@ try {
  * Returns an error message string on failure, or null on success.
  */
 function validateInstitutionNumericFields(array $input): ?string {
-    if (isset($input['established_year'])
-        && (!is_numeric($input['established_year'])
-            || $input['established_year'] < 1000
-            || $input['established_year'] > 2100)
-    ) {
-        return 'Invalid established_year (must be between 1000-2100)';
-    }
-    if (isset($input['faculties_count'])
-        && (!is_numeric($input['faculties_count']) || $input['faculties_count'] < 0)
-    ) {
-        return 'Invalid faculties_count (must be non-negative)';
-    }
-    if (isset($input['students_count'])
-        && (!is_numeric($input['students_count']) || $input['students_count'] < 0)
-    ) {
-        return 'Invalid students_count (must be non-negative)';
-    }
-    if (isset($input['lecturers_count'])
-        && (!is_numeric($input['lecturers_count']) || $input['lecturers_count'] < 0)
-    ) {
-        return 'Invalid lecturers_count (must be non-negative)';
+    $rules = [
+        'established_year' => ['min' => 1000, 'max' => 2100],
+        'faculties_count' => ['min' => 0],
+        'students_count' => ['min' => 0],
+        'lecturers_count' => ['min' => 0]
+    ];
+
+    foreach ($rules as $field => $constraints) {
+        if (!isset($input[$field])) continue;
+        if (!is_numeric($input[$field])) {
+            return "Invalid $field (must be numeric)";
+        }
+        $value = (int)$input[$field];
+        if (isset($constraints['min']) && $value < $constraints['min']) {
+            return "Invalid $field (minimum: {$constraints['min']})";
+        }
+        if (isset($constraints['max']) && $value > $constraints['max']) {
+            return "Invalid $field (maximum: {$constraints['max']})";
+        }
     }
     return null;
 }
