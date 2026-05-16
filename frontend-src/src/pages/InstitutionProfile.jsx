@@ -204,16 +204,31 @@ const InstitutionProfile = () => {
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
         <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
         <span className="text-gray-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
         <Link to="/institutions" className="hover:text-indigo-600 transition-colors">Institutions</Link>
         <span className="text-gray-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
         <span className="text-gray-900 font-medium">Profile Institusi</span>
       </nav>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="flex justify-center py-20">
+          <LoadingSpinner />
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+          {error}
+        </div>
+      )}
+
       {/* Header Section */}
+      {!loading && (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         {/* Left: Logo & Basic Info */}
         <div className="flex gap-6 lg:col-span-2">
@@ -705,6 +720,7 @@ const InstitutionProfile = () => {
           </div>
         </div>
       </div>
+      )}
     </main>
   );
 };

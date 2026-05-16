@@ -60,44 +60,48 @@ function getInstitutionProfile(int $institutionId): array {
         }
 
         // Fetch news
-        $newsStmt = $pdo->query("
+        $newsStmt = $pdo->prepare("
             SELECT id, title, description, image_url, category, news_date
             FROM institution_news
-            WHERE institution_id = $institutionId
+            WHERE institution_id = ?
             ORDER BY news_date DESC
             LIMIT 5
         ");
+        $newsStmt->execute([$institutionId]);
         $news = $newsStmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Fetch publication trends
-        $trendsStmt = $pdo->query("
+        $trendsStmt = $pdo->prepare("
             SELECT publication_year, publications_count, citations_count, average_citation
             FROM institution_publication_trend
-            WHERE institution_id = $institutionId
+            WHERE institution_id = ?
             ORDER BY publication_year ASC
         ");
+        $trendsStmt->execute([$institutionId]);
         $trends = $trendsStmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Fetch top researchers
-        $topResearchersStmt = $pdo->query("
+        $topResearchersStmt = $pdo->prepare("
             SELECT r.orcid, r.name, r.email, r.h_index, r.citation_count
             FROM researchers r
-            WHERE r.institution_id = $institutionId
+            WHERE r.institution_id = ?
             ORDER BY r.citation_count DESC
             LIMIT 10
         ");
+        $topResearchersStmt->execute([$institutionId]);
         $topResearchers = $topResearchersStmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Fetch top publications
-        $topPubStmt = $pdo->query("
+        $topPubStmt = $pdo->prepare("
             SELECT p.doi, p.title, p.publication_year, p.citation_count
             FROM publications p
             JOIN publication_authors pa ON pa.doi = p.doi
             JOIN researchers r ON r.orcid = pa.orcid
-            WHERE r.institution_id = $institutionId
+            WHERE r.institution_id = ?
             ORDER BY p.citation_count DESC
             LIMIT 10
         ");
+        $topPubStmt->execute([$institutionId]);
         $topPublications = $topPubStmt->fetchAll(PDO::FETCH_ASSOC);
 
         $sdgFocus = json_decode($inst['sdg_focus'] ?? '[]', true);

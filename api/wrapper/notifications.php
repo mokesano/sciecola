@@ -58,6 +58,10 @@ function getNotifications(string $orcid): array {
     $type = trim($_GET['type'] ?? '');
     $limit = (int)($_GET['limit'] ?? 50);
 
+    // DoS protection: cap limit
+    if ($limit > 500) $limit = 500;
+    if ($limit < 1) $limit = 1;
+
     if (!defined('DB_HOST') || !DB_HOST) {
         return getSampleNotifications();
     }
@@ -145,6 +149,13 @@ function markAsRead(int $id): array {
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
         );
 
+        // Verify notification exists
+        $checkStmt = $pdo->prepare("SELECT id FROM notifications WHERE id = ?");
+        $checkStmt->execute([$id]);
+        if (!$checkStmt->fetch()) {
+            return ['status' => 'error', 'message' => 'Notification not found'];
+        }
+
         $stmt = $pdo->prepare("UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ?");
         $stmt->execute([$id]);
 
@@ -166,6 +177,13 @@ function deleteNotification(int $id): array {
             DB_USERNAME, DB_PASSWORD,
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
         );
+
+        // Verify notification exists
+        $checkStmt = $pdo->prepare("SELECT id FROM notifications WHERE id = ?");
+        $checkStmt->execute([$id]);
+        if (!$checkStmt->fetch()) {
+            return ['status' => 'error', 'message' => 'Notification not found'];
+        }
 
         $stmt = $pdo->prepare("DELETE FROM notifications WHERE id = ?");
         $stmt->execute([$id]);

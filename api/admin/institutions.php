@@ -48,6 +48,20 @@ function createInstitution(string $adminOrcid): array {
         return ['status' => 'error', 'message' => 'Institution name required'];
     }
 
+    // Validate numeric fields
+    if (isset($input['established_year']) && (!is_numeric($input['established_year']) || $input['established_year'] < 1000 || $input['established_year'] > 2100)) {
+        return ['status' => 'error', 'message' => 'Invalid established_year (must be between 1000-2100)'];
+    }
+    if (isset($input['faculties_count']) && (!is_numeric($input['faculties_count']) || $input['faculties_count'] < 0)) {
+        return ['status' => 'error', 'message' => 'Invalid faculties_count (must be non-negative)'];
+    }
+    if (isset($input['students_count']) && (!is_numeric($input['students_count']) || $input['students_count'] < 0)) {
+        return ['status' => 'error', 'message' => 'Invalid students_count (must be non-negative)'];
+    }
+    if (isset($input['lecturers_count']) && (!is_numeric($input['lecturers_count']) || $input['lecturers_count'] < 0)) {
+        return ['status' => 'error', 'message' => 'Invalid lecturers_count (must be non-negative)'];
+    }
+
     if (!defined('DB_HOST') || !DB_HOST) {
         return ['status' => 'error', 'message' => 'Database not configured'];
     }
@@ -110,6 +124,20 @@ function updateInstitution(string $adminOrcid): array {
 
     if (empty($input['id'])) {
         return ['status' => 'error', 'message' => 'Institution ID required'];
+    }
+
+    // Validate numeric fields if provided
+    if (isset($input['established_year']) && (!is_numeric($input['established_year']) || $input['established_year'] < 1000 || $input['established_year'] > 2100)) {
+        return ['status' => 'error', 'message' => 'Invalid established_year (must be between 1000-2100)'];
+    }
+    if (isset($input['faculties_count']) && (!is_numeric($input['faculties_count']) || $input['faculties_count'] < 0)) {
+        return ['status' => 'error', 'message' => 'Invalid faculties_count (must be non-negative)'];
+    }
+    if (isset($input['students_count']) && (!is_numeric($input['students_count']) || $input['students_count'] < 0)) {
+        return ['status' => 'error', 'message' => 'Invalid students_count (must be non-negative)'];
+    }
+    if (isset($input['lecturers_count']) && (!is_numeric($input['lecturers_count']) || $input['lecturers_count'] < 0)) {
+        return ['status' => 'error', 'message' => 'Invalid lecturers_count (must be non-negative)'];
     }
 
     if (!defined('DB_HOST') || !DB_HOST) {

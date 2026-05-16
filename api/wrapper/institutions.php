@@ -34,6 +34,10 @@ function getInstitutions(): array {
     $sort = $_GET['sort'] ?? 'publications';
     $limit = (int)($_GET['limit'] ?? 50);
 
+    // DoS protection: cap limit
+    if ($limit > 500) $limit = 500;
+    if ($limit < 1) $limit = 1;
+
     if (!defined('DB_HOST') || !DB_HOST) {
         return getSampleInstitutions();
     }

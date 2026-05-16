@@ -60,6 +60,17 @@ function createNotification(string $adminOrcid): array {
         return ['status' => 'error', 'message' => 'Invalid notification type'];
     }
 
+    // Validate recipient ORCID format
+    $recipients = $input['recipient_orcid'];
+    if (!is_array($recipients)) {
+        $recipients = [$recipients];
+    }
+    foreach ($recipients as $orcid) {
+        if (!preg_match('/^\d{4}-\d{4}-\d{4}-\d{3}[0-9X]$/', $orcid)) {
+            return ['status' => 'error', 'message' => "Invalid ORCID format: $orcid"];
+        }
+    }
+
     if (!defined('DB_HOST') || !DB_HOST) {
         return ['status' => 'error', 'message' => 'Database not configured'];
     }
@@ -120,6 +131,11 @@ function createNotification(string $adminOrcid): array {
 function listNotifications(): array {
     $limit = (int)($_GET['limit'] ?? 100);
     $offset = (int)($_GET['offset'] ?? 0);
+
+    // DoS protection
+    if ($limit > 500) $limit = 500;
+    if ($limit < 1) $limit = 1;
+    if ($offset < 0) $offset = 0;
 
     if (!defined('DB_HOST') || !DB_HOST) {
         return ['status' => 'error', 'message' => 'Database not configured'];
