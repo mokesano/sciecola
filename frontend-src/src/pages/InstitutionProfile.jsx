@@ -1,18 +1,23 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { 
+import React, { useState, useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, AreaChart, Area, LineChart, Line
 } from 'recharts';
+import { LoadingSpinner } from '../components/shared';
 
 // ==========================================
 // INSTITUTION PROFILE COMPONENT
 // ==========================================
 const InstitutionProfile = () => {
+  const { id } = useParams();
   const [activeTab, setActiveTab] = useState('ringkasan');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [profileData, setProfileData] = useState(null);
 
-  // Mock data for Universitas Indonesia
-  const institution = {
+  // Default/fallback data
+  const defaultInstitution = {
     id: 1,
     name: "Universitas Indonesia",
     logo: "https://via.placeholder.com/150x150/fbbf24/ffffff?text=UI",
@@ -46,6 +51,64 @@ const InstitutionProfile = () => {
       instagram: "#"
     }
   };
+
+  // Fetch institution profile from API
+  useEffect(() => {
+    const fetchInstitutionProfile = async () => {
+      if (!id) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/institution_profile.php?id=${id}`);
+        const data = await response.json();
+
+        if (data.status === 'success' && data.institution) {
+          // Map API response to component structure
+          const mappedData = {
+            institution: {
+              ...data.institution,
+              publications: data.statistics?.publications || 0,
+              researchers: data.statistics?.researchers || 0,
+              citations: data.statistics?.citations || 0,
+              hIndex: data.statistics?.hIndex || 0,
+              i10Index: data.statistics?.i10Index || 0,
+              journals: data.statistics?.journals || 0,
+              collaborations: data.statistics?.collaborations || 0,
+              sdgs: (data.statistics?.sdg_focus || []).length,
+              location: `${data.institution.city || ''}, ${data.institution.country || ''}`.trim(),
+              established: data.institution.established_year ? `Tahun ${data.institution.established_year}` : 'N/A',
+              students: `${data.institution.students || 0} (2024)`,
+              lecturers: `${data.institution.lecturers || 0} (2024)`
+            },
+            publication_trend: data.publication_trend || [],
+            top_researchers: data.top_researchers || [],
+            top_publications: data.top_publications || [],
+            news: data.news || [],
+            sdg_list: data.statistics?.sdg_focus || []
+          };
+
+          setProfileData(mappedData);
+          setError(null);
+        } else {
+          setProfileData(null);
+          setError('Failed to load institution data');
+        }
+      } catch (err) {
+        console.error('Error fetching institution:', err);
+        setProfileData(null);
+        setError('Failed to load institution data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInstitutionProfile();
+  }, [id]);
+
+  const institution = profileData?.institution || defaultInstitution;
 
   // Publication trend data
   const publicationTrend = [
