@@ -1,7 +1,8 @@
 -- ═══════════════════════════════════════════════════════════════
--- Priority 1: Core Infrastructure Tables & Columns
--- File: db/priority1_infrastructure.sql
--- Adds missing columns to existing tables and creates essential new tables
+-- Extended Infrastructure: Core Tables & Columns Enhancement
+-- File: db/schema_extended_infrastructure.sql
+-- Extends institutions, researchers, team_members tables
+-- Creates notification, preference, and statistics tracking tables
 -- ═══════════════════════════════════════════════════════════════
 
 USE wizdam_ecosystem;
