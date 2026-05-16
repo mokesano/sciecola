@@ -100,21 +100,22 @@ function getProjects(): array {
                 'description' => $row['description'],
                 'status' => $row['status'],
                 'progress' => (int)$row['progress'],
-                'startDate' => $row['start_date'],
-                'endDate' => $row['end_date'],
-                'sdgFocus' => is_array($sdgFocus) ? $sdgFocus : [],
-                'team' => (int)$row['team_size'],
+                'start_date' => $row['start_date'],
+                'end_date' => $row['end_date'],
+                'sdg_focus' => is_array($sdgFocus) ? $sdgFocus : [],
+                'collaborators' => (int)$row['team_size'],
                 'publications' => (int)$row['publication_count'],
                 'budget' => (float)($row['budget'] ?? 0),
                 'spent' => (float)($row['spent'] ?? 0),
-                'piName' => $row['lead_name'],
-                'institution' => $row['institution']
+                'lead_name' => $row['lead_name'],
+                'institution' => $row['institution'],
+                'updated_at' => $row['updated_at']
             ];
         }, $rows);
 
         return [
             'status' => 'success',
-            'data' => $projects,
+            'projects' => $projects,
             'total' => count($projects),
             'timestamp' => date('c')
         ];
@@ -286,9 +287,9 @@ function updateProject(): array {
 function getSampleProjects(): array {
     return [
         'status' => 'success',
-        'data' => [
-            ['id' => 1, 'title' => 'Ocean Acidification Impact Study', 'description' => 'Comprehensive analysis', 'status' => 'active', 'progress' => 67, 'startDate' => '2024-01-15', 'endDate' => '2025-06-30', 'sdgFocus' => [13, 14], 'team' => 3, 'publications' => 3, 'budget' => 450000, 'spent' => 287500, 'piName' => 'Dr. Sarah Chen', 'institution' => 'MIT'],
-            ['id' => 2, 'title' => 'Solar Grid Optimization Initiative', 'description' => 'AI-powered algorithms', 'status' => 'active', 'progress' => 45, 'startDate' => '2024-03-01', 'endDate' => '2025-12-31', 'sdgFocus' => [7, 9, 11], 'team' => 2, 'publications' => 1, 'budget' => 680000, 'spent' => 245000, 'piName' => 'Prof. Ahmed Hassan', 'institution' => 'Cairo University']
+        'projects' => [
+            ['id' => 1, 'title' => 'Ocean Acidification Impact Study', 'description' => 'Comprehensive analysis', 'status' => 'active', 'progress' => 67, 'start_date' => '2024-01-15', 'end_date' => '2025-06-30', 'sdg_focus' => [13, 14], 'collaborators' => 3, 'publications' => 3, 'budget' => 450000, 'spent' => 287500, 'lead_name' => 'Dr. Sarah Chen', 'institution' => 'MIT'],
+            ['id' => 2, 'title' => 'Solar Grid Optimization Initiative', 'description' => 'AI-powered algorithms', 'status' => 'active', 'progress' => 45, 'start_date' => '2024-03-01', 'end_date' => '2025-12-31', 'sdg_focus' => [7, 9, 11], 'collaborators' => 2, 'publications' => 1, 'budget' => 680000, 'spent' => 245000, 'lead_name' => 'Prof. Ahmed Hassan', 'institution' => 'Cairo University']
         ],
         'total' => 2,
         'timestamp' => date('c')
