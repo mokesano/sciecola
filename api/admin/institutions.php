@@ -134,6 +134,24 @@ function createInstitution(string $adminOrcid, string $ipAddress): array {
     }
 }
 
+function collectInstitutionUpdates(array $input): array {
+    $updates = [];
+    $params  = [];
+
+    $fields = ['name', 'acronym', 'country', 'city', 'website_url', 'logo_url',
+               'type', 'established_year', 'rector_name', 'faculties_count',
+               'students_count', 'lecturers_count', 'motto'];
+
+    foreach ($fields as $field) {
+        if (isset($input[$field])) {
+            $updates[] = "$field = ?";
+            $params[]  = $input[$field];
+        }
+    }
+
+    return ['updates' => $updates, 'params' => $params];
+}
+
 function updateInstitution(string $adminOrcid, string $ipAddress): array {
     $input = json_decode(file_get_contents('php://input'), true);
 
@@ -165,19 +183,7 @@ function updateInstitution(string $adminOrcid, string $ipAddress): array {
             return ['status' => 'error', 'message' => 'Institution not found'];
         }
 
-        $updates = [];
-        $params  = [];
-
-        $fields = ['name', 'acronym', 'country', 'city', 'website_url', 'logo_url',
-                   'type', 'established_year', 'rector_name', 'faculties_count',
-                   'students_count', 'lecturers_count', 'motto'];
-
-        foreach ($fields as $field) {
-            if (isset($input[$field])) {
-                $updates[] = "$field = ?";
-                $params[]  = $input[$field];
-            }
-        }
+        ['updates' => $updates, 'params' => $params] = collectInstitutionUpdates($input);
 
         if (empty($updates)) {
             return ['status' => 'error', 'message' => 'No fields to update'];

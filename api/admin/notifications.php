@@ -63,6 +63,23 @@ function createNotification(string $adminOrcid, string $ipAddress): array {
         return $orcidError;
     }
 
+    return insertNotifications($adminOrcid, $ipAddress, $input, $recipients);
+}
+
+function normalizeNotificationInput(array $input): array {
+    return [
+        'type'             => $input['type'],
+        'category'         => $input['category'] ?? null,
+        'title'            => $input['title'],
+        'message'          => $input['message'],
+        'link'             => $input['link'] ?? null,
+        'data'             => isset($input['data']) ? json_encode($input['data']) : null,
+        'action_required'  => $input['action_required'] ?? 0,
+        'action_deadline'  => $input['action_deadline'] ?? null
+    ];
+}
+
+function insertNotifications(string $adminOrcid, string $ipAddress, array $input, array $recipients): array {
     if (!defined('DB_HOST') || !DB_HOST) {
         return ['status' => 'error', 'message' => 'Database not configured'];
     }
@@ -74,25 +91,24 @@ function createNotification(string $adminOrcid, string $ipAddress): array {
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
         );
 
-        $extraData = $input['data'] ?? null;
+        $norm = normalizeNotificationInput($input);
+        $stmt = $pdo->prepare("
+            INSERT INTO notifications
+            (recipient_orcid, type, category, title, message, link, data, action_required, action_deadline)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ");
 
         foreach ($recipients as $orcid) {
-            $stmt = $pdo->prepare("
-                INSERT INTO notifications
-                (recipient_orcid, type, category, title, message, link, data, action_required, action_deadline)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ");
-
             $stmt->execute([
                 $orcid,
-                $input['type'],
-                $input['category'] ?? null,
-                $input['title'],
-                $input['message'],
-                $input['link'] ?? null,
-                $extraData ? json_encode($extraData) : null,
-                $input['action_required'] ?? 0,
-                $input['action_deadline'] ?? null
+                $norm['type'],
+                $norm['category'],
+                $norm['title'],
+                $norm['message'],
+                $norm['link'],
+                $norm['data'],
+                $norm['action_required'],
+                $norm['action_deadline']
             ]);
         }
 
