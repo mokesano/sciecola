@@ -33,7 +33,7 @@ function calculateMatches(): array {
     if (!$input || empty($input)) {
         return [
             'status' => 'success',
-            'data' => getSampleMatches(),
+            'matches' => getSampleMatches(),
             'timestamp' => date('c')
         ];
     }
@@ -41,7 +41,7 @@ function calculateMatches(): array {
     if (!defined('DB_HOST') || !DB_HOST) {
         return [
             'status' => 'success',
-            'data' => getSampleMatches(),
+            'matches' => getSampleMatches(),
             'timestamp' => date('c')
         ];
     }
@@ -71,27 +71,28 @@ function calculateMatches(): array {
         foreach ($researchers as $match) {
             $score = rand(80, 96);
             $matches[] = [
+                'id' => $match['orcid'],
                 'orcid' => $match['orcid'],
                 'name' => $match['name'],
-                'matchScore' => $score,
-                'matchReasons' => [
+                'match_score' => $score,
+                'match_reasons' => [
                     'Similar research focus',
                     'Complementary expertise',
                     'Active collaboration network',
                     'High citation impact'
                 ],
-                'sdgFocus' => array_map('intval', explode(',', $match['sdgs'] ?? '')),
-                'hIndex' => (int)$match['h_index'],
+                'sdg_focus' => array_map('intval', explode(',', $match['sdgs'] ?? '')),
+                'h_index' => (int)$match['h_index'],
                 'publications' => rand(100, 300),
                 'collaborations' => rand(30, 70),
                 'availability' => ['available', 'limited', 'selective'][rand(0, 2)],
-                'responseTime' => ['< 24 hours', '< 48 hours', '< 72 hours'][rand(0, 2)]
+                'response_time' => ['< 24 hours', '< 48 hours', '< 72 hours'][rand(0, 2)]
             ];
         }
 
         return [
             'status' => 'success',
-            'data' => $matches,
+            'matches' => $matches,
             'total' => count($matches),
             'timestamp' => date('c')
         ];
@@ -99,7 +100,7 @@ function calculateMatches(): array {
         error_log($e->getMessage());
         return [
             'status' => 'success',
-            'data' => getSampleMatches(),
+            'matches' => getSampleMatches(),
             'timestamp' => date('c')
         ];
     }
@@ -110,38 +111,36 @@ function getSampleMatches(): array {
         [
             'id' => 1,
             'name' => 'Dr. Sarah Chen',
-            'matchScore' => 96,
-            'matchReasons' => [
+            'match_score' => 96,
+            'match_reasons' => [
                 'Similar research focus on climate change',
                 'Complementary expertise in ocean systems',
                 'Active in SDG 13 & 14',
                 'Previous collaboration success rate: 94%'
             ],
-            'sdgFocus' => [13, 14, 15],
-            'hIndex' => 52,
+            'sdg_focus' => [13, 14, 15],
+            'h_index' => 52,
             'publications' => 234,
             'collaborations' => 47,
-            'avatar' => 'https://i.pravatar.cc/150?img=1',
             'availability' => 'Available for new projects',
-            'responseTime' => '< 24 hours'
+            'response_time' => '< 24 hours'
         ],
         [
             'id' => 2,
             'name' => 'Prof. Ahmed Hassan',
-            'matchScore' => 93,
-            'matchReasons' => [
+            'match_score' => 93,
+            'match_reasons' => [
                 'Expertise in sustainable energy systems',
                 'Strong publication record in related fields',
                 'Active collaboration network',
                 'Geographic diversity for global impact'
             ],
-            'sdgFocus' => [7, 9, 11],
-            'hIndex' => 48,
+            'sdg_focus' => [7, 9, 11],
+            'h_index' => 48,
             'publications' => 189,
             'collaborations' => 63,
-            'avatar' => 'https://i.pravatar.cc/150?img=2',
             'availability' => 'Available for new projects',
-            'responseTime' => '< 48 hours'
+            'response_time' => '< 48 hours'
         ]
     ];
 }

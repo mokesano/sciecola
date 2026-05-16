@@ -101,18 +101,17 @@ function getOpportunities(): array {
                 'type' => $row['org_type'],
                 'category' => $row['category'],
                 'description' => substr($row['description'], 0, 300) . '...',
-                'sdgFocus' => is_array($sdgs) ? $sdgs : [],
-                'budget' => $row['budget_range'],
+                'sdg_focus' => is_array($sdgs) ? $sdgs : [],
+                'budget_range' => $row['budget_range'],
+                'required_skills' => is_array($skills) ? $skills : [],
                 'deadline' => $row['deadline'],
-                'applicants' => (int)$row['application_count'],
-                'status' => 'open',
-                'logo' => $row['logo_url']
+                'status' => 'open'
             ];
         }, $rows);
 
         return [
             'status' => 'success',
-            'data' => $opportunities,
+            'opportunities' => $opportunities,
             'total' => count($opportunities),
             'timestamp' => date('c')
         ];
@@ -183,9 +182,9 @@ function applyToOpportunity(): array {
 function getSampleOpportunities(): array {
     return [
         'status' => 'success',
-        'data' => [
-            ['id' => 1, 'title' => 'Carbon Capture Technology Partnership', 'organization' => 'Tesla Energy', 'type' => 'industry', 'category' => 'Climate Tech', 'description' => 'Seeking academic partners for next-generation carbon capture...', 'sdgFocus' => [13, 9, 7], 'budget' => '$2.5M', 'deadline' => '2025-02-28', 'applicants' => 47, 'status' => 'open', 'logo' => 'https://logo.clearbit.com/tesla.com'],
-            ['id' => 2, 'title' => 'AI-Driven Drug Discovery Collaboration', 'organization' => 'Pfizer Research', 'type' => 'industry', 'category' => 'Healthcare', 'description' => 'Revolutionary AI platform for accelerating drug discovery...', 'sdgFocus' => [3, 9], 'budget' => '$4.2M', 'deadline' => '2025-01-31', 'applicants' => 89, 'status' => 'open', 'logo' => 'https://logo.clearbit.com/pfizer.com']
+        'opportunities' => [
+            ['id' => 1, 'title' => 'Carbon Capture Technology Partnership', 'organization' => 'Tesla Energy', 'type' => 'industry', 'category' => 'Climate Tech', 'description' => 'Seeking academic partners for next-generation carbon capture...', 'sdg_focus' => [13, 9, 7], 'budget_range' => '$2.5M', 'required_skills' => ['Environmental Science', 'Carbon Capture'], 'deadline' => '2025-02-28', 'status' => 'open'],
+            ['id' => 2, 'title' => 'AI-Driven Drug Discovery Collaboration', 'organization' => 'Pfizer Research', 'type' => 'industry', 'category' => 'Healthcare', 'description' => 'Revolutionary AI platform for accelerating drug discovery...', 'sdg_focus' => [3, 9], 'budget_range' => '$4.2M', 'required_skills' => ['Machine Learning', 'Bioinformatics'], 'deadline' => '2025-01-31', 'status' => 'open']
         ],
         'total' => 2,
         'timestamp' => date('c')

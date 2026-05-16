@@ -126,8 +126,8 @@ const ResearchMatching = () => {
 
       const data = await response.json();
 
-      if (data.status === 'success' && data.matches) {
-        setAiMatches(data.matches);
+      if (data.status === 'success' && (data.matches || data.data)) {
+        setAiMatches(data.matches || data.data);
       } else {
         setAiMatches(mockMatches);
       }
@@ -421,7 +421,7 @@ const ResearchMatching = () => {
                           </div>
                           <div className="text-center">
                             <div className="text-sm font-semibold text-green-600">{match.availability}</div>
-                            <div className="text-xs text-gray-500">{match.responseTime}</div>
+                            <div className="text-xs text-gray-500">{match.response_time}</div>
                           </div>
                         </div>
 
