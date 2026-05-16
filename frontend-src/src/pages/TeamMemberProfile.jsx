@@ -85,7 +85,6 @@ const TeamMemberProfile = () => {
   const { memberSlug } = useParams();
   const [member, setMember] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   // Fetch team member from API
   useEffect(() => {
@@ -96,14 +95,12 @@ const TeamMemberProfile = () => {
         const data = await response.json();
         if (data.status === 'success' && data.member) {
           setMember(data);
-          setError(null);
         } else {
           setMember(null);
         }
       } catch (err) {
         console.error('Error fetching team member:', err);
         setMember(null);
-        setError('Failed to load team member');
       } finally {
         setLoading(false);
       }
