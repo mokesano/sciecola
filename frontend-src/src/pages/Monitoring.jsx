@@ -309,23 +309,23 @@ const Monitoring = () => {
         </div>
       </div>
 
-      {loading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-8 flex flex-col items-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent mb-4"></div>
-            <p className="text-gray-700 font-medium">Loading monitoring data...</p>
-          </div>
-        </div>
-      )}
-
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mx-4 mt-4">
-          <p className="text-red-700">Error loading data: {error}. Using cached data.</p>
-        </div>
-      )}
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        
+
+        {loading && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-8 flex flex-col items-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent mb-4"></div>
+              <p className="text-gray-700 font-medium">Loading monitoring data...</p>
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <p className="text-red-700">Error loading data: {error}. Using cached data.</p>
+          </div>
+        )}
+
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           <div className="p-5 border-b border-gray-100">
             <h2 className="text-lg font-bold text-gray-900">Geographic Distribution</h2>
