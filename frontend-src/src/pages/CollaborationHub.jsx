@@ -14,9 +14,40 @@ const CollaborationHub = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedResearcher, setSelectedResearcher] = useState(null);
   const [viewMode, setViewMode] = useState('grid');
+  const [researchers, setResearchers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [networkStats, setNetworkStats] = useState(null);
 
-  // Mock data untuk collaboration network
-  const researchers = [
+  // Fetch data dari API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [researchersRes, statsRes] = await Promise.all([
+          fetch('/api/collaboration.php?action=researchers&status=' + (activeFilter === 'open' ? 'open' : 'open')),
+          fetch('/api/collaboration.php?action=stats')
+        ]);
+
+        const researchersJson = await researchersRes.json();
+        const statsJson = await statsRes.json();
+
+        if (researchersJson.status === 'success') {
+          setResearchers(researchersJson.data);
+        }
+        if (statsJson.status === 'success') {
+          setNetworkStats(statsJson.data);
+        }
+      } catch (e) {
+        console.error('Error fetching collaboration data:', e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [activeFilter]);
+
+  // Fallback mock data jika API tidak tersedia
+  const defaultResearchers = [
     {
       id: 1,
       name: 'Dr. Sarah Chen',
@@ -103,7 +134,7 @@ const CollaborationHub = () => {
     }
   ];
 
-  const networkStats = {
+  const statsDisplay = networkStats || {
     totalResearchers: 12847,
     activeCollaborations: 3421,
     countries: 156,
@@ -197,12 +228,12 @@ const CollaborationHub = () => {
         <div className="container max-w-7xl mx-auto w-full px-8">
           <div className="bg-white rounded-3xl shadow-2xl p-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {[
-              { label: 'Researchers', value: networkStats.totalResearchers.toLocaleString(), icon: Users },
-              { label: 'Collaborations', value: networkStats.activeCollaborations.toLocaleString(), icon: Handshake },
-              { label: 'Countries', value: networkStats.countries, icon: Globe },
-              { label: 'Institutions', value: networkStats.institutions.toLocaleString(), icon: Building2 },
-              { label: 'Projects', value: networkStats.projectsCompleted.toLocaleString(), icon: Target },
-              { label: 'Avg Score', value: networkStats.avgCollaborationScore, icon: Award }
+              { label: 'Researchers', value: statsDisplay.totalResearchers.toLocaleString(), icon: Users },
+              { label: 'Collaborations', value: statsDisplay.activeCollaborations.toLocaleString(), icon: Handshake },
+              { label: 'Countries', value: statsDisplay.countries, icon: Globe },
+              { label: 'Institutions', value: statsDisplay.institutions.toLocaleString(), icon: Building2 },
+              { label: 'Projects', value: statsDisplay.projectsCompleted.toLocaleString(), icon: Target },
+              { label: 'Avg Score', value: statsDisplay.avgCollaborationScore, icon: Award }
             ].map((stat, index) => (
               <div key={index} className="text-center group">
                 <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl mb-3 group-hover:scale-110 transition-transform duration-300">
