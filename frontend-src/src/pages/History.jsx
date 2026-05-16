@@ -6,7 +6,7 @@ import { IconSparkles, IconChartBar, IconTrendingUp, IconStar, IconBolt, IconGlo
 const History = () => {
   const [timelineData, setTimelineData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [, setError] = useState(null);
 
   // Fetch timeline on mount
   useEffect(() => {
