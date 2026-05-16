@@ -14,9 +14,46 @@ const CollaborationHub = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedResearcher, setSelectedResearcher] = useState(null);
   const [viewMode, setViewMode] = useState('grid');
+  const [researchers, setResearchers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [networkStats, setNetworkStats] = useState(null);
 
-  // Mock data untuk collaboration network
-  const researchers = [
+  // Fetch data dari API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const statusParam = activeFilter === 'all' ? '' : `&status=${activeFilter}`;
+        const [researchersRes, statsRes] = await Promise.all([
+          fetch(`/api/collaboration.php?action=researchers${statusParam}`),
+          fetch('/api/collaboration.php?action=stats')
+        ]);
+
+        const researchersJson = await researchersRes.json();
+        const statsJson = await statsRes.json();
+
+        if (researchersJson.status === 'success') {
+          // Set actual API result - preserve empty results as legitimate
+          setResearchers(researchersJson.data || []);
+        } else {
+          // Only fallback on API error, not on empty results
+          setResearchers(defaultResearchers);
+        }
+        if (statsJson.status === 'success') {
+          setNetworkStats(statsJson.data);
+        }
+      } catch (e) {
+        console.error('Error fetching collaboration data:', e);
+        setResearchers(defaultResearchers);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [activeFilter]);
+
+  // Fallback mock data jika API tidak tersedia
+  const defaultResearchers = [
     {
       id: 1,
       name: 'Dr. Sarah Chen',
@@ -103,7 +140,7 @@ const CollaborationHub = () => {
     }
   ];
 
-  const networkStats = {
+  const statsDisplay = networkStats || {
     totalResearchers: 12847,
     activeCollaborations: 3421,
     countries: 156,
@@ -142,14 +179,16 @@ const CollaborationHub = () => {
   };
 
   const filteredResearchers = researchers.filter(researcher => {
-    const matchesSearch = researcher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         researcher.institution.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         researcher.title.toLowerCase().includes(searchTerm.toLowerCase());
-    
+    const name = (researcher.name || '').toLowerCase();
+    const institution = (researcher.institution || '').toLowerCase();
+    const bio = (researcher.bio || researcher.title || '').toLowerCase();
+    const matchesSearch = name.includes(searchTerm.toLowerCase()) ||
+                         institution.includes(searchTerm.toLowerCase()) ||
+                         bio.includes(searchTerm.toLowerCase());
+
     if (activeFilter === 'all') return matchesSearch;
     if (activeFilter === 'open') return matchesSearch && researcher.status === 'open';
-    if (activeFilter === 'by-sdg') return matchesSearch; // Could add SDG filtering logic
-    
+
     return matchesSearch;
   });
 
@@ -197,12 +236,12 @@ const CollaborationHub = () => {
         <div className="container max-w-7xl mx-auto w-full px-8">
           <div className="bg-white rounded-3xl shadow-2xl p-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {[
-              { label: 'Researchers', value: networkStats.totalResearchers.toLocaleString(), icon: Users },
-              { label: 'Collaborations', value: networkStats.activeCollaborations.toLocaleString(), icon: Handshake },
-              { label: 'Countries', value: networkStats.countries, icon: Globe },
-              { label: 'Institutions', value: networkStats.institutions.toLocaleString(), icon: Building2 },
-              { label: 'Projects', value: networkStats.projectsCompleted.toLocaleString(), icon: Target },
-              { label: 'Avg Score', value: networkStats.avgCollaborationScore, icon: Award }
+              { label: 'Researchers', value: statsDisplay.totalResearchers.toLocaleString(), icon: Users },
+              { label: 'Collaborations', value: statsDisplay.activeCollaborations.toLocaleString(), icon: Handshake },
+              { label: 'Countries', value: statsDisplay.countries, icon: Globe },
+              { label: 'Institutions', value: statsDisplay.institutions.toLocaleString(), icon: Building2 },
+              { label: 'Projects', value: statsDisplay.projectsCompleted.toLocaleString(), icon: Target },
+              { label: 'Avg Score', value: statsDisplay.avgCollaborationScore, icon: Award }
             ].map((stat, index) => (
               <div key={index} className="text-center group">
                 <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl mb-3 group-hover:scale-110 transition-transform duration-300">
@@ -293,9 +332,15 @@ const CollaborationHub = () => {
           {/* Researchers Grid/List */}
           {viewMode === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredResearchers.map((researcher) => (
+              {loading ? (
+                <div className="col-span-full flex justify-center items-center py-12">
+                  <div className="w-12 h-12 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                </div>
+              ) : filteredResearchers.length === 0 ? (
+                <div className="col-span-full text-center py-12 text-gray-500">No researchers found</div>
+              ) : filteredResearchers.map((researcher) => (
                 <div
-                  key={researcher.id}
+                  key={researcher.orcid || researcher.id}
                   className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group cursor-pointer transform hover:-translate-y-2"
                   onClick={() => setSelectedResearcher(researcher)}
                 >
@@ -310,15 +355,16 @@ const CollaborationHub = () => {
                   
                   <div className="p-6 -mt-12 relative">
                     <img
-                      src={researcher.avatar}
+                      src={researcher.avatar || `https://i.pravatar.cc/150?u=${researcher.orcid}`}
                       alt={researcher.name}
                       className="w-24 h-24 rounded-2xl border-4 border-white shadow-lg mb-4 object-cover"
+                      onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
                     />
                     
                     <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-indigo-600 transition-colors">
                       {researcher.name}
                     </h3>
-                    <p className="text-gray-600 text-sm mb-2">{researcher.title}</p>
+                    <p className="text-gray-600 text-sm mb-2">{researcher.title || researcher.bio || 'Researcher'}</p>
                     
                     <div className="flex items-center gap-2 text-gray-500 text-sm mb-4">
                       <Building2 className="w-4 h-4" />
@@ -352,7 +398,7 @@ const CollaborationHub = () => {
                         <div className="text-xs text-gray-500">H-Index</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-lg font-bold text-indigo-600">{researcher.publications}</div>
+                        <div className="text-lg font-bold text-indigo-600">{researcher.publications ?? researcher.citations ?? 0}</div>
                         <div className="text-xs text-gray-500">Publications</div>
                       </div>
                     </div>
@@ -373,23 +419,30 @@ const CollaborationHub = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              {filteredResearchers.map((researcher) => (
+              {loading ? (
+                <div className="flex justify-center items-center py-12">
+                  <div className="w-12 h-12 border-4 border-gray-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                </div>
+              ) : filteredResearchers.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">No researchers found</div>
+              ) : filteredResearchers.map((researcher) => (
                 <div
-                  key={researcher.id}
+                  key={researcher.orcid || researcher.id}
                   className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 flex items-center gap-6 cursor-pointer group"
                   onClick={() => setSelectedResearcher(researcher)}
                 >
                   <img
-                    src={researcher.avatar}
+                    src={researcher.avatar || `https://i.pravatar.cc/150?u=${researcher.orcid}`}
                     alt={researcher.name}
                     className="w-20 h-20 rounded-xl object-cover"
+                    onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
                   />
                   
                   <div className="flex-1">
                     <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-indigo-600 transition-colors">
                       {researcher.name}
                     </h3>
-                    <p className="text-gray-600 text-sm mb-2">{researcher.title}</p>
+                    <p className="text-gray-600 text-sm mb-2">{researcher.title || researcher.bio || 'Researcher'}</p>
                     <div className="flex items-center gap-4 text-gray-500 text-sm">
                       <span className="flex items-center gap-1">
                         <Building2 className="w-4 h-4" />

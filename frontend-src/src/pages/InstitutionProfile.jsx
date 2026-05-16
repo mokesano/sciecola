@@ -1,18 +1,23 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { 
+import React, { useState, useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, AreaChart, Area, LineChart, Line
 } from 'recharts';
+import { LoadingSpinner } from '../components/shared';
 
 // ==========================================
 // INSTITUTION PROFILE COMPONENT
 // ==========================================
 const InstitutionProfile = () => {
+  const { id } = useParams();
   const [activeTab, setActiveTab] = useState('ringkasan');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [profileData, setProfileData] = useState(null);
 
-  // Mock data for Universitas Indonesia
-  const institution = {
+  // Default/fallback data
+  const defaultInstitution = {
     id: 1,
     name: "Universitas Indonesia",
     logo: "https://via.placeholder.com/150x150/fbbf24/ffffff?text=UI",
@@ -46,6 +51,64 @@ const InstitutionProfile = () => {
       instagram: "#"
     }
   };
+
+  // Fetch institution profile from API
+  useEffect(() => {
+    const fetchInstitutionProfile = async () => {
+      if (!id) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/institution_profile.php?id=${id}`);
+        const data = await response.json();
+
+        if (data.status === 'success' && data.institution) {
+          // Map API response to component structure
+          const mappedData = {
+            institution: {
+              ...data.institution,
+              publications: data.statistics?.publications || 0,
+              researchers: data.statistics?.researchers || 0,
+              citations: data.statistics?.citations || 0,
+              hIndex: data.statistics?.hIndex || 0,
+              i10Index: data.statistics?.i10Index || 0,
+              journals: data.statistics?.journals || 0,
+              collaborations: data.statistics?.collaborations || 0,
+              sdgs: (data.statistics?.sdg_focus || []).length,
+              location: `${data.institution.city || ''}, ${data.institution.country || ''}`.trim(),
+              established: data.institution.established_year ? `Tahun ${data.institution.established_year}` : 'N/A',
+              students: `${data.institution.students || 0} (2024)`,
+              lecturers: `${data.institution.lecturers || 0} (2024)`
+            },
+            publication_trend: data.publication_trend || [],
+            top_researchers: data.top_researchers || [],
+            top_publications: data.top_publications || [],
+            news: data.news || [],
+            sdg_list: data.statistics?.sdg_focus || []
+          };
+
+          setProfileData(mappedData);
+          setError(null);
+        } else {
+          setProfileData(null);
+          setError('Failed to load institution data');
+        }
+      } catch (err) {
+        console.error('Error fetching institution:', err);
+        setProfileData(null);
+        setError('Failed to load institution data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInstitutionProfile();
+  }, [id]);
+
+  const institution = profileData?.institution || defaultInstitution;
 
   // Publication trend data
   const publicationTrend = [
@@ -141,25 +204,41 @@ const InstitutionProfile = () => {
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
         <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
         <span className="text-gray-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
         <Link to="/institutions" className="hover:text-indigo-600 transition-colors">Institutions</Link>
         <span className="text-gray-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
         <span className="text-gray-900 font-medium">Profile Institusi</span>
       </nav>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="flex justify-center py-20">
+          <LoadingSpinner />
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+          {error}
+        </div>
+      )}
+
       {/* Header Section */}
+      {!loading && (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         {/* Left: Logo & Basic Info */}
         <div className="flex gap-6 lg:col-span-2">
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
             <div className="text-center mb-6">
-              <img 
-                src={institution.logo} 
+              <img
+                src={institution.logo}
                 alt={institution.name}
                 className="w-32 h-32 object-contain mx-auto mb-4"
+                onError={(e) => {e.target.src = '/assets/img/institution-default.svg'}}
               />
               <h1 className="text-2xl font-bold text-gray-900 mb-1">{institution.name}</h1>
               <div className="flex gap-2 justify-center mt-2">
@@ -234,23 +313,23 @@ const InstitutionProfile = () => {
 
             {/* Social Links */}
             <div className="flex gap-3 mt-6 pt-6 border-t border-gray-100">
-              <a href={institution.social.globe} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <a href={institution.social.globe} aria-label="Visit website" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                 </svg>
               </a>
-              <a href={institution.social.linkedin} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <a href={institution.social.linkedin} aria-label="Visit LinkedIn" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/>
                 </svg>
               </a>
-              <a href={institution.social.youtube} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <a href={institution.social.youtube} aria-label="Visit YouTube" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                 </svg>
               </a>
-              <a href={institution.social.instagram} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <a href={institution.social.instagram} aria-label="Visit Instagram" className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-600 hover:text-white transition-colors">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                 </svg>
               </a>
@@ -347,6 +426,7 @@ const InstitutionProfile = () => {
           </div>
         </div>
       </div>
+      )}
 
       {/* Navigation Tabs */}
       <div className="border-b border-gray-200 mb-8 overflow-x-auto">
@@ -364,13 +444,15 @@ const InstitutionProfile = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
+              aria-current={activeTab === tab.id ? 'page' : undefined}
+              aria-label={`${tab.label} tab`}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
                 activeTab === tab.id
                   ? 'border-indigo-600 text-indigo-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={tab.icon} />
               </svg>
               {tab.label}
@@ -550,7 +632,12 @@ const InstitutionProfile = () => {
           <div className="space-y-3">
             {topCollaborators.map((collab, idx) => (
               <div key={idx} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors">
-                <img src={collab.logo} alt={collab.name} className="w-10 h-10 rounded-lg object-cover" />
+                <img
+                  src={collab.logo}
+                  alt={collab.name}
+                  className="w-10 h-10 rounded-lg object-cover"
+                  onError={(e) => {e.target.src = '/assets/img/institution-default.svg'}}
+                />
                 <div className="flex-grow min-w-0">
                   <h4 className="font-semibold text-gray-900 text-sm mb-0.5 truncate">{collab.name}</h4>
                   <p className="text-xs text-gray-500 truncate">{collab.country}</p>
@@ -603,7 +690,12 @@ const InstitutionProfile = () => {
           <div className="space-y-4">
             {news.map((item, idx) => (
               <div key={idx} className="flex gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors">
-                <img src={item.image} alt={item.title} className="w-20 h-16 object-cover rounded-lg shrink-0" />
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-20 h-16 object-cover rounded-lg shrink-0"
+                  onError={(e) => {e.target.src = '/assets/img/article-default.svg'}}
+                />
                 <div className="flex-grow min-w-0">
                   <h4 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{item.title}</h4>
                   <p className="text-xs text-gray-500">{item.date}</p>
@@ -642,6 +734,7 @@ const InstitutionProfile = () => {
           </div>
         </div>
       </div>
+      )}
     </main>
   );
 };

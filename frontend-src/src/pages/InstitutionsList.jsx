@@ -1,20 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { 
+import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, AreaChart, Area, LineChart, Line
 } from 'recharts';
+import { LoadingSpinner } from '../components/shared';
 
 // ==========================================
 // INSTITUTIONS LIST COMPONENT
 // ==========================================
 const InstitutionsList = () => {
+  const [searchQueryLocal, setSearchQueryLocal] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('all');
-  const [sortBy, setSortBy] = useState('relevance');
+  const [sortBy, setSortBy] = useState('publications');
+  const [institutions, setInstitutions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const searchTimeoutRef = useRef(null);
 
-  // Mock data institutions
-  const institutions = [
+  // Debounce search input (300ms)
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchQueryLocal(value);
+    clearTimeout(searchTimeoutRef.current);
+    searchTimeoutRef.current = setTimeout(() => {
+      setSearchQuery(value);
+    }, 300);
+  };
+
+  // Default/fallback data
+  const defaultInstitutions = [
     {
       id: 1,
       name: "Universitas Indonesia",
@@ -113,13 +129,41 @@ const InstitutionsList = () => {
     }
   ];
 
-  const countries = ['all', 'Indonesia', 'Australia', 'Singapore', 'Malaysia'];
+  // Fetch institutions from API
+  useEffect(() => {
+    const fetchInstitutions = async () => {
+      try {
+        setLoading(true);
+        const params = new URLSearchParams();
+        if (selectedCountry !== 'all') params.append('country', selectedCountry);
+        if (searchQuery) params.append('search', searchQuery);
+        params.append('sort', sortBy);
+        params.append('limit', '50');
 
-  const filteredInstitutions = institutions.filter(inst => {
-    const matchesSearch = inst.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCountry = selectedCountry === 'all' || inst.country === selectedCountry;
-    return matchesSearch && matchesCountry;
-  });
+        const response = await fetch(`/api/institutions.php?${params.toString()}`);
+        const data = await response.json();
+
+        if (data.status === 'success' && data.institutions) {
+          setInstitutions(data.institutions);
+          setError(null);
+        } else {
+          setInstitutions(defaultInstitutions);
+        }
+      } catch (err) {
+        console.error('Error fetching institutions:', err);
+        setInstitutions(defaultInstitutions);
+        setError('Failed to load institutions. Showing sample data.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInstitutions();
+  }, [selectedCountry, searchQuery, sortBy]);
+
+  const countries = ['all', 'Indonesia', 'Australia', 'Singapore', 'Malaysia', 'Japan', 'United States', 'United Kingdom'];
+
+  const filteredInstitutions = Array.isArray(institutions) ? institutions : [];
 
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
@@ -144,20 +188,24 @@ const InstitutionsList = () => {
           <div className="flex-grow relative">
             <input
               type="text"
+              id="institution-search"
               placeholder="Cari nama institusi..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={searchQueryLocal}
+              onChange={handleSearchChange}
+              aria-label="Cari nama institusi"
               className="w-full pl-11 pr-4 py-3 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 transition-all"
             />
-            <svg className="w-5 h-5 text-gray-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-gray-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
           
           <div className="flex gap-3">
             <select
+              id="country-filter"
               value={selectedCountry}
               onChange={(e) => setSelectedCountry(e.target.value)}
+              aria-label="Filter by country"
               className="bg-gray-50 border-none rounded-xl py-3 px-4 text-sm font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
             >
               {countries.map(country => (
@@ -168,8 +216,10 @@ const InstitutionsList = () => {
             </select>
             
             <select
+              id="sort-select"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
+              aria-label="Sort institutions by"
               className="bg-gray-50 border-none rounded-xl py-3 px-4 text-sm font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
             >
               <option value="relevance">Relevansi</option>
@@ -188,7 +238,22 @@ const InstitutionsList = () => {
         </p>
       </div>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="flex justify-center py-20">
+          <LoadingSpinner />
+        </div>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm">
+          {error}
+        </div>
+      )}
+
       {/* Institutions Grid */}
+      {!loading && (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {filteredInstitutions.map((inst) => (
           <Link
@@ -199,9 +264,10 @@ const InstitutionsList = () => {
             <div className="flex gap-6">
               {/* Logo */}
               <div className="shrink-0">
-                <img 
-                  src={inst.logo} 
-                  alt={inst.name}
+                <img
+                  src={inst.logo}
+                  alt={`${inst.name} logo`}
+                  onError={(e) => {e.target.src = 'https://via.placeholder.com/100x100/9ca3af/ffffff?text=Logo'}}
                   className="w-24 h-24 object-contain rounded-xl bg-gray-50 p-2 group-hover:scale-105 transition-transform"
                 />
               </div>
@@ -225,21 +291,21 @@ const InstitutionsList = () => {
                 </div>
 
                 <p className="text-sm text-gray-500 mb-4">
-                  Berdiri sejak {inst.established} • {inst.website.replace('https://', '').replace('www.', '')}
+                  Berdiri sejak {inst.established_year || inst.established || 'N/A'} • {(inst.website || '').replace('https://', '').replace('www.', '') || 'N/A'}
                 </p>
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-3 gap-3">
                   <div className="text-center p-2 bg-gray-50 rounded-lg">
-                    <p className="text-lg font-bold text-gray-900">{inst.publications.toLocaleString()}</p>
+                    <p className="text-lg font-bold text-gray-900">{(inst.publications || 0).toLocaleString()}</p>
                     <p className="text-[10px] text-gray-500 uppercase">Publikasi</p>
                   </div>
                   <div className="text-center p-2 bg-gray-50 rounded-lg">
-                    <p className="text-lg font-bold text-gray-900">{inst.researchers.toLocaleString()}</p>
+                    <p className="text-lg font-bold text-gray-900">{(inst.researchers || 0).toLocaleString()}</p>
                     <p className="text-[10px] text-gray-500 uppercase">Peneliti</p>
                   </div>
                   <div className="text-center p-2 bg-gray-50 rounded-lg">
-                    <p className="text-lg font-bold text-gray-900">{inst.hIndex}</p>
+                    <p className="text-lg font-bold text-gray-900">{inst.hIndex || 0}</p>
                     <p className="text-[10px] text-gray-500 uppercase">H-Index</p>
                   </div>
                 </div>
@@ -250,19 +316,19 @@ const InstitutionsList = () => {
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                     </svg>
-                    {inst.journals} Jurnal
+                    {inst.journals || 0} Jurnal
                   </span>
                   <span className="flex items-center gap-1">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
-                    {inst.collaborations} Kolaborasi
+                    {inst.collaborations || 0} Kolaborasi
                   </span>
                   <span className="flex items-center gap-1">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    {inst.sdgs} SDGs
+                    {(inst.sdgs && inst.sdgs.length) || 0} SDGs
                   </span>
                 </div>
               </div>
@@ -279,8 +345,9 @@ const InstitutionsList = () => {
           </Link>
         ))}
       </div>
+      )}
 
-      {filteredInstitutions.length === 0 && (
+      {!loading && filteredInstitutions.length === 0 && (
         <div className="text-center py-20">
           <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

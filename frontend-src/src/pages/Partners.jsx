@@ -1,141 +1,86 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { LoadingSpinner } from '../components/shared';
 
 const Partners = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [partners, setPartners] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Mock Data: Partner Categories
-  const categories = [
-    { id: 'all', label: 'Semua Mitra', count: 24 },
-    { id: 'data', label: 'Data Providers', count: 8 },
-    { id: 'research', label: 'Research Institutions', count: 7 },
-    { id: 'government', label: 'Government', count: 5 },
-    { id: 'ngo', label: 'NGO & Community', count: 4 }
-  ];
+  // Fetch partners from API
+  useEffect(() => {
+    const fetchPartners = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/partners.php?limit=100');
+        const data = await response.json();
+        if (data.status === 'success' && data.partners) {
+          setPartners(data.partners);
+          setError(null);
+        } else {
+          setPartners(getDefaultPartners());
+        }
+      } catch (err) {
+        console.error('Error fetching partners:', err);
+        setPartners(getDefaultPartners());
+        setError('Failed to load partners');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPartners();
+  }, []);
 
-  // Mock Data: Partners
-  const partners = [
+  // Default/Fallback Partner Data
+  const getDefaultPartners = () => [
     {
       id: 1,
-      name: 'Crossref',
-      category: 'data',
-      logo: 'https://via.placeholder.com/120x60/6366f1/ffffff?text=Crossref',
-      description: 'Penyedia metadata DOI dan referensi akademik global untuk integrasi publikasi riset.',
-      website: 'https://www.crossref.org',
-      since: '2023',
-      type: 'Data Provider'
+      name: 'University of Melbourne',
+      category: 'academic',
+      logo: 'https://via.placeholder.com/150x60/ef4444/ffffff?text=UoM',
+      description: 'Kolaborasi riset iklim dan keberlanjutan',
+      website: 'https://www.unimelb.edu.au',
+      partnership_type: 'Research',
+      start_date: '2022-01-15'
     },
     {
       id: 2,
-      name: 'ORCID',
-      category: 'data',
-      logo: 'https://via.placeholder.com/120x60/8b5cf6/ffffff?text=ORCID',
-      description: 'Identifikasi peneliti global yang terintegrasi untuk verifikasi profil dan atribusi karya.',
-      website: 'https://orcid.org',
-      since: '2023',
-      type: 'Data Provider'
+      name: 'UNEP - United Nations Environment Programme',
+      category: 'ngo',
+      logo: 'https://via.placeholder.com/150x60/10b981/ffffff?text=UNEP',
+      description: 'Program lingkungan dan SDGs',
+      website: 'https://www.unep.org',
+      partnership_type: 'Policy',
+      start_date: '2023-06-01'
     },
     {
       id: 3,
-      name: 'Universitas Indonesia',
-      category: 'research',
-      logo: 'https://via.placeholder.com/120x60/10b981/ffffff?text=UI',
-      description: 'Mitra riset utama untuk pengembangan metodologi klasifikasi SDGs berbasis AI.',
-      website: 'https://www.ui.ac.id',
-      since: '2022',
-      type: 'Research Institution'
-    },
-    {
-      id: 4,
-      name: 'BRIN',
-      category: 'government',
-      logo: 'https://via.placeholder.com/120x60/f59e0b/ffffff?text=BRIN',
-      description: 'Badan Riset dan Inovasi Nasional, mitra strategis untuk kebijakan riset berbasis data.',
-      website: 'https://www.brin.go.id',
-      since: '2023',
-      type: 'Government'
-    },
-    {
-      id: 5,
-      name: 'Greenpeace Indonesia',
-      category: 'ngo',
-      logo: 'https://via.placeholder.com/120x60/14b8a6/ffffff?text=Greenpeace',
-      description: 'Organisasi lingkungan yang berkolaborasi dalam analisis dampak riset terhadap SDG 13 & 14.',
-      website: 'https://www.greenpeace.org/indonesia',
-      since: '2024',
-      type: 'NGO'
-    },
-    {
-      id: 6,
-      name: 'Dimensions.ai',
-      category: 'data',
-      logo: 'https://via.placeholder.com/120x60/ec4899/ffffff?text=Dimensions',
-      description: 'Platform data riset terintegrasi dengan linkage publikasi, grant, dan patent.',
-      website: 'https://www.dimensions.ai',
-      since: '2024',
-      type: 'Data Provider'
-    },
-    {
-      id: 7,
-      name: 'IPB University',
-      category: 'research',
-      logo: 'https://via.placeholder.com/120x60/06b6d4/ffffff?text=IPB',
-      description: 'Kolaborasi riset pertanian berkelanjutan dan ketahanan pangan untuk SDG 2.',
-      website: 'https://www.ipb.ac.id',
-      since: '2023',
-      type: 'Research Institution'
-    },
-    {
-      id: 8,
-      name: 'Kementerian LHK',
-      category: 'government',
-      logo: 'https://via.placeholder.com/120x60/84cc16/ffffff?text=KLHK',
-      description: 'Mitra pemerintah untuk integrasi data lingkungan dan kebijakan perubahan iklim.',
-      website: 'https://www.menlhk.go.id',
-      since: '2024',
-      type: 'Government'
-    },
-    {
-      id: 9,
-      name: 'WALHI',
-      category: 'ngo',
-      logo: 'https://via.placeholder.com/120x60/f97316/ffffff?text=WALHI',
-      description: 'Jaringan advokasi lingkungan yang memanfaatkan data WIZDAM untuk kampanye berbasis bukti.',
-      website: 'https://www.walhi.or.id',
-      since: '2024',
-      type: 'NGO'
-    },
-    {
-      id: 10,
-      name: 'ITS Surabaya',
-      category: 'research',
-      logo: 'https://via.placeholder.com/120x60/3b82f6/ffffff?text=ITS',
-      description: 'Kolaborasi pengembangan model AI untuk klasifikasi otomatis publikasi teknik dan teknologi.',
-      website: 'https://www.its.ac.id',
-      since: '2023',
-      type: 'Research Institution'
-    },
-    {
-      id: 11,
-      name: 'Google Scholar',
-      category: 'data',
-      logo: 'https://via.placeholder.com/120x60/4f46e5/ffffff?text=Scholar',
-      description: 'Integrasi metadata publikasi untuk memperkaya cakupan analisis dampak riset.',
-      website: 'https://scholar.google.com',
-      since: '2024',
-      type: 'Data Provider'
-    },
-    {
-      id: 12,
-      name: 'UGM Yogyakarta',
-      category: 'research',
-      logo: 'https://via.placeholder.com/120x60/a855f7/ffffff?text=UGM',
-      description: 'Mitra riset untuk pengembangan indikator SDGs berbasis kearifan lokal Indonesia.',
-      website: 'https://www.ugm.ac.id',
-      since: '2022',
-      type: 'Research Institution'
+      name: 'World Bank',
+      category: 'organization',
+      logo: 'https://via.placeholder.com/150x60/0ea5e9/ffffff?text=WorldBank',
+      description: 'Program pembangunan berkelanjutan',
+      website: 'https://www.worldbank.org',
+      partnership_type: 'Development',
+      start_date: '2023-03-01'
     }
+  ];
+
+  // Dynamic category counts
+  const categoryCounts = {
+    all: partners.length,
+    academic: partners.filter(p => p.category === 'academic').length,
+    ngo: partners.filter(p => p.category === 'ngo').length,
+    organization: partners.filter(p => p.category === 'organization').length
+  };
+
+  // Partner Categories with dynamic counts
+  const categories = [
+    { id: 'all', label: 'Semua Mitra', count: categoryCounts.all },
+    { id: 'academic', label: 'Academic', count: categoryCounts.academic },
+    { id: 'ngo', label: 'NGO', count: categoryCounts.ngo },
+    { id: 'organization', label: 'Organization', count: categoryCounts.organization }
   ];
 
   // Filter Logic
@@ -148,10 +93,10 @@ const Partners = () => {
 
   // Stats
   const stats = {
-    totalPartners: 24,
-    dataProviders: 8,
-    institutions: 7,
-    countries: 12
+    totalPartners: partners.length,
+    dataProviders: categoryCounts.academic || 0,
+    institutions: categoryCounts.ngo || 0,
+    countries: Math.max(3, Math.ceil(partners.length / 2))
   };
 
   return (
@@ -171,10 +116,29 @@ const Partners = () => {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Mitra & Kolaborator</h1>
         <p className="text-gray-600 mt-2 max-w-3xl">
-          WIZDAM berkolaborasi dengan institusi riset, penyedia data, pemerintah, dan organisasi masyarakat 
+          WIZDAM berkolaborasi dengan institusi riset, penyedia data, pemerintah, dan organisasi masyarakat
           untuk memperkuat ekosistem analisis SDGs berbasis bukti di Indonesia dan Global South.
         </p>
       </div>
+
+      {/* Loading State */}
+      {loading && (
+        <div className="flex justify-center py-12">
+          <LoadingSpinner />
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+          {error}
+        </div>
+      )}
+
+      {!loading && (
+      <>
+
+      {/* Main Content */}
 
       {/* Stats Overview */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -245,18 +209,18 @@ const Partners = () => {
               {/* Logo Header */}
               <div className="p-5 border-b border-gray-100 bg-gray-50 group-hover:bg-indigo-50/50 transition-colors">
                 <div className="flex items-center justify-between">
-                  <img 
-                    src={partner.logo} 
-                    alt={partner.name} 
+                  <img
+                    src={partner.logo}
+                    alt={partner.name}
                     className="h-12 object-contain opacity-80 group-hover:opacity-100 transition-opacity"
+                    onError={(e) => {e.target.src = 'https://via.placeholder.com/150x60/9ca3af/ffffff?text=Logo'}}
                   />
                   <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${
-                    partner.category === 'data' ? 'bg-purple-100 text-purple-700' :
-                    partner.category === 'research' ? 'bg-green-100 text-green-700' :
-                    partner.category === 'government' ? 'bg-blue-100 text-blue-700' :
-                    'bg-amber-100 text-amber-700'
+                    partner.category === 'academic' ? 'bg-green-100 text-green-700' :
+                    partner.category === 'ngo' ? 'bg-amber-100 text-amber-700' :
+                    'bg-blue-100 text-blue-700'
                   }`}>
-                    {partner.type}
+                    {partner.partnership_type}
                   </span>
                 </div>
               </div>
@@ -267,10 +231,10 @@ const Partners = () => {
                 <p className="text-sm text-gray-600 mb-4 line-clamp-3">{partner.description}</p>
                 
                 <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
-                  <span>Mitra sejak {partner.since}</span>
-                  <a 
-                    href={partner.website} 
-                    target="_blank" 
+                  <span>Mitra sejak {partner.start_date ? new Date(partner.start_date).getFullYear() : 'N/A'}</span>
+                  <a
+                    href={partner.website}
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1"
                   >
@@ -312,6 +276,9 @@ const Partners = () => {
             Reset Pencarian
           </button>
         </div>
+      )}
+
+      </>
       )}
 
       {/* Become a Partner CTA */}
