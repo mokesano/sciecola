@@ -18,11 +18,14 @@
 
 name: Release Otomatis (Semantic Release)
 
-# Jalankan workflow ketika ada push ke branch master (default branch repositori)
+# Jalankan workflow ketika ada push ke branch utama (rilis) dan develop (hanya untuk memicu CI tanpa rilis)
 on:
   push:
     branches:
+      - main
       - master
+      - develop
+      - production
 
 # Izin yang diperlukan untuk membuat release dan tag
 permissions:
@@ -32,6 +35,8 @@ permissions:
 
 jobs:
   release:
+    # Hanya jalankan job rilis untuk branch yang memang menghasilkan versi resmi
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/production'
     runs-on: ubuntu-latest
 
     steps:
