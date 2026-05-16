@@ -55,14 +55,18 @@ function calculateMatches(): array {
 
         // Get all researchers
         $stmt = $pdo->query("
-            SELECT r.orcid, r.name, r.h_index, r.citation_count,
+            SELECT r.orcid, r.name, r.h_index, r.citation_count, r.country,
+                   r.collaboration_status, r.profile_photo_url,
+                   i.name AS institution,
                    GROUP_CONCAT(DISTINCT rse.sdg_number) as sdgs,
                    GROUP_CONCAT(DISTINCT re.field_name) as expertise
             FROM researchers r
+            LEFT JOIN institutions i ON i.id = r.institution_id
             LEFT JOIN researcher_sdg_expertise rse ON rse.orcid = r.orcid
             LEFT JOIN researcher_expertise re ON re.orcid = r.orcid
+            WHERE r.collaboration_status != 'busy'
             GROUP BY r.orcid
-            LIMIT 5
+            LIMIT 10
         ");
 
         $researchers = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -70,10 +74,16 @@ function calculateMatches(): array {
         $matches = [];
         foreach ($researchers as $match) {
             $score = rand(80, 96);
+            $sdgs = array_filter(array_map('intval', explode(',', $match['sdgs'] ?? '')));
+            $expertise = array_filter(explode(',', $match['expertise'] ?? ''));
             $matches[] = [
                 'id' => $match['orcid'],
                 'orcid' => $match['orcid'],
                 'name' => $match['name'],
+                'title' => implode(', ', $expertise) ?: 'Researcher',
+                'institution' => $match['institution'] ?? 'Unknown Institution',
+                'location' => $match['country'] ?? 'Unknown',
+                'avatar' => $match['profile_photo_url'] ?? ('https://i.pravatar.cc/150?u=' . $match['orcid']),
                 'match_score' => $score,
                 'match_reasons' => [
                     'Similar research focus',
@@ -81,11 +91,11 @@ function calculateMatches(): array {
                     'Active collaboration network',
                     'High citation impact'
                 ],
-                'sdg_focus' => array_map('intval', explode(',', $match['sdgs'] ?? '')),
+                'sdg_focus' => array_values($sdgs),
                 'h_index' => (int)$match['h_index'],
                 'publications' => rand(100, 300),
                 'collaborations' => rand(30, 70),
-                'availability' => ['available', 'limited', 'selective'][rand(0, 2)],
+                'availability' => $match['collaboration_status'] === 'open' ? 'Available for new projects' : 'Limited availability',
                 'response_time' => ['< 24 hours', '< 48 hours', '< 72 hours'][rand(0, 2)]
             ];
         }

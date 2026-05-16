@@ -277,9 +277,18 @@ const InnovationMarketplace = () => {
                 <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-6 text-white">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center text-lg font-bold">
-                        {opp.organization.charAt(0)}
-                      </div>
+                      {opp.logo_url ? (
+                        <img
+                          src={opp.logo_url}
+                          alt={opp.organization}
+                          className="w-12 h-12 rounded-lg bg-white p-1 object-contain"
+                          onError={(e) => { e.target.style.display = 'none'; }}
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-lg bg-white/20 flex items-center justify-center text-lg font-bold">
+                          {(opp.organization || 'O').charAt(0)}
+                        </div>
+                      )}
                       <div>
                         <div className="text-sm opacity-90">{opp.organization}</div>
                         <div className="font-bold text-lg">{opp.title}</div>
