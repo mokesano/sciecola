@@ -186,11 +186,13 @@ function route_api_wrapper(): void {
 
     static $allowed = [
         'analytics.php', 'article_profile.php', 'articles.php', 'auth.php',
-        'cache_handler.php', 'journal_profile.php', 'journals.php',
+        'cache_handler.php', 'collaboration.php', 'innovation_marketplace.php',
+        'journal_profile.php', 'journals.php',
         'leaderboard.php', 'log_history.php', 'my_activity.php',
         'my_articles.php', 'my_collections.php', 'my_profile.php',
-        'my_statistics.php', 'platform_stats.php', 'researcher_distribution.php',
-        'researcher_profile.php', 'researchers.php', 'sdg_distribution.php', 'trends.php',
+        'my_statistics.php', 'platform_stats.php', 'projects.php',
+        'researcher_distribution.php', 'researcher_profile.php', 'researchers.php',
+        'research_matching.php', 'sdg_distribution.php', 'trends.php',
     ];
 
     if (!in_array($filename, $allowed, true)) {

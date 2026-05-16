@@ -118,6 +118,7 @@ import CollaborationHub from './pages/CollaborationHub';
 import ProjectManagement from './pages/ProjectManagement';
 import ResearchMatching from './pages/ResearchMatching';
 import InnovationMarketplace from './pages/InnovationMarketplace';
+import AdminPanel from './pages/AdminPanel';
 
 // =====================================================================
 // KOMPONEN BERANDA (HOME)
@@ -289,7 +290,10 @@ function App() {
             <Route path="/projects" element={<ProjectManagement />} />
             <Route path="/research-matching" element={<ResearchMatching />} />
             <Route path="/innovation-marketplace" element={<InnovationMarketplace />} />
-            
+
+            {/* Admin Panel */}
+            <Route path="/admin/data-management" element={<AdminPanel />} />
+
             {/* Catch-all route untuk 404 */}
             <Route path="*" element={<NotFound404 />} />
           </Routes>
