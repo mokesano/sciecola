@@ -125,22 +125,20 @@ const setByPath = (obj, path, value) => {
     const key = keys[i];
     const nextKey = keys[i + 1];
     const shouldBeArray = /^\d+$/.test(nextKey);
-    const hasOwnSlot = Object.prototype.hasOwnProperty.call(cursor, key);
 
     if (!Array.isArray(cursor) && !isPlainObject(cursor)) return next;
-    if (!hasOwnSlot && Object.prototype.hasOwnProperty.call(Object(cursor), key) === false && key in Object(cursor)) return next;
+    if (!Object.prototype.hasOwnProperty.call(cursor, key)) return next;
 
-    const slot = hasOwnSlot ? cursor[key] : undefined;
-    // Repair malformed/legacy intermediates: replace if type doesn't match expected shape.
+    const slot = cursor[key];
     if (shouldBeArray) {
-      if (!Array.isArray(slot)) cursor[key] = [];
+      if (!Array.isArray(slot)) return next;
     } else {
-      if (!isPlainObject(slot)) {
-        cursor[key] = {};
-      }
+      if (!isPlainObject(slot)) return next;
     }
-    cursor = cursor[key];
+
+    cursor = slot;
   }
+
   const lastKey = keys[keys.length - 1];
   if (!isSafeKey(lastKey)) return next;
   if (!Array.isArray(cursor) && !isPlainObject(cursor)) return next;
