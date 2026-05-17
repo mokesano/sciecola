@@ -41,6 +41,8 @@ import idTrendsAnalysis     from './locales/id/trends_analysis.json';
 import enTrendsAnalysis     from './locales/en/trends_analysis.json';
 import idArticleImpact      from './locales/id/article_impact.json';
 import enArticleImpact      from './locales/en/article_impact.json';
+import idTopResearchers     from './locales/id/top_researchers.json';
+import enTopResearchers     from './locales/en/top_researchers.json';
 
 // ─── Deteksi bahasa awal ─────────────────────────────────────────────
 // Prioritas: (1) preferensi tersimpan user → (2) bahasa browser →
@@ -81,6 +83,7 @@ i18n
         analytics:           idAnalytics,
         trends_analysis:     idTrendsAnalysis,
         article_impact:      idArticleImpact,
+        top_researchers:     idTopResearchers,
       },
       en: {
         translation: enCommon,
@@ -101,12 +104,13 @@ i18n
         analytics:           enAnalytics,
         trends_analysis:     enTrendsAnalysis,
         article_impact:      enArticleImpact,
+        top_researchers:     enTopResearchers,
       },
     },
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers'],
     interpolation: { escapeValue: false },
   });
 
