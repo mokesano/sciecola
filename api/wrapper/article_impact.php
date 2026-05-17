@@ -87,7 +87,7 @@ function buildImpactResponseFromDb(PDO $pdo, int $sdg, int $years, string $sort,
 
     // Paginated articles
     $sql = "SELECT p.doi, p.title, p.publication_year AS year, p.citation_count AS citations,
-                   j.title AS journal_name, j.quartile,
+                   j.title AS journal_name, j.sinta_grade,
                    GROUP_CONCAT(DISTINCT TRIM(CONCAT(COALESCE(pa.given_names,''), ' ', COALESCE(pa.family_name,''))) ORDER BY pa.sequence SEPARATOR ', ') AS authors
             FROM publications p
             LEFT JOIN journals j ON j.id = p.journal_id
@@ -115,13 +115,13 @@ function buildImpactResponseFromDb(PDO $pdo, int $sdg, int $years, string $sort,
     $articles = array_map(function ($r) use ($sdgMap, $logMax) {
         $cit = (int) ($r['citations'] ?? 0);
         $academic = $logMax > 0 ? round(log($cit + 1) / $logMax * 100, 1) : 0.0;
-        $quartile = $r['quartile'] ? 'Q' . $r['quartile'] : null;
+        $sinta = $r['sinta_grade'] ?: null;
         return [
             'doi'             => $r['doi'],
             'title'           => $r['title'],
             'authors'         => $r['authors'] ? array_values(array_filter(explode(', ', $r['authors']))) : [],
             'journal'         => $r['journal_name'] ?? '',
-            'quartile'        => $quartile,
+            'sinta'           => $sinta,
             'year'            => (int) $r['year'],
             'citations'       => $cit,
             'social_mentions' => 0,
@@ -160,28 +160,28 @@ function buildImpactResponseFromDb(PDO $pdo, int $sdg, int $years, string $sort,
         ];
     }, $sdgRows);
 
-    // Quartile breakdown (avg impact per quartile jurnal)
-    $qRows = $pdo->query(
-        "SELECT j.quartile, COUNT(p.doi) AS article_count,
+    // SINTA breakdown (avg impact per grade akreditasi SINTA jurnal)
+    $sintaRows = $pdo->query(
+        "SELECT j.sinta_grade, COUNT(p.doi) AS article_count,
                 COALESCE(AVG(p.citation_count), 0) AS avg_citations
          FROM publications p
          JOIN journals j ON j.id = p.journal_id
-         WHERE j.quartile IS NOT NULL
-         GROUP BY j.quartile
-         ORDER BY j.quartile ASC"
+         WHERE j.sinta_grade IS NOT NULL
+         GROUP BY j.sinta_grade
+         ORDER BY j.sinta_grade ASC"
     )->fetchAll(PDO::FETCH_ASSOC);
 
-    $quartileBreakdown = array_map(function ($r) use ($logMax) {
+    $sintaBreakdown = array_map(function ($r) use ($logMax) {
         $avg      = (float) $r['avg_citations'];
         $academic = $logMax > 0 ? round(log($avg + 1) / $logMax * 100, 1) : 0.0;
         return [
-            'quartile'      => 'Q' . (int) $r['quartile'],
+            'sinta'         => $r['sinta_grade'],
             'article_count' => (int) $r['article_count'],
             'academic'      => $academic,
             'social'        => 0,
             'practical'     => 0,
         ];
-    }, $qRows);
+    }, $sintaRows);
 
     return [
         'articles'           => $articles,
@@ -190,7 +190,7 @@ function buildImpactResponseFromDb(PDO $pdo, int $sdg, int $years, string $sort,
         'limit'              => $limit,
         'total_pages'        => (int) ceil($total / $limit),
         'impact_by_sdg'      => $impactBySdg,
-        'quartile_breakdown' => $quartileBreakdown,
+        'sinta_breakdown'    => $sintaBreakdown,
         'dimensions_available' => [
             'academic'  => $logMax > 1,
             'social'    => false,
@@ -230,7 +230,7 @@ function getSampleImpactData(int $sdg, string $sort, int $page, int $limit): arr
             'title'           => 'Renewable Energy Transition in Indonesia: A Multi-Stakeholder Approach',
             'authors'         => ['Andi Rahman', 'Siti Nurhaliza'],
             'journal'         => 'Journal of Cleaner Production',
-            'quartile'        => 'Q1',
+            'sinta'           => 'S1',
             'year'            => 2023,
             'citations'       => 187,
             'social_mentions' => 0,
@@ -246,7 +246,7 @@ function getSampleImpactData(int $sdg, string $sort, int $page, int $limit): arr
             'title'           => 'Sustainable Urban Water Management for Coastal Indonesian Cities',
             'authors'         => ['Budi Santoso', 'Dewi Kusuma'],
             'journal'         => 'Science of Total Environment',
-            'quartile'        => 'Q1',
+            'sinta'           => 'S1',
             'year'            => 2023,
             'citations'       => 142,
             'social_mentions' => 0,
@@ -262,7 +262,7 @@ function getSampleImpactData(int $sdg, string $sort, int $page, int $limit): arr
             'title'           => 'Nanoparticle Applications for Clean Water Treatment',
             'authors'         => ['Rini Hartono'],
             'journal'         => 'Journal of Nanoparticle Research',
-            'quartile'        => 'Q2',
+            'sinta'           => 'S2',
             'year'            => 2022,
             'citations'       => 98,
             'social_mentions' => 0,
@@ -278,7 +278,7 @@ function getSampleImpactData(int $sdg, string $sort, int $page, int $limit): arr
             'title'           => 'AI for Tropical Disease Diagnosis in Southeast Asia',
             'authors'         => ['Maya Sari', 'Joko Widodo'],
             'journal'         => 'Nature',
-            'quartile'        => 'Q1',
+            'sinta'           => 'S1',
             'year'            => 2024,
             'citations'       => 76,
             'social_mentions' => 0,
@@ -294,7 +294,7 @@ function getSampleImpactData(int $sdg, string $sort, int $page, int $limit): arr
             'title'           => 'Solar PV Integration in Rural Indonesian Grids',
             'authors'         => ['Eko Pratama'],
             'journal'         => 'Energy',
-            'quartile'        => 'Q1',
+            'sinta'           => 'S2',
             'year'            => 2023,
             'citations'       => 65,
             'social_mentions' => 0,
@@ -304,6 +304,38 @@ function getSampleImpactData(int $sdg, string $sort, int $page, int $limit): arr
             'practical_impact' => 0,
             'total_impact'     => 68.5,
             'sdgs'             => [7],
+        ],
+        [
+            'doi'             => '10.1080/agritrop.2022.001',
+            'title'           => 'Agroforestry Practices in West Java',
+            'authors'         => ['Rini Hartati'],
+            'journal'         => 'AgriTrop Journal',
+            'sinta'           => 'S3',
+            'year'            => 2022,
+            'citations'       => 34,
+            'social_mentions' => 0,
+            'practical_uses'  => 0,
+            'academic_impact'  => 55.3,
+            'social_impact'    => 0,
+            'practical_impact' => 0,
+            'total_impact'     => 55.3,
+            'sdgs'             => [2, 15],
+        ],
+        [
+            'doi'             => '10.5614/inj.2023.002',
+            'title'           => 'Community-Based Education Program in Rural Sulawesi',
+            'authors'         => ['Dani Pratama'],
+            'journal'         => 'Indonesian Journal of Community Engagement',
+            'sinta'           => 'S4',
+            'year'            => 2023,
+            'citations'       => 18,
+            'social_mentions' => 0,
+            'practical_uses'  => 0,
+            'academic_impact'  => 42.7,
+            'social_impact'    => 0,
+            'practical_impact' => 0,
+            'total_impact'     => 42.7,
+            'sdgs'             => [4, 10],
         ],
     ];
 
@@ -329,11 +361,13 @@ function getSampleImpactData(int $sdg, string $sort, int $page, int $limit): arr
         'limit'              => $limit,
         'total_pages'        => max(1, (int) ceil(count($sample) / $limit)),
         'impact_by_sdg'      => $impactBySdg,
-        'quartile_breakdown' => [
-            ['quartile' => 'Q1', 'article_count' => 856, 'academic' => 78.5, 'social' => 0, 'practical' => 0],
-            ['quartile' => 'Q2', 'article_count' => 423, 'academic' => 62.3, 'social' => 0, 'practical' => 0],
-            ['quartile' => 'Q3', 'article_count' => 187, 'academic' => 48.2, 'social' => 0, 'practical' => 0],
-            ['quartile' => 'Q4', 'article_count' =>  92, 'academic' => 35.1, 'social' => 0, 'practical' => 0],
+        'sinta_breakdown'    => [
+            ['sinta' => 'S1', 'article_count' => 856, 'academic' => 82.4, 'social' => 0, 'practical' => 0],
+            ['sinta' => 'S2', 'article_count' => 624, 'academic' => 68.7, 'social' => 0, 'practical' => 0],
+            ['sinta' => 'S3', 'article_count' => 423, 'academic' => 55.2, 'social' => 0, 'practical' => 0],
+            ['sinta' => 'S4', 'article_count' => 287, 'academic' => 42.1, 'social' => 0, 'practical' => 0],
+            ['sinta' => 'S5', 'article_count' => 142, 'academic' => 31.5, 'social' => 0, 'practical' => 0],
+            ['sinta' => 'S6', 'article_count' =>  68, 'academic' => 22.3, 'social' => 0, 'practical' => 0],
         ],
         'dimensions_available' => [
             'academic'  => true,
