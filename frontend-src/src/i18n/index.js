@@ -43,6 +43,8 @@ import idArticleImpact      from './locales/id/article_impact.json';
 import enArticleImpact      from './locales/en/article_impact.json';
 import idTopResearchers     from './locales/id/top_researchers.json';
 import enTopResearchers     from './locales/en/top_researchers.json';
+import idResearcherDist     from './locales/id/researcher_distribution.json';
+import enResearcherDist     from './locales/en/researcher_distribution.json';
 
 // ─── Deteksi bahasa awal ─────────────────────────────────────────────
 // Prioritas: (1) preferensi tersimpan user → (2) bahasa browser →
@@ -83,7 +85,8 @@ i18n
         analytics:           idAnalytics,
         trends_analysis:     idTrendsAnalysis,
         article_impact:      idArticleImpact,
-        top_researchers:     idTopResearchers,
+        top_researchers:         idTopResearchers,
+        researcher_distribution: idResearcherDist,
       },
       en: {
         translation: enCommon,
@@ -104,13 +107,14 @@ i18n
         analytics:           enAnalytics,
         trends_analysis:     enTrendsAnalysis,
         article_impact:      enArticleImpact,
-        top_researchers:     enTopResearchers,
+        top_researchers:         enTopResearchers,
+        researcher_distribution: enResearcherDist,
       },
     },
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution'],
     interpolation: { escapeValue: false },
   });
 
