@@ -1,0 +1,118 @@
+{
+  "loading": "Memuat jurnal…",
+  "not_found": {
+    "title":   "Jurnal Tidak Ditemukan",
+    "message": "Jurnal dengan ID {{id}} tidak tersedia di basis data.",
+    "retry":   "Coba Lagi",
+    "home":    "Ke Beranda"
+  },
+  "invalid_issn": "Format ISSN tidak valid",
+  "header": {
+    "issn":              "ISSN: {{value}}",
+    "publisher":         "Penerbit:",
+    "website":           "Website: {{value}}",
+    "subject":           "Subject:",
+    "country":           "Negara:",
+    "language":          "Bahasa:",
+    "established":       "Terbit Sejak:",
+    "frequency":         "Frekuensi Terbit:",
+    "visit_website":     "Kunjungi Website",
+    "stats": {
+      "articles":   "Artikel",
+      "authors":    "Penulis",
+      "citations":  "Sitasi",
+      "views":      "Views",
+      "citescore":  "CiteScore",
+      "sdgs":       "SDGs Tercakup"
+    }
+  },
+  "tabs": {
+    "ringkasan": "Ringkasan",
+    "artikel":   "Artikel",
+    "statistik": "Statistik",
+    "sdgs":      "SDGs",
+    "informasi": "Informasi"
+  },
+  "ringkasan": {
+    "stats": {
+      "total_articles":  "Total Artikel",
+      "total_authors":   "Total Penulis",
+      "total_citations": "Total Sitasi",
+      "total_views":     "Total Views",
+      "impact_score":    "Impact Score",
+      "sdgs_covered":    "SDGs Tercakup"
+    },
+    "publication_trend": "Tren Publikasi",
+    "citation_trend":    "Tren Sitasi",
+    "all_years":         "Semua Tahun",
+    "last_5_years":      "5 Tahun Terakhir",
+    "performance":       "Performa Jurnal",
+    "top_articles":      "Top Artikel Berdasarkan Sitasi",
+    "view_all":          "Lihat semua",
+    "citations_unit":    "{{count}} Sitasi",
+    "no_publication_trend": "Data tren publikasi belum tersedia",
+    "no_citation_trend":    "Data tren sitasi belum tersedia",
+    "no_top_articles":      "Belum ada artikel teratas"
+  },
+  "performance_metrics": {
+    "acceptance_rate": "Acceptance Rate",
+    "review_time":     "Waktu Review Rata-rata",
+    "publish_time":    "Waktu Terbit Rata-rata",
+    "cites_per_article": "Tingkat Sitasi per Artikel",
+    "hindex":          "H-Index"
+  },
+  "artikel": {
+    "title":           "Artikel Teratas ({{count}} ditampilkan)",
+    "all_years":       "Semua Tahun",
+    "sort_citations":  "Urutkan: Sitasi Terbanyak",
+    "sort_newest":     "Urutkan: Terbaru",
+    "sort_views":      "Urutkan: Views Terbanyak",
+    "citations_unit":  "{{count}} Sitasi",
+    "doi_label":       "DOI: {{doi}}",
+    "view_all":        "Lihat semua artikel di basis data",
+    "empty":           "Belum ada artikel pada jurnal ini"
+  },
+  "statistik": {
+    "publication_trend": "Tren Publikasi per Tahun",
+    "citation_trend":    "Tren Sitasi per Tahun",
+    "all_years":         "Semua Tahun",
+    "last_5_years":      "5 Tahun Terakhir",
+    "last_10_years":     "10 Tahun Terakhir",
+    "monthly_access":    "Statistik Akses Bulanan",
+    "year_2024":         "Tahun 2024",
+    "year_2023":         "Tahun 2023",
+    "performance":       "Performa Jurnal",
+    "metric_review":     "Waktu Review",
+    "metric_publish":    "Waktu Terbit",
+    "metric_cites":      "Sitasi/Artikel"
+  },
+  "sdgs_tab": {
+    "distribution": "Distribusi Artikel per SDGs",
+    "percentage":   "Persentase SDGs dalam Artikel",
+    "total_covered":"Total {{count}} SDGs tercakup dalam publikasi jurnal ini",
+    "empty":        "Belum ada klasifikasi SDG pada jurnal ini"
+  },
+  "informasi": {
+    "indexing":       "Indeksasi & Database",
+    "journal_info":   "Informasi Jurnal",
+    "scope":          "Ruang Lingkup",
+    "fields": {
+      "eissn":     "EISSN",
+      "pissn":     "PISSN",
+      "publisher": "Penerbit",
+      "country":   "Negara",
+      "language":  "Bahasa",
+      "established":"Terbit Sejak",
+      "frequency": "Frekuensi",
+      "indexing_count":"Jumlah Indeksasi"
+    },
+    "database_unit":  "{{count}} database",
+    "no_indexing":    "Belum ada data indeksasi"
+  },
+  "cta": {
+    "title":       "Ingin menganalisis artikel dari jurnal ini?",
+    "subtitle":    "Masukkan DOI atau ORCID untuk mendapatkan analisis dan klasifikasi SDGs secara instan.",
+    "placeholder": "Masukkan DOI atau ORCID",
+    "button":      "Analisis Sekarang"
+  }
+}

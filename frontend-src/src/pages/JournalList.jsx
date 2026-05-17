@@ -16,6 +16,7 @@ const JournalList = () => {
   const [searchQuery, setSearchQuery]   = useState('');
   const [sortBy, setSortBy]             = useState('citescore');
   const [page, setPage]                 = useState(1);
+  const [viewMode, setViewMode]         = useState('list');
 
   const [journals, setJournals]         = useState([]);
   const [loading, setLoading]           = useState(true);
@@ -122,77 +123,137 @@ const JournalList = () => {
       {/* Results */}
       {!loading && journals.length > 0 && (
         <>
-          <div className="mb-6 text-sm text-gray-600">
-            <Trans
-              i18nKey="results.count"
-              ns="journals"
-              values={{ shown: journals.length, total: totalResults }}
-              components={{ strong: <span className="font-bold text-gray-900" /> }}
-            />
+          <div className="mb-6 flex justify-between items-center">
+            <p className="text-sm text-gray-600">
+              <Trans
+                i18nKey="results.count"
+                ns="journals"
+                values={{ shown: journals.length, total: totalResults }}
+                components={{ strong: <span className="font-bold text-gray-900" /> }}
+              />
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setViewMode('list')}
+                aria-label={t('filters.view.list_aria')}
+                className={`p-2 border rounded-lg transition-colors ${viewMode === 'list' ? 'bg-indigo-50 text-indigo-600 border-indigo-200' : 'border-gray-200 text-gray-400 hover:text-gray-600'}`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+              </button>
+              <button
+                onClick={() => setViewMode('card')}
+                aria-label={t('filters.view.card_aria')}
+                className={`p-2 border rounded-lg transition-colors ${viewMode === 'card' ? 'bg-indigo-50 text-indigo-600 border-indigo-200' : 'border-gray-200 text-gray-400 hover:text-gray-600'}`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-6">
-            {journals.map((journal) => (
-              <Link
-                key={journal.id}
-                to={`/journals/${journal.id}`}
-                className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
-              >
-                <div className="flex gap-5 items-start">
-                  <div className="w-16 h-20 bg-indigo-50 rounded-lg flex flex-col items-center justify-center text-indigo-400 border border-indigo-100 shrink-0">
-                    <span className="text-[10px] font-bold">JOURNAL</span>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                    </svg>
-                  </div>
-
-                  <div>
-                    <h3 className="font-bold text-gray-900 group-hover:text-indigo-600 text-lg transition-colors leading-tight mb-1">
-                      {journal.name}
-                    </h3>
-                    <p className="text-gray-500 text-sm mb-3">
-                      {t('results.issn_publisher', { issn: journal.issn || '—', publisher: journal.publisher || '—' })}
-                    </p>
-                    {journal.sdgFocus.length > 0 && (
-                      <div className="flex gap-2 flex-wrap">
-                        {journal.sdgFocus.map((sdg) => (
-                          <span
-                            key={sdg}
-                            className="px-2 py-0.5 text-white rounded text-[10px] font-bold"
-                            style={{ backgroundColor: SDG_COLORS[sdg] || '#6b7280' }}
-                          >
-                            SDG {sdg}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-8 w-full md:w-auto pt-4 md:pt-0 border-t md:border-0 border-gray-50">
-                  <div className="text-center">
-                    <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.quartile')}</p>
-                    <span className="text-lg font-black text-emerald-600">{journal.quartile}</span>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.sjr')}</p>
-                    <span className="text-lg font-black text-gray-900">{journal.sjr}</span>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.hindex')}</p>
-                    <span className="text-lg font-black text-gray-900">{journal.hIndex}</span>
-                  </div>
-                  <div className="ml-4">
-                    <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
+          {viewMode === 'list' ? (
+            <div className="grid grid-cols-1 gap-6">
+              {journals.map((journal) => (
+                <Link
+                  key={journal.id}
+                  to={`/journals/${journal.id}`}
+                  className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-6"
+                >
+                  <div className="flex gap-5 items-start">
+                    <div className="w-16 h-20 bg-indigo-50 rounded-lg flex flex-col items-center justify-center text-indigo-400 border border-indigo-100 shrink-0">
+                      <span className="text-[10px] font-bold">JOURNAL</span>
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                       </svg>
                     </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 group-hover:text-indigo-600 text-lg transition-colors leading-tight mb-1">{journal.name}</h3>
+                      <p className="text-gray-500 text-sm mb-3">
+                        {t('results.issn_publisher', { issn: journal.issn || '—', publisher: journal.publisher || '—' })}
+                      </p>
+                      {journal.sdgFocus.length > 0 && (
+                        <div className="flex gap-2 flex-wrap">
+                          {journal.sdgFocus.map((sdg) => (
+                            <span key={sdg} className="px-2 py-0.5 text-white rounded text-[10px] font-bold" style={{ backgroundColor: SDG_COLORS[sdg] || '#6b7280' }}>
+                              SDG {sdg}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+
+                  <div className="flex items-center gap-8 w-full md:w-auto pt-4 md:pt-0 border-t md:border-0 border-gray-50">
+                    <div className="text-center">
+                      <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.quartile')}</p>
+                      <span className="text-lg font-black text-emerald-600">{journal.quartile}</span>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.sjr')}</p>
+                      <span className="text-lg font-black text-gray-900">{journal.sjr}</span>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.hindex')}</p>
+                      <span className="text-lg font-black text-gray-900">{journal.hIndex}</span>
+                    </div>
+                    <div className="ml-4">
+                      <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {journals.map((journal) => (
+                <Link
+                  key={journal.id}
+                  to={`/journals/${journal.id}`}
+                  className="group bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all flex flex-col"
+                >
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-12 h-14 bg-indigo-50 rounded-lg flex flex-col items-center justify-center text-indigo-400 border border-indigo-100 shrink-0">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                      </svg>
+                    </div>
+                    <div className="min-w-0 flex-grow">
+                      <h3 className="font-bold text-gray-900 group-hover:text-indigo-600 text-base transition-colors leading-tight line-clamp-2 mb-1">{journal.name}</h3>
+                      <p className="text-xs text-gray-500 truncate">
+                        {t('results.issn_publisher', { issn: journal.issn || '—', publisher: journal.publisher || '—' })}
+                      </p>
+                    </div>
+                  </div>
+
+                  {journal.sdgFocus.length > 0 && (
+                    <div className="flex gap-1.5 flex-wrap mb-4">
+                      {journal.sdgFocus.slice(0, 4).map((sdg) => (
+                        <span key={sdg} className="px-2 py-0.5 text-white rounded text-[10px] font-bold" style={{ backgroundColor: SDG_COLORS[sdg] || '#6b7280' }}>
+                          SDG {sdg}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-3 gap-2 mt-auto pt-3 border-t border-gray-100">
+                    <div className="text-center">
+                      <p className="text-[9px] text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.quartile')}</p>
+                      <span className="text-sm font-black text-emerald-600">{journal.quartile}</span>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-[9px] text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.sjr')}</p>
+                      <span className="text-sm font-black text-gray-900">{journal.sjr}</span>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-[9px] text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.hindex')}</p>
+                      <span className="text-sm font-black text-gray-900">{journal.hIndex}</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </>
       )}
 

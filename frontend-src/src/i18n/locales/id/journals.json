@@ -13,6 +13,10 @@
       "citescore": "CiteScore (Tinggi)",
       "quartile":  "Quartile (Q1→Q4)",
       "name":      "Nama (A-Z)"
+    },
+    "view": {
+      "list_aria": "Tampilan daftar",
+      "card_aria": "Tampilan kartu"
     }
   },
   "results": {

@@ -243,109 +243,159 @@ const ArticleList = () => {
                 </svg>
               </button>
               <button
-                onClick={() => setViewMode('grid')}
-                aria-label={t('results.view.grid_aria')}
+                onClick={() => setViewMode('card')}
+                aria-label={t('results.view.card_aria')}
                 className={`p-2 border rounded-lg transition-colors ${
-                  viewMode === 'grid'
+                  viewMode === 'card'
                     ? 'bg-indigo-50 text-indigo-600 border-indigo-200'
                     : 'border-gray-200 text-gray-400 hover:text-gray-600'
                 }`}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                 </svg>
               </button>
             </div>
           </div>
 
-          <div className={`${viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid grid-cols-1'} gap-6`}>
-            {articles.map((article) => (
-              <Link
-                key={article.doi}
-                to={`/doi/${encodeURIComponent(article.doi)}`}
-                className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-indigo-300 transition-all"
-              >
-                <div className={`${viewMode === 'grid' ? 'flex flex-col' : 'flex flex-col md:flex-row'} gap-6`}>
-                  <div className="shrink-0">
-                    <img
-                      src={article.thumbnail}
-                      alt={article.title}
-                      className="w-full md:w-48 h-32 object-cover rounded-xl"
-                      onError={(e) => { e.target.src = '/assets/img/article-default.svg'; }}
-                    />
-                  </div>
+          {viewMode === 'list' ? (
+            <div className="grid grid-cols-1 gap-6">
+              {articles.map((article) => (
+                <Link
+                  key={article.doi}
+                  to={`/doi/${encodeURIComponent(article.doi)}`}
+                  className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-indigo-300 transition-all"
+                >
+                  <div className="flex flex-col md:flex-row gap-6">
+                    <div className="shrink-0">
+                      <img
+                        src={article.thumbnail}
+                        alt={article.title}
+                        className="w-full md:w-48 h-32 object-cover rounded-xl"
+                        onError={(e) => { e.target.src = '/assets/img/article-default.svg'; }}
+                      />
+                    </div>
 
-                  <div className="flex-grow min-w-0">
-                    <h3 className="font-bold text-gray-900 group-hover:text-indigo-600 text-xl mb-2 leading-tight transition-colors line-clamp-2">
+                    <div className="flex-grow min-w-0">
+                      <h3 className="font-bold text-gray-900 group-hover:text-indigo-600 text-xl mb-2 leading-tight transition-colors line-clamp-2">
+                        {article.title}
+                      </h3>
+                      {article.authors.length > 0 && (
+                        <p className="text-gray-600 text-sm mb-2 line-clamp-1">{article.authors.join(', ')}</p>
+                      )}
+                      <p className="text-gray-500 text-sm mb-3">
+                        {article.journal && <span className="font-medium text-gray-700">{article.journal}</span>}
+                        {article.journal && article.year ? ' • ' : ''}
+                        {article.year && <span>{article.year}</span>}
+                      </p>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {article.sdgFocus.map((sdg) => (
+                          <span
+                            key={sdg}
+                            className="px-2.5 py-1 text-white rounded-lg text-[10px] font-bold shadow-sm"
+                            style={{ backgroundColor: SDG_COLORS[sdg] || '#6b7280' }}
+                          >
+                            SDG {sdg}
+                          </span>
+                        ))}
+                        {article.articleType && (
+                          <span className="px-2.5 py-1 bg-gray-100 text-gray-600 rounded-lg text-[10px] font-medium">
+                            {article.articleType}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex md:flex-col items-center md:items-end justify-between gap-4 pt-4 md:pt-0 border-t md:border-0 border-gray-50 shrink-0">
+                      <div className="text-center md:text-right">
+                        <div className="flex items-center md:justify-end gap-1.5 mb-1">
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                          <span className="text-lg font-bold text-gray-900">{article.citations}</span>
+                        </div>
+                        <p className="text-[10px] text-gray-500 uppercase font-semibold">{t('results.metrics.citations')}</p>
+                      </div>
+                      <div className="text-center md:text-right">
+                        <div className="flex items-center md:justify-end gap-1.5 mb-1">
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                          <span className="text-lg font-bold text-gray-900">{formatNumber(article.views)}</span>
+                        </div>
+                        <p className="text-[10px] text-gray-500 uppercase font-semibold">{t('results.metrics.views')}</p>
+                      </div>
+                      <div className="text-center md:text-right">
+                        <div className="flex items-center md:justify-end gap-1.5 mb-1">
+                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                          <span className="text-lg font-bold text-gray-900">{formatNumber(article.downloads)}</span>
+                        </div>
+                        <p className="text-[10px] text-gray-500 uppercase font-semibold">{t('results.metrics.downloads')}</p>
+                      </div>
+                      <div className="md:ml-4">
+                        <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {articles.map((article) => (
+                <Link
+                  key={article.doi}
+                  to={`/doi/${encodeURIComponent(article.doi)}`}
+                  className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-indigo-300 transition-all overflow-hidden flex flex-col"
+                >
+                  <img
+                    src={article.thumbnail}
+                    alt={article.title}
+                    className="w-full h-36 object-cover"
+                    onError={(e) => { e.target.src = '/assets/img/article-default.svg'; }}
+                  />
+                  <div className="p-5 flex-grow flex flex-col">
+                    <h3 className="font-bold text-gray-900 group-hover:text-indigo-600 text-base mb-2 leading-snug transition-colors line-clamp-2">
                       {article.title}
                     </h3>
                     {article.authors.length > 0 && (
-                      <p className="text-gray-600 text-sm mb-2 line-clamp-1">{article.authors.join(', ')}</p>
+                      <p className="text-gray-600 text-xs mb-2 line-clamp-1">{article.authors.join(', ')}</p>
                     )}
-                    <p className="text-gray-500 text-sm mb-3">
+                    <p className="text-gray-500 text-xs mb-3 line-clamp-1">
                       {article.journal && <span className="font-medium text-gray-700">{article.journal}</span>}
                       {article.journal && article.year ? ' • ' : ''}
                       {article.year && <span>{article.year}</span>}
                     </p>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {article.sdgFocus.map((sdg) => (
-                        <span
-                          key={sdg}
-                          className="px-2.5 py-1 text-white rounded-lg text-[10px] font-bold shadow-sm"
-                          style={{ backgroundColor: SDG_COLORS[sdg] || '#6b7280' }}
-                        >
-                          SDG {sdg}
-                        </span>
-                      ))}
-                      {article.articleType && (
-                        <span className="px-2.5 py-1 bg-gray-100 text-gray-600 rounded-lg text-[10px] font-medium">
-                          {article.articleType}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className={`${viewMode === 'grid' ? 'flex flex-row items-center' : 'flex md:flex-col items-center md:items-end'} justify-between gap-4 pt-4 ${viewMode === 'grid' ? '' : 'md:pt-0'} border-t ${viewMode === 'grid' ? '' : 'md:border-0'} border-gray-50 shrink-0`}>
-                    <div className="text-center md:text-right">
-                      <div className="flex items-center md:justify-end gap-1.5 mb-1">
-                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                        </svg>
-                        <span className="text-lg font-bold text-gray-900">{article.citations}</span>
+                    {article.sdgFocus.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mb-4">
+                        {article.sdgFocus.slice(0, 4).map((sdg) => (
+                          <span
+                            key={sdg}
+                            className="px-2 py-0.5 text-white rounded text-[9px] font-bold"
+                            style={{ backgroundColor: SDG_COLORS[sdg] || '#6b7280' }}
+                          >
+                            SDG {sdg}
+                          </span>
+                        ))}
                       </div>
-                      <p className="text-[10px] text-gray-500 uppercase font-semibold">{t('results.metrics.citations')}</p>
-                    </div>
-                    <div className="text-center md:text-right">
-                      <div className="flex items-center md:justify-end gap-1.5 mb-1">
-                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        <span className="text-lg font-bold text-gray-900">{formatNumber(article.views)}</span>
+                    )}
+                    <div className="mt-auto pt-3 border-t border-gray-100 grid grid-cols-3 gap-2 text-center">
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">{formatNumber(article.citations)}</p>
+                        <p className="text-[9px] text-gray-500 uppercase font-semibold">{t('results.metrics.citations')}</p>
                       </div>
-                      <p className="text-[10px] text-gray-500 uppercase font-semibold">{t('results.metrics.views')}</p>
-                    </div>
-                    <div className="text-center md:text-right">
-                      <div className="flex items-center md:justify-end gap-1.5 mb-1">
-                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                        </svg>
-                        <span className="text-lg font-bold text-gray-900">{formatNumber(article.downloads)}</span>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">{formatNumber(article.views)}</p>
+                        <p className="text-[9px] text-gray-500 uppercase font-semibold">{t('results.metrics.views')}</p>
                       </div>
-                      <p className="text-[10px] text-gray-500 uppercase font-semibold">{t('results.metrics.downloads')}</p>
-                    </div>
-                    <div className="md:ml-4">
-                      <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                        </svg>
+                      <div>
+                        <p className="text-sm font-bold text-gray-900">{formatNumber(article.downloads)}</p>
+                        <p className="text-[9px] text-gray-500 uppercase font-semibold">{t('results.metrics.downloads')}</p>
                       </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </>
       )}
 
