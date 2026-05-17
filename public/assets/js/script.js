@@ -1,3 +1,4 @@
+/* jshint esversion: 6 */
 // Main JavaScript - assets/js/script.js
 
 document.addEventListener('DOMContentLoaded', function() {
