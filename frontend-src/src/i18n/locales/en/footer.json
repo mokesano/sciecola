@@ -1,0 +1,35 @@
+{
+  "brand_tagline": "SDGs Classification & Analytics",
+  "description": "Advanced AI-powered platform for analyzing research contributions to Sustainable Development Goals. Empowering researchers and institutions with intelligent classification and insights.",
+  "columns": {
+    "product":      "Product",
+    "data_sources": "Data Sources",
+    "information":  "Information"
+  },
+  "links": {
+    "trends":         "Trends Analysis",
+    "sdgs_explorer":  "SDGs Explorer",
+    "article_impact": "Article Impact",
+    "researchers":    "Researchers",
+    "journals":       "Journals",
+    "api":            "API",
+    "about":          "About Us",
+    "docs":           "Feature Documentation",
+    "faq":            "FAQ",
+    "help":           "Help",
+    "privacy":        "Privacy Policy",
+    "terms":          "Terms & Conditions"
+  },
+  "newsletter": {
+    "title":       "Subscribe to",
+    "highlight":   "Newsletter",
+    "description": "Get the latest updates on features and research analytics from Sciecola.",
+    "placeholder": "Enter your email",
+    "subscribe":   "Subscribe",
+    "subscribed":  "Subscribed!"
+  },
+  "copyright": {
+    "rights":       "All rights reserved.",
+    "developed_by": "Developed by"
+  }
+}
