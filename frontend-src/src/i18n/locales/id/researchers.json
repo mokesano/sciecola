@@ -1,0 +1,50 @@
+{
+  "breadcrumb": {
+    "home":     "Beranda",
+    "current":  "Data Peneliti"
+  },
+  "header": {
+    "title":    "Data Peneliti",
+    "subtitle": "Jelajahi profil peneliti dan kontribusi mereka terhadap target SDGs."
+  },
+  "filters": {
+    "search_placeholder": "Cari nama, institusi, atau topik penelitian…",
+    "all_countries":      "Semua Negara",
+    "all_sdgs":           "Semua SDGs",
+    "sdg_label":          "SDG {{number}}",
+    "sort": {
+      "relevance":    "Relevansi",
+      "citations":    "Sitasi Tertinggi",
+      "hIndex":       "H-Index Tertinggi",
+      "publications": "Publikasi Terbanyak",
+      "name":         "Nama (A-Z)"
+    },
+    "active_label": "Filter aktif:",
+    "reset_all":    "Reset semua"
+  },
+  "results": {
+    "count":      "Menampilkan <strong>{{shown}}</strong> dari <strong>{{total}}</strong> peneliti",
+    "title_role": "Researcher",
+    "interests":  "Fokus Penelitian",
+    "metrics": {
+      "citations":    "Sitasi",
+      "h_index":      "H-Index",
+      "publications": "Publikasi"
+    }
+  },
+  "empty": {
+    "no_match": {
+      "title":    "Tidak ada peneliti yang cocok",
+      "subtitle": "Filter atau kata kunci Anda tidak menemukan peneliti. Coba longgarkan filter atau gunakan kata kunci yang berbeda.",
+      "reset":    "Reset Filter"
+    },
+    "no_data": {
+      "title":    "Data peneliti belum tersedia",
+      "subtitle": "Belum ada profil peneliti yang terindeks di database. Data akan muncul setelah administrator menjalankan crawl ORCID."
+    }
+  },
+  "pagination": {
+    "prev": "Sebelumnya",
+    "next": "Selanjutnya"
+  }
+}

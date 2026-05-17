@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const SDG_BG_COLORS = {
   1: 'bg-[#E5243B]', 2: 'bg-[#DDA63A]', 3: 'bg-[#4C9F38]', 4: 'bg-[#C5192D]',
@@ -10,6 +11,7 @@ const SDG_BG_COLORS = {
 };
 
 const TopSdgsCard = () => {
+  const { t } = useTranslation('dashboard');
   const [sdgsData, setSdgsData] = useState([]);
 
   useEffect(() => {
@@ -64,14 +66,19 @@ const TopSdgsCard = () => {
       {/* Header Section */}
       <div className="flex justify-between items-end mb-4">
         <h2 className="text-lg md:text-xl font-bold text-gray-900">
-          SDGs Paling Banyak Dikontribsikan
+          {t('top_sdgs.title')}
         </h2>
         <Link to="/sdgs" className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors pb-0.5">
-          Lihat semua
+          {t('top_sdgs.view_all')}
         </Link>
       </div>
 
       {/* Container Cards */}
+      {sdgsData.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-dashed border-gray-200 py-12 text-center text-sm text-gray-500">
+          {t('top_sdgs.empty')}
+        </div>
+      ) : (
       <div className="relative">
         
         {/* Tombol Panah Kiri (Muncul jika showPrev true) */}
@@ -103,9 +110,9 @@ const TopSdgsCard = () => {
               <div className={`w-[60px] shrink-0 flex flex-col items-center justify-center py-4 ${SDG_BG_COLORS[sdg.id] || 'bg-gray-500'} text-white`}>
                 <span className="text-2xl font-bold leading-none">{sdg.id}</span>
                 <div className="w-5 h-[1.5px] bg-white/50 my-2.5 rounded-full"></div>
-                <img 
-                  src={sdg.iconSrc} 
-                  alt={`Ikon SDG ${sdg.id}`} 
+                <img
+                  src={sdg.iconSrc}
+                  alt={`SDG ${sdg.id}`}
                   className="w-14 h-14 object-contain"
                 />
               </div>
@@ -118,7 +125,7 @@ const TopSdgsCard = () => {
                 <div className="mt-3">
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-xl font-extrabold text-gray-900 leading-none">{sdg.count}</span>
-                    <span className="text-[11px] font-medium text-gray-500">artikel</span>
+                    <span className="text-[11px] font-medium text-gray-500">{t('top_sdgs.unit')}</span>
                   </div>
                   
                   <div className="text-[11px] font-bold text-[#2E9F40] mt-1 flex items-center gap-1">
@@ -135,7 +142,7 @@ const TopSdgsCard = () => {
 
         {/* Tombol Panah Kanan (Muncul jika showNext true) */}
         {showNext && (
-          <button 
+          <button
             onClick={() => scroll('right')}
             type="button"
             aria-label="Scroll next"
@@ -147,6 +154,7 @@ const TopSdgsCard = () => {
           </button>
         )}
       </div>
+      )}
 
     </div>
   );

@@ -1,0 +1,42 @@
+{
+  "breadcrumb": {
+    "home":    "Beranda",
+    "current": "Data Jurnal"
+  },
+  "header": {
+    "title":    "Data Jurnal",
+    "subtitle": "Temukan jurnal bereputasi berdasarkan kesesuaian target SDGs."
+  },
+  "filters": {
+    "search_placeholder": "Cari nama jurnal atau ISSN…",
+    "sort": {
+      "citescore": "CiteScore (Tinggi)",
+      "quartile":  "Quartile (Q1→Q4)",
+      "name":      "Nama (A-Z)"
+    }
+  },
+  "results": {
+    "count":         "Menampilkan <strong>{{shown}}</strong> dari <strong>{{total}}</strong> jurnal",
+    "issn_publisher":"ISSN: {{issn}} • {{publisher}}",
+    "metrics": {
+      "quartile": "Quartile",
+      "sjr":      "SJR",
+      "hindex":   "H-Index"
+    }
+  },
+  "empty": {
+    "no_match": {
+      "title":    "Tidak ada jurnal yang cocok",
+      "subtitle": "Filter atau kata kunci Anda tidak menemukan jurnal. Coba longgarkan filter atau ubah kata kunci.",
+      "reset":    "Reset Filter"
+    },
+    "no_data": {
+      "title":    "Data jurnal belum tersedia",
+      "subtitle": "Belum ada jurnal yang terindeks di database. Data akan muncul setelah administrator mengisi katalog jurnal."
+    }
+  },
+  "pagination": {
+    "prev": "Sebelumnya",
+    "next": "Selanjutnya"
+  }
+}
