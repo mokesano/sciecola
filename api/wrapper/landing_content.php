@@ -6,6 +6,9 @@
  * Mengembalikan JSON content untuk PublicHomePage. Frontend wajib
  * memiliki fallback (locale files) bila response tidak berisi konten —
  * endpoint ini TIDAK menyertakan teks bawaan/mock di sisi server.
+ *
+ * @author Claude Code
+ * @version 1.0.0
  */
 
 declare(strict_types=1);
