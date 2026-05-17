@@ -65,41 +65,43 @@ const InstitutionProfile = () => {
         const response = await fetch(`/api/institution_profile.php?id=${id}`);
         const data = await response.json();
 
-        if (data.status === 'success' && data.institution) {
-          // Map API response to component structure
-          const mappedData = {
-            institution: {
-              ...data.institution,
-              publications: data.statistics?.publications || 0,
-              researchers: data.statistics?.researchers || 0,
-              citations: data.statistics?.citations || 0,
-              hIndex: data.statistics?.hIndex || 0,
-              i10Index: data.statistics?.i10Index || 0,
-              journals: data.statistics?.journals || 0,
-              collaborations: data.statistics?.collaborations || 0,
-              sdgs: (data.statistics?.sdg_focus || []).length,
-              location: `${data.institution.city || ''}, ${data.institution.country || ''}`.trim(),
-              established: data.institution.established_year ? `Tahun ${data.institution.established_year}` : 'N/A',
-              students: `${data.institution.students || 0} (2024)`,
-              lecturers: `${data.institution.lecturers || 0} (2024)`
-            },
-            publication_trend: data.publication_trend || [],
-            top_researchers: data.top_researchers || [],
-            top_publications: data.top_publications || [],
-            news: data.news || [],
-            sdg_list: data.statistics?.sdg_focus || []
-          };
-
-          setProfileData(mappedData);
+        if (data.status === 'success') {
+          if (data.institution) {
+            // Map API response to component structure
+            const mappedData = {
+              institution: {
+                ...data.institution,
+                publications: data.statistics?.publications || 0,
+                researchers: data.statistics?.researchers || 0,
+                citations: data.statistics?.citations || 0,
+                hIndex: data.statistics?.hIndex || 0,
+                i10Index: data.statistics?.i10Index || 0,
+                journals: data.statistics?.journals || 0,
+                collaborations: data.statistics?.collaborations || 0,
+                sdgs: (data.statistics?.sdg_focus || []).length,
+                location: `${data.institution.city || ''}, ${data.institution.country || ''}`.trim(),
+                established: data.institution.established_year ? `Tahun ${data.institution.established_year}` : 'N/A',
+                students: `${data.institution.students || 0} (2024)`,
+                lecturers: `${data.institution.lecturers || 0} (2024)`
+              },
+              publication_trend: data.publication_trend || [],
+              top_researchers: data.top_researchers || [],
+              top_publications: data.top_publications || [],
+              news: data.news || [],
+              sdg_list: data.statistics?.sdg_focus || []
+            };
+            setProfileData(mappedData);
+          } else {
+            setProfileData(null);
+          }
           setError(null);
         } else {
-          setProfileData(null);
-          setError('Failed to load institution data');
+          throw new Error(data.message || 'Failed to load institution data');
         }
       } catch (err) {
         console.error('Error fetching institution:', err);
         setProfileData(null);
-        setError('Failed to load institution data');
+        setError(err.message || 'Failed to load institution data');
       } finally {
         setLoading(false);
       }
@@ -227,8 +229,24 @@ const InstitutionProfile = () => {
         </div>
       )}
 
+      {/* Empty State - Institution not found */}
+      {!loading && !error && !profileData && (
+        <div className="text-center py-20">
+          <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">Institusi tidak ditemukan</h3>
+          <p className="text-gray-500 text-sm">Institusi dengan ID tersebut belum tersedia di basis data.</p>
+          <Link to="/institutions" className="mt-4 inline-flex items-center gap-1 text-sm text-indigo-600 font-medium hover:text-indigo-700">
+            Kembali ke daftar institusi
+          </Link>
+        </div>
+      )}
+
       {/* Header Section */}
-      {!loading && (
+      {!loading && !error && profileData && (
       <>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         {/* Left: Logo & Basic Info */}
