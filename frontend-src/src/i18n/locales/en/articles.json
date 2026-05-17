@@ -33,7 +33,7 @@
     },
     "view": {
       "list_aria": "List view",
-      "grid_aria": "Grid view"
+      "card_aria": "Card view"
     }
   },
   "empty": {
