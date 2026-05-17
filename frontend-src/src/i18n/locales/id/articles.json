@@ -32,8 +32,8 @@
       "downloads": "Downloads"
     },
     "view": {
-      "list_aria": "Tampilan list",
-      "grid_aria": "Tampilan grid"
+      "list_aria": "Tampilan daftar",
+      "card_aria": "Tampilan kartu"
     }
   },
   "empty": {
