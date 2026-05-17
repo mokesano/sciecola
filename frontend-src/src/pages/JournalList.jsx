@@ -34,7 +34,8 @@ const JournalList = () => {
 
         const data = await response.json();
         if (data.status === 'success') {
-          const transformedJournals = data.data.map(journal => ({
+          const sourceList = Array.isArray(data.data) ? data.data : [];
+          const transformedJournals = sourceList.map(journal => ({
             id: journal.id,
             name: journal.name,
             issn: journal.issn || '',
@@ -49,6 +50,8 @@ const JournalList = () => {
           setJournals(transformedJournals);
           setTotalPages(data.total_pages || 1);
           setTotalResults(data.total || 0);
+        } else {
+          throw new Error(data.message || 'Failed to load journals');
         }
       } catch (err) {
         setError(err.message);

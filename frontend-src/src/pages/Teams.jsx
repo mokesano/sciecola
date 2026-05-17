@@ -27,6 +27,9 @@ const LeaderCard = ({ person }) => (
     <p className="text-[10px] font-mono text-gray-300 mb-0.5">{person.code}</p>
     <h3 className="font-bold text-gray-900 mb-1 group-hover:text-indigo-700 transition-colors">{person.name}</h3>
     <p className="text-sm text-indigo-600 font-medium mb-3">{person.role}</p>
+    <span className="inline-block text-xs text-indigo-500 font-medium group-hover:underline">
+      Lihat Profil →
+    </span>
   </Link>
 );
 
@@ -51,6 +54,9 @@ const AdvisorCard = ({ advisor }) => (
     <p className="text-xs text-purple-600 font-medium mb-1">{advisor.role}</p>
     <p className="text-xs text-gray-500 mb-1">{advisor.affiliation}</p>
     <p className="text-xs text-gray-400 mb-3">{(advisor.expertise ?? []).slice(0, 2).join(' · ')}</p>
+    <span className="inline-block text-xs text-purple-500 font-medium group-hover:underline">
+      Lihat Profil →
+    </span>
   </Link>
 );
 
@@ -67,16 +73,16 @@ const Teams = () => {
         setLoading(true);
         const response = await fetch('/api/teams.php?limit=100');
         const data = await response.json();
-        if (data.status === 'success' && data.members) {
-          setTeamMembers(data.members);
+        if (data.status === 'success') {
+          setTeamMembers(Array.isArray(data.members) ? data.members : []);
           setError(null);
         } else {
-          setTeamMembers(getDefaultTeamMembers());
+          throw new Error(data.message || 'Failed to load team members');
         }
       } catch (err) {
         console.error('Error fetching team members:', err);
-        setTeamMembers(getDefaultTeamMembers());
-        setError('Failed to load team members');
+        setTeamMembers([]);
+        setError(err.message || 'Failed to load team members');
       } finally {
         setLoading(false);
       }
@@ -365,11 +371,17 @@ const Teams = () => {
           <h2 className="text-2xl font-bold text-gray-900">Kepemimpinan</h2>
           <span className="text-sm text-gray-400">Klik kartu untuk melihat profil</span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-          {leadershipList.map((person) => (
-            <LeaderCard key={person.slug} person={person} />
-          ))}
-        </div>
+        {leadershipList.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            {leadershipList.map((person) => (
+              <LeaderCard key={person.slug} person={person} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+            <p className="text-gray-500">Belum ada anggota kepemimpinan untuk ditampilkan.</p>
+          </div>
+        )}
       </section>
 
       {/* Divisi */}
@@ -395,11 +407,17 @@ const Teams = () => {
           <h2 className="text-2xl font-bold text-gray-900">Konsultan & Penasihat</h2>
           <span className="text-sm text-gray-400">Klik kartu untuk melihat profil</span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {advisorsList.map((advisor) => (
-            <AdvisorCard key={advisor.slug} advisor={advisor} />
-          ))}
-        </div>
+        {advisorsList.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {advisorsList.map((advisor) => (
+              <AdvisorCard key={advisor.slug} advisor={advisor} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+            <p className="text-gray-500">Belum ada konsultan atau penasihat untuk ditampilkan.</p>
+          </div>
+        )}
       </section>
 
       {/* Nilai & Pencapaian */}
