@@ -1,0 +1,90 @@
+{
+  "breadcrumb": {
+    "home":      "Beranda",
+    "analytics": "Analytics",
+    "current":   "Distribusi Peneliti Global"
+  },
+  "header": {
+    "title":    "Distribusi Peneliti Global",
+    "subtitle": "Persebaran peneliti per negara dan institusi di seluruh dunia berdasarkan data ORCID dan publikasi."
+  },
+  "stats": {
+    "total_researchers": "Total Peneliti",
+    "total_countries":   "Negara",
+    "total_institutions": "Institusi"
+  },
+  "filter": {
+    "search_placeholder": "Cari nama negara atau institusi…",
+    "sdg_all":   "Semua SDGs",
+    "sdg_label": "SDG {{number}}",
+    "view": {
+      "country":     "Negara",
+      "institution": "Institusi"
+    },
+    "reset": "Reset Filter"
+  },
+  "map": {
+    "title_country":     "Peta Distribusi per Negara",
+    "title_institution": "Peta Lokasi Institusi",
+    "legend_label":      "Peneliti:",
+    "legend_zero":       "0",
+    "legend_low":        "Sedikit",
+    "legend_medium":     "Sedang",
+    "legend_high":       "Banyak",
+    "legend_highest":    "Tertinggi",
+    "popup": {
+      "researchers": "peneliti",
+      "publications": "publikasi"
+    }
+  },
+  "table": {
+    "title_country":     "Statistik Peneliti per Negara",
+    "title_institution": "Statistik Peneliti per Institusi",
+    "columns": {
+      "country":      "Negara",
+      "institution":  "Institusi",
+      "researchers":  "Peneliti",
+      "institutions": "Institusi",
+      "publications": "Publikasi",
+      "top_sdg":      "SDG Dominan",
+      "avg_impact":   "Rata-rata Dampak"
+    },
+    "no_match": {
+      "title":    "Tidak ada hasil yang cocok",
+      "subtitle": "Coba ubah filter SDG atau kata kunci pencarian."
+    },
+    "no_data": {
+      "title":    "Data distribusi belum tersedia",
+      "subtitle": "Data akan muncul setelah peneliti dikaitkan dengan institusi dan negara di database."
+    }
+  },
+  "top_countries": {
+    "title":    "Top 10 Negara berdasarkan Jumlah Peneliti",
+    "subtitle": "Perbandingan jumlah peneliti dan rata-rata dampak per negara",
+    "researchers": "Peneliti",
+    "avg_impact":  "Rata-rata Dampak",
+    "no_data": {
+      "title":    "Data peringkat belum tersedia",
+      "subtitle": "Data akan muncul setelah peneliti diasosiasikan dengan negara."
+    }
+  },
+  "detail": {
+    "country_title":     "Detail Negara",
+    "institution_title": "Detail Institusi",
+    "top_institutions":  "Top 5 Institusi di Negara Ini",
+    "key_stats":         "Statistik Utama",
+    "total_researchers": "Total Peneliti",
+    "total_institutions": "Jumlah Institusi",
+    "avg_impact":        "Rata-rata Dampak",
+    "total_publications": "Total Publikasi",
+    "top_sdg":           "SDG Dominan",
+    "close":             "Tutup",
+    "no_institutions": {
+      "title":    "Tidak ada institusi terdaftar",
+      "subtitle": "Belum ada institusi yang terhubung ke negara ini di database."
+    }
+  },
+  "loading": "Memuat data distribusi...",
+  "retry":   "Coba lagi",
+  "error":   "Gagal memuat data. Silakan coba lagi."
+}
