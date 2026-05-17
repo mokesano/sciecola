@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Search, BarChart2, Users, Globe,
   ArrowRight, CheckCircle, Star, ChevronRight,
@@ -7,89 +8,28 @@ import {
 } from 'lucide-react';
 
 // =====================================================================
-// KONTEN NARATIF APLIKASI
-// Bagian FEATURES dan HOW_IT_WORKS adalah copy/marketing yang
-// menjelaskan aplikasi Sciecola itu sendiri — bukan data platform yang
-// berubah-ubah. Konten semacam ini tidak diambil dari database.
+// VISUAL CONFIG
+// Icon + warna untuk tiap kartu fitur / langkah. Bukan teks naratif —
+// hanya konfigurasi presentasi yang dipasangkan ke konten naratif
+// berdasarkan urutan. Teks naratifnya bisa berasal dari DB (admin)
+// atau locale file (id.json / en.json) sebagai fallback.
 // =====================================================================
 
-const FEATURES = [
-  {
-    icon: FlaskConical,
-    title: 'Klasifikasi SDG Otomatis',
-    desc: 'AI kami mengklasifikasikan artikel ilmiah dan profil peneliti ke dalam 17 tujuan pembangunan berkelanjutan PBB secara otomatis.',
-    color: 'from-blue-500 to-indigo-600',
-    bg: 'bg-blue-50',
-    border: 'border-blue-100',
-  },
-  {
-    icon: Search,
-    title: 'Analisis ORCID & DOI',
-    desc: 'Masukkan ORCID peneliti atau DOI artikel untuk mendapatkan peta kontribusi SDG secara instan dan mendetail.',
-    color: 'from-emerald-500 to-teal-600',
-    bg: 'bg-emerald-50',
-    border: 'border-emerald-100',
-  },
-  {
-    icon: BarChart2,
-    title: 'Research Explorer',
-    desc: 'Jelajahi tren riset global, distribusi SDG antarwaktu, dan temukan kolaborator potensial dengan visualisasi interaktif.',
-    color: 'from-violet-500 to-purple-600',
-    bg: 'bg-violet-50',
-    border: 'border-violet-100',
-  },
-  {
-    icon: Users,
-    title: 'Jaringan Kolaborasi',
-    desc: 'Bangun koneksi lintas institusi dan negara. Temukan peneliti yang memiliki fokus SDG serupa untuk berkolaborasi.',
-    color: 'from-orange-500 to-red-500',
-    bg: 'bg-orange-50',
-    border: 'border-orange-100',
-  },
-  {
-    icon: Brain,
-    title: 'AI Insights',
-    desc: 'Dapatkan wawasan mendalam yang dihasilkan AI tentang tren penelitian, gap riset, dan peluang kolaborasi SDG.',
-    color: 'from-pink-500 to-rose-600',
-    bg: 'bg-pink-50',
-    border: 'border-pink-100',
-  },
-  {
-    icon: Handshake,
-    title: 'Research Matching',
-    desc: 'Platform cerdas yang mencocokkan peneliti, institusi, dan mitra industri berdasarkan keselarasan tujuan SDG.',
-    color: 'from-amber-500 to-yellow-500',
-    bg: 'bg-amber-50',
-    border: 'border-amber-100',
-  },
+const FEATURE_VISUALS = [
+  { icon: FlaskConical, color: 'from-blue-500 to-indigo-600',   bg: 'bg-blue-50',    border: 'border-blue-100' },
+  { icon: Search,       color: 'from-emerald-500 to-teal-600',  bg: 'bg-emerald-50', border: 'border-emerald-100' },
+  { icon: BarChart2,    color: 'from-violet-500 to-purple-600', bg: 'bg-violet-50',  border: 'border-violet-100' },
+  { icon: Users,        color: 'from-orange-500 to-red-500',    bg: 'bg-orange-50',  border: 'border-orange-100' },
+  { icon: Brain,        color: 'from-pink-500 to-rose-600',     bg: 'bg-pink-50',    border: 'border-pink-100' },
+  { icon: Handshake,    color: 'from-amber-500 to-yellow-500',  bg: 'bg-amber-50',   border: 'border-amber-100' },
 ];
 
-const HOW_IT_WORKS = [
-  {
-    step: 1,
-    icon: Search,
-    title: 'Masukkan ORCID atau DOI',
-    desc: 'Ketikkan ID ORCID peneliti atau DOI artikel ilmiah Anda. Platform kami akan mengambil data publikasi secara otomatis.',
-    color: 'from-blue-500 to-indigo-600',
-  },
-  {
-    step: 2,
-    icon: Brain,
-    title: 'AI Mengklasifikasi SDG',
-    desc: 'Model AI kami menganalisis abstrak dan konten publikasi, lalu memetakannya ke dalam satu atau lebih dari 17 SDG PBB.',
-    color: 'from-violet-500 to-purple-600',
-  },
-  {
-    step: 3,
-    icon: BarChart2,
-    title: 'Eksplorasi Hasil & Dampak',
-    desc: 'Lihat visualisasi interaktif kontribusi SDG, tren waktu, kolaborasi, dan ukuran dampak penelitian Anda.',
-    color: 'from-emerald-500 to-teal-600',
-  },
+const STEP_VISUALS = [
+  { icon: Search,    color: 'from-blue-500 to-indigo-600' },
+  { icon: Brain,     color: 'from-violet-500 to-purple-600' },
+  { icon: BarChart2, color: 'from-emerald-500 to-teal-600' },
 ];
 
-// Pemetaan icon untuk kartu statistik — diberikan berurutan pada
-// entry pertama, kedua, dst. yang dikirim API.
 const STAT_ICON_MAP = [
   { icon: FileText,  color: 'text-violet-600',  bg: 'bg-violet-50' },
   { icon: Users,     color: 'text-blue-600',    bg: 'bg-blue-50' },
@@ -97,16 +37,46 @@ const STAT_ICON_MAP = [
   { icon: Target,    color: 'text-orange-600',  bg: 'bg-orange-50' },
 ];
 
+// Helper: pilih nilai dari override DB jika ada, kalau tidak pakai
+// fallback dari locale (t function). Memastikan tidak ada teks
+// naratif yang ter-hardcode di komponen.
+const text = (override, t, key, options) =>
+  override ?? t(key, options);
+
 // =====================================================================
 // KOMPONEN UTAMA
 // =====================================================================
 const PublicHomePage = () => {
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language || 'id';
+
   const [stats, setStats]       = useState([]);
   const [sdgList, setSdgList]   = useState([]);
   const [insights, setInsights] = useState([]);
   const [partners, setPartners] = useState([]);
 
+  // Konten naratif yang diatur admin lewat /api/landing_content.php.
+  // Jika empty/error, semua `c.<key>` undefined → fallback ke t().
+  const [c, setC] = useState({});
+
+  // Helper utk akses bertingkat tanpa try/catch
+  const pick = (path) => {
+    return path.split('.').reduce((acc, k) => (acc && acc[k] !== undefined ? acc[k] : undefined), c);
+  };
+
   useEffect(() => {
+    // ---- Narrative content (DB override per language) ----
+    fetch(`/api/landing_content.php?lang=${encodeURIComponent(lang)}`)
+      .then(r => r.json())
+      .then(json => {
+        if (json.status === 'success' && json.content && typeof json.content === 'object') {
+          setC(json.content);
+        } else {
+          setC({});
+        }
+      })
+      .catch(() => setC({}));
+
     // ---- Platform statistics ----
     fetch('/api/platform_stats.php')
       .then(r => r.json())
@@ -123,7 +93,7 @@ const PublicHomePage = () => {
       })
       .catch(() => {});
 
-    // ---- SDG list (17 SDGs dengan nama & warna) ----
+    // ---- SDG list ----
     fetch('/api/sdg_distribution.php?sort=id&limit=17')
       .then(r => r.json())
       .then(json => {
@@ -133,7 +103,7 @@ const PublicHomePage = () => {
       })
       .catch(() => {});
 
-    // ---- AI Insights (ambil 3 pertama) ----
+    // ---- AI Insights ----
     fetch('/api/insights.php')
       .then(r => r.json())
       .then(json => {
@@ -143,7 +113,7 @@ const PublicHomePage = () => {
       })
       .catch(() => {});
 
-    // ---- Partner & sponsor ----
+    // ---- Partners ----
     fetch('/api/partners.php?limit=8')
       .then(r => r.json())
       .then(json => {
@@ -152,13 +122,37 @@ const PublicHomePage = () => {
         }
       })
       .catch(() => {});
-  }, []);
+  }, [lang]);
 
-  // Peta SDG number → warna, untuk pewarnaan badge insight
   const sdgColorById = sdgList.reduce((acc, s) => {
     acc[s.sdg] = s.color;
     return acc;
   }, {});
+
+  // Susun list fitur / how-it-works: prioritaskan override dari DB
+  // (jika array & jumlah elemen mencukupi), kalau tidak pakai locale.
+  const featureTexts = Array.isArray(pick('features'))
+    ? pick('features')
+    : t('publicHome.features', { returnObjects: true });
+  const features = FEATURE_VISUALS.map((vis, i) => ({
+    ...vis,
+    title: featureTexts?.[i]?.title ?? '',
+    desc:  featureTexts?.[i]?.desc  ?? '',
+  }));
+
+  const stepTexts = Array.isArray(pick('how_it_works'))
+    ? pick('how_it_works')
+    : t('publicHome.how_it_works', { returnObjects: true });
+  const steps = STEP_VISUALS.map((vis, i) => ({
+    ...vis,
+    step: i + 1,
+    title: stepTexts?.[i]?.title ?? '',
+    desc:  stepTexts?.[i]?.desc  ?? '',
+  }));
+
+  const trustSignals = Array.isArray(pick('cta_section.trust_signals'))
+    ? pick('cta_section.trust_signals')
+    : t('publicHome.cta_section.trust_signals', { returnObjects: true });
 
   return (
     <main className="min-h-screen bg-white">
@@ -176,19 +170,20 @@ const PublicHomePage = () => {
         <div className="relative z-10 mx-auto max-w-6xl px-6 text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-sm">
             <Globe className="h-4 w-4 text-blue-300" />
-            <span className="text-sm font-medium text-blue-200">Platform Riset SDG berbasis AI</span>
+            <span className="text-sm font-medium text-blue-200">
+              {text(pick('hero.badge'), t, 'publicHome.hero.badge')}
+            </span>
           </div>
 
           <h1 className="mb-6 text-5xl font-extrabold leading-tight tracking-tight text-white md:text-6xl lg:text-7xl">
-            Petakan Dampak Riset <br />
+            {text(pick('hero.title_1'), t, 'publicHome.hero.title_1')} <br />
             <span className="bg-gradient-to-r from-blue-400 via-violet-400 to-emerald-400 bg-clip-text text-transparent">
-              Terhadap Dunia
+              {text(pick('hero.title_2'), t, 'publicHome.hero.title_2')}
             </span>
           </h1>
 
           <p className="mx-auto mb-10 max-w-2xl text-lg text-slate-300 md:text-xl">
-            Sciecola menggunakan kecerdasan buatan untuk mengklasifikasikan penelitian ilmiah
-            ke dalam 17 Tujuan Pembangunan Berkelanjutan PBB — secara otomatis, akurat, dan visual.
+            {text(pick('hero.subtitle'), t, 'publicHome.hero.subtitle')}
           </p>
 
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -196,28 +191,28 @@ const PublicHomePage = () => {
               to="/login"
               className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-900/40 transition-all hover:-translate-y-0.5 hover:shadow-xl"
             >
-              Mulai Analisis
+              {text(pick('hero.cta_primary'), t, 'publicHome.hero.cta_primary')}
               <ArrowRight className="h-5 w-5" />
             </Link>
             <Link
               to="/register"
               className="inline-flex items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
             >
-              Daftar Gratis
+              {text(pick('hero.cta_secondary'), t, 'publicHome.hero.cta_secondary')}
             </Link>
           </div>
 
           <p className="mt-6 text-sm text-slate-400">
-            Sudah punya ORCID?&nbsp;
+            {text(pick('hero.orcid_hint_prefix'), t, 'publicHome.hero.orcid_hint_prefix')}&nbsp;
             <Link to="/login" className="font-medium text-blue-400 hover:text-blue-300 underline underline-offset-2">
-              Masuk &amp; analisis profil Anda &rarr;
+              {text(pick('hero.orcid_hint_link'), t, 'publicHome.hero.orcid_hint_link')}
             </Link>
           </p>
         </div>
       </section>
 
       {/* ============================================================ */}
-      {/* PLATFORM STATS (dari API)                                     */}
+      {/* PLATFORM STATS                                                */}
       {/* ============================================================ */}
       {stats.length > 0 && (
         <section className="bg-white py-14">
@@ -238,19 +233,21 @@ const PublicHomePage = () => {
       )}
 
       {/* ============================================================ */}
-      {/* FITUR UTAMA (konten naratif aplikasi)                         */}
+      {/* FITUR UTAMA                                                   */}
       {/* ============================================================ */}
       <section className="bg-gray-50 py-20">
         <div className="mx-auto max-w-6xl px-6">
           <div className="mb-14 text-center">
-            <h2 className="mb-4 text-4xl font-bold text-gray-900">Semua yang Anda Butuhkan</h2>
+            <h2 className="mb-4 text-4xl font-bold text-gray-900">
+              {text(pick('features_section.title'), t, 'publicHome.features_section.title')}
+            </h2>
             <p className="mx-auto max-w-2xl text-lg text-gray-500">
-              Dari klasifikasi otomatis hingga analisis dampak — satu platform untuk seluruh kebutuhan riset SDG Anda.
+              {text(pick('features_section.subtitle'), t, 'publicHome.features_section.subtitle')}
             </p>
           </div>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {FEATURES.map((f, i) => (
+            {features.map((f, i) => (
               <div key={i} className={`group rounded-2xl border ${f.border} ${f.bg} p-6 transition-all hover:-translate-y-1 hover:shadow-lg`}>
                 <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${f.color} text-white shadow-md`}>
                   <f.icon className="h-6 w-6" />
@@ -264,25 +261,23 @@ const PublicHomePage = () => {
       </section>
 
       {/* ============================================================ */}
-      {/* 17 SDGs OVERVIEW (dari API)                                   */}
+      {/* 17 SDGs                                                       */}
       {/* ============================================================ */}
       {sdgList.length > 0 && (
         <section className="py-20 bg-white">
           <div className="mx-auto max-w-6xl px-6">
             <div className="mb-14 text-center">
-              <h2 className="mb-4 text-4xl font-bold text-gray-900">17 Tujuan Pembangunan Berkelanjutan</h2>
+              <h2 className="mb-4 text-4xl font-bold text-gray-900">
+                {text(pick('sdg_section.title'), t, 'publicHome.sdg_section.title')}
+              </h2>
               <p className="mx-auto max-w-2xl text-lg text-gray-500">
-                Platform kami mencakup seluruh SDG PBB 2030 — setiap publikasi dipetakan secara presisi ke tujuan yang relevan.
+                {text(pick('sdg_section.subtitle'), t, 'publicHome.sdg_section.subtitle')}
               </p>
             </div>
 
             <div className="grid grid-cols-4 gap-3 sm:grid-cols-6 md:grid-cols-9 lg:grid-cols-9">
               {sdgList.map((sdg) => (
-                <Link
-                  key={sdg.sdg}
-                  to="/sdgs"
-                  className="group flex flex-col items-center"
-                >
+                <Link key={sdg.sdg} to="/sdgs" className="group flex flex-col items-center">
                   <div
                     className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl shadow-sm transition-all group-hover:-translate-y-1 group-hover:shadow-md"
                     style={{ backgroundColor: sdg.color }}
@@ -309,7 +304,7 @@ const PublicHomePage = () => {
                 to="/sdgs"
                 className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-gray-700"
               >
-                Jelajahi Semua SDG
+                {text(pick('sdg_section.cta_label'), t, 'publicHome.sdg_section.cta_label')}
                 <ChevronRight className="h-4 w-4" />
               </Link>
             </div>
@@ -318,21 +313,23 @@ const PublicHomePage = () => {
       )}
 
       {/* ============================================================ */}
-      {/* HOW IT WORKS (konten naratif aplikasi)                        */}
+      {/* HOW IT WORKS                                                  */}
       {/* ============================================================ */}
       <section className="bg-gradient-to-br from-slate-50 to-blue-50 py-20">
         <div className="mx-auto max-w-6xl px-6">
           <div className="mb-14 text-center">
-            <h2 className="mb-4 text-4xl font-bold text-gray-900">Cara Kerja Sciecola</h2>
+            <h2 className="mb-4 text-4xl font-bold text-gray-900">
+              {text(pick('how_it_works_section.title'), t, 'publicHome.how_it_works_section.title')}
+            </h2>
             <p className="mx-auto max-w-xl text-lg text-gray-500">
-              Tiga langkah sederhana untuk memetakan dampak penelitian Anda terhadap SDG global.
+              {text(pick('how_it_works_section.subtitle'), t, 'publicHome.how_it_works_section.subtitle')}
             </p>
           </div>
 
           <div className="relative grid grid-cols-1 gap-8 md:grid-cols-3">
             <div className="absolute top-10 left-[calc(16.67%+2rem)] right-[calc(16.67%+2rem)] hidden h-0.5 bg-gradient-to-r from-blue-200 via-violet-200 to-emerald-200 md:block" />
 
-            {HOW_IT_WORKS.map((item) => (
+            {steps.map((item) => (
               <div key={item.step} className="relative flex flex-col items-center text-center">
                 <div className="relative mb-6 flex h-20 w-20 items-center justify-center">
                   <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${item.color} opacity-10`} />
@@ -352,23 +349,25 @@ const PublicHomePage = () => {
       </section>
 
       {/* ============================================================ */}
-      {/* AI INSIGHTS (dari API)                                        */}
+      {/* AI INSIGHTS                                                   */}
       {/* ============================================================ */}
       {insights.length > 0 && (
         <section className="bg-white py-20">
           <div className="mx-auto max-w-6xl px-6">
             <div className="mb-14 flex flex-col items-center gap-4 text-center md:flex-row md:justify-between md:text-left">
               <div>
-                <h2 className="mb-3 text-4xl font-bold text-gray-900">AI Insights Terkini</h2>
+                <h2 className="mb-3 text-4xl font-bold text-gray-900">
+                  {text(pick('insights_section.title'), t, 'publicHome.insights_section.title')}
+                </h2>
                 <p className="max-w-xl text-lg text-gray-500">
-                  Wawasan otomatis berbasis data riset global — diperbarui setiap minggu.
+                  {text(pick('insights_section.subtitle'), t, 'publicHome.insights_section.subtitle')}
                 </p>
               </div>
               <Link
                 to="/insights"
                 className="inline-flex items-center gap-2 rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-700 transition-all hover:border-gray-300 hover:bg-gray-50 whitespace-nowrap"
               >
-                Lihat Semua Insights
+                {text(pick('insights_section.cta_label'), t, 'publicHome.insights_section.cta_label')}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
@@ -405,14 +404,18 @@ const PublicHomePage = () => {
       )}
 
       {/* ============================================================ */}
-      {/* PARTNERS & SPONSORS (dari API)                                */}
+      {/* PARTNERS                                                      */}
       {/* ============================================================ */}
       {partners.length > 0 && (
         <section className="bg-gray-50 py-16">
           <div className="mx-auto max-w-6xl px-6">
             <div className="mb-10 text-center">
-              <h2 className="mb-3 text-2xl font-bold text-gray-900">Dipercaya oleh Institusi Terkemuka</h2>
-              <p className="text-gray-500">Bergabung bersama ratusan universitas, lembaga riset, dan mitra industri.</p>
+              <h2 className="mb-3 text-2xl font-bold text-gray-900">
+                {text(pick('partners_section.title'), t, 'publicHome.partners_section.title')}
+              </h2>
+              <p className="text-gray-500">
+                {text(pick('partners_section.subtitle'), t, 'publicHome.partners_section.subtitle')}
+              </p>
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-4">
@@ -431,7 +434,7 @@ const PublicHomePage = () => {
                 to="/partners"
                 className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
               >
-                Lihat semua partner &amp; sponsor
+                {text(pick('partners_section.cta_label'), t, 'publicHome.partners_section.cta_label')}
                 <ChevronRight className="h-4 w-4" />
               </Link>
             </div>
@@ -451,14 +454,15 @@ const PublicHomePage = () => {
         <div className="relative mx-auto max-w-4xl px-6 text-center">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2">
             <Star className="h-4 w-4 text-yellow-300" />
-            <span className="text-sm font-medium">Gratis untuk peneliti akademik</span>
+            <span className="text-sm font-medium">
+              {text(pick('cta_section.badge'), t, 'publicHome.cta_section.badge')}
+            </span>
           </div>
           <h2 className="mb-6 text-4xl font-extrabold leading-tight md:text-5xl">
-            Mulai Pemetaan Riset SDG <br className="hidden md:block" />
-            Anda Hari Ini
+            {text(pick('cta_section.title'), t, 'publicHome.cta_section.title')}
           </h2>
           <p className="mx-auto mb-10 max-w-xl text-lg text-blue-100">
-            Daftarkan diri Anda, hubungkan profil ORCID, dan temukan kontribusi nyata penelitian Anda terhadap tujuan global.
+            {text(pick('cta_section.subtitle'), t, 'publicHome.cta_section.subtitle')}
           </p>
 
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -466,22 +470,22 @@ const PublicHomePage = () => {
               to="/register"
               className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-bold text-blue-700 shadow-lg transition-all hover:-translate-y-0.5 hover:bg-blue-50 hover:shadow-xl"
             >
-              Daftar Sekarang — Gratis
+              {text(pick('cta_section.cta_primary'), t, 'publicHome.cta_section.cta_primary')}
               <ArrowRight className="h-5 w-5" />
             </Link>
             <Link
               to="/login"
               className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
             >
-              Sudah punya akun? Masuk
+              {text(pick('cta_section.cta_secondary'), t, 'publicHome.cta_section.cta_secondary')}
             </Link>
           </div>
 
           <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-blue-200">
-            {['Tidak perlu kartu kredit', 'Tersedia dalam Bahasa Indonesia', 'Data peneliti dilindungi'].map((t, i) => (
+            {(Array.isArray(trustSignals) ? trustSignals : []).map((label, i) => (
               <span key={i} className="flex items-center gap-1.5">
                 <CheckCircle className="h-4 w-4 text-emerald-400" />
-                {t}
+                {label}
               </span>
             ))}
           </div>
