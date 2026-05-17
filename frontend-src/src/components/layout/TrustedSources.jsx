@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TRUSTED_SOURCES_FALLBACK } from '../../data/mock/trustedSources';
 
 const TrustedSources = () => {
   const { t } = useTranslation('dashboard');
@@ -11,8 +10,7 @@ const TrustedSources = () => {
     fetch('/api/partners.php?category=data_source&limit=20')
       .then((r) => r.json())
       .then((json) => {
-        if (json.status === 'success' && Array.isArray(json.partners) && json.partners.length > 0) {
-          // Mapping payload partner → bentuk yang dipakai komponen
+        if (json.status === 'success' && Array.isArray(json.partners)) {
           setSources(
             json.partners.map((p) => ({
               name: p.name,
@@ -21,11 +19,10 @@ const TrustedSources = () => {
             }))
           );
         } else {
-          // DB belum berisi sumber data → pakai fallback dari file terpisah
-          setSources(TRUSTED_SOURCES_FALLBACK);
+          setSources([]);
         }
       })
-      .catch(() => setSources(TRUSTED_SOURCES_FALLBACK))
+      .catch(() => setSources([]))
       .finally(() => setLoaded(true));
   }, []);
 
