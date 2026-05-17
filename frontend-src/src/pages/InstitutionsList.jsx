@@ -143,16 +143,16 @@ const InstitutionsList = () => {
         const response = await fetch(`/api/institutions.php?${params.toString()}`);
         const data = await response.json();
 
-        if (data.status === 'success' && data.institutions) {
-          setInstitutions(data.institutions);
+        if (data.status === 'success') {
+          setInstitutions(Array.isArray(data.institutions) ? data.institutions : []);
           setError(null);
         } else {
-          setInstitutions(defaultInstitutions);
+          throw new Error(data.message || 'Failed to load institutions');
         }
       } catch (err) {
         console.error('Error fetching institutions:', err);
-        setInstitutions(defaultInstitutions);
-        setError('Failed to load institutions. Showing sample data.');
+        setInstitutions([]);
+        setError(err.message || 'Failed to load institutions');
       } finally {
         setLoading(false);
       }
@@ -347,7 +347,7 @@ const InstitutionsList = () => {
       </div>
       )}
 
-      {!loading && filteredInstitutions.length === 0 && (
+      {!loading && !error && filteredInstitutions.length === 0 && (
         <div className="text-center py-20">
           <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
