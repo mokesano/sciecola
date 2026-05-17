@@ -15,6 +15,10 @@
       "publications": "Publikasi Terbanyak",
       "citations":    "Sitasi Tertinggi",
       "hIndex":       "H-Index Tertinggi"
+    },
+    "view": {
+      "list_aria": "Tampilan daftar",
+      "card_aria": "Tampilan kartu"
     }
   },
   "results": {

@@ -10,6 +10,7 @@ const InstitutionsList = () => {
   const [searchQuery, setSearchQuery]           = useState('');
   const [selectedCountry, setSelectedCountry]   = useState('all');
   const [sortBy, setSortBy]                     = useState('publications');
+  const [viewMode, setViewMode]                 = useState('card');
   const [institutions, setInstitutions]         = useState([]);
   const [loading, setLoading]                   = useState(true);
   const searchTimeoutRef = useRef(null);
@@ -129,7 +130,7 @@ const InstitutionsList = () => {
       {/* Results */}
       {!loading && institutions.length > 0 && (
         <>
-          <div className="mb-6">
+          <div className="mb-6 flex justify-between items-center">
             <p className="text-gray-600 text-sm">
               <Trans
                 i18nKey="results.count"
@@ -138,9 +139,25 @@ const InstitutionsList = () => {
                 components={{ strong: <span className="font-bold text-gray-900" /> }}
               />
             </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setViewMode('list')}
+                aria-label={t('filters.view.list_aria')}
+                className={`p-2 border rounded-lg transition-colors ${viewMode === 'list' ? 'bg-indigo-50 text-indigo-600 border-indigo-200' : 'border-gray-200 text-gray-400 hover:text-gray-600'}`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+              </button>
+              <button
+                onClick={() => setViewMode('card')}
+                aria-label={t('filters.view.card_aria')}
+                className={`p-2 border rounded-lg transition-colors ${viewMode === 'card' ? 'bg-indigo-50 text-indigo-600 border-indigo-200' : 'border-gray-200 text-gray-400 hover:text-gray-600'}`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className={viewMode === 'card' ? 'grid grid-cols-1 lg:grid-cols-2 gap-6' : 'grid grid-cols-1 gap-4'}>
             {institutions.map((inst) => (
               <Link
                 key={inst.id}
