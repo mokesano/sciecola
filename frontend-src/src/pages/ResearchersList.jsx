@@ -35,7 +35,8 @@ const ResearchersList = () => {
 
         const data = await response.json();
         if (data.status === 'success') {
-          const transformedResearchers = data.data.map(researcher => ({
+          const sourceList = Array.isArray(data.data) ? data.data : [];
+          const transformedResearchers = sourceList.map(researcher => ({
             id: researcher.id,
             name: researcher.name,
             orcid: researcher.orcid,
@@ -64,6 +65,8 @@ const ResearchersList = () => {
           setResearchers(transformedResearchers);
           setTotalPages(data.total_pages || 1);
           setTotalResults(data.total || 0);
+        } else {
+          throw new Error(data.message || 'Failed to load researchers');
         }
       } catch (err) {
         setError(err.message);
