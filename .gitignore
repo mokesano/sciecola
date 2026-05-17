@@ -22,6 +22,10 @@ frontend-src/node_modules/
 yarn.lock
 # package-lock.json
 
+# PHP
+*.phar
+/composer.lock
+
 # Vite/Rollup
 dist/
 build/
@@ -68,11 +72,6 @@ Thumbs.db
 *.log
 npm-debug.log*
 yarn-debug.log*
-
-# PHP
-*.phar
-/composer.lock
-/package-lock.json
 
 # Optional: Jika pakai TypeScript
 *.tsbuildinfo
