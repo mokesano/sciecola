@@ -13,6 +13,10 @@
       "citescore": "CiteScore (High)",
       "quartile":  "Quartile (Q1→Q4)",
       "name":      "Name (A-Z)"
+    },
+    "view": {
+      "list_aria": "List view",
+      "card_aria": "Card view"
     }
   },
   "results": {

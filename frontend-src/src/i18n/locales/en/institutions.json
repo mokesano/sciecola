@@ -15,6 +15,10 @@
       "publications": "Most Published",
       "citations":    "Most Cited",
       "hIndex":       "Highest H-Index"
+    },
+    "view": {
+      "list_aria": "List view",
+      "card_aria": "Card view"
     }
   },
   "results": {
