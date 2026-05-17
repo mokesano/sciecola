@@ -74,13 +74,13 @@ const InstitutionsList = () => {
       </nav>
 
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-10">
         <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">{t('header.title')}</h1>
         <p className="text-lg font-semibold text-gray-600 mt-1 max-w-2xl">{t('header.subtitle')}</p>
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm mb-8">
+      <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm mb-8">
         <div className="flex flex-col lg:flex-row gap-4">
           <div className="flex-grow relative">
             <input
@@ -89,7 +89,7 @@ const InstitutionsList = () => {
               value={searchQueryLocal}
               onChange={handleSearchChange}
               aria-label={t('filters.search_placeholder')}
-              className="w-full pl-11 pr-4 py-3 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 transition-all"
+              className="w-full pl-11 pr-4 py-3 bg-gray-50 border-none rounded-xl text-m focus:ring-2 focus:ring-indigo-500 transition-all"
             />
             <svg className="w-5 h-5 text-gray-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
