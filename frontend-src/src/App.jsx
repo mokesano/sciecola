@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { HashRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
 import { AuthProvider } from './context/AuthContext';
 import ScrollToTop from './components/shared/ScrollToTop';
 
@@ -103,6 +104,9 @@ import LogHistory from './pages/LogHistory';
 // Impor Halaman Insights AI
 import InsightsPage from './pages/InsightsPage';
 
+// Impor Halaman Public (landing page untuk user belum login)
+import PublicHomePage from './pages/PublicHomePage';
+
 // Impor Chatbot
 import Chatbot from './components/layout/Chatbot';
 
@@ -178,6 +182,16 @@ const Home = () => {
 };
 
 // =====================================================================
+// HOME ROUTER — Tampilkan landing page publik atau dashboard SDG
+// berdasarkan status login pengguna, tanpa redirect.
+// =====================================================================
+const HomeRouter = () => {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  return user ? <Home /> : <PublicHomePage />;
+};
+
+// =====================================================================
 // LAYOUT UTAMA (dengan Navbar, Footer, Chatbot)
 // =====================================================================
 const MainLayout = () => (
@@ -207,7 +221,7 @@ function App() {
             {/* ============================================== */}
             <Route element={<MainLayout />}>
               {/* Halaman Utama */}
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<HomeRouter />} />
 
               {/* Rute Jurnal */}
               <Route path="/journals" element={<JournalList />} />
