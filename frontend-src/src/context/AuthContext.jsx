@@ -13,7 +13,11 @@ export function AuthProvider({ children }) {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (parsed?.orcid) setUser(parsed);
+        // Rehydrate setiap pengguna yang sebelumnya berhasil login —
+        // ORCID opsional (login email/password dapat menghasilkan orcid: null).
+        if (parsed && (parsed.token || parsed.orcid || parsed.email)) {
+          setUser(parsed);
+        }
       }
     } catch {
       localStorage.removeItem(STORAGE_KEY);
