@@ -70,7 +70,7 @@ const Navbar = () => {
           </NavLink>
 
           {/* ── Navigasi Desktop ── */}
-          <div className="hidden lg:flex space-x-1 mt-1">
+          <div className="hidden lg:flex space-x-1">
             {[
               { to: '/',             label: t('nav.home'),        exact: true },
               { to: '/researchers',  label: t('nav.researchers'), active: isResearchersActive },

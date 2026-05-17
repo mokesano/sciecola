@@ -155,7 +155,7 @@ const PublicHomePage = () => {
     : t('cta_section.trust_signals', { returnObjects: true });
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white pt-20">
 
       {/* ============================================================ */}
       {/* HERO                                                          */}
