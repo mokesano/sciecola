@@ -102,7 +102,13 @@ const getByPath = (obj, path) => {
 
 const setByPath = (obj, path, value) => {
   const keys = path.split('.');
+  const blockedKeys = new Set(['__proto__', 'constructor', 'prototype']);
   const next = structuredClone(obj || {});
+
+  if (keys.some((k) => blockedKeys.has(k))) {
+    return next;
+  }
+
   let cursor = next;
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i];
