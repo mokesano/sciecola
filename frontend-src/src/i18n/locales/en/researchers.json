@@ -1,0 +1,48 @@
+{
+  "breadcrumb": {
+    "home":    "Home",
+    "current": "Researchers"
+  },
+  "header": {
+    "title":    "Researchers",
+    "subtitle": "Explore researcher profiles and their contributions to the SDGs."
+  },
+  "filters": {
+    "search_placeholder": "Search by name, institution, or research topic…",
+    "all_countries":      "All Countries",
+    "all_sdgs":           "All SDGs",
+    "sdg_label":          "SDG {{number}}",
+    "sort": {
+      "relevance":    "Relevance",
+      "citations":    "Most Cited",
+      "hIndex":       "Highest H-Index",
+      "publications": "Most Published",
+      "name":         "Name (A-Z)"
+    },
+    "active_label": "Active filters:",
+    "reset_all":    "Reset all"
+  },
+  "results": {
+    "count":      "Showing <strong>{{shown}}</strong> of <strong>{{total}}</strong> researchers",
+    "title_role": "Researcher",
+    "interests":  "Research Interests",
+    "metrics": {
+      "citations":    "Citations",
+      "h_index":      "H-Index",
+      "publications": "Publications"
+    }
+  },
+  "error": {
+    "title": "Failed to load researchers",
+    "retry": "Try Again"
+  },
+  "empty": {
+    "title":    "No researchers found",
+    "subtitle": "Try adjusting your filters or search terms.",
+    "reset":    "Reset Filters"
+  },
+  "pagination": {
+    "prev": "Previous",
+    "next": "Next"
+  }
+}
