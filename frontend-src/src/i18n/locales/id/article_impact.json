@@ -1,0 +1,115 @@
+{
+  "breadcrumb": {
+    "home":      "Beranda",
+    "analytics": "Analytics",
+    "current":   "Dampak Artikel"
+  },
+  "header": {
+    "title":    "Analisis Dampak Artikel",
+    "subtitle": "Analisis mendalam tentang dampak artikel berdasarkan tiga dimensi: akademik, sosial, dan praktis."
+  },
+  "filter": {
+    "sdg_all":   "Semua SDGs",
+    "sdg_label": "SDG {{number}}",
+    "period": {
+      "all":      "Semua Waktu",
+      "year_1":   "1 Tahun Terakhir",
+      "years_3":  "3 Tahun Terakhir",
+      "years_5":  "5 Tahun Terakhir",
+      "years_10": "10 Tahun Terakhir"
+    },
+    "sort": {
+      "label":     "Urutkan",
+      "impact":    "Skor Dampak",
+      "citations": "Sitasi Tertinggi",
+      "year":      "Tahun Terbaru"
+    },
+    "reset": "Reset Filter"
+  },
+  "explanation": {
+    "title":    "Tentang Skor Dampak Artikel",
+    "subtitle": "Skor dampak menggabungkan tiga dimensi pengukuran dampak penelitian.",
+    "dimensions": {
+      "academic": {
+        "title":  "Dampak Akademik",
+        "weight": "45%",
+        "desc":   "Mengukur sitasi, kuartil jurnal, dan indikator dampak akademik lainnya."
+      },
+      "social": {
+        "title":  "Dampak Media Sosial",
+        "weight": "25%",
+        "desc":   "Mengukur penyebaran dan diskusi penelitian di media sosial, berita, dan blog."
+      },
+      "practical": {
+        "title":  "Dampak Penggunaan",
+        "weight": "30%",
+        "desc":   "Mengukur implementasi praktis, kebijakan publik, dan manfaat langsung pada masyarakat."
+      }
+    },
+    "data_note": "Saat ini hanya dimensi akademik yang dihitung dari database. Dimensi sosial dan praktis memerlukan integrasi sumber data eksternal (Altmetric, dsb.)."
+  },
+  "detail": {
+    "title":        "Detail Artikel",
+    "authors":      "Penulis",
+    "journal":      "Jurnal",
+    "year":         "Tahun",
+    "quartile":     "Kuartil",
+    "total_score":  "Skor Dampak Total",
+    "components":   "Komponen Dampak",
+    "profile":      "Profil Dampak",
+    "open_article": "Buka Artikel",
+    "close":        "Tutup"
+  },
+  "table": {
+    "title":   "Artikel dengan Dampak Tertinggi",
+    "columns": {
+      "title_authors": "Judul & Penulis",
+      "journal":       "Jurnal",
+      "year":          "Tahun",
+      "citations":     "Sitasi",
+      "academic":      "Akademik",
+      "social":        "Sosial",
+      "practical":     "Praktis",
+      "impact_score":  "Skor Dampak"
+    },
+    "no_match": {
+      "title":    "Tidak ada artikel yang cocok",
+      "subtitle": "Coba ubah filter SDG atau rentang waktu."
+    },
+    "no_data": {
+      "title":    "Data artikel belum tersedia",
+      "subtitle": "Belum ada artikel yang terindeks dengan data sitasi. Data akan muncul setelah administrator menjalankan crawl CrossRef/OpenAlex."
+    }
+  },
+  "pagination": {
+    "prev":     "Sebelumnya",
+    "next":     "Berikutnya",
+    "showing":  "Menampilkan {{from}}-{{to}} dari {{total}} artikel"
+  },
+  "by_sdg": {
+    "title":    "Rata-rata Dampak per SDG",
+    "subtitle": "Skor dampak akademik rata-rata untuk artikel di setiap SDG",
+    "no_data": {
+      "title":    "Belum ada data dampak per SDG",
+      "subtitle": "Data akan muncul setelah artikel terklasifikasi per SDG dengan data sitasi."
+    }
+  },
+  "by_quartile": {
+    "title":    "Dampak Berdasarkan Kuartil Jurnal",
+    "subtitle": "Perbandingan skor dampak rata-rata per kuartil jurnal (Q1-Q4)",
+    "articles": "artikel",
+    "no_data": {
+      "title":    "Belum ada data kuartil",
+      "subtitle": "Data akan muncul setelah jurnal terindeks dengan informasi kuartil (Q1-Q4)."
+    }
+  },
+  "impact_dims": {
+    "academic":  "Dampak Akademik",
+    "social":    "Dampak Media Sosial",
+    "practical": "Dampak Penggunaan Praktis",
+    "total":     "Skor Dampak Total"
+  },
+  "loading": "Memuat data dampak artikel...",
+  "retry":   "Coba lagi",
+  "error":   "Gagal memuat data. Silakan coba lagi."
+}
