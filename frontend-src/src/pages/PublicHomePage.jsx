@@ -106,11 +106,22 @@ const HOW_IT_WORKS = [
 ];
 
 const DEFAULT_STATS = [
-  { label: 'Peneliti Terdaftar', value: '12,400+', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
-  { label: 'Artikel Terklasifikasi', value: '89,500+', icon: FileText, color: 'text-violet-600', bg: 'bg-violet-50' },
-  { label: 'Institusi Partner', value: '340+', icon: Building2, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-  { label: 'SDG Dicakup', value: '17 / 17', icon: Target, color: 'text-orange-600', bg: 'bg-orange-50' },
+  { label: 'Peneliti', value: '12,843', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
+  { label: 'Artikel Terklasifikasi', value: '24,751', icon: FileText, color: 'text-violet-600', bg: 'bg-violet-50' },
+  { label: 'Jurnal Terindeks', value: '1,259', icon: Building2, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  { label: 'SDGs Terwakili', value: '17 / 17', icon: Target, color: 'text-orange-600', bg: 'bg-orange-50' },
 ];
+
+// Cari nilai dari payload API berdasarkan kata kunci pada label.
+// API mengembalikan: data = [{label, value}, ...] dengan label seperti
+// "Peneliti", "Artikel Terklasifikasi", "Jurnal", "SDGs Terwakili".
+const pickStat = (items, keyword) => {
+  const found = items.find(item =>
+    typeof item?.label === 'string' &&
+    item.label.toLowerCase().includes(keyword.toLowerCase())
+  );
+  return found?.value;
+};
 
 const INSIGHT_PREVIEWS = [
   {
@@ -152,13 +163,15 @@ const PublicHomePage = () => {
       try {
         const res = await fetch('/api/platform_stats.php');
         if (!res.ok) return;
-        const data = await res.json();
-        if (data.status !== 'success' || !data.stats) return;
+        const json = await res.json();
+        if (json.status !== 'success' || !Array.isArray(json.data)) return;
+
+        const items = json.data;
         setStats([
-          { label: 'Peneliti Terdaftar', value: data.stats.researchers ?? DEFAULT_STATS[0].value, icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
-          { label: 'Artikel Terklasifikasi', value: data.stats.articles ?? DEFAULT_STATS[1].value, icon: FileText, color: 'text-violet-600', bg: 'bg-violet-50' },
-          { label: 'Institusi Partner', value: data.stats.institutions ?? DEFAULT_STATS[2].value, icon: Building2, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-          { label: 'SDG Dicakup', value: '17 / 17', icon: Target, color: 'text-orange-600', bg: 'bg-orange-50' },
+          { label: 'Peneliti',               value: pickStat(items, 'peneliti')  ?? DEFAULT_STATS[0].value, icon: Users,      color: 'text-blue-600',    bg: 'bg-blue-50' },
+          { label: 'Artikel Terklasifikasi', value: pickStat(items, 'artikel')   ?? DEFAULT_STATS[1].value, icon: FileText,   color: 'text-violet-600',  bg: 'bg-violet-50' },
+          { label: 'Jurnal Terindeks',       value: pickStat(items, 'jurnal')    ?? DEFAULT_STATS[2].value, icon: Building2,  color: 'text-emerald-600', bg: 'bg-emerald-50' },
+          { label: 'SDGs Terwakili',         value: pickStat(items, 'sdg')       ?? DEFAULT_STATS[3].value, icon: Target,     color: 'text-orange-600',  bg: 'bg-orange-50' },
         ]);
       } catch {
         // silently keep default stats
