@@ -41,11 +41,13 @@ try {
 
     switch ($method) {
         case 'GET':
-            echo json_encode(fetchContent($pdo));
+            $lang = strtolower(trim((string) ($_GET['lang'] ?? 'id')));
+            echo json_encode(fetchContent($pdo, $lang));
             break;
         case 'POST':
         case 'PUT':
-            echo json_encode(upsertContent($pdo));
+            $body = json_decode(file_get_contents('php://input'), true);
+            echo json_encode(upsertContent($pdo, is_array($body) ? $body : []));
             break;
         default:
             http_response_code(405);
@@ -56,9 +58,8 @@ try {
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
 
-function fetchContent(PDO $pdo): array
+function fetchContent(PDO $pdo, string $lang): array
 {
-    $lang = strtolower(trim($_GET['lang'] ?? 'id'));
     if (!in_array($lang, ['id', 'en'], true)) {
         return ['status' => 'error', 'message' => 'Invalid lang'];
     }
@@ -82,15 +83,13 @@ function fetchContent(PDO $pdo): array
     ];
 }
 
-function upsertContent(PDO $pdo): array
+function upsertContent(PDO $pdo, array $input): array
 {
-    $input = json_decode(file_get_contents('php://input'), true);
-
-    if (!is_array($input)) {
+    if (empty($input)) {
         return ['status' => 'error', 'message' => 'Invalid JSON body'];
     }
 
-    $lang = strtolower(trim($input['lang'] ?? ''));
+    $lang = strtolower(trim((string) ($input['lang'] ?? '')));
     if (!in_array($lang, ['id', 'en'], true)) {
         return ['status' => 'error', 'message' => 'Invalid lang'];
     }
