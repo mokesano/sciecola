@@ -1,0 +1,50 @@
+{
+  "breadcrumb": {
+    "home":    "Home",
+    "current": "Researchers"
+  },
+  "header": {
+    "title":    "Researchers",
+    "subtitle": "Explore researcher profiles and their contributions to the SDGs."
+  },
+  "filters": {
+    "search_placeholder": "Search by name, institution, or research topic…",
+    "all_countries":      "All Countries",
+    "all_sdgs":           "All SDGs",
+    "sdg_label":          "SDG {{number}}",
+    "sort": {
+      "relevance":    "Relevance",
+      "citations":    "Most Cited",
+      "hIndex":       "Highest H-Index",
+      "publications": "Most Published",
+      "name":         "Name (A-Z)"
+    },
+    "active_label": "Active filters:",
+    "reset_all":    "Reset all"
+  },
+  "results": {
+    "count":      "Showing <strong>{{shown}}</strong> of <strong>{{total}}</strong> researchers",
+    "title_role": "Researcher",
+    "interests":  "Research Interests",
+    "metrics": {
+      "citations":    "Citations",
+      "h_index":      "H-Index",
+      "publications": "Publications"
+    }
+  },
+  "empty": {
+    "no_match": {
+      "title":    "No matching researchers",
+      "subtitle": "Your filters or keywords returned no results. Try loosening the filters or using different keywords.",
+      "reset":    "Reset Filters"
+    },
+    "no_data": {
+      "title":    "No researcher data yet",
+      "subtitle": "No researcher profiles have been indexed in the database. Data will appear once the administrator runs an ORCID crawl."
+    }
+  },
+  "pagination": {
+    "prev": "Previous",
+    "next": "Next"
+  }
+}
