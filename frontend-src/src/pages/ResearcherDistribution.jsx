@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { MapContainer, TileLayer, GeoJSON, CircleMarker, Popup, useMap } from 'react-leaflet';
@@ -13,6 +13,7 @@ const ResearcherDistribution = () => {
   const [provinceResearcherData, setProvinceResearcherData] = useState([]);
   const [institutionData, setInstitutionData] = useState([]);
   const [worldGeoJson, setWorldGeoJson] = useState(null);
+  const mapRef = useRef(null);
 
   // Fetch data dari database (GLOBAL - semua negara, tidak hanya Indonesia)
   useEffect(() => {
@@ -72,6 +73,17 @@ const ResearcherDistribution = () => {
     fetchData();
   }, []);
 
+  const MapSizeFixer = () => {
+    const map = useMap();
+    useEffect(() => {
+      const timeout = setTimeout(() => {
+        map.invalidateSize();
+      }, 250);
+      return () => clearTimeout(timeout);
+    }, [map]);
+    return null;
+  };
+  
   // Hitung center peta berdasarkan distribusi data peneliti global
   const calculateMapCenter = () => {
     if (provinceResearcherData.length === 0) {
@@ -120,7 +132,7 @@ const ResearcherDistribution = () => {
     const map = useMap();
     useEffect(() => {
       if (view === 'province') {
-        map.setView([20, 10], 2); // World overview untuk choropleth
+        map.setView([20, 0], 2); // World overview untuk choropleth
       }
     }, [view, map]);
     return null;
@@ -160,21 +172,41 @@ const ResearcherDistribution = () => {
     };
 
     return (
-      <div className="h-96 rounded-xl overflow-hidden border border-gray-200">
+      <div className="h-96 overflow-hidden border border-gray-200">
         <MapContainer
-          center={[20, 10]}
+          ref={mapRef}
+          center={[20, 0]}
           zoom={2}
-          minZoom={1}
-          maxZoom={8}
-          style={{ height: '100%', width: '100%' }}
+          minZoom={2}
+          maxZoom={6}
+          style={{ height: '100%', width: '100%', zIndex: 0 }}
           scrollWheelZoom={true}
           dragging={true}
           zoomControl={true}
           doubleClickZoom={true}
           touchZoom={true}
+          worldCopyJump={true}
           attributionControl={false}
         >
-          <TileLayer url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png" />
+          <TileLayer 
+            url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png" 
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            subdomains="abcd"
+            maxZoom={19}
+            noWrap={false}
+          />
+          
+          <MapSizeFixer />
+          {geoData.map((location) => (
+            <PulseMarker
+              key={location.id}
+              position={[location.lat, location.lng]}
+              city={location.city}
+              visitors={location.visitors}
+              type={location.visitors > 1000 ? 'brute' : location.visitors > 500 ? 'bot' : 'normal'}
+            />
+          ))}
+
           <MapViewController view={mapView} />
 
           {/* CHOROPLETH: Warna negara berdasarkan jumlah peneliti */}
@@ -297,13 +329,13 @@ const ResearcherDistribution = () => {
         <div className="flex flex-wrap gap-2">
           <div className="flex">
             <button
-              className={`px-3 py-1 text-sm rounded-l-md ${mapView === 'province' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+              className={`px-4 py-2 text-sm rounded-l-md ${mapView === 'province' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
               onClick={() => toggleMapView('province')}
             >
               Provinsi
             </button>
             <button
-              className={`px-3 py-1 text-sm rounded-r-md ${mapView === 'institution' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+              className={`px-4 py-2 text-sm rounded-r-md ${mapView === 'institution' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'}`}
               onClick={() => toggleMapView('institution')}
             >
               Institusi
