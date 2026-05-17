@@ -125,7 +125,9 @@ const setByPath = (obj, path, value) => {
     }
     cursor = cursor[key];
   }
-  cursor[keys[keys.length - 1]] = value;
+  const lastKey = keys[keys.length - 1];
+  if (!isSafeKey(lastKey)) return next;
+  cursor[lastKey] = value;
   return next;
 };
 
