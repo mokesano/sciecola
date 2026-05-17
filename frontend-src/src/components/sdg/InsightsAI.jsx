@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { CACHED_INSIGHTS } from '../../utils/insightEngine';
+import { useTranslation } from 'react-i18next';
 
 const ICON_STYLES = [
   { iconColor: 'text-green-400',  iconBg: 'bg-green-500/20'  },
@@ -27,9 +27,8 @@ const TrendIcon = ({ trend }) => {
 };
 
 const InsightsAI = () => {
-  const [displayInsights, setDisplayInsights] = useState(
-    CACHED_INSIGHTS.slice(0, 3).map((item, i) => ({ ...item, ...ICON_STYLES[i % ICON_STYLES.length] }))
-  );
+  const { t } = useTranslation('dashboard');
+  const [displayInsights, setDisplayInsights] = useState([]);
 
   useEffect(() => {
     fetch('/api/insights.php')
@@ -57,15 +56,19 @@ const InsightsAI = () => {
           <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
-          <h3 className="font-semibold text-lg">Insights AI</h3>
+          <h3 className="font-semibold text-lg">{t('insights_ai.title')}</h3>
         </div>
         <Link to="/insights" className="text-sm text-gray-300 hover:text-white transition-colors">
-          Lihat semua
+          {t('insights_ai.view_all')}
         </Link>
       </div>
 
       <div className="flex-grow space-y-4 relative z-10">
-        {displayInsights.map((item) => (
+        {displayInsights.length === 0 ? (
+          <div className="bg-white/5 border border-white/10 rounded-xl p-6 text-center text-sm text-gray-300">
+            {t('insights_ai.empty')}
+          </div>
+        ) : displayInsights.map((item) => (
           <div key={item.id} className="bg-white/5 border border-white/10 rounded-xl p-4 flex gap-4 items-start transition hover:bg-white/10">
             <div className={`p-2 rounded-lg ${item.iconBg} ${item.iconColor} shrink-0`}>
               <TrendIcon trend={item.trend} />
@@ -79,7 +82,7 @@ const InsightsAI = () => {
         to="/insights"
         className="mt-6 w-full py-3 px-4 border border-white/20 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors flex justify-center items-center gap-2 relative z-10"
       >
-        Lihat semua insight
+        {t('insights_ai.cta')}
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
         </svg>

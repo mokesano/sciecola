@@ -1,0 +1,35 @@
+{
+  "brand_tagline": "Klasifikasi & Analitik SDGs",
+  "description": "Platform AI canggih untuk menganalisis kontribusi riset terhadap Tujuan Pembangunan Berkelanjutan. Memberdayakan peneliti dan institusi dengan klasifikasi dan wawasan cerdas.",
+  "columns": {
+    "product":      "Produk",
+    "data_sources": "Sumber Data",
+    "information":  "Informasi"
+  },
+  "links": {
+    "trends":         "Analisis Tren",
+    "sdgs_explorer":  "Penjelajah SDGs",
+    "article_impact": "Dampak Artikel",
+    "researchers":    "Peneliti",
+    "journals":       "Jurnal",
+    "api":            "API",
+    "about":          "Tentang Kami",
+    "docs":           "Dokumentasi Fitur",
+    "faq":            "FAQ",
+    "help":           "Bantuan",
+    "privacy":        "Kebijakan Privasi",
+    "terms":          "Syarat & Ketentuan"
+  },
+  "newsletter": {
+    "title":       "Berlangganan",
+    "highlight":   "Newsletter",
+    "description": "Dapatkan update terbaru tentang fitur dan analisis riset dari Sciecola.",
+    "placeholder": "Masukkan email Anda",
+    "subscribe":   "Berlangganan",
+    "subscribed":  "Berlangganan!"
+  },
+  "copyright": {
+    "rights":       "Hak cipta dilindungi.",
+    "developed_by": "Dikembangkan oleh"
+  }
+}
