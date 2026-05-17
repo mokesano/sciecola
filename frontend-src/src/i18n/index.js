@@ -39,6 +39,8 @@ import idAnalytics          from './locales/id/analytics.json';
 import enAnalytics          from './locales/en/analytics.json';
 import idTrendsAnalysis     from './locales/id/trends_analysis.json';
 import enTrendsAnalysis     from './locales/en/trends_analysis.json';
+import idArticleImpact      from './locales/id/article_impact.json';
+import enArticleImpact      from './locales/en/article_impact.json';
 
 // ─── Deteksi bahasa awal ─────────────────────────────────────────────
 // Prioritas: (1) preferensi tersimpan user → (2) bahasa browser →
@@ -78,6 +80,7 @@ i18n
         sdgs_cluster:        idSdgsCluster,
         analytics:           idAnalytics,
         trends_analysis:     idTrendsAnalysis,
+        article_impact:      idArticleImpact,
       },
       en: {
         translation: enCommon,
@@ -97,12 +100,13 @@ i18n
         sdgs_cluster:        enSdgsCluster,
         analytics:           enAnalytics,
         trends_analysis:     enTrendsAnalysis,
+        article_impact:      enArticleImpact,
       },
     },
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact'],
     interpolation: { escapeValue: false },
   });
 
