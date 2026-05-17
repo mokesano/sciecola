@@ -33,7 +33,8 @@ const ArticleList = () => {
 
         const data = await response.json();
         if (data.status === 'success') {
-          const transformedArticles = data.data.map(article => ({
+          const sourceList = Array.isArray(data.data) ? data.data : [];
+          const transformedArticles = sourceList.map(article => ({
             id: article.doi,
             title: article.title,
             authors: article.authors || [],
@@ -52,6 +53,8 @@ const ArticleList = () => {
           setArticles(transformedArticles);
           setTotalPages(data.total_pages || 1);
           setTotalResults(data.total || 0);
+        } else {
+          throw new Error(data.message || 'Failed to load articles');
         }
       } catch (err) {
         setError(err.message);
