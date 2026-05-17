@@ -16,11 +16,15 @@ const PERIOD_OPTIONS = [
 
 const SORT_OPTIONS = ['impact', 'citations', 'year'];
 
-const QUARTILE_STYLE = {
-  Q1: 'bg-green-100  text-green-800',
-  Q2: 'bg-blue-100   text-blue-800',
-  Q3: 'bg-yellow-100 text-yellow-800',
-  Q4: 'bg-gray-100   text-gray-700',
+// SINTA accreditation: 6 grades (S1 highest → S6 lowest). Structured color gradient
+// for clear visual hierarchy: green → blue → indigo → amber → orange → red.
+const SINTA_STYLE = {
+  S1: { chip: 'bg-emerald-100 text-emerald-800', bar: '#10b981' },
+  S2: { chip: 'bg-blue-100    text-blue-800',    bar: '#3b82f6' },
+  S3: { chip: 'bg-indigo-100  text-indigo-800',  bar: '#6366f1' },
+  S4: { chip: 'bg-amber-100   text-amber-800',   bar: '#f59e0b' },
+  S5: { chip: 'bg-orange-100  text-orange-800',  bar: '#f97316' },
+  S6: { chip: 'bg-red-100     text-red-800',     bar: '#ef4444' },
 };
 
 const DIM_STYLE = {
@@ -48,10 +52,11 @@ const ChevronRight = () => (
   </svg>
 );
 
-const QuartileChip = ({ q }) => {
-  if (!q) return <span className="text-xs text-gray-400">—</span>;
-  const cls = QUARTILE_STYLE[q] || QUARTILE_STYLE.Q4;
-  return <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${cls}`}>{q}</span>;
+const SintaChip = ({ grade }) => {
+  if (!grade) return <span className="text-xs text-gray-400">—</span>;
+  const style = SINTA_STYLE[grade];
+  if (!style) return <span className="text-xs text-gray-400">{grade}</span>;
+  return <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${style.chip}`}>SINTA {grade.slice(1)}</span>;
 };
 
 const ImpactBar = ({ value, color }) => (
@@ -124,7 +129,7 @@ const ArticleImpactMetrics = () => {
   const total             = data?.total               ?? 0;
   const totalPages        = data?.total_pages         ?? 1;
   const impactBySdg       = data?.impact_by_sdg       ?? [];
-  const quartileBreakdown = data?.quartile_breakdown  ?? [];
+  const sintaBreakdown    = data?.sinta_breakdown     ?? [];
   const dimsAvailable     = data?.dimensions_available ?? { academic: true, social: false, practical: false };
 
   const resetFilters = () => {
@@ -288,7 +293,7 @@ const ArticleImpactMetrics = () => {
                   <p><b>{t('detail.authors')}:</b> {(selectedArticle.authors ?? []).join(', ') || '—'}</p>
                   <p><b>{t('detail.journal')}:</b> {selectedArticle.journal || '—'}</p>
                   <p><b>{t('detail.year')}:</b> {selectedArticle.year || '—'}</p>
-                  <p><b>{t('detail.quartile')}:</b> <QuartileChip q={selectedArticle.quartile} /></p>
+                  <p><b>{t('detail.sinta')}:</b> <SintaChip grade={selectedArticle.sinta} /></p>
                   <p><b>{t('detail.total_score')}:</b> <span className="font-bold text-indigo-600">{selectedArticle.total_impact}</span></p>
 
                   <div className="mt-4">
@@ -373,7 +378,7 @@ const ArticleImpactMetrics = () => {
                         </td>
                         <td className="px-4 py-3">
                           <div className="text-sm text-gray-700 truncate max-w-[180px]">{article.journal || '—'}</div>
-                          <div className="mt-0.5"><QuartileChip q={article.quartile} /></div>
+                          <div className="mt-0.5"><SintaChip grade={article.sinta} /></div>
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-700">{article.year || '—'}</td>
                         <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900">{article.citations.toLocaleString()}</td>
@@ -474,40 +479,37 @@ const ArticleImpactMetrics = () => {
               )}
             </div>
 
-            {/* Quartile breakdown (horizontal stacked bar) */}
+            {/* SINTA breakdown (horizontal bar with SINTA color gradient) */}
             <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-              <h3 className="font-semibold text-gray-900 mb-1">{t('by_quartile.title')}</h3>
-              <p className="text-xs text-gray-500 mb-4">{t('by_quartile.subtitle')}</p>
-              {quartileBreakdown.length > 0 ? (
+              <h3 className="font-semibold text-gray-900 mb-1">{t('by_sinta.title')}</h3>
+              <p className="text-xs text-gray-500 mb-4">{t('by_sinta.subtitle')}</p>
+              {sintaBreakdown.length > 0 ? (
                 <>
-                  <ResponsiveContainer width="100%" height={260}>
-                    <BarChart data={quartileBreakdown} layout="vertical" margin={{ left: 20 }}>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={sintaBreakdown} layout="vertical" margin={{ left: 20 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                       <XAxis type="number" domain={[0, 100]} stroke="#6b7280" fontSize={11} />
-                      <YAxis dataKey="quartile" type="category" stroke="#6b7280" fontSize={11} width={40} />
+                      <YAxis dataKey="sinta" type="category" stroke="#6b7280" fontSize={11} width={40} />
                       <Tooltip />
                       <Bar dataKey="academic" name={t('impact_dims.academic')} radius={[0, 4, 4, 0]}>
-                        {quartileBreakdown.map((row, i) => {
-                          const color = row.quartile === 'Q1' ? '#10b981'
-                            : row.quartile === 'Q2' ? '#3b82f6'
-                            : row.quartile === 'Q3' ? '#f59e0b' : '#9ca3af';
-                          return <Cell key={i} fill={color} />;
-                        })}
+                        {sintaBreakdown.map((row, i) => (
+                          <Cell key={i} fill={SINTA_STYLE[row.sinta]?.bar || '#9ca3af'} />
+                        ))}
                       </Bar>
                     </BarChart>
                   </ResponsiveContainer>
-                  <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {quartileBreakdown.map(row => (
-                      <div key={row.quartile} className="bg-gray-50 p-2 rounded text-center">
-                        <QuartileChip q={row.quartile} />
+                  <div className="mt-3 grid grid-cols-3 sm:grid-cols-6 gap-2">
+                    {sintaBreakdown.map(row => (
+                      <div key={row.sinta} className="bg-gray-50 p-2 rounded text-center">
+                        <SintaChip grade={row.sinta} />
                         <p className="text-sm font-bold text-gray-900 mt-1">{row.article_count.toLocaleString()}</p>
-                        <p className="text-[10px] text-gray-500">{t('by_quartile.articles')}</p>
+                        <p className="text-[10px] text-gray-500">{t('by_sinta.articles')}</p>
                       </div>
                     ))}
                   </div>
                 </>
               ) : (
-                <EmptySection title={t('by_quartile.no_data.title')} subtitle={t('by_quartile.no_data.subtitle')} />
+                <EmptySection title={t('by_sinta.no_data.title')} subtitle={t('by_sinta.no_data.subtitle')} />
               )}
             </div>
           </div>
