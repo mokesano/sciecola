@@ -160,14 +160,14 @@ const PublicHomePage = () => {
       {/* ============================================================ */}
       {/* HERO                                                          */}
       {/* ============================================================ */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-900 pt-28 pb-20">
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-900 py-28">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl" />
           <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-indigo-500/20 blur-3xl" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-violet-600/10 blur-3xl" />
         </div>
 
-        <div className="relative z-10 mx-auto max-w-6xl px-6 text-center">
+        <div className="relative z-10 mx-auto max-w-7xl px-8 text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-sm">
             <Globe className="h-4 w-4 text-blue-300" />
             <span className="text-sm font-medium text-blue-200">
@@ -175,14 +175,14 @@ const PublicHomePage = () => {
             </span>
           </div>
 
-          <h1 className="mb-6 text-5xl font-extrabold leading-tight tracking-tight text-white md:text-6xl lg:text-7xl">
+          <h1 className="mb-6 text-6xl font-extrabold leading-tight tracking-tight text-white md:text-6xl lg:text-7xl">
             {text(pick('hero.title_1'), t, 'hero.title_1')} <br />
             <span className="bg-gradient-to-r from-blue-400 via-violet-400 to-emerald-400 bg-clip-text text-transparent">
               {text(pick('hero.title_2'), t, 'hero.title_2')}
             </span>
           </h1>
 
-          <p className="mx-auto mb-10 max-w-2xl text-lg text-slate-300 md:text-xl">
+          <p className="mx-auto mb-10 max-w-4xl text-lg text-slate-300 md:text-xl">
             {text(pick('hero.subtitle'), t, 'hero.subtitle')}
           </p>
 
