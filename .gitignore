@@ -20,7 +20,7 @@ frontend-src/package-lock.json
 .pnpm/
 .yarn/
 yarn.lock
-package-lock.json
+# package-lock.json
 
 # Vite/Rollup
 dist/
