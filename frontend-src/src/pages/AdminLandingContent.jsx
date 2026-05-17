@@ -133,6 +133,8 @@ const setByPath = (obj, path, value) => {
   }
   const lastKey = keys[keys.length - 1];
   if (!isSafeKey(lastKey)) return next;
+  if (cursor === null || (typeof cursor !== 'object' && !Array.isArray(cursor))) return next;
+  if ((lastKey in cursor) && !Object.prototype.hasOwnProperty.call(cursor, lastKey)) return next;
   cursor[lastKey] = value;
   return next;
 };
