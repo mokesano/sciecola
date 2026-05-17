@@ -42,7 +42,7 @@ const Navbar = () => {
   const isResearchersActive = location.pathname === '/researchers' || location.pathname.startsWith('/orcid/');
   const isArticlesActive    = location.pathname === '/articles'    || location.pathname.startsWith('/doi/');
 
-  const activeClass   = 'text-indigo-600 font-bold border-b-[4px] border-indigo-600 pb-6 transition-all';
+  const activeClass   = 'text-indigo-600 font-bold border-b-[4px] border-indigo-600 pb-7 transition-all';
   const inactiveClass = 'text-gray-500 group-hover:text-indigo-600 font-medium border-b-[4px] border-transparent group-hover:border-indigo-600 pb-6 transition-all';
 
   // Data bahasa dari locale — fallback inline jika namespace belum muat
@@ -106,7 +106,7 @@ const Navbar = () => {
                 <span className="hidden md:inline text-gray-400">—</span>
                 <span className="hidden md:inline">{activeLang.country}</span>
                 <svg
-                  className={`w-3 h-3 text-gray-400 transition-transform duration-200 ${langOpen ? 'rotate-180' : ''}`}
+                  className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${langOpen ? 'rotate-180' : ''}`}
                   fill="none" stroke="currentColor" viewBox="0 0 24 24"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
