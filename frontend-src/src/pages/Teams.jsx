@@ -27,9 +27,6 @@ const LeaderCard = ({ person }) => (
     <p className="text-[10px] font-mono text-gray-300 mb-0.5">{person.code}</p>
     <h3 className="font-bold text-gray-900 mb-1 group-hover:text-indigo-700 transition-colors">{person.name}</h3>
     <p className="text-sm text-indigo-600 font-medium mb-3">{person.role}</p>
-    <span className="inline-block text-xs text-indigo-500 font-medium group-hover:underline">
-      Lihat Profil →
-    </span>
   </Link>
 );
 
@@ -54,9 +51,6 @@ const AdvisorCard = ({ advisor }) => (
     <p className="text-xs text-purple-600 font-medium mb-1">{advisor.role}</p>
     <p className="text-xs text-gray-500 mb-1">{advisor.affiliation}</p>
     <p className="text-xs text-gray-400 mb-3">{(advisor.expertise ?? []).slice(0, 2).join(' · ')}</p>
-    <span className="inline-block text-xs text-purple-500 font-medium group-hover:underline">
-      Lihat Profil →
-    </span>
   </Link>
 );
 
