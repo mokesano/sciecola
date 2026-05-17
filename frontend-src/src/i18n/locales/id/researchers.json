@@ -32,14 +32,16 @@
       "publications": "Publikasi"
     }
   },
-  "error": {
-    "title": "Gagal memuat data peneliti",
-    "retry": "Coba Lagi"
-  },
   "empty": {
-    "title":    "Tidak ada peneliti ditemukan",
-    "subtitle": "Coba ubah filter atau kata kunci pencarian Anda.",
-    "reset":    "Reset Filter"
+    "no_match": {
+      "title":    "Tidak ada peneliti yang cocok",
+      "subtitle": "Filter atau kata kunci Anda tidak menemukan peneliti. Coba longgarkan filter atau gunakan kata kunci yang berbeda.",
+      "reset":    "Reset Filter"
+    },
+    "no_data": {
+      "title":    "Data peneliti belum tersedia",
+      "subtitle": "Belum ada profil peneliti yang terindeks di database. Data akan muncul setelah administrator menjalankan crawl ORCID."
+    }
   },
   "pagination": {
     "prev": "Sebelumnya",
