@@ -1,8 +1,0 @@
-{
-  "esversion": 11,
-  "module": true,
-  "asi": false,
-  "strict": false,
-  "browser": true,
-  "node": true
-}
