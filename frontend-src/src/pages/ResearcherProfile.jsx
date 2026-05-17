@@ -15,113 +15,6 @@ const SDG_COLORS = {
   17: '#19486a',
 };
 
-// ── Response mapper ──────────────────────────────────────────────────────────
-// Transforms the raw ORCID API payload into the flat shape used by this page.
-const mapOrcidResponse = (data) => {
-  const info     = data.basic_info  || {};
-  const acts     = data.activities  || {};
-  const nameObj  = info.name        || {};
-  const works    = acts.works       || [];
-
-  const fullName = nameObj.credit ||
-    [nameObj.given, nameObj.family].filter(Boolean).join(' ') ||
-    data.orcid;
-
-  const currentAff = (acts.current_affiliations || [])[0] || {};
-  const address    = currentAff.address || {};
-  const city       = address.city;
-  const country    = address.country;
-
-  // Publication trend grouped by year
-  const trendMap = {};
-  works.forEach(w => {
-    if (w.publication_date) {
-      const yr = w.publication_date.split('-')[0];
-      trendMap[yr] = (trendMap[yr] || 0) + 1;
-    }
-  });
-  const publicationTrend = Object.entries(trendMap)
-    .map(([year, count]) => ({ year: parseInt(year, 10), count }))
-    .sort((a, b) => a.year - b.year);
-
-  // Mapped publications list
-  const recentPublications = works.map((w, i) => ({
-    id:      i,
-    title:   w.title   || '',
-    journal: w.journal || '',
-    year:    w.publication_date ? w.publication_date.split('-')[0] : null,
-    doi:     w.doi     || null,
-    authors: [],
-    sdgs:    [],
-  }));
-
-  const pubYears = works
-    .map(w => w.publication_date ? parseInt(w.publication_date.split('-')[0], 10) : null)
-    .filter(Boolean);
-  const firstPublication = pubYears.length > 0 ? Math.min(...pubYears) : null;
-  const currentYear      = new Date().getFullYear();
-
-  // Affiliations sidebar
-  const affiliations = (acts.current_affiliations || []).map(aff => ({
-    name:       aff.organization,
-    department: aff.department,
-    role:       aff.role,
-    logo:       null,
-    is_current: true,
-  }));
-
-  // External IDs
-  const externalIds = info.external_ids || [];
-  const scopusExt   = externalIds.find(e => e.type?.toLowerCase().includes('scopus'));
-  const rIdExt      = externalIds.find(e =>
-    e.type?.toLowerCase().includes('researcher') || e.type?.toLowerCase().includes('rid')
-  );
-
-  // Social links from researcher URLs
-  const socialLinks = { orcid: `https://orcid.org/${data.orcid}` };
-  (info.urls || []).forEach(u => {
-    const n = (u.name || '').toLowerCase();
-    if (n.includes('scopus'))  socialLinks.scopus        = u.url;
-    if (n.includes('scholar')) socialLinks.googleScholar = u.url;
-    if (n.includes('linkedin'))socialLinks.linkedin      = u.url;
-  });
-
-  return {
-    name:               fullName,
-    title:              currentAff.role         || null,
-    univ:               currentAff.organization || null,
-    department:         currentAff.department   || null,
-    location:           [city, country].filter(Boolean).join(', ') || null,
-    country:            country || null,
-    orcid:              data.orcid,
-    email:              (info.emails || [])[0]  || null,
-    bio:                info.biography          || null,
-    avatar:             null,
-    verified:           false,
-    scopusId:           scopusExt ? scopusExt.value : null,
-    researcherId:       rIdExt   ? rIdExt.value   : null,
-    publications:       works.length,
-    citations:          0,
-    hIndex:             0,
-    i10Index:           0,
-    sdgsInvolved:       0,
-    views:              0,
-    downloads:          0,
-    firstPublication,
-    yearsActive:        firstPublication ? `${firstPublication}–${currentYear}` : null,
-    collaboratorsCount: 0,
-    researchInterests:  [],
-    sdgFocus:           [],
-    topKeywords:        [],
-    publicationTrend,
-    citationTrend:      [],
-    recentPublications,
-    collaborators:      [],
-    affiliations,
-    socialLinks,
-  };
-};
-
 // ── Sub-components ───────────────────────────────────────────────────────────
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -187,14 +80,12 @@ const ResearcherProfile = () => {
     setLoading(true);
     setError(null);
     try {
-      const res  = await fetch(`/api/ORCID/ORCID_Profile_API.php?orcid=${encodeURIComponent(orcidCode)}`);
+      const res  = await fetch(`/api/researcher_profile.php?orcid=${encodeURIComponent(orcidCode)}`);
       const json = await res.json();
-      if (json.error) {
-        setError(json.error);
-      } else if (json.orcid) {
-        setResearcher(mapOrcidResponse(json));
+      if (json.status === 'success' && json.profile) {
+        setResearcher(json.profile);
       } else {
-        setError('Profil tidak ditemukan');
+        setError(json.message || 'Profil tidak ditemukan');
       }
     } catch (err) {
       setError('Gagal menghubungi server: ' + err.message);
