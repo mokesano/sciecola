@@ -104,6 +104,8 @@ jobs:
     # DITAMBAHKAN: Pencegah error jika CodeQL sama sekali tidak menemukan file JS yang valid untuk dianalisis
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4
-      continue-on-error: true 
+      # FIX 1: Hapus 'continue-on-error: true' agar kita tahu jika scan benar-benar gagal
+      # FIX 2: Sederhanakan 'category' agar cocok dengan identifier standar GitHub
+      #        Hindari format '/language:...' yang menyebabkan mismatch dengan branch main
       with:
-        category: "/language:${{matrix.language}}"
+        category: "${{ matrix.language }}"
