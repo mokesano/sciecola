@@ -100,12 +100,18 @@ const getByPath = (obj, path) => {
   }, obj);
 };
 
-const setByPath = (obj, path, value) => {
-  const keys = path.split('.');
-  const blockedKeys = new Set(['__proto__', 'constructor', 'prototype']);
-  const next = structuredClone(obj || {});
+// Whitelist: hanya izinkan alphanumeric + underscore + hyphen.
+// Cegah __proto__, constructor, prototype dan karakter aneh lain
+// agar tidak terjadi prototype pollution saat traversal.
+const SAFE_KEY = /^[a-zA-Z0-9_-]+$/;
+const BLOCKED_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+const isSafeKey = (k) => SAFE_KEY.test(k) && !BLOCKED_KEYS.has(k);
 
-  if (keys.some((k) => blockedKeys.has(k))) {
+const setByPath = (obj, path, value) => {
+  const next = structuredClone(obj || {});
+  const keys = path.split('.');
+
+  if (!keys.every(isSafeKey)) {
     return next;
   }
 
@@ -114,7 +120,7 @@ const setByPath = (obj, path, value) => {
     const key = keys[i];
     const nextKey = keys[i + 1];
     const shouldBeArray = /^\d+$/.test(nextKey);
-    if (cursor[key] === undefined || cursor[key] === null) {
+    if (!Object.prototype.hasOwnProperty.call(cursor, key) || cursor[key] === null) {
       cursor[key] = shouldBeArray ? [] : {};
     }
     cursor = cursor[key];
