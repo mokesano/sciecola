@@ -14,14 +14,8 @@
     "preview": "npm run preview -w frontend-src",
     "install-ui": "npm install -w frontend-src"
   },
-  "dependencies": {
-    "@mdx-js/react": "^3.1.1",
-    "lucide-react": "^1.14.0",
-    "react-hot-toast": "^2.6.0"
-  },
-  "devDependencies": {
-    "@mdx-js/rollup": "^3.1.1",
-    "@tailwindcss/typography": "^0.5.19",
-    "@types/mdx": "^2.0.13"
+  "overrides": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   }
 }
