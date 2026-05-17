@@ -47,7 +47,7 @@ const text = (override, t, key, options) =>
 // KOMPONEN UTAMA
 // =====================================================================
 const PublicHomePage = () => {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('homepage');
   const lang = i18n.language || 'id';
 
   const [stats, setStats]       = useState([]);
@@ -133,7 +133,7 @@ const PublicHomePage = () => {
   // (jika array & jumlah elemen mencukupi), kalau tidak pakai locale.
   const featureTexts = Array.isArray(pick('features'))
     ? pick('features')
-    : t('publicHome.features', { returnObjects: true });
+    : t('features', { returnObjects: true });
   const features = FEATURE_VISUALS.map((vis, i) => ({
     ...vis,
     title: featureTexts?.[i]?.title ?? '',
@@ -142,7 +142,7 @@ const PublicHomePage = () => {
 
   const stepTexts = Array.isArray(pick('how_it_works'))
     ? pick('how_it_works')
-    : t('publicHome.how_it_works', { returnObjects: true });
+    : t('how_it_works', { returnObjects: true });
   const steps = STEP_VISUALS.map((vis, i) => ({
     ...vis,
     step: i + 1,
@@ -152,7 +152,7 @@ const PublicHomePage = () => {
 
   const trustSignals = Array.isArray(pick('cta_section.trust_signals'))
     ? pick('cta_section.trust_signals')
-    : t('publicHome.cta_section.trust_signals', { returnObjects: true });
+    : t('cta_section.trust_signals', { returnObjects: true });
 
   return (
     <main className="min-h-screen bg-white">
@@ -171,19 +171,19 @@ const PublicHomePage = () => {
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-sm">
             <Globe className="h-4 w-4 text-blue-300" />
             <span className="text-sm font-medium text-blue-200">
-              {text(pick('hero.badge'), t, 'publicHome.hero.badge')}
+              {text(pick('hero.badge'), t, 'hero.badge')}
             </span>
           </div>
 
           <h1 className="mb-6 text-5xl font-extrabold leading-tight tracking-tight text-white md:text-6xl lg:text-7xl">
-            {text(pick('hero.title_1'), t, 'publicHome.hero.title_1')} <br />
+            {text(pick('hero.title_1'), t, 'hero.title_1')} <br />
             <span className="bg-gradient-to-r from-blue-400 via-violet-400 to-emerald-400 bg-clip-text text-transparent">
-              {text(pick('hero.title_2'), t, 'publicHome.hero.title_2')}
+              {text(pick('hero.title_2'), t, 'hero.title_2')}
             </span>
           </h1>
 
           <p className="mx-auto mb-10 max-w-2xl text-lg text-slate-300 md:text-xl">
-            {text(pick('hero.subtitle'), t, 'publicHome.hero.subtitle')}
+            {text(pick('hero.subtitle'), t, 'hero.subtitle')}
           </p>
 
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -191,21 +191,21 @@ const PublicHomePage = () => {
               to="/login"
               className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-900/40 transition-all hover:-translate-y-0.5 hover:shadow-xl"
             >
-              {text(pick('hero.cta_primary'), t, 'publicHome.hero.cta_primary')}
+              {text(pick('hero.cta_primary'), t, 'hero.cta_primary')}
               <ArrowRight className="h-5 w-5" />
             </Link>
             <Link
               to="/register"
               className="inline-flex items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
             >
-              {text(pick('hero.cta_secondary'), t, 'publicHome.hero.cta_secondary')}
+              {text(pick('hero.cta_secondary'), t, 'hero.cta_secondary')}
             </Link>
           </div>
 
           <p className="mt-6 text-sm text-slate-400">
-            {text(pick('hero.orcid_hint_prefix'), t, 'publicHome.hero.orcid_hint_prefix')}&nbsp;
+            {text(pick('hero.orcid_hint_prefix'), t, 'hero.orcid_hint_prefix')}&nbsp;
             <Link to="/login" className="font-medium text-blue-400 hover:text-blue-300 underline underline-offset-2">
-              {text(pick('hero.orcid_hint_link'), t, 'publicHome.hero.orcid_hint_link')}
+              {text(pick('hero.orcid_hint_link'), t, 'hero.orcid_hint_link')}
             </Link>
           </p>
         </div>
@@ -239,10 +239,10 @@ const PublicHomePage = () => {
         <div className="mx-auto max-w-6xl px-6">
           <div className="mb-14 text-center">
             <h2 className="mb-4 text-4xl font-bold text-gray-900">
-              {text(pick('features_section.title'), t, 'publicHome.features_section.title')}
+              {text(pick('features_section.title'), t, 'features_section.title')}
             </h2>
             <p className="mx-auto max-w-2xl text-lg text-gray-500">
-              {text(pick('features_section.subtitle'), t, 'publicHome.features_section.subtitle')}
+              {text(pick('features_section.subtitle'), t, 'features_section.subtitle')}
             </p>
           </div>
 
@@ -268,10 +268,10 @@ const PublicHomePage = () => {
           <div className="mx-auto max-w-6xl px-6">
             <div className="mb-14 text-center">
               <h2 className="mb-4 text-4xl font-bold text-gray-900">
-                {text(pick('sdg_section.title'), t, 'publicHome.sdg_section.title')}
+                {text(pick('sdg_section.title'), t, 'sdg_section.title')}
               </h2>
               <p className="mx-auto max-w-2xl text-lg text-gray-500">
-                {text(pick('sdg_section.subtitle'), t, 'publicHome.sdg_section.subtitle')}
+                {text(pick('sdg_section.subtitle'), t, 'sdg_section.subtitle')}
               </p>
             </div>
 
@@ -304,7 +304,7 @@ const PublicHomePage = () => {
                 to="/sdgs"
                 className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-gray-700"
               >
-                {text(pick('sdg_section.cta_label'), t, 'publicHome.sdg_section.cta_label')}
+                {text(pick('sdg_section.cta_label'), t, 'sdg_section.cta_label')}
                 <ChevronRight className="h-4 w-4" />
               </Link>
             </div>
@@ -319,10 +319,10 @@ const PublicHomePage = () => {
         <div className="mx-auto max-w-6xl px-6">
           <div className="mb-14 text-center">
             <h2 className="mb-4 text-4xl font-bold text-gray-900">
-              {text(pick('how_it_works_section.title'), t, 'publicHome.how_it_works_section.title')}
+              {text(pick('how_it_works_section.title'), t, 'how_it_works_section.title')}
             </h2>
             <p className="mx-auto max-w-xl text-lg text-gray-500">
-              {text(pick('how_it_works_section.subtitle'), t, 'publicHome.how_it_works_section.subtitle')}
+              {text(pick('how_it_works_section.subtitle'), t, 'how_it_works_section.subtitle')}
             </p>
           </div>
 
@@ -357,17 +357,17 @@ const PublicHomePage = () => {
             <div className="mb-14 flex flex-col items-center gap-4 text-center md:flex-row md:justify-between md:text-left">
               <div>
                 <h2 className="mb-3 text-4xl font-bold text-gray-900">
-                  {text(pick('insights_section.title'), t, 'publicHome.insights_section.title')}
+                  {text(pick('insights_section.title'), t, 'insights_section.title')}
                 </h2>
                 <p className="max-w-xl text-lg text-gray-500">
-                  {text(pick('insights_section.subtitle'), t, 'publicHome.insights_section.subtitle')}
+                  {text(pick('insights_section.subtitle'), t, 'insights_section.subtitle')}
                 </p>
               </div>
               <Link
                 to="/insights"
                 className="inline-flex items-center gap-2 rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-700 transition-all hover:border-gray-300 hover:bg-gray-50 whitespace-nowrap"
               >
-                {text(pick('insights_section.cta_label'), t, 'publicHome.insights_section.cta_label')}
+                {text(pick('insights_section.cta_label'), t, 'insights_section.cta_label')}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
@@ -411,10 +411,10 @@ const PublicHomePage = () => {
           <div className="mx-auto max-w-6xl px-6">
             <div className="mb-10 text-center">
               <h2 className="mb-3 text-2xl font-bold text-gray-900">
-                {text(pick('partners_section.title'), t, 'publicHome.partners_section.title')}
+                {text(pick('partners_section.title'), t, 'partners_section.title')}
               </h2>
               <p className="text-gray-500">
-                {text(pick('partners_section.subtitle'), t, 'publicHome.partners_section.subtitle')}
+                {text(pick('partners_section.subtitle'), t, 'partners_section.subtitle')}
               </p>
             </div>
 
@@ -434,7 +434,7 @@ const PublicHomePage = () => {
                 to="/partners"
                 className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
               >
-                {text(pick('partners_section.cta_label'), t, 'publicHome.partners_section.cta_label')}
+                {text(pick('partners_section.cta_label'), t, 'partners_section.cta_label')}
                 <ChevronRight className="h-4 w-4" />
               </Link>
             </div>
@@ -455,14 +455,14 @@ const PublicHomePage = () => {
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2">
             <Star className="h-4 w-4 text-yellow-300" />
             <span className="text-sm font-medium">
-              {text(pick('cta_section.badge'), t, 'publicHome.cta_section.badge')}
+              {text(pick('cta_section.badge'), t, 'cta_section.badge')}
             </span>
           </div>
           <h2 className="mb-6 text-4xl font-extrabold leading-tight md:text-5xl">
-            {text(pick('cta_section.title'), t, 'publicHome.cta_section.title')}
+            {text(pick('cta_section.title'), t, 'cta_section.title')}
           </h2>
           <p className="mx-auto mb-10 max-w-xl text-lg text-blue-100">
-            {text(pick('cta_section.subtitle'), t, 'publicHome.cta_section.subtitle')}
+            {text(pick('cta_section.subtitle'), t, 'cta_section.subtitle')}
           </p>
 
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -470,14 +470,14 @@ const PublicHomePage = () => {
               to="/register"
               className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-bold text-blue-700 shadow-lg transition-all hover:-translate-y-0.5 hover:bg-blue-50 hover:shadow-xl"
             >
-              {text(pick('cta_section.cta_primary'), t, 'publicHome.cta_section.cta_primary')}
+              {text(pick('cta_section.cta_primary'), t, 'cta_section.cta_primary')}
               <ArrowRight className="h-5 w-5" />
             </Link>
             <Link
               to="/login"
               className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
             >
-              {text(pick('cta_section.cta_secondary'), t, 'publicHome.cta_section.cta_secondary')}
+              {text(pick('cta_section.cta_secondary'), t, 'cta_section.cta_secondary')}
             </Link>
           </div>
 
