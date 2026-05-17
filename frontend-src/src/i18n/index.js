@@ -10,8 +10,10 @@ import idNavbar   from './locales/id/navbar.json';
 import enNavbar   from './locales/en/navbar.json';
 import idFooter   from './locales/id/footer.json';
 import enFooter   from './locales/en/footer.json';
-import idHomepage from './locales/id/homepage.json';
-import enHomepage from './locales/en/homepage.json';
+import idHomepage  from './locales/id/homepage.json';
+import enHomepage  from './locales/en/homepage.json';
+import idDashboard from './locales/id/dashboard.json';
+import enDashboard from './locales/en/dashboard.json';
 
 // ─── Deteksi bahasa awal ─────────────────────────────────────────────
 // Prioritas: (1) preferensi tersimpan user → (2) bahasa browser →
@@ -38,18 +40,20 @@ i18n
         navbar:      idNavbar,
         footer:      idFooter,
         homepage:    idHomepage,
+        dashboard:   idDashboard,
       },
       en: {
         translation: enCommon,
         navbar:      enNavbar,
         footer:      enFooter,
         homepage:    enHomepage,
+        dashboard:   enDashboard,
       },
     },
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard'],
     interpolation: { escapeValue: false },
   });
 
