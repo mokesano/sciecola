@@ -1,3 +1,4 @@
+/* jshint esversion: 6 */
 // Chart JavaScript - assets/js/chart.js
 
 // Chart configuration and utilities
