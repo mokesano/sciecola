@@ -120,8 +120,14 @@ const setByPath = (obj, path, value) => {
     const key = keys[i];
     const nextKey = keys[i + 1];
     const shouldBeArray = /^\d+$/.test(nextKey);
-    if (!Object.prototype.hasOwnProperty.call(cursor, key) || cursor[key] === null) {
-      cursor[key] = shouldBeArray ? [] : {};
+    const slot = Object.prototype.hasOwnProperty.call(cursor, key) ? cursor[key] : undefined;
+    // Repair malformed/legacy intermediates: replace if type doesn't match expected shape.
+    if (shouldBeArray) {
+      if (!Array.isArray(slot)) cursor[key] = [];
+    } else {
+      if (slot === null || slot === undefined || typeof slot !== 'object' || Array.isArray(slot)) {
+        cursor[key] = {};
+      }
     }
     cursor = cursor[key];
   }
