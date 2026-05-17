@@ -229,6 +229,7 @@ const InstitutionProfile = () => {
 
       {/* Header Section */}
       {!loading && (
+      <>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
         {/* Left: Logo & Basic Info */}
         <div className="flex gap-6 lg:col-span-2">
@@ -426,7 +427,6 @@ const InstitutionProfile = () => {
           </div>
         </div>
       </div>
-      )}
 
       {/* Navigation Tabs */}
       <div className="border-b border-gray-200 mb-8 overflow-x-auto">
@@ -734,6 +734,7 @@ const InstitutionProfile = () => {
           </div>
         </div>
       </div>
+      </>
       )}
     </main>
   );
