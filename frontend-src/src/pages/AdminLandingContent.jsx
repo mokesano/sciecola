@@ -106,11 +106,6 @@ const getByPath = (obj, path) => {
 const SAFE_KEY = /^[a-zA-Z0-9_-]+$/;
 const BLOCKED_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 const isSafeKey = (k) => SAFE_KEY.test(k) && !BLOCKED_KEYS.has(k);
-const isPlainObject = (v) => {
-  if (v === null || typeof v !== 'object') return false;
-  const proto = Object.getPrototypeOf(v);
-  return proto === Object.prototype || proto === null;
-};
 
 const setByPath = (obj, path, value) => {
   const next = structuredClone(obj || {});
@@ -125,26 +120,13 @@ const setByPath = (obj, path, value) => {
     const key = keys[i];
     const nextKey = keys[i + 1];
     const shouldBeArray = /^\d+$/.test(nextKey);
-
-    const hasOwn = Object.prototype.hasOwnProperty.call(cursor, key);
-    const current = hasOwn ? cursor[key] : undefined;
-
-    if (shouldBeArray) {
-      if (!Array.isArray(current)) {
-        cursor[key] = [];
-      }
-    } else {
-      if (!isPlainObject(current)) {
-        cursor[key] = {};
-      }
+    if (!Object.prototype.hasOwnProperty.call(cursor, key) || cursor[key] === null) {
+      cursor[key] = shouldBeArray ? [] : {};
     }
-
     cursor = cursor[key];
   }
-
   const lastKey = keys[keys.length - 1];
   if (!isSafeKey(lastKey)) return next;
-  if (cursor === null || (typeof cursor !== 'object' && !Array.isArray(cursor))) return next;
   cursor[lastKey] = value;
   return next;
 };
