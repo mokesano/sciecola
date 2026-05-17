@@ -1,0 +1,76 @@
+{
+  "hero": {
+    "badge":           "AI-POWERED RESEARCH INTELLIGENCE",
+    "title_1":         "Bridging Research",
+    "title_2":         "with",
+    "title_highlight": "Global Impact",
+    "description":     "Sciecola automatically analyzes and classifies scientific articles against the UN Sustainable Development Goals using artificial intelligence.",
+    "cta_explore":     "Explore Research",
+    "cta_analyze":     "Analyze Article",
+    "image_alt":       "Sciecola homepage illustration"
+  },
+  "stats_fallback": [
+    "Classified Articles",
+    "Researchers",
+    "Journals",
+    "SDGs Covered",
+    "Total Citations"
+  ],
+  "sdg_distribution": {
+    "title":        "SDG Classification Distribution",
+    "view_all":     "View all",
+    "centre_label": "Articles",
+    "empty":        "No SDG classification data yet. Start an ORCID or DOI analysis to see the distribution.",
+    "tooltip_unit": "Articles"
+  },
+  "sdg_trend": {
+    "title":        "SDG Publication Trends",
+    "view_all":     "See more",
+    "empty":        "No trend data yet. Analyze your ORCID profile to see SDG publication trends over time.",
+    "others_label": "Others"
+  },
+  "top_sdgs": {
+    "title":     "Most Contributed SDGs",
+    "view_all":  "View all",
+    "unit":      "articles",
+    "empty":     "No SDG data to display."
+  },
+  "latest_articles": {
+    "title":      "Latest Articles",
+    "view_all":   "View all",
+    "views_tip":  "Total Views",
+    "cites_tip":  "Total Citations",
+    "empty":      "No recent articles yet."
+  },
+  "insights_ai": {
+    "title":    "AI Insights",
+    "view_all": "View all",
+    "cta":      "View all insights",
+    "empty":    "No AI insights available yet."
+  },
+  "research_explorer": {
+    "title":       "Explore Research on Sciecola",
+    "subtitle":    "Discover articles, researchers, journals, or topics by SDG",
+    "placeholder": "Search article title, author, journal, keyword...",
+    "search":      "Search",
+    "advanced":    "Advanced search",
+    "filters": {
+      "all_sdgs":     "All SDGs",
+      "all_years":    "All Years",
+      "all_journals": "All Journals",
+      "all_countries":"All Countries"
+    }
+  },
+  "trusted_sources": {
+    "title": "Powered by Trusted Data",
+    "empty": "No data sources available."
+  },
+  "cta": {
+    "title":           "Ready to analyze your research?",
+    "subtitle":        "Enter a DOI or ORCID to see instant SDG analysis and classification.",
+    "placeholder":     "Enter a DOI or ORCID",
+    "button":          "Analyze Now",
+    "button_loading":  "Processing...",
+    "error_format":    "Unrecognized format. Enter an ORCID (0000-0000-0000-0000) or DOI (10.xxxx/...)"
+  }
+}

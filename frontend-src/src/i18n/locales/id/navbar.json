@@ -1,0 +1,21 @@
+{
+  "brand_tagline": "Klasifikasi & Analitik SDGs",
+  "nav": {
+    "home":        "Beranda",
+    "researchers": "Peneliti",
+    "articles":    "Artikel",
+    "sdgs":        "SDGs",
+    "analytics":   "Analitik",
+    "teams":       "Tim",
+    "about":       "Tentang"
+  },
+  "lang": {
+    "id": { "flag": "🇮🇩", "code": "ID", "country": "Indonesia" },
+    "en": { "flag": "🇬🇧", "code": "EN", "country": "English" }
+  },
+  "auth": {
+    "login":    "Masuk",
+    "register": "Daftar",
+    "profile":  "Profil Saya"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "breadcrumb": {
+    "home":    "Home",
+    "current": "Journals"
+  },
+  "header": {
+    "title":    "Journals",
+    "subtitle": "Discover reputable journals aligned with SDG targets."
+  },
+  "filters": {
+    "search_placeholder": "Search by journal name or ISSN…",
+    "sort": {
+      "citescore": "CiteScore (High)",
+      "quartile":  "Quartile (Q1→Q4)",
+      "name":      "Name (A-Z)"
+    },
+    "view": {
+      "list_aria": "List view",
+      "card_aria": "Card view"
+    }
+  },
+  "results": {
+    "count":         "Showing <strong>{{shown}}</strong> of <strong>{{total}}</strong> journals",
+    "issn_publisher":"ISSN: {{issn}} • {{publisher}}",
+    "metrics": {
+      "quartile": "Quartile",
+      "sjr":      "SJR",
+      "hindex":   "H-Index"
+    }
+  },
+  "empty": {
+    "no_match": {
+      "title":    "No matching journals",
+      "subtitle": "Your filters or keywords returned no results. Try loosening the filters or different keywords.",
+      "reset":    "Reset Filters"
+    },
+    "no_data": {
+      "title":    "No journal data yet",
+      "subtitle": "No journals have been indexed in the database. Data will appear once the administrator populates the journal catalog."
+    }
+  },
+  "pagination": {
+    "prev": "Previous",
+    "next": "Next"
+  }
+}
