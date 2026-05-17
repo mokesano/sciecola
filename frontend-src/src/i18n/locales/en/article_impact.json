@@ -33,7 +33,7 @@
       "academic": {
         "title":  "Academic Impact",
         "weight": "45%",
-        "desc":   "Measures citations, journal quartile, and other academic impact indicators."
+        "desc":   "Measures citations, SINTA accreditation, and other academic impact indicators."
       },
       "social": {
         "title":  "Social Media Impact",
@@ -53,7 +53,7 @@
     "authors":      "Authors",
     "journal":      "Journal",
     "year":         "Year",
-    "quartile":     "Quartile",
+    "sinta":        "SINTA Accreditation",
     "total_score":  "Total Impact Score",
     "components":   "Impact Components",
     "profile":      "Impact Profile",
@@ -94,13 +94,13 @@
       "subtitle": "Data will appear once articles are classified per SDG with citation data."
     }
   },
-  "by_quartile": {
-    "title":    "Impact by Journal Quartile",
-    "subtitle": "Comparison of average impact scores per journal quartile (Q1-Q4)",
+  "by_sinta": {
+    "title":    "Impact by SINTA Accreditation",
+    "subtitle": "Comparison of average impact scores per SINTA grade (S1-S6)",
     "articles": "articles",
     "no_data": {
-      "title":    "No quartile data yet",
-      "subtitle": "Data will appear once journals are indexed with quartile information (Q1-Q4)."
+      "title":    "No SINTA grade data yet",
+      "subtitle": "Data will appear once journals are indexed with SINTA accreditation information (S1-S6)."
     }
   },
   "impact_dims": {
