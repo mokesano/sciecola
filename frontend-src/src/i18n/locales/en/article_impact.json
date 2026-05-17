@@ -1,0 +1,115 @@
+{
+  "breadcrumb": {
+    "home":      "Home",
+    "analytics": "Analytics",
+    "current":   "Article Impact"
+  },
+  "header": {
+    "title":    "Article Impact Analysis",
+    "subtitle": "In-depth analysis of article impact across three dimensions: academic, social, and practical."
+  },
+  "filter": {
+    "sdg_all":   "All SDGs",
+    "sdg_label": "SDG {{number}}",
+    "period": {
+      "all":      "All Time",
+      "year_1":   "Last 1 Year",
+      "years_3":  "Last 3 Years",
+      "years_5":  "Last 5 Years",
+      "years_10": "Last 10 Years"
+    },
+    "sort": {
+      "label":     "Sort by",
+      "impact":    "Impact Score",
+      "citations": "Most Cited",
+      "year":      "Latest"
+    },
+    "reset": "Reset Filters"
+  },
+  "explanation": {
+    "title":    "About Article Impact Score",
+    "subtitle": "The impact score combines three dimensions of research impact measurement.",
+    "dimensions": {
+      "academic": {
+        "title":  "Academic Impact",
+        "weight": "45%",
+        "desc":   "Measures citations, journal quartile, and other academic impact indicators."
+      },
+      "social": {
+        "title":  "Social Media Impact",
+        "weight": "25%",
+        "desc":   "Measures dissemination and discussion of research on social media, news, and blogs."
+      },
+      "practical": {
+        "title":  "Practical Impact",
+        "weight": "30%",
+        "desc":   "Measures practical implementation, public policy influence, and direct community benefit."
+      }
+    },
+    "data_note": "Currently only the academic dimension is computed from the database. Social and practical dimensions require integration with external data sources (Altmetric, etc.)."
+  },
+  "detail": {
+    "title":        "Article Detail",
+    "authors":      "Authors",
+    "journal":      "Journal",
+    "year":         "Year",
+    "quartile":     "Quartile",
+    "total_score":  "Total Impact Score",
+    "components":   "Impact Components",
+    "profile":      "Impact Profile",
+    "open_article": "Open Article",
+    "close":        "Close"
+  },
+  "table": {
+    "title":   "Articles with Highest Impact",
+    "columns": {
+      "title_authors": "Title & Authors",
+      "journal":       "Journal",
+      "year":          "Year",
+      "citations":     "Citations",
+      "academic":      "Academic",
+      "social":        "Social",
+      "practical":     "Practical",
+      "impact_score":  "Impact Score"
+    },
+    "no_match": {
+      "title":    "No matching articles",
+      "subtitle": "Try changing the SDG filter or time range."
+    },
+    "no_data": {
+      "title":    "No article data yet",
+      "subtitle": "No articles indexed with citation data yet. Data will appear once the administrator runs a CrossRef/OpenAlex crawl."
+    }
+  },
+  "pagination": {
+    "prev":    "Previous",
+    "next":    "Next",
+    "showing": "Showing {{from}}-{{to}} of {{total}} articles"
+  },
+  "by_sdg": {
+    "title":    "Average Impact per SDG",
+    "subtitle": "Average academic impact score for articles in each SDG",
+    "no_data": {
+      "title":    "No per-SDG impact data yet",
+      "subtitle": "Data will appear once articles are classified per SDG with citation data."
+    }
+  },
+  "by_quartile": {
+    "title":    "Impact by Journal Quartile",
+    "subtitle": "Comparison of average impact scores per journal quartile (Q1-Q4)",
+    "articles": "articles",
+    "no_data": {
+      "title":    "No quartile data yet",
+      "subtitle": "Data will appear once journals are indexed with quartile information (Q1-Q4)."
+    }
+  },
+  "impact_dims": {
+    "academic":  "Academic Impact",
+    "social":    "Social Media Impact",
+    "practical": "Practical Impact",
+    "total":     "Total Impact Score"
+  },
+  "loading": "Loading article impact data...",
+  "retry":   "Try again",
+  "error":   "Failed to load data. Please try again."
+}
