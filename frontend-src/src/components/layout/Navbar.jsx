@@ -43,7 +43,7 @@ const Navbar = () => {
   const isArticlesActive    = location.pathname === '/articles'    || location.pathname.startsWith('/doi/');
 
   const activeClass   = 'text-indigo-600 font-bold border-b-[4px] border-indigo-600 pb-7 transition-all';
-  const inactiveClass = 'text-gray-500 group-hover:text-indigo-600 font-medium border-b-[4px] border-transparent group-hover:border-indigo-600 pb-6 transition-all';
+  const inactiveClass = 'text-gray-500 group-hover:text-indigo-600 font-medium border-b-[4px] border-transparent group-hover:border-indigo-600 pb-7 transition-all';
 
   // Data bahasa dari locale — fallback inline jika namespace belum muat
   const langData = {
