@@ -39,7 +39,7 @@ const STAT_COLOR = {
 };
 
 const MAP_GEO_FALLBACK = [
-  { id:1,  lat:-6.21,  lng:106.85, city:'Jakarta',       pubs:3247 },
+  { id:1,  lat:-6.21,  lng:106.85, city:'Jakarta',       pubs: 247 },
   { id:2,  lat:-6.89,  lng:107.61, city:'Bandung',       pubs:2156 },
   { id:3,  lat:-7.26,  lng:112.75, city:'Surabaya',      pubs:1856 },
   { id:4,  lat:-7.80,  lng:110.36, city:'Yogyakarta',    pubs:1634 },
