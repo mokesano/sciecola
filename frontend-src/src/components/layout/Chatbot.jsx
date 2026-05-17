@@ -156,7 +156,7 @@ const Chatbot = () => {
 
       {isOpen && (
         <div
-          className="fixed bottom-24 right-6 z-50 flex flex-col rounded-2xl shadow-2xl overflow-hidden border border-gray-200 bg-white"
+          className="fixed bottom-24 right-6 z-50 flex flex-col rounded-2xl shadow-2xl overflow-hidden bg-white"
           style={{ width: '400px', height: '600px', maxHeight: 'calc(100vh - 120px)' }}
         >
           {/* ── HOME TAB ────────────────────────────────────────── */}
@@ -183,9 +183,8 @@ const Chatbot = () => {
                     </svg>
                   </button>
                 </div>
-                <h2 className="text-white text-2xl font-bold leading-snug">
-                  Butuh bantuan?<br />Bagaimana kami dapat<br />membantu Anda?
-                </h2>
+                <h2 className="text-white text-2xl font-bold leading-snug">Butuh bantuan?</h2>
+                <h3 className="text-white text-lg font-bold leading-snug">Bagaimana kami dapat membantu Anda?</h3>
               </div>
 
               {/* Cards area — overlaps header slightly */}
