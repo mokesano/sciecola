@@ -1,602 +1,581 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis
+  PieChart, Pie, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
 } from 'recharts';
 
+const SORT_OPTIONS = ['impact', 'citations', 'hindex', 'publications'];
+
+const DIM_STYLE = {
+  academic:     { bg: 'bg-blue-100',   icon: 'text-blue-600',   text: 'text-blue-800'   },
+  citation:     { bg: 'bg-green-100',  icon: 'text-green-600',  text: 'text-green-800'  },
+  productivity: { bg: 'bg-yellow-100', icon: 'text-yellow-600', text: 'text-yellow-800' },
+  collab:       { bg: 'bg-purple-100', icon: 'text-purple-600', text: 'text-purple-800' },
+};
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+const EmptySection = ({ title, subtitle, compact = false }) => (
+  <div className={`flex flex-col items-center justify-center text-center px-6 ${compact ? 'py-8' : 'py-14'}`}>
+    <svg className="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"
+        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+    </svg>
+    <p className="font-semibold text-gray-700 text-sm">{title}</p>
+    {subtitle && <p className="text-xs text-gray-500 mt-1 max-w-sm">{subtitle}</p>}
+  </div>
+);
+
+const ChevronRight = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+  </svg>
+);
+
+const ScoreBar = ({ value, total = 100 }) => (
+  <div className="flex items-center gap-2 min-w-[100px]">
+    <div className="flex-grow bg-gray-200 rounded-full h-2">
+      <div
+        className="bg-indigo-600 h-2 rounded-full transition-all"
+        style={{ width: `${Math.max(0, Math.min(100, (value / total) * 100))}%` }}
+      />
+    </div>
+    <span className="text-xs font-semibold text-gray-900 shrink-0">{value}</span>
+  </div>
+);
+
+const ComponentIcon = ({ comp }) => {
+  const paths = {
+    academic:     'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
+    citation:     'M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z',
+    productivity: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2',
+    collab:       'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z',
+  };
+  return (
+    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={paths[comp]} />
+    </svg>
+  );
+};
+
+const getInitials = (name = '') => name
+  .split(' ')
+  .filter(p => p.length && !['Dr.', 'Prof.', 'Drs.', 'Ir.', 'Mr.', 'Mrs.', 'Ms.'].includes(p))
+  .map(p => p[0])
+  .join('')
+  .slice(0, 2)
+  .toUpperCase();
+
+// ─── Main component ──────────────────────────────────────────────────────────
+
 const TopResearchers = () => {
-  const [selectedField, setSelectedField] = useState('all');
-  const [selectedProvince, setSelectedProvince] = useState('');
-  const [sortBy, setSortBy] = useState('citations');
-  const [sortDirection, setSortDirection] = useState('desc');
-  const [currentPage, setCurrentPage] = useState(1);
+  const { t } = useTranslation('top_researchers');
+
+  const [sdg,                setSdg]                = useState(0);
+  const [countryFilter,      setCountryFilter]      = useState('');
+  const [search,             setSearch]             = useState('');
+  const [sort,               setSort]               = useState('impact');
+  const [page,               setPage]               = useState(1);
   const [selectedResearcher, setSelectedResearcher] = useState(null);
-  const [topResearchersData, setTopResearchersData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [data,               setData]               = useState(null);
+  const [loading,            setLoading]            = useState(true);
+  const [error,              setError]              = useState(null);
 
+  const limit = 10;
+  const hasActiveFilters = sdg > 0 || countryFilter !== '' || search.trim() !== '';
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams({ sort, page: String(page), limit: String(limit) });
+      if (sdg > 0)              params.set('sdg', String(sdg));
+      if (countryFilter)        params.set('country', countryFilter);
+      if (search.trim())        params.set('search', search.trim());
+
+      const r = await fetch(`/api/top_researchers.php?${params}`);
+      const json = await r.json();
+      if (json.status === 'success') {
+        setData(json.data);
+      } else {
+        setError(t('error'));
+      }
+    } catch {
+      setError(t('error'));
+    } finally {
+      setLoading(false);
+    }
+  }, [sdg, countryFilter, search, sort, page, t]);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
+
+  // Reset page when filters/sort change
+  useEffect(() => { setPage(1); }, [sdg, countryFilter, search, sort]);
+
+  // Auto-select first researcher on data load (only if none selected)
   useEffect(() => {
-    const sortParam = sortBy === 'impactScore' ? 'citations' : sortBy === 'hIndex' ? 'hindex' : sortBy;
-    fetch(`/api/researchers.php?limit=20&sort=${sortParam}`)
-      .then(r => r.json())
-      .then(json => {
-        if (json.status === 'success') {
-          setTopResearchersData(json.data.map((r, idx) => ({
-            id: r.id ?? idx + 1,
-            name: r.name,
-            affiliation: r.affiliation,
-            department: '',
-            field: 'Penelitian',
-            location: '',
-            province: '',
-            hIndex: r.hindex ?? 0,
-            i10Index: 0,
-            citations: r.citations ?? 0,
-            publications: r.publications ?? 0,
-            collaborations: 0,
-            domesticCollabs: 0,
-            internationalCollabs: 0,
-            researchGrants: 0,
-            impactScore: Math.min(99, 50 + (r.citations ?? 0) * 0.015),
-            orcid: r.orcid,
-            topPublications: [],
-          })));
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [sortBy]);
-
-  // Distribution data for statistics
-  const researcherDistributionByField = [
-    { field: 'Teknologi Informasi', count: 1246, avgImpact: 82.4 },
-    { field: 'Kedokteran', count: 1582, avgImpact: 79.8 },
-    { field: 'Pertanian', count: 1124, avgImpact: 74.5 },
-    { field: 'Teknik', count: 986, avgImpact: 77.2 },
-    { field: 'Sosial Ekonomi', count: 875, avgImpact: 72.6 },
-    { field: 'Pendidikan', count: 942, avgImpact: 71.9 }
-  ];
-  
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
-  const ITEMS_PER_PAGE = 5;
-  const TOTAL_RESEARCHERS = 24580;
-  
-  // Filter and sort researchers
-  const filteredResearchers = useMemo(() => {
-    return topResearchersData
-      .filter(researcher => {
-        const fieldMatch = selectedField === 'all' || 
-          (selectedField === 'ti' && researcher.field === 'Teknologi Informasi') ||
-          (selectedField === 'med' && researcher.field === 'Kedokteran') ||
-          (selectedField === 'agr' && researcher.field === 'Pertanian') ||
-          (selectedField === 'eng' && researcher.field === 'Teknik') ||
-          (selectedField === 'soc' && researcher.field === 'Sosial Ekonomi');
-        
-        const provinceMatch = selectedProvince === '' || researcher.province === selectedProvince;
-        
-        return fieldMatch && provinceMatch;
-      })
-      .sort((a, b) => {
-        const sortValue = sortDirection === 'asc' ? 1 : -1;
-        return sortValue * (a[sortBy] - b[sortBy]);
-      });
-  }, [topResearchersData, selectedField, selectedProvince, sortBy, sortDirection]);
-  
-  // Calculate pagination
-  const totalPages = Math.ceil(filteredResearchers.length / ITEMS_PER_PAGE);
-  const paginatedResearchers = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredResearchers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [filteredResearchers, currentPage]);
-
-  // Handle page changes
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
+    if (data?.researchers?.length > 0 && !selectedResearcher) {
+      setSelectedResearcher(data.researchers[0]);
     }
-  };
-  
-  // Handle field filter changes
-  const handleFieldFilter = (field) => {
-    setSelectedField(field);
-    setCurrentPage(1); // Reset to first page on filter change
-  };
-  
-  // Handle province filter changes
-  const handleProvinceFilter = (province) => {
-    setSelectedProvince(province);
-    setCurrentPage(1); // Reset to first page on filter change
-  };
-  
-  // Handle sorting change
-  const handleSortChange = (field) => {
-    if (sortBy === field) {
-      // Toggle sort direction if clicking the same field
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortBy(field);
-      setSortDirection('desc'); // Default to descending for new sort field
-    }
-    setCurrentPage(1); // Reset to first page on sort change
-  };
-  
-  // Apply all filters together
-  const applyFilters = () => {
-    // This function would be used if we had backend filtering
-    // Currently, filtering is handled through the useMemo above
+  }, [data, selectedResearcher]);
+
+  const researchers   = data?.researchers           ?? [];
+  const total         = data?.total                 ?? 0;
+  const totalPages    = data?.total_pages           ?? 1;
+  const distribution  = data?.distribution_by_sdg   ?? [];
+  const countries     = data?.available_countries   ?? [];
+
+  const resetFilters = () => {
+    setSdg(0);
+    setCountryFilter('');
+    setSearch('');
+    setSort('impact');
+    setPage(1);
   };
 
-  // Component for displaying researcher impact profile
-  const ResearcherImpactProfile = ({ researcher }) => {
-    const radarData = [
-      { name: 'H-Index', value: researcher.hIndex * 3.5 },  // Scaling for visualization
-      { name: 'Sitasi', value: Math.min(researcher.citations / 100, 90) },  // Cap at 90
-      { name: 'Publikasi', value: researcher.publications },
-      { name: 'Kolaborasi', value: researcher.collaborations * 2.5 },  // Scaling for visualization
-      { name: 'Internasional', value: researcher.internationalCollabs * 5 }  // Scaling for visualization
+  // Radar data for selected researcher
+  const radarData = useMemo(() => {
+    if (!selectedResearcher) return [];
+    const maxH    = Math.max(50, ...researchers.map(r => r.h_index));
+    const maxCit  = Math.max(1000, ...researchers.map(r => r.citations));
+    const maxPub  = Math.max(100, ...researchers.map(r => r.publications));
+    const maxClbs = Math.max(50, ...researchers.map(r => r.total_collabs));
+    const intMax  = Math.max(25, ...researchers.map(r => r.international_collabs));
+    return [
+      { name: t('detail.hindex'),       value: Math.min(100, (selectedResearcher.h_index               / maxH)    * 100) },
+      { name: t('detail.citations'),    value: Math.min(100, (selectedResearcher.citations             / maxCit)  * 100) },
+      { name: t('detail.publications'), value: Math.min(100, (selectedResearcher.publications          / maxPub)  * 100) },
+      { name: t('detail.collab_total'), value: Math.min(100, (selectedResearcher.total_collabs         / maxClbs) * 100) },
+      { name: t('detail.collab_intl'),  value: Math.min(100, (selectedResearcher.international_collabs / intMax)  * 100) },
     ];
-    
-    return (
-      <ResponsiveContainer width="100%" height={300}>
-        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
-          <PolarGrid />
-          <PolarAngleAxis dataKey="name" />
-          <PolarRadiusAxis angle={30} domain={[0, 100]} />
-          <Radar name="Profil Peneliti" dataKey="value" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-          <Tooltip />
-        </RadarChart>
-      </ResponsiveContainer>
-    );
-  };
+  }, [selectedResearcher, researchers, t]);
 
-  // Generate researcher initials for the avatar
-  const getResearcherInitials = (name) => {
-    return name.split(' ')
-      .filter(part => part.length > 0 && !['Dr.', 'Prof.'].includes(part))
-      .map(n => n[0])
-      .join('')
-      .substring(0, 2);
-  };
+  const pageNumbers = useMemo(() => {
+    const pages = [];
+    const max   = Math.min(totalPages, 5);
+    let start   = Math.max(1, page - 2);
+    let end     = Math.min(totalPages, start + max - 1);
+    start       = Math.max(1, end - max + 1);
+    for (let i = start; i <= end; i++) pages.push(i);
+    return pages;
+  }, [page, totalPages]);
 
-  // For demo purposes, automatically select first researcher
-  React.useEffect(() => {
-    if (!selectedResearcher && topResearchersData.length > 0) {
-      setSelectedResearcher(topResearchersData[0]);
-    }
-  }, []);
-  
+  const fromIdx = researchers.length > 0 ? (page - 1) * limit + 1 : 0;
+  const toIdx   = (page - 1) * limit + researchers.length;
+
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-600 mb-8">
-        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
-        <span>›</span>
-        <Link to="/about" className="hover:text-indigo-600 transition-colors">Tentang Kami</Link>
-        <span>›</span>
-        <span className="text-gray-900 font-medium">Tim Kami</span>
-      </div>
 
-      {/* Header and Filters */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 space-y-2 md:space-y-0">
-        <h2 className="text-lg font-semibold">Peneliti Terkemuka di Indonesia</h2>
-        <div className="flex flex-wrap gap-2">
-          <select 
-            className="border rounded px-2 py-1 text-sm"
-            value={selectedField}
-            onChange={(e) => handleFieldFilter(e.target.value)}
-            aria-label="Filter berdasarkan bidang"
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+        <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
+        <span className="text-gray-400"><ChevronRight /></span>
+        <Link to="/analytics" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.analytics')}</Link>
+        <span className="text-gray-400"><ChevronRight /></span>
+        <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
+      </nav>
+
+      {/* Header + filter */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+        <div>
+          <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">{t('header.title')}</h1>
+          <p className="text-base lg:text-lg font-semibold text-gray-600 max-w-2xl">{t('header.subtitle')}</p>
+        </div>
+        <div className="flex flex-wrap gap-2 items-center">
+          <div className="relative">
+            <input
+              type="search"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder={t('filter.search_placeholder')}
+              className="border border-gray-200 rounded-lg pl-9 pr-3 py-2 text-sm bg-white shadow-sm w-64 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+            <svg className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <select
+            value={sdg}
+            onChange={e => setSdg(Number(e.target.value))}
+            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
-            <option value="all">Semua Bidang</option>
-            <option value="ti">Teknologi Informasi</option>
-            <option value="med">Kedokteran</option>
-            <option value="agr">Pertanian</option>
-            <option value="eng">Teknik</option>
-            <option value="soc">Sosial Ekonomi</option>
+            <option value={0}>{t('filter.sdg_all')}</option>
+            {Array.from({ length: 17 }, (_, i) => i + 1).map(n => (
+              <option key={n} value={n}>{t('filter.sdg_label', { number: n })}</option>
+            ))}
           </select>
-          <select 
-            className="border rounded px-2 py-1 text-sm"
-            value={selectedProvince}
-            onChange={(e) => handleProvinceFilter(e.target.value)}
-            aria-label="Filter berdasarkan provinsi"
+          <select
+            value={countryFilter}
+            onChange={e => setCountryFilter(e.target.value)}
+            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
-            <option value="">Semua Provinsi</option>
-            <option value="DKI Jakarta">DKI Jakarta</option>
-            <option value="Jawa Barat">Jawa Barat</option>
-            <option value="Jawa Timur">Jawa Timur</option>
-            <option value="DI Yogyakarta">DI Yogyakarta</option>
-            <option value="Jawa Tengah">Jawa Tengah</option>
+            <option value="">{t('filter.country_all')}</option>
+            {countries.map(c => (
+              <option key={c} value={c}>{c}</option>
+            ))}
           </select>
-          <button 
-            className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onClick={applyFilters}
-            aria-label="Terapkan filter"
+          <select
+            value={sort}
+            onChange={e => setSort(e.target.value)}
+            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
-            Terapkan Filter
-          </button>
+            {SORT_OPTIONS.map(s => (
+              <option key={s} value={s}>{t(`filter.sort.${s}`)}</option>
+            ))}
+          </select>
+          {hasActiveFilters && (
+            <button
+              onClick={resetFilters}
+              className="px-3 py-2 text-sm text-indigo-600 font-medium hover:bg-indigo-50 rounded-lg transition-colors"
+            >
+              {t('filter.reset')}
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Selected Researcher Details */}
-      {selectedResearcher && (
-        <div className="mt-6 bg-blue-50 p-4 rounded-lg">
-          <div className="flex justify-between items-start">
-            <h3 className="text-md font-semibold">{selectedResearcher.name}</h3>
-            <button 
-              className="text-gray-500 hover:text-gray-700 transition-colors"
-              onClick={() => setSelectedResearcher(null)}
-              aria-label="Tutup detail peneliti"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-          </div>
-          
-          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <div className="flex items-center mb-3">
-                <div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center mr-4">
-                  <span className="text-2xl font-semibold text-blue-700">
-                    {getResearcherInitials(selectedResearcher.name)}
-                  </span>
-                </div>
-                <div>
-                  <h4 className="text-md font-semibold">{selectedResearcher.name}</h4>
-                  <p className="text-sm text-gray-700">{selectedResearcher.department}</p>
-                  <p className="text-sm text-gray-700">{selectedResearcher.affiliation}, {selectedResearcher.location}</p>
-                  <p className="text-sm text-blue-600 font-medium">Skor Dampak: {selectedResearcher.impactScore}</p>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <div className="bg-white rounded p-3 shadow-sm">
-                  <p className="text-xs text-gray-500">H-Index</p>
-                  <p className="text-xl font-bold">{selectedResearcher.hIndex}</p>
-                </div>
-                <div className="bg-white rounded p-3 shadow-sm">
-                  <p className="text-xs text-gray-500">i10-Index</p>
-                  <p className="text-xl font-bold">{selectedResearcher.i10Index}</p>
-                </div>
-                <div className="bg-white rounded p-3 shadow-sm">
-                  <p className="text-xs text-gray-500">Publikasi</p>
-                  <p className="text-xl font-bold">{selectedResearcher.publications}</p>
-                </div>
-                <div className="bg-white rounded p-3 shadow-sm">
-                  <p className="text-xs text-gray-500">Sitasi</p>
-                  <p className="text-xl font-bold">{selectedResearcher.citations.toLocaleString()}</p>
-                </div>
-              </div>
-              
-              <div className="mt-4">
-                <h4 className="text-sm font-semibold mb-2">Publikasi Teratas:</h4>
-                <ul className="space-y-2">
-                  {selectedResearcher.topPublications.map((pub, index) => (
-                    <li key={index} className="bg-white rounded p-2 text-sm hover:bg-gray-50 transition-colors">
-                      <div className="font-medium">{pub.title}</div>
-                      <div className="text-xs text-gray-600 mt-1 flex justify-between">
-                        <span>{pub.journal} ({pub.year})</span>
-                        <span className="flex items-center">
-                          <svg className="w-3 h-3 text-blue-500 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"></path>
-                          </svg>
-                          {pub.citations}
-                        </span>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="text-sm font-semibold mb-3">Profil Dampak:</h4>
-              <ResearcherImpactProfile researcher={selectedResearcher} />
-              
-              <div className="mt-4 bg-white rounded p-3 shadow-sm">
-                <h4 className="text-sm font-semibold mb-2">Jaringan Kolaborasi:</h4>
-                <div className="flex justify-between items-center">
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500">Total</p>
-                    <p className="text-lg font-bold text-blue-700">{selectedResearcher.collaborations}</p>
-                  </div>
-                  <div className="h-12 border-l border-gray-200"></div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500">Domestik</p>
-                    <p className="text-lg font-bold text-blue-700">{selectedResearcher.domesticCollabs}</p>
-                  </div>
-                  <div className="h-12 border-l border-gray-200"></div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500">Internasional</p>
-                    <p className="text-lg font-bold text-blue-700">{selectedResearcher.internationalCollabs}</p>
-                  </div>
-                </div>
-                
-                <div className="mt-4">
-                  <ResponsiveContainer width="100%" height={100}>
-                    <PieChart>
-                      <Pie
-                        data={[
-                          { name: 'Domestik', value: selectedResearcher.domesticCollabs },
-                          { name: 'Internasional', value: selectedResearcher.internationalCollabs }
-                        ]}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={25}
-                        outerRadius={40}
-                        paddingAngle={2}
-                        dataKey="value"
-                      >
-                        {[
-                          { name: 'Domestik', color: '#8884d8' },
-                          { name: 'Internasional', color: '#82ca9d' }
-                        ].map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip formatter={(value, name) => [`${value} kolaborasi`, name]} />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-              
-              <div className="mt-4 bg-white rounded p-3 shadow-sm">
-                <h4 className="text-sm font-semibold mb-2">Dana Penelitian:</h4>
-                <p className="text-lg font-bold">{selectedResearcher.researchGrants} hibah</p>
-                <p className="text-xs text-gray-500">dalam 5 tahun terakhir</p>
-                
-                <div className="mt-2 bg-blue-50 p-2 rounded">
-                  <p className="text-xs text-blue-800">
-                    <svg className="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Peneliti yang memiliki lebih banyak hibah cenderung memiliki skor dampak yang lebih tinggi.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+      {/* Loading */}
+      {loading && (
+        <div className="flex items-center justify-center gap-3 py-16 text-gray-500">
+          <div className="animate-spin rounded-full h-6 w-6 border-2 border-indigo-600 border-t-transparent" />
+          <span>{t('loading')}</span>
         </div>
       )}
 
-      {/* Researchers Table */}
-      <div className="mt-6 bg-white p-4 rounded-lg shadow">
-        <h3 className="text-md font-semibold mb-4">Peneliti dengan Dampak Tertinggi</h3>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Peneliti
-                </th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Afiliasi
-                </th>
-                <th 
-                  className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => handleSortChange('hIndex')}
-                >
-                  <div className="flex items-center">
-                    H-Index
-                    {sortBy === 'hIndex' && (
-                      <span className="ml-1">
-                        {sortDirection === 'desc' ? '↓' : '↑'}
-                      </span>
-                    )}
-                  </div>
-                </th>
-                <th 
-                  className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => handleSortChange('publications')}
-                >
-                  <div className="flex items-center">
-                    Publikasi
-                    {sortBy === 'publications' && (
-                      <span className="ml-1">
-                        {sortDirection === 'desc' ? '↓' : '↑'}
-                      </span>
-                    )}
-                  </div>
-                </th>
-                <th 
-                  className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => handleSortChange('citations')}
-                >
-                  <div className="flex items-center">
-                    Sitasi
-                    {sortBy === 'citations' && (
-                      <span className="ml-1">
-                        {sortDirection === 'desc' ? '↓' : '↑'}
-                      </span>
-                    )}
-                  </div>
-                </th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Kolaborasi
-                </th>
-                <th 
-                  className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => handleSortChange('impactScore')}
-                >
-                  <div className="flex items-center">
-                    Skor Dampak
-                    {sortBy === 'impactScore' && (
-                      <span className="ml-1">
-                        {sortDirection === 'desc' ? '↓' : '↑'}
-                      </span>
-                    )}
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {paginatedResearchers.map(researcher => (
-                <tr 
-                  key={researcher.id} 
-                  className={`hover:bg-gray-50 cursor-pointer transition-colors ${selectedResearcher?.id === researcher.id ? 'bg-blue-50' : ''}`}
-                  onClick={() => setSelectedResearcher(researcher)}
-                >
-                  <td className="px-4 py-2">
-                    <div className="text-sm font-medium text-gray-900">{researcher.name}</div>
-                    <div className="text-xs text-gray-500">{researcher.field}</div>
-                  </td>
-                  <td className="px-4 py-2">
-                    <div className="text-sm text-gray-900">{researcher.affiliation}</div>
-                    <div className="text-xs text-gray-500">{researcher.location}</div>
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-900">
-                    {researcher.hIndex}
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-900">
-                    {researcher.publications}
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-900">
-                    {researcher.citations.toLocaleString()}
-                  </td>
-                  <td className="px-4 py-2">
-                    <div className="flex items-center">
-                      <div className="flex flex-wrap gap-1">
-                        <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full">
-                          {researcher.domesticCollabs} domestik
-                        </span>
-                        <span className="text-xs px-2 py-0.5 bg-green-100 text-green-800 rounded-full">
-                          {researcher.internationalCollabs} int'l
-                        </span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-2">
-                    <div className="flex items-center">
-                      <div className="w-full bg-gray-200 rounded-full h-2.5 mr-2">
-                        <div 
-                          className="bg-blue-600 h-2.5 rounded-full" 
-                          style={{ width: `${researcher.impactScore}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-sm font-medium text-gray-900">{researcher.impactScore}</span>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* Error */}
+      {error && !loading && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-center gap-3">
+          <svg className="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span className="text-red-700 text-sm flex-grow">{error}</span>
+          <button onClick={fetchData} className="text-sm text-red-600 underline shrink-0">{t('retry')}</button>
         </div>
+      )}
 
-        {/* Pagination */}
-        <div className="mt-4 flex justify-between items-center">
-          <div className="text-sm text-gray-500">
-            Menampilkan {((currentPage - 1) * ITEMS_PER_PAGE) + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, TOTAL_RESEARCHERS)} dari {TOTAL_RESEARCHERS.toLocaleString()} peneliti
+      {!loading && (
+        <>
+          {/* Selected researcher detail */}
+          {selectedResearcher && (
+            <div className="bg-indigo-50 border border-indigo-200 p-5 rounded-xl mb-6">
+              <div className="flex justify-between items-start gap-4 mb-4">
+                <div>
+                  <p className="text-xs font-semibold text-indigo-600 mb-1 uppercase tracking-wide">{t('detail.title')}</p>
+                  <h3 className="font-bold text-gray-900 text-lg leading-snug">{selectedResearcher.name}</h3>
+                </div>
+                <button
+                  className="p-1.5 rounded-lg hover:bg-white text-gray-500 hover:text-gray-700 shrink-0"
+                  onClick={() => setSelectedResearcher(null)}
+                  aria-label={t('detail.close')}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Left column: profile + metrics + top pubs */}
+                <div>
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-20 h-20 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+                      <span className="text-2xl font-bold text-indigo-700">{getInitials(selectedResearcher.name)}</span>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm text-gray-700"><b>{t('detail.affiliation')}:</b> {selectedResearcher.affiliation || '—'}</p>
+                      <p className="text-sm text-gray-700"><b>{t('detail.country')}:</b> {selectedResearcher.country || '—'}</p>
+                      <p className="text-sm text-indigo-600 font-semibold mt-1">
+                        {t('detail.impact_score')}: {selectedResearcher.impact_score}
+                      </p>
+                    </div>
+                  </div>
+
+                  <h4 className="font-semibold text-gray-800 mb-2 text-sm">{t('detail.metrics')}</h4>
+                  <div className="grid grid-cols-3 gap-2 mb-4">
+                    <div className="bg-white rounded-lg p-3 text-center">
+                      <p className="text-xs text-gray-500">{t('detail.hindex')}</p>
+                      <p className="text-xl font-bold text-gray-900">{selectedResearcher.h_index}</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-3 text-center">
+                      <p className="text-xs text-gray-500">{t('detail.citations')}</p>
+                      <p className="text-xl font-bold text-gray-900">{selectedResearcher.citations.toLocaleString()}</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-3 text-center">
+                      <p className="text-xs text-gray-500">{t('detail.publications')}</p>
+                      <p className="text-xl font-bold text-gray-900">{selectedResearcher.publications}</p>
+                    </div>
+                  </div>
+
+                  <h4 className="font-semibold text-gray-800 mb-2 text-sm">{t('detail.top_pubs')}</h4>
+                  {selectedResearcher.top_publications?.length > 0 ? (
+                    <ul className="space-y-2">
+                      {selectedResearcher.top_publications.map((pub, i) => (
+                        <li key={pub.doi || i} className="bg-white rounded-lg p-2.5 text-sm">
+                          <Link
+                            to={pub.doi ? `/doi/${encodeURIComponent(pub.doi)}` : '#'}
+                            className="font-medium text-gray-900 hover:text-indigo-600 line-clamp-2 leading-tight"
+                          >
+                            {pub.title}
+                          </Link>
+                          <div className="text-xs text-gray-500 mt-1 flex justify-between">
+                            <span className="truncate">{pub.journal} ({pub.year})</span>
+                            <span className="ml-2 shrink-0 font-semibold text-gray-700">
+                              {pub.citations.toLocaleString()} cit
+                            </span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-xs text-gray-500 italic">{t('detail.no_top_pubs')}</p>
+                  )}
+
+                  {selectedResearcher.orcid && (
+                    <Link
+                      to={`/orcid/${encodeURIComponent(selectedResearcher.orcid)}`}
+                      className="inline-flex items-center gap-1 mt-3 text-sm text-indigo-600 font-medium hover:text-indigo-700"
+                    >
+                      {t('detail.open_profile')} →
+                    </Link>
+                  )}
+                </div>
+
+                {/* Right column: radar + collab */}
+                <div>
+                  <h4 className="font-semibold text-gray-800 mb-2 text-sm">{t('detail.profile_radar')}</h4>
+                  <div className="bg-white rounded-lg p-2">
+                    <ResponsiveContainer width="100%" height={240}>
+                      <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
+                        <PolarGrid />
+                        <PolarAngleAxis dataKey="name" tick={{ fontSize: 9 }} />
+                        <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 9 }} />
+                        <Radar dataKey="value" stroke="#6366f1" fill="#6366f1" fillOpacity={0.5} />
+                        <Tooltip formatter={v => Math.round(v)} />
+                      </RadarChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  <h4 className="font-semibold text-gray-800 mt-4 mb-2 text-sm">{t('detail.collab_network')}</h4>
+                  {selectedResearcher.total_collabs > 0 ? (
+                    <div className="bg-white rounded-lg p-3">
+                      <div className="flex justify-around items-center mb-3">
+                        <div className="text-center">
+                          <p className="text-xs text-gray-500">{t('detail.collab_total')}</p>
+                          <p className="text-lg font-bold text-indigo-700">{selectedResearcher.total_collabs}</p>
+                        </div>
+                        <div className="h-10 border-l border-gray-200"></div>
+                        <div className="text-center">
+                          <p className="text-xs text-gray-500">{t('detail.collab_domestic')}</p>
+                          <p className="text-lg font-bold text-blue-600">{selectedResearcher.domestic_collabs}</p>
+                        </div>
+                        <div className="h-10 border-l border-gray-200"></div>
+                        <div className="text-center">
+                          <p className="text-xs text-gray-500">{t('detail.collab_intl')}</p>
+                          <p className="text-lg font-bold text-green-600">{selectedResearcher.international_collabs}</p>
+                        </div>
+                      </div>
+                      <ResponsiveContainer width="100%" height={90}>
+                        <PieChart>
+                          <Pie
+                            data={[
+                              { name: t('detail.collab_domestic'), value: selectedResearcher.domestic_collabs,      color: '#3b82f6' },
+                              { name: t('detail.collab_intl'),     value: selectedResearcher.international_collabs, color: '#10b981' },
+                            ]}
+                            cx="50%" cy="50%" innerRadius={22} outerRadius={38}
+                            paddingAngle={2} dataKey="value"
+                          >
+                            <Cell fill="#3b82f6" />
+                            <Cell fill="#10b981" />
+                          </Pie>
+                          <Tooltip />
+                          <Legend wrapperStyle={{ fontSize: '11px' }} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-gray-500 italic">{t('detail.no_collab')}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Researcher table */}
+          <div className="mb-6 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-gray-100 flex justify-between items-center flex-wrap gap-2">
+              <h3 className="text-lg font-semibold text-gray-900">{t('table.title')}</h3>
+              {total > 0 && (
+                <span className="text-xs text-gray-500">
+                  {t('pagination.showing', { from: fromIdx, to: toIdx, total: total.toLocaleString() })}
+                </span>
+              )}
+            </div>
+
+            {researchers.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-sm">
+                  <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
+                    <tr>
+                      <th className="px-4 py-3 text-left font-medium">{t('table.columns.researcher')}</th>
+                      <th className="px-4 py-3 text-left font-medium">{t('table.columns.affiliation')}</th>
+                      <th className="px-4 py-3 text-right font-medium">{t('table.columns.hindex')}</th>
+                      <th className="px-4 py-3 text-right font-medium">{t('table.columns.publications')}</th>
+                      <th className="px-4 py-3 text-right font-medium">{t('table.columns.citations')}</th>
+                      <th className="px-4 py-3 text-left font-medium">{t('table.columns.collab')}</th>
+                      <th className="px-4 py-3 text-left font-medium">{t('table.columns.impact_score')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-100">
+                    {researchers.map(r => (
+                      <tr
+                        key={r.orcid}
+                        className={`hover:bg-gray-50 cursor-pointer transition-colors ${
+                          selectedResearcher?.orcid === r.orcid ? 'bg-indigo-50/50' : ''
+                        }`}
+                        onClick={() => setSelectedResearcher(r)}
+                      >
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+                              <span className="text-xs font-bold text-indigo-700">{getInitials(r.name)}</span>
+                            </div>
+                            <div className="min-w-0">
+                              <div className="text-sm font-medium text-gray-900 truncate">{r.name}</div>
+                              <div className="text-[10px] text-gray-500 truncate font-mono">{r.orcid}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="text-sm text-gray-700 truncate max-w-[200px]">{r.affiliation || '—'}</div>
+                          <div className="text-xs text-gray-500">{r.country || '—'}</div>
+                        </td>
+                        <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900">{r.h_index}</td>
+                        <td className="px-4 py-3 text-right text-sm text-gray-700">{r.publications}</td>
+                        <td className="px-4 py-3 text-right text-sm text-gray-700">{r.citations.toLocaleString()}</td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-wrap gap-1">
+                            <span className="text-[10px] px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full">
+                              {t('table.collab_domestic', { n: r.domestic_collabs })}
+                            </span>
+                            <span className="text-[10px] px-2 py-0.5 bg-green-100 text-green-800 rounded-full">
+                              {t('table.collab_intl', { n: r.international_collabs })}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <ScoreBar value={r.impact_score} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <EmptySection
+                title={t(hasActiveFilters ? 'table.no_match.title' : 'table.no_data.title')}
+                subtitle={t(hasActiveFilters ? 'table.no_match.subtitle' : 'table.no_data.subtitle')}
+              />
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && researchers.length > 0 && (
+              <div className="p-4 border-t border-gray-100 flex justify-between items-center">
+                <button
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page <= 1}
+                  className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  {t('pagination.prev')}
+                </button>
+                <div className="flex gap-1">
+                  {pageNumbers.map(p => (
+                    <button
+                      key={p}
+                      onClick={() => setPage(p)}
+                      className={`text-sm px-3 py-1.5 rounded-lg ${
+                        page === p
+                          ? 'bg-indigo-600 text-white'
+                          : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={page >= totalPages}
+                  className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  {t('pagination.next')}
+                </button>
+              </div>
+            )}
           </div>
-          <div className="flex space-x-2">
-            <button 
-              className={`border rounded px-3 py-1 text-sm ${currentPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-500 hover:bg-gray-50'}`}
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              aria-label="Halaman sebelumnya"
-            >
-              Sebelumnya
-            </button>
-            {[...Array(Math.min(3, totalPages))].map((_, index) => {
-              const pageNumber = currentPage + index - (currentPage > 1 ? 1 : 0);
-              if (pageNumber > 0 && pageNumber <= totalPages) {
+
+          {/* Impact score explanation */}
+          <div className="bg-blue-50 p-5 rounded-xl border border-blue-100 mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('explanation.title')}</h3>
+            <p className="text-sm text-gray-600 mb-4">{t('explanation.subtitle')}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {['academic', 'citation', 'productivity', 'collab'].map(c => {
+                const s = DIM_STYLE[c];
                 return (
-                  <button 
-                    key={pageNumber}
-                    className={`${pageNumber === currentPage ? 'bg-blue-600 text-white' : 'border text-gray-500 hover:bg-gray-50'} rounded px-3 py-1 text-sm`}
-                    onClick={() => handlePageChange(pageNumber)}
-                    aria-label={`Halaman ${pageNumber}`}
-                    aria-current={pageNumber === currentPage ? 'page' : undefined}
-                  >
-                    {pageNumber}
-                  </button>
+                  <div key={c} className="bg-white rounded-lg p-3 shadow-sm border border-gray-100">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className={`h-8 w-8 rounded-full flex items-center justify-center ${s.bg} ${s.icon}`}>
+                        <ComponentIcon comp={c} />
+                      </div>
+                      <h4 className={`font-semibold text-xs ${s.text}`}>
+                        {t(`explanation.components.${c}.title`)} ({t(`explanation.components.${c}.weight`)})
+                      </h4>
+                    </div>
+                    <p className="text-xs text-gray-600 leading-relaxed">
+                      {t(`explanation.components.${c}.desc`)}
+                    </p>
+                  </div>
                 );
-              }
-              return null;
-            })}
-            <button 
-              className={`border rounded px-3 py-1 text-sm ${currentPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-gray-500 hover:bg-gray-50'}`}
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              aria-label="Halaman berikutnya"
-            >
-              Berikutnya
-            </button>
+              })}
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Impact Score Explanation */}
-      <div className="bg-blue-50 p-4 rounded-lg mt-6">
-        <h3 className="text-md font-semibold mb-2">Tentang Skor Dampak Peneliti</h3>
-        <p className="text-sm text-gray-700">
-          Skor dampak peneliti di Wizdom Indonesia dihitung berdasarkan kombinasi dari metrik akademik tradisional, 
-          dampak artikel yang dipublikasikan, dan jangkauan kolaborasi:
-        </p>
-        <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white rounded p-3 shadow-sm">
-            <div className="flex items-center">
-              <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
-                <svg className="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-              </div>
-              <h4 className="font-medium">Metrik Akademik (50%)</h4>
-            </div>
-            <p className="text-xs mt-2 text-gray-600">
-              H-index, i10-index, jumlah sitasi, dan produktivitas publikasi peneliti.
-            </p>
+          {/* Distribution by SDG */}
+          <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+            <h3 className="font-semibold text-gray-900 mb-1">{t('distribution.title')}</h3>
+            <p className="text-xs text-gray-500 mb-4">{t('distribution.subtitle')}</p>
+            {distribution.length > 0 ? (
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={distribution} margin={{ top: 5, right: 20, left: 0, bottom: 30 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis
+                    dataKey="sdg"
+                    stroke="#6b7280"
+                    fontSize={11}
+                    tickFormatter={v => `SDG ${v}`}
+                  />
+                  <YAxis stroke="#6b7280" fontSize={11} />
+                  <Tooltip
+                    formatter={(v) => [v.toLocaleString(), t('distribution.researchers')]}
+                    labelFormatter={(label) => {
+                      const item = distribution.find(d => d.sdg === label);
+                      return item ? `SDG ${label}: ${item.name}` : `SDG ${label}`;
+                    }}
+                  />
+                  <Bar dataKey="researcher_count" radius={[4, 4, 0, 0]}>
+                    {distribution.map((d, i) => (
+                      <Cell key={i} fill={d.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <EmptySection title={t('distribution.no_data.title')} subtitle={t('distribution.no_data.subtitle')} />
+            )}
           </div>
-          <div className="bg-white rounded p-3 shadow-sm">
-            <div className="flex items-center">
-              <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mr-2">
-                <svg className="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
-                </svg>
-              </div>
-              <h4 className="font-medium">Dampak Artikel (30%)</h4>
-            </div>
-            <p className="text-xs mt-2 text-gray-600">
-              Rata-rata dampak dari artikel yang dipublikasikan termasuk dampak akademik, sosial, dan praktis.
-            </p>
-          </div>
-          <div className="bg-white rounded p-3 shadow-sm">
-            <div className="flex items-center">
-              <div className="h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center mr-2">
-                <svg className="h-5 w-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <h4 className="font-medium">Jangkauan & Kolaborasi (20%)</h4>
-            </div>
-            <p className="text-xs mt-2 text-gray-600">
-              Tingkat dan kualitas kolaborasi (lokal dan internasional), interdisiplinaritas, dan keterlibatan dengan masyarakat/industri.
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      {/* Distribution by Field */}
-      <div className="mt-6 mb-6 bg-white p-4 rounded-lg shadow">
-        <h3 className="text-md font-semibold mb-4">Distribusi Peneliti berdasarkan Bidang</h3>
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart
-            data={researcherDistributionByField}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="field" />
-            <YAxis />
-            <Tooltip 
-              formatter={(value, name) => [value, name === 'count' ? 'Jumlah Peneliti' : 'Dampak Rata-rata']}
-              labelFormatter={(value) => `Bidang: ${value}`}
-            />
-            <Legend />
-            <Bar dataKey="count" fill="#8884d8" name="Jumlah Peneliti" />
-            <Bar dataKey="avgImpact" fill="#82ca9d" name="Dampak Rata-rata" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-      
+        </>
+      )}
     </main>
   );
 };
