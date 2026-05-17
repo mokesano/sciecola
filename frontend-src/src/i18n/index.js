@@ -17,6 +17,8 @@ import idDashboard    from './locales/id/dashboard.json';
 import enDashboard    from './locales/en/dashboard.json';
 import idResearcher   from './locales/id/researcher.json';
 import enResearcher   from './locales/en/researcher.json';
+import idResearchers  from './locales/id/researchers.json';
+import enResearchers  from './locales/en/researchers.json';
 
 // ─── Deteksi bahasa awal ─────────────────────────────────────────────
 // Prioritas: (1) preferensi tersimpan user → (2) bahasa browser →
@@ -45,6 +47,7 @@ i18n
         homepage:    idHomepage,
         dashboard:   idDashboard,
         researcher:  idResearcher,
+        researchers: idResearchers,
       },
       en: {
         translation: enCommon,
@@ -53,12 +56,13 @@ i18n
         homepage:    enHomepage,
         dashboard:   enDashboard,
         researcher:  enResearcher,
+        researchers: enResearchers,
       },
     },
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers'],
     interpolation: { escapeValue: false },
   });
 
