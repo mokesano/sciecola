@@ -58,6 +58,13 @@ try {
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
 
+/**
+ * Fetch landing page content for a given language
+ *
+ * @param PDO $pdo
+ * @param string $lang 'id' or 'en'
+ * @return array
+ */
 function fetchContent(PDO $pdo, string $lang): array
 {
     if (!in_array($lang, ['id', 'en'], true)) {
@@ -83,6 +90,13 @@ function fetchContent(PDO $pdo, string $lang): array
     ];
 }
 
+/**
+ * Upsert landing page content for a given language
+ *
+ * @param PDO $pdo
+ * @param array $input
+ * @return array
+ */
 function upsertContent(PDO $pdo, array $input): array
 {
     if (empty($input)) {
