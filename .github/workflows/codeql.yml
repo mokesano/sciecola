@@ -24,15 +24,23 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  # JOB 1: SCAN JAVASCRIPT
-  analyze-js:
-    name: Analyze JavaScript
+  analyze:
+    name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
     permissions:
       security-events: write
       packages: read
       actions: read
       contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - language: javascript-typescript
+          build-mode: none
+        - language: php
+          build-mode: none
 
     steps:
     - name: Checkout repository
@@ -41,35 +49,12 @@ jobs:
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
-        languages: javascript-typescript
-        queries: security-and-quality
+        languages: ${{ matrix.language }}
+        build-mode: ${{ matrix.build-mode }}
+        # PENTING: Arahkan ke file konfigurasi yang baru dibuat
+        config-file: ./.github/codeql/codeql-config.yml
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
       with:
-        category: "javascript-typescript"
-
-  # JOB 2: SCAN PHP
-  analyze-php:
-    name: Analyze PHP
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      packages: read
-      actions: read
-      contents: read
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: php
-        queries: security-and-quality
-
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        category: "php"
+        category: "${{ matrix.language }}"
