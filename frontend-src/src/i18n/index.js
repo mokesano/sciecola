@@ -35,6 +35,8 @@ import idMyCollections      from './locales/id/my_collections.json';
 import enMyCollections      from './locales/en/my_collections.json';
 import idSdgsCluster        from './locales/id/sdgs_cluster.json';
 import enSdgsCluster        from './locales/en/sdgs_cluster.json';
+import idAnalytics          from './locales/id/analytics.json';
+import enAnalytics          from './locales/en/analytics.json';
 
 // ─── Deteksi bahasa awal ─────────────────────────────────────────────
 // Prioritas: (1) preferensi tersimpan user → (2) bahasa browser →
@@ -72,6 +74,7 @@ i18n
         institution_profile: idInstitutionProfile,
         my_collections:      idMyCollections,
         sdgs_cluster:        idSdgsCluster,
+        analytics:           idAnalytics,
       },
       en: {
         translation: enCommon,
@@ -89,12 +92,13 @@ i18n
         institution_profile: enInstitutionProfile,
         my_collections:      enMyCollections,
         sdgs_cluster:        enSdgsCluster,
+        analytics:           enAnalytics,
       },
     },
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics'],
     interpolation: { escapeValue: false },
   });
 
