@@ -32,14 +32,16 @@
       "publications": "Publications"
     }
   },
-  "error": {
-    "title": "Failed to load researchers",
-    "retry": "Try Again"
-  },
   "empty": {
-    "title":    "No researchers found",
-    "subtitle": "Try adjusting your filters or search terms.",
-    "reset":    "Reset Filters"
+    "no_match": {
+      "title":    "No matching researchers",
+      "subtitle": "Your filters or keywords returned no results. Try loosening the filters or using different keywords.",
+      "reset":    "Reset Filters"
+    },
+    "no_data": {
+      "title":    "No researcher data yet",
+      "subtitle": "No researcher profiles have been indexed in the database. Data will appear once the administrator runs an ORCID crawl."
+    }
   },
   "pagination": {
     "prev": "Previous",
