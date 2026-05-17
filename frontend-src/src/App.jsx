@@ -107,6 +107,9 @@ import InsightsPage from './pages/InsightsPage';
 // Impor Halaman Public (landing page untuk user belum login)
 import PublicHomePage from './pages/PublicHomePage';
 
+// Impor Halaman Admin: editor konten halaman publik
+import AdminLandingContent from './pages/AdminLandingContent';
+
 // Impor Chatbot
 import Chatbot from './components/layout/Chatbot';
 
@@ -312,6 +315,7 @@ function App() {
 
               {/* Admin Panel */}
               <Route path="/admin/data-management" element={<AdminPanel />} />
+              <Route path="/admin/landing-content" element={<AdminLandingContent />} />
             </Route>
 
             {/* ============================================== */}
