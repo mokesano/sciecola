@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const SDG_COLORS = {
   1: '#E5243B', 2: '#DDA63A', 3: '#4C9F38', 4: '#C5192D', 5: '#FF3A21',
@@ -9,27 +10,37 @@ const SDG_COLORS = {
 };
 
 const LatestArticles = () => {
+  const { t } = useTranslation('dashboard');
   const [articles, setArticles] = useState([]);
+  const [loaded, setLoaded]     = useState(false);
 
   useEffect(() => {
     fetch('/api/articles.php?limit=3&sort=recent')
       .then(r => r.json())
       .then(json => {
-        if (json.status === 'success') setArticles(json.data);
+        if (json.status === 'success' && Array.isArray(json.data)) setArticles(json.data);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoaded(true));
   }, []);
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full font-sans">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-bold text-gray-800">Artikel Terbaru</h3>
-        <Link to="/articles" className="text-sm text-indigo-600 hover:text-indigo-800 font-medium transition-colors">Lihat semua</Link>
+        <h3 className="text-lg font-bold text-gray-800">{t('latest_articles.title')}</h3>
+        <Link to="/articles" className="text-sm text-indigo-600 hover:text-indigo-800 font-medium transition-colors">
+          {t('latest_articles.view_all')}
+        </Link>
       </div>
 
-      {articles.length === 0 && (
+      {!loaded && articles.length === 0 && (
         <div className="flex items-center justify-center flex-grow py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        </div>
+      )}
+      {loaded && articles.length === 0 && (
+        <div className="flex items-center justify-center flex-grow py-8 text-sm text-gray-500 text-center px-6">
+          {t('latest_articles.empty')}
         </div>
       )}
 
@@ -76,14 +87,14 @@ const LatestArticles = () => {
               </div>
 
               <div className="flex items-center gap-4 p-4 text-xs text-gray-500 font-medium">
-                <div className="flex items-center gap-1.5" title="Total Views">
+                <div className="flex items-center gap-1.5" title={t('latest_articles.views_tip')}>
                   <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                   </svg>
                   {article.views ?? 0}
                 </div>
-                <div className="flex items-center gap-1.5" title="Total Citations">
+                <div className="flex items-center gap-1.5" title={t('latest_articles.cites_tip')}>
                   <svg className="w-3.5 h-3.5 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
                   </svg>
