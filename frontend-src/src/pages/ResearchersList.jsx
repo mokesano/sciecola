@@ -24,14 +24,12 @@ const ResearchersList = () => {
 
   const [researchers, setResearchers]     = useState([]);
   const [loading, setLoading]             = useState(true);
-  const [error, setError]                 = useState(null);
   const [totalPages, setTotalPages]       = useState(1);
   const [totalResults, setTotalResults]   = useState(0);
 
   useEffect(() => {
     const fetchResearchers = async () => {
       setLoading(true);
-      setError(null);
       try {
         const params = new URLSearchParams({
           page:   page,
@@ -67,8 +65,12 @@ const ResearchersList = () => {
         setTotalPages(data.total_pages || 1);
         setTotalResults(data.total || 0);
       } catch (err) {
-        setError(err.message);
+        // Fetch failure is treated as "no data" empty state, not an error UI.
+        // Log for diagnostics; user sees the informative empty state below.
+        console.error('[ResearchersList] fetch failed:', err);
         setResearchers([]);
+        setTotalPages(1);
+        setTotalResults(0);
       } finally {
         setLoading(false);
       }
@@ -99,6 +101,8 @@ const ResearchersList = () => {
     setSelectedSdg('all');
     setSearchQuery('');
   };
+
+  const hasActiveFilters = selectedCountry !== 'all' || selectedSdg !== 'all' || searchQuery.trim() !== '';
 
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
@@ -218,32 +222,21 @@ const ResearchersList = () => {
         </div>
       )}
 
-      {/* Error */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-2xl p-6 mb-8">
-          <p className="text-red-700 font-medium">{t('error.title')}: {error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-          >
-            {t('error.retry')}
-          </button>
-        </div>
-      )}
-
       {/* Results */}
-      {!loading && !error && (
+      {!loading && (
         <>
-          <div className="mb-6 flex justify-between items-center">
-            <p className="text-gray-600 text-sm">
-              <Trans
-                i18nKey="results.count"
-                ns="researchers"
-                values={{ shown: researchers.length, total: totalResults }}
-                components={{ strong: <span className="font-bold text-gray-900" /> }}
-              />
-            </p>
-          </div>
+          {researchers.length > 0 && (
+            <div className="mb-6 flex justify-between items-center">
+              <p className="text-gray-600 text-sm">
+                <Trans
+                  i18nKey="results.count"
+                  ns="researchers"
+                  values={{ shown: researchers.length, total: totalResults }}
+                  components={{ strong: <span className="font-bold text-gray-900" /> }}
+                />
+              </p>
+            </div>
+          )}
 
           {researchers.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -336,28 +329,48 @@ const ResearchersList = () => {
                 </Link>
               ))}
             </div>
-          ) : (
+          ) : hasActiveFilters ? (
             <div className="text-center py-20">
-              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <div className="w-24 h-24 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-6 relative">
+                <svg className="w-12 h-12 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"
+                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                 </svg>
+                <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-md border border-gray-100">
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('empty.title')}</h3>
-              <p className="text-gray-500 text-sm mb-4">{t('empty.subtitle')}</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('empty.no_match.title')}</h3>
+              <p className="text-gray-500 text-sm mb-6 max-w-md mx-auto">{t('empty.no_match.subtitle')}</p>
               <button
                 onClick={resetAll}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
               >
-                {t('empty.reset')}
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                {t('empty.no_match.reset')}
               </button>
+            </div>
+          ) : (
+            <div className="text-center py-20">
+              <div className="w-24 h-24 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('empty.no_data.title')}</h3>
+              <p className="text-gray-500 text-sm max-w-md mx-auto">{t('empty.no_data.subtitle')}</p>
             </div>
           )}
         </>
       )}
 
       {/* Pagination */}
-      {!loading && !error && researchers.length > 0 && totalPages > 1 && (
+      {!loading && researchers.length > 0 && totalPages > 1 && (
         <div className="mt-10 flex justify-center items-center gap-2">
           <button
             onClick={() => setPage(Math.max(1, page - 1))}
