@@ -106,6 +106,11 @@ const getByPath = (obj, path) => {
 const SAFE_KEY = /^[a-zA-Z0-9_-]+$/;
 const BLOCKED_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 const isSafeKey = (k) => SAFE_KEY.test(k) && !BLOCKED_KEYS.has(k);
+const isPlainObject = (v) => {
+  if (v === null || typeof v !== 'object' || Array.isArray(v)) return false;
+  const proto = Object.getPrototypeOf(v);
+  return proto === Object.prototype || proto === null;
+};
 
 const setByPath = (obj, path, value) => {
   const next = structuredClone(obj || {});
@@ -120,12 +125,17 @@ const setByPath = (obj, path, value) => {
     const key = keys[i];
     const nextKey = keys[i + 1];
     const shouldBeArray = /^\d+$/.test(nextKey);
-    const slot = Object.prototype.hasOwnProperty.call(cursor, key) ? cursor[key] : undefined;
+    const hasOwnSlot = Object.prototype.hasOwnProperty.call(cursor, key);
+
+    if (!Array.isArray(cursor) && !isPlainObject(cursor)) return next;
+    if (!hasOwnSlot && Object.prototype.hasOwnProperty.call(Object(cursor), key) === false && key in Object(cursor)) return next;
+
+    const slot = hasOwnSlot ? cursor[key] : undefined;
     // Repair malformed/legacy intermediates: replace if type doesn't match expected shape.
     if (shouldBeArray) {
       if (!Array.isArray(slot)) cursor[key] = [];
     } else {
-      if (slot === null || slot === undefined || typeof slot !== 'object' || Array.isArray(slot)) {
+      if (!isPlainObject(slot)) {
         cursor[key] = {};
       }
     }
@@ -133,8 +143,8 @@ const setByPath = (obj, path, value) => {
   }
   const lastKey = keys[keys.length - 1];
   if (!isSafeKey(lastKey)) return next;
-  if (cursor === null || (typeof cursor !== 'object' && !Array.isArray(cursor))) return next;
-  if ((lastKey in cursor) && !Object.prototype.hasOwnProperty.call(cursor, lastKey)) return next;
+  if (!Array.isArray(cursor) && !isPlainObject(cursor)) return next;
+  if (!Object.prototype.hasOwnProperty.call(cursor, lastKey) && (lastKey in cursor)) return next;
   cursor[lastKey] = value;
   return next;
 };
