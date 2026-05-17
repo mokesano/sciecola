@@ -1,0 +1,49 @@
+{
+  "breadcrumb": {
+    "home":    "Home",
+    "current": "Institutions"
+  },
+  "header": {
+    "title":    "Institutions",
+    "subtitle": "Explore research institution profiles and their contributions to the SDGs."
+  },
+  "filters": {
+    "search_placeholder": "Search by institution name…",
+    "all_countries":      "All Countries",
+    "sort": {
+      "relevance":    "Relevance",
+      "publications": "Most Published",
+      "citations":    "Most Cited",
+      "hIndex":       "Highest H-Index"
+    },
+    "view": {
+      "list_aria": "List view",
+      "card_aria": "Card view"
+    }
+  },
+  "results": {
+    "count":       "Showing <strong>{{shown}}</strong> institutions",
+    "established": "Established {{year}}",
+    "metrics": {
+      "publications": "Publications",
+      "researchers":  "Researchers",
+      "hindex":       "H-Index"
+    },
+    "footer": {
+      "journals":       "{{count}} Journals",
+      "collaborations": "{{count}} Collaborations",
+      "sdgs":           "{{count}} SDGs"
+    }
+  },
+  "empty": {
+    "no_match": {
+      "title":    "No matching institutions",
+      "subtitle": "Your filters or keywords returned no results. Try loosening the filters or different keywords.",
+      "reset":    "Reset Filters"
+    },
+    "no_data": {
+      "title":    "No institution data yet",
+      "subtitle": "No institutions have been indexed in the database. Data will appear once the administrator populates the institution directory."
+    }
+  }
+}

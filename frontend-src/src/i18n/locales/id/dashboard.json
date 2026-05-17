@@ -1,0 +1,76 @@
+{
+  "hero": {
+    "badge":           "AI-POWERED RESEARCH INTELLIGENCE",
+    "title_1":         "Bridging Research",
+    "title_2":         "with",
+    "title_highlight": "Global Impact",
+    "description":     "Sciecola menganalisis dan mengklasifikasikan artikel ilmiah berdasarkan Sustainable Development Goals (SDGs) secara otomatis menggunakan kecerdasan buatan.",
+    "cta_explore":     "Jelajahi Riset",
+    "cta_analyze":     "Analisis Artikel",
+    "image_alt":       "Ilustrasi Beranda Sciecola"
+  },
+  "stats_fallback": [
+    "Artikel Terklasifikasi",
+    "Peneliti",
+    "Jurnal",
+    "SDGs Terwakili",
+    "Total Sitasi"
+  ],
+  "sdg_distribution": {
+    "title":        "Distribusi Klasifikasi SDGs",
+    "view_all":     "Lihat semua",
+    "centre_label": "Artikel",
+    "empty":        "Belum ada data klasifikasi SDG. Mulai analisis ORCID atau DOI untuk melihat distribusi.",
+    "tooltip_unit": "Artikel"
+  },
+  "sdg_trend": {
+    "title":        "Tren Publikasi per SDGs",
+    "view_all":     "Lihat selengkapnya",
+    "empty":        "Belum ada data tren. Analisis profil ORCID Anda untuk melihat tren publikasi SDG dari waktu ke waktu.",
+    "others_label": "Lainnya"
+  },
+  "top_sdgs": {
+    "title":     "SDGs Paling Banyak Dikontribusikan",
+    "view_all":  "Lihat semua",
+    "unit":      "artikel",
+    "empty":     "Belum ada data SDG untuk ditampilkan."
+  },
+  "latest_articles": {
+    "title":      "Artikel Terbaru",
+    "view_all":   "Lihat semua",
+    "views_tip":  "Total Tampilan",
+    "cites_tip":  "Total Sitasi",
+    "empty":      "Belum ada artikel terbaru."
+  },
+  "insights_ai": {
+    "title":    "Insights AI",
+    "view_all": "Lihat semua",
+    "cta":      "Lihat semua insight",
+    "empty":    "Belum ada insight AI yang tersedia."
+  },
+  "research_explorer": {
+    "title":       "Jelajahi Riset di Sciecola",
+    "subtitle":    "Temukan artikel, peneliti, jurnal, atau topik berdasarkan SDGs",
+    "placeholder": "Cari judul artikel, penulis, jurnal, kata kunci...",
+    "search":      "Cari",
+    "advanced":    "Pencarian lanjutan",
+    "filters": {
+      "all_sdgs":    "Semua SDGs",
+      "all_years":   "Semua Tahun",
+      "all_journals":"Semua Jurnal",
+      "all_countries":"Semua Negara"
+    }
+  },
+  "trusted_sources": {
+    "title": "Bersumber dari Data Terpercaya",
+    "empty": "Daftar sumber data belum tersedia."
+  },
+  "cta": {
+    "title":           "Siap untuk menganalisis riset Anda?",
+    "subtitle":        "Masukkan DOI atau ORCID untuk melihat analisis dan klasifikasi SDGs secara instan.",
+    "placeholder":     "Masukkan DOI atau ORCID",
+    "button":          "Analisis Sekarang",
+    "button_loading":  "Memproses...",
+    "error_format":    "Format tidak dikenali. Masukkan ORCID (0000-0000-0000-0000) atau DOI (10.xxxx/...)"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "breadcrumb": {
+    "home":    "Home",
+    "current": "Articles"
+  },
+  "header": {
+    "title":    "Articles",
+    "subtitle": "Explore research articles classified by SDG targets."
+  },
+  "filters": {
+    "search_placeholder": "Search by title, DOI, or keyword…",
+    "all_sdgs":           "All SDGs",
+    "sdg_label":          "SDG {{number}}",
+    "all_years":          "All Years",
+    "year_label":         "Year {{year}}",
+    "sort": {
+      "relevance": "Relevance",
+      "citations": "Most Cited",
+      "views":     "Most Viewed",
+      "date":      "Newest"
+    },
+    "active_label": "Active filters:",
+    "reset_all":    "Reset all"
+  },
+  "results": {
+    "count":         "Showing <strong>{{shown}}</strong> of <strong>{{total}}</strong> articles",
+    "open_access":   "Open Access",
+    "article_type":  "Research Article",
+    "metrics": {
+      "citations": "Citations",
+      "views":     "Views",
+      "downloads": "Downloads"
+    },
+    "view": {
+      "list_aria": "List view",
+      "card_aria": "Card view"
+    }
+  },
+  "empty": {
+    "no_match": {
+      "title":    "No matching articles",
+      "subtitle": "Your filters or keywords returned no results. Try loosening the filters or different keywords.",
+      "reset":    "Reset Filters"
+    },
+    "no_data": {
+      "title":    "No article data yet",
+      "subtitle": "No articles have been indexed in the database. Data will appear once the administrator runs a CrossRef/OpenAlex crawl."
+    }
+  },
+  "pagination": {
+    "prev": "Previous",
+    "next": "Next"
+  }
+}

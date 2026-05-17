@@ -1,0 +1,118 @@
+{
+  "loading": "Loading journal…",
+  "not_found": {
+    "title":   "Journal Not Found",
+    "message": "The journal with ID {{id}} is not available in the database.",
+    "retry":   "Try Again",
+    "home":    "Back to Home"
+  },
+  "invalid_issn": "Invalid ISSN format",
+  "header": {
+    "issn":              "ISSN: {{value}}",
+    "publisher":         "Publisher:",
+    "website":           "Website: {{value}}",
+    "subject":           "Subject:",
+    "country":           "Country:",
+    "language":          "Language:",
+    "established":       "Established:",
+    "frequency":         "Frequency:",
+    "visit_website":     "Visit Website",
+    "stats": {
+      "articles":   "Articles",
+      "authors":    "Authors",
+      "citations":  "Citations",
+      "views":      "Views",
+      "citescore":  "CiteScore",
+      "sdgs":       "SDGs Covered"
+    }
+  },
+  "tabs": {
+    "ringkasan": "Overview",
+    "artikel":   "Articles",
+    "statistik": "Statistics",
+    "sdgs":      "SDGs",
+    "informasi": "Information"
+  },
+  "ringkasan": {
+    "stats": {
+      "total_articles":  "Total Articles",
+      "total_authors":   "Total Authors",
+      "total_citations": "Total Citations",
+      "total_views":     "Total Views",
+      "impact_score":    "Impact Score",
+      "sdgs_covered":    "SDGs Covered"
+    },
+    "publication_trend": "Publication Trend",
+    "citation_trend":    "Citation Trend",
+    "all_years":         "All Years",
+    "last_5_years":      "Last 5 Years",
+    "performance":       "Journal Performance",
+    "top_articles":      "Top Articles by Citations",
+    "view_all":          "View all",
+    "citations_unit":    "{{count}} Citations",
+    "no_publication_trend": "No publication trend data yet",
+    "no_citation_trend":    "No citation trend data yet",
+    "no_top_articles":      "No top articles yet"
+  },
+  "performance_metrics": {
+    "acceptance_rate": "Acceptance Rate",
+    "review_time":     "Average Review Time",
+    "publish_time":    "Average Publication Time",
+    "cites_per_article": "Citations per Article",
+    "hindex":          "H-Index"
+  },
+  "artikel": {
+    "title":           "Top Articles ({{count}} shown)",
+    "all_years":       "All Years",
+    "sort_citations":  "Sort by: Most Cited",
+    "sort_newest":     "Sort by: Newest",
+    "sort_views":      "Sort by: Most Viewed",
+    "citations_unit":  "{{count}} Citations",
+    "doi_label":       "DOI: {{doi}}",
+    "view_all":        "View all articles in database",
+    "empty":           "No articles for this journal yet"
+  },
+  "statistik": {
+    "publication_trend": "Publication Trend by Year",
+    "citation_trend":    "Citation Trend by Year",
+    "all_years":         "All Years",
+    "last_5_years":      "Last 5 Years",
+    "last_10_years":     "Last 10 Years",
+    "monthly_access":    "Monthly Access Statistics",
+    "year_2024":         "Year 2024",
+    "year_2023":         "Year 2023",
+    "performance":       "Journal Performance",
+    "metric_review":     "Review Time",
+    "metric_publish":    "Publication Time",
+    "metric_cites":      "Citations/Article"
+  },
+  "sdgs_tab": {
+    "distribution": "Article Distribution by SDGs",
+    "percentage":   "SDG Percentages in Articles",
+    "total_covered":"Total {{count}} SDGs covered by this journal's publications",
+    "empty":        "No SDG classification for this journal yet"
+  },
+  "informasi": {
+    "indexing":       "Indexing & Databases",
+    "journal_info":   "Journal Information",
+    "scope":          "Scope",
+    "fields": {
+      "eissn":     "EISSN",
+      "pissn":     "PISSN",
+      "publisher": "Publisher",
+      "country":   "Country",
+      "language":  "Language",
+      "established":"Established",
+      "frequency": "Frequency",
+      "indexing_count":"Indexing Count"
+    },
+    "database_unit":  "{{count}} databases",
+    "no_indexing":    "No indexing data yet"
+  },
+  "cta": {
+    "title":       "Want to analyse articles from this journal?",
+    "subtitle":    "Enter a DOI or ORCID for instant SDG analysis and classification.",
+    "placeholder": "Enter DOI or ORCID",
+    "button":      "Analyse Now"
+  }
+}

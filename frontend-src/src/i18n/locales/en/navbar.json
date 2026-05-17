@@ -1,0 +1,21 @@
+{
+  "brand_tagline": "SDGs Classification & Analytics",
+  "nav": {
+    "home":        "Home",
+    "researchers": "Researchers",
+    "articles":    "Articles",
+    "sdgs":        "SDGs",
+    "analytics":   "Analytics",
+    "teams":       "Teams",
+    "about":       "About"
+  },
+  "lang": {
+    "id": { "flag": "🇮🇩", "code": "ID", "country": "Indonesia" },
+    "en": { "flag": "🇬🇧", "code": "EN", "country": "English" }
+  },
+  "auth": {
+    "login":    "Login",
+    "register": "Register",
+    "profile":  "My Profile"
+  }
+}

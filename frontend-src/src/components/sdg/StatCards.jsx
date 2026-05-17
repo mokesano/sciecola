@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const SDG_WHEEL_ICON = (
   <svg className="w-14 h-14 overflow-visible" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
@@ -49,15 +50,8 @@ const STAT_ICONS = [
   },
 ];
 
-const STATS_FALLBACK = [
-  { label: 'Artikel Terklasifikasi', value: '—' },
-  { label: 'Peneliti',               value: '—' },
-  { label: 'Jurnal',                 value: '—' },
-  { label: 'SDGs Terwakili',         value: '—' },
-  { label: 'Total Sitasi',           value: '—' },
-];
-
 const StatCards = ({ data: propData }) => {
+  const { t } = useTranslation('dashboard');
   const [apiData, setApiData] = useState(null);
 
   useEffect(() => {
@@ -68,7 +62,11 @@ const StatCards = ({ data: propData }) => {
       .catch(() => {});
   }, [propData]);
 
-  const source = propData || apiData || STATS_FALLBACK;
+  // Label fallback diambil dari locale (id/en) — bukan hardcode.
+  const fallbackLabels = t('stats_fallback', { returnObjects: true }) || [];
+  const fallback       = fallbackLabels.map((label) => ({ label, value: '—' }));
+
+  const source = propData || apiData || fallback;
   const stats = source.map((s, i) => ({
     ...s,
     ...STAT_ICONS[i] || STAT_ICONS[0],
