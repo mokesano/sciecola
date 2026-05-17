@@ -33,7 +33,7 @@
       "academic": {
         "title":  "Dampak Akademik",
         "weight": "45%",
-        "desc":   "Mengukur sitasi, kuartil jurnal, dan indikator dampak akademik lainnya."
+        "desc":   "Mengukur sitasi, akreditasi SINTA jurnal, dan indikator dampak akademik lainnya."
       },
       "social": {
         "title":  "Dampak Media Sosial",
@@ -53,7 +53,7 @@
     "authors":      "Penulis",
     "journal":      "Jurnal",
     "year":         "Tahun",
-    "quartile":     "Kuartil",
+    "sinta":        "Akreditasi SINTA",
     "total_score":  "Skor Dampak Total",
     "components":   "Komponen Dampak",
     "profile":      "Profil Dampak",
@@ -94,13 +94,13 @@
       "subtitle": "Data akan muncul setelah artikel terklasifikasi per SDG dengan data sitasi."
     }
   },
-  "by_quartile": {
-    "title":    "Dampak Berdasarkan Kuartil Jurnal",
-    "subtitle": "Perbandingan skor dampak rata-rata per kuartil jurnal (Q1-Q4)",
+  "by_sinta": {
+    "title":    "Dampak Berdasarkan Akreditasi SINTA",
+    "subtitle": "Perbandingan skor dampak rata-rata per peringkat SINTA jurnal (S1-S6)",
     "articles": "artikel",
     "no_data": {
-      "title":    "Belum ada data kuartil",
-      "subtitle": "Data akan muncul setelah jurnal terindeks dengan informasi kuartil (Q1-Q4)."
+      "title":    "Belum ada data peringkat SINTA",
+      "subtitle": "Data akan muncul setelah jurnal terindeks dengan informasi akreditasi SINTA (S1-S6)."
     }
   },
   "impact_dims": {
