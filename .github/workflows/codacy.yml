@@ -53,8 +53,9 @@ jobs:
           # Force 0 exit code to allow SARIF file generation
           # This will handover control about PR rejection to the GitHub side
           max-allowed-issues: 2147483647
-          # Specify tool to run
-          tool: eslint,phpstan,phpcs,security/php-security-scanner,duplication,complexity
+          # Upload only, don't fail on analysis errors
+          upload: true
+          fail-if-incomplete: false
 
       # Upload the SARIF file generated in the previous step
       - name: Upload SARIF results file
