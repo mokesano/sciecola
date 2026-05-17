@@ -79,5 +79,5 @@ yarn-debug.log*
 # Debug files
 /public/debug.php
 
-# Codacy output
-results.sarif
+# Deployment artifacts
+.github/workflows/webdeploy.yml

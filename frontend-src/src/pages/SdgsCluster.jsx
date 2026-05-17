@@ -39,21 +39,21 @@ const STAT_COLOR = {
 };
 
 const MAP_GEO_FALLBACK = [
-  { id:1,  lat:-6.21,  lng:106.85, city:'Jakarta',      pubs:3247 },
-  { id:2,  lat:-6.89,  lng:107.61, city:'Bandung',       pubs:2156 },
+  { id:1,  lat:-6.21,  lng:106.85, city:'Jakarta',       pubs: 247 },
+  { id:2,  lat:-6.89,  lng:107.61, city:'Bandung',       pubs: 156 },
   { id:3,  lat:-7.26,  lng:112.75, city:'Surabaya',      pubs:1856 },
   { id:4,  lat:-7.80,  lng:110.36, city:'Yogyakarta',    pubs:1634 },
-  { id:5,  lat:-6.97,  lng:110.42, city:'Semarang',      pubs:1245 },
+  { id:5,  lat:-6.97,  lng:110.42, city:'Semarang',      pubs: 745 },
   { id:6,  lat:3.59,   lng:98.68,  city:'Medan',         pubs: 987 },
-  { id:7,  lat:-5.13,  lng:119.42, city:'Makassar',      pubs: 876 },
+  { id:7,  lat:-5.13,  lng:119.42, city:'Makassar',      pubs:4876 },
   { id:8,  lat:-8.65,  lng:115.22, city:'Denpasar',      pubs: 743 },
   { id:9,  lat:1.35,   lng:103.82, city:'Singapore',     pubs: 698 },
-  { id:10, lat:3.14,   lng:101.69, city:'Kuala Lumpur',  pubs: 534 },
-  { id:11, lat:35.68,  lng:139.69, city:'Tokyo',         pubs: 423 },
+  { id:10, lat:3.14,   lng:101.69, city:'Kuala Lumpur',  pubs:1534 },
+  { id:11, lat:35.68,  lng:139.69, city:'Tokyo',         pubs:3423 },
   { id:12, lat:51.51,  lng:-0.13,  city:'London',        pubs: 312 },
-  { id:13, lat:40.71,  lng:-74.01, city:'New York',      pubs: 289 },
-  { id:14, lat:39.91,  lng:116.39, city:'Beijing',       pubs: 267 },
-  { id:15, lat:-33.87, lng:151.21, city:'Sydney',        pubs: 198 },
+  { id:13, lat:40.71,  lng:-74.01, city:'New York',      pubs:4289 },
+  { id:14, lat:39.91,  lng:116.39, city:'Beijing',       pubs:3267 },
+  { id:15, lat:-33.87, lng:151.21, city:'Sydney',        pubs:2198 },
 ];
 
 // ─── Sub-components ─────────────────────────────────────────────────────────
@@ -433,7 +433,7 @@ const SdgsCluster = () => {
                             <span className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-700">
                               {sdg.rank}
                             </span>
-                            <img src={`/assets/sdgs/icons/sdg-${sdg.sdg}.svg`} alt={`SDG ${sdg.sdg}`} className="w-8 h-8 rounded" />
+                            <img src={`/assets/sdgs/logos/Arthboard_SDG${sdg.sdg}.svg`} alt={`SDG ${sdg.sdg}`} className="w-8 h-8 rounded" />
                           </div>
                           <span className="text-xs font-bold text-gray-400">SDG {sdg.sdg}</span>
                         </div>
@@ -449,7 +449,7 @@ const SdgsCluster = () => {
               {/* All 17 SDG Cards */}
               <div className="mb-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-6">{t('sdg_cards.title')}</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-9 gap-3">
                   {allSdgs.map(sdg => (
                     <button
                       key={sdg.sdg}
@@ -465,7 +465,7 @@ const SdgsCluster = () => {
                       {/* SDG icon fills the card */}
                       <div className="aspect-square relative">
                         <img
-                          src={`/assets/sdgs/icons/sdg-${sdg.sdg}.svg`}
+                          src={`/assets/sdgs/logos/Artboard_SDG${sdg.sdg}.svg`}
                           alt={`SDG ${sdg.sdg}`}
                           className="w-full h-full object-cover"
                         />
@@ -655,10 +655,10 @@ const SdgsCluster = () => {
               </div>
               <div className="h-[520px] w-full relative" style={{ zIndex: 0 }}>
                 <MapContainer
-                  center={[0, 110]}
-                  zoom={3}
+                  center={[20, 0]}
+                  zoom={2}
                   minZoom={2}
-                  maxZoom={8}
+                  maxZoom={6}
                   style={{ height: '100%', width: '100%', zIndex: 0 }}
                   scrollWheelZoom={false}
                   dragging={true}
