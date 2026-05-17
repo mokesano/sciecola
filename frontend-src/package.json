@@ -33,7 +33,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "@vitest/ui": "^2.1.8",
     "autoprefixer": "^10.4.19",
-    "jsdom": "^25.0.1",
+    "jsdom": "^29.1.1",
     "postcss": "^8.4.38",
     "remark-frontmatter": "^5.0.0",
     "remark-gfm": "^4.0.0",
