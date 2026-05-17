@@ -1,0 +1,48 @@
+{
+  "breadcrumb": {
+    "home":     "Beranda",
+    "current":  "Data Peneliti"
+  },
+  "header": {
+    "title":    "Data Peneliti",
+    "subtitle": "Jelajahi profil peneliti dan kontribusi mereka terhadap target SDGs."
+  },
+  "filters": {
+    "search_placeholder": "Cari nama, institusi, atau topik penelitian…",
+    "all_countries":      "Semua Negara",
+    "all_sdgs":           "Semua SDGs",
+    "sdg_label":          "SDG {{number}}",
+    "sort": {
+      "relevance":    "Relevansi",
+      "citations":    "Sitasi Tertinggi",
+      "hIndex":       "H-Index Tertinggi",
+      "publications": "Publikasi Terbanyak",
+      "name":         "Nama (A-Z)"
+    },
+    "active_label": "Filter aktif:",
+    "reset_all":    "Reset semua"
+  },
+  "results": {
+    "count":      "Menampilkan <strong>{{shown}}</strong> dari <strong>{{total}}</strong> peneliti",
+    "title_role": "Researcher",
+    "interests":  "Fokus Penelitian",
+    "metrics": {
+      "citations":    "Sitasi",
+      "h_index":      "H-Index",
+      "publications": "Publikasi"
+    }
+  },
+  "error": {
+    "title": "Gagal memuat data peneliti",
+    "retry": "Coba Lagi"
+  },
+  "empty": {
+    "title":    "Tidak ada peneliti ditemukan",
+    "subtitle": "Coba ubah filter atau kata kunci pencarian Anda.",
+    "reset":    "Reset Filter"
+  },
+  "pagination": {
+    "prev": "Sebelumnya",
+    "next": "Selanjutnya"
+  }
+}
