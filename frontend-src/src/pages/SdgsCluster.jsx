@@ -135,7 +135,7 @@ const SdgsCluster = () => {
       const [sdgRes, statsRes, trendsRes] = await Promise.all([
         fetch('/api/sdg_distribution.php?limit=17&sort=id').then(r => r.json()),
         fetch('/api/platform_stats.php').then(r => r.json()),
-        fetch('/api/trends.php?years=5').then(r => r.json()),
+        fetch('/api/sdgs_cluster.php?years=5').then(r => r.json()),
       ]);
       if (sdgRes.status === 'success')    setSdgData(sdgRes.data || []);
       if (statsRes.status === 'success')  setPlatformStats(statsRes.data || []);
