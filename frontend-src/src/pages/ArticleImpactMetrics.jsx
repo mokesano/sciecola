@@ -1,406 +1,518 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis
+  RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Cell,
 } from 'recharts';
 
+const PERIOD_OPTIONS = [
+  { value: 0,  key: 'all'      },
+  { value: 1,  key: 'year_1'   },
+  { value: 3,  key: 'years_3'  },
+  { value: 5,  key: 'years_5'  },
+  { value: 10, key: 'years_10' },
+];
+
+const SORT_OPTIONS = ['impact', 'citations', 'year'];
+
+const QUARTILE_STYLE = {
+  Q1: 'bg-green-100  text-green-800',
+  Q2: 'bg-blue-100   text-blue-800',
+  Q3: 'bg-yellow-100 text-yellow-800',
+  Q4: 'bg-gray-100   text-gray-700',
+};
+
+const DIM_STYLE = {
+  academic:  { bg: 'bg-blue-100',   icon: 'text-blue-600',   text: 'text-blue-800',   bar: 'bg-blue-600'   },
+  social:    { bg: 'bg-green-100',  icon: 'text-green-600',  text: 'text-green-800',  bar: 'bg-green-600'  },
+  practical: { bg: 'bg-yellow-100', icon: 'text-yellow-600', text: 'text-yellow-800', bar: 'bg-yellow-600' },
+};
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+const EmptySection = ({ title, subtitle, compact = false }) => (
+  <div className={`flex flex-col items-center justify-center text-center px-6 ${compact ? 'py-8' : 'py-14'}`}>
+    <svg className="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"
+        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+    </svg>
+    <p className="font-semibold text-gray-700 text-sm">{title}</p>
+    {subtitle && <p className="text-xs text-gray-500 mt-1 max-w-sm">{subtitle}</p>}
+  </div>
+);
+
+const ChevronRight = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+  </svg>
+);
+
+const QuartileChip = ({ q }) => {
+  if (!q) return <span className="text-xs text-gray-400">—</span>;
+  const cls = QUARTILE_STYLE[q] || QUARTILE_STYLE.Q4;
+  return <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${cls}`}>{q}</span>;
+};
+
+const ImpactBar = ({ value, color }) => (
+  <div className="w-full bg-gray-200 rounded-full h-1.5">
+    <div className={`${color} h-1.5 rounded-full transition-all duration-500`} style={{ width: `${Math.max(0, Math.min(100, value))}%` }} />
+  </div>
+);
+
+const DimensionIcon = ({ dim }) => {
+  const paths = {
+    academic:  'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253',
+    social:    'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z',
+    practical: 'M13 10V3L4 14h7v7l9-11h-7z',
+  };
+  return (
+    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={paths[dim]} />
+    </svg>
+  );
+};
+
+// ─── Main component ──────────────────────────────────────────────────────────
+
 const ArticleImpactMetrics = () => {
-  const [selectedField, setSelectedField] = useState('all');
-  const [timeRange, setTimeRange] = useState('all');
-  const [sort, setSort] = useState('impact');
-  const [currentPage, setCurrentPage] = useState(1);
+  const { t } = useTranslation('article_impact');
+
+  const [sdg,             setSdg]             = useState(0);
+  const [years,           setYears]           = useState(0);
+  const [sort,            setSort]            = useState('impact');
+  const [page,            setPage]            = useState(1);
   const [selectedArticle, setSelectedArticle] = useState(null);
-  const [topArticlesData, setTopArticlesData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [data,            setData]            = useState(null);
+  const [loading,         setLoading]         = useState(true);
+  const [error,           setError]           = useState(null);
 
-  useEffect(() => {
-    fetch('/api/articles.php?limit=5&sort=citations')
-      .then(r => r.json())
-      .then(json => {
-        if (json.status === 'success') {
-          setTopArticlesData(json.data.map((a, idx) => ({
-            id: idx + 1,
-            title: a.title,
-            authors: (a.authors || []).join(', '),
-            journal: a.journal,
-            year: a.published_date ? new Date(a.published_date).getFullYear() : 2024,
-            citations: a.citations ?? 0,
-            social_mentions: Math.round((a.citations ?? 0) * 0.3),
-            practical_uses: Math.round((a.citations ?? 0) * 0.1),
-            sintaAccreditation: 'SINTA 2',
-            academicImpact: Math.min(99, 50 + (a.citations ?? 0) * 0.2),
-            socialImpact: Math.min(99, 40 + (a.citations ?? 0) * 0.15),
-            practicalImpact: Math.min(99, 35 + (a.citations ?? 0) * 0.12),
-            impactScore: Math.min(99, 55 + (a.citations ?? 0) * 0.18),
-            doi: a.doi,
-          })));
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+  const limit = 10;
+  const hasActiveFilters = sdg > 0 || years > 0;
 
-  // Data untuk komponen dampak
-  const impactComponents = [
-    { name: 'Sitasi Akademik', akademik: 45, sosial: 30, praktis: 25 },
-    { name: 'Media Sosial', akademik: 20, sosial: 60, praktis: 40 },
-    { name: 'Implementasi Praktis', akademik: 15, sosial: 25, praktis: 65 },
-    { name: 'Kebijakan Publik', akademik: 35, sosial: 40, praktis: 55 },
-    { name: 'Kolaborasi', akademik: 55, sosial: 35, praktis: 30 }
-  ];
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams({
+        sort,
+        page:  String(page),
+        limit: String(limit),
+      });
+      if (sdg > 0)   params.set('sdg',   String(sdg));
+      if (years > 0) params.set('years', String(years));
+      const r = await fetch(`/api/article_impact.php?${params}`);
+      const json = await r.json();
+      if (json.status === 'success') {
+        setData(json.data);
+      } else {
+        setError(t('error'));
+      }
+    } catch {
+      setError(t('error'));
+    } finally {
+      setLoading(false);
+    }
+  }, [sdg, years, sort, page, t]);
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+  useEffect(() => { fetchData(); }, [fetchData]);
 
-  // Fungsi untuk mengubah halaman
-  const changePage = (page) => {
-    setCurrentPage(page);
+  // Reset page when filters/sort change
+  useEffect(() => { setPage(1); }, [sdg, years, sort]);
+
+  const articles          = data?.articles            ?? [];
+  const total             = data?.total               ?? 0;
+  const totalPages        = data?.total_pages         ?? 1;
+  const impactBySdg       = data?.impact_by_sdg       ?? [];
+  const quartileBreakdown = data?.quartile_breakdown  ?? [];
+  const dimsAvailable     = data?.dimensions_available ?? { academic: true, social: false, practical: false };
+
+  const resetFilters = () => {
+    setSdg(0);
+    setYears(0);
+    setSort('impact');
+    setPage(1);
   };
 
-  // Fungsi untuk mengganti urutan
-  const changeSort = (sortField) => {
-    setSort(sortField);
-  };
+  // Pagination range to render
+  const pageNumbers = useMemo(() => {
+    const pages = [];
+    const max   = Math.min(totalPages, 5);
+    let start   = Math.max(1, page - 2);
+    let end     = Math.min(totalPages, start + max - 1);
+    start       = Math.max(1, end - max + 1);
+    for (let i = start; i <= end; i++) pages.push(i);
+    return pages;
+  }, [page, totalPages]);
 
-  // Komponen untuk menampilkan grafik dampak artikel
-  const ArticleImpactChart = ({ article }) => {
-    const data = [
-      { name: 'Akademik', value: article.academicImpact },
-      { name: 'Sosial', value: article.socialImpact },
-      { name: 'Praktis', value: article.practicalImpact }
-    ];
+  const fromIdx = articles.length > 0 ? (page - 1) * limit + 1 : 0;
+  const toIdx   = (page - 1) * limit + articles.length;
 
-    return (
-      <ResponsiveContainer width="100%" height={300}>
-        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
-          <PolarGrid />
-          <PolarAngleAxis dataKey="name" />
-          <PolarRadiusAxis angle={30} domain={[0, 100]} />
-          <Radar name="Dampak" dataKey="value" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-          <Tooltip />
-        </RadarChart>
-      </ResponsiveContainer>
-    );
-  };
+  // Radar data for selected article
+  const radarData = useMemo(() => selectedArticle ? [
+    { name: t('impact_dims.academic'),  value: selectedArticle.academic_impact  ?? 0 },
+    { name: t('impact_dims.social'),    value: selectedArticle.social_impact    ?? 0 },
+    { name: t('impact_dims.practical'), value: selectedArticle.practical_impact ?? 0 },
+  ] : [], [selectedArticle, t]);
 
+  // ─── Render ────────────────────────────────────────────────────────────────
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-600 mb-12">
-        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
-        <span className="text-gray-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-        </span>
-        <Link to="/analytics" className="hover:text-indigo-600 transition-colors">Analytics</Link>
-        <span className="text-gray-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-        </span>
-        <span className="text-gray-900 font-medium">Article Impact</span>
-      </div>
+      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+        <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
+        <span className="text-gray-400"><ChevronRight /></span>
+        <Link to="/analytics" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.analytics')}</Link>
+        <span className="text-gray-400"><ChevronRight /></span>
+        <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
+      </nav>
 
-      {/* Header dan Filter */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 space-y-2 md:space-y-0">
+      {/* Header + filter */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Analisis Dampak Artikel</h1>
-          <p className="text-lg font-semibold text-gray-600 mt-1 max-w-2xl">Analisis mendalam tentang dampak artikel berdasarkan tiga dimensi utama.</p>
+          <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3">{t('header.title')}</h1>
+          <p className="text-base lg:text-lg font-semibold text-gray-600 max-w-2xl">{t('header.subtitle')}</p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <select 
-            className="border rounded-md px-4 py-2.5 text-sm"
-            value={selectedField}
-            onChange={(e) => setSelectedField(e.target.value)}
+        <div className="flex flex-wrap gap-2 items-center">
+          <select
+            value={sdg}
+            onChange={e => setSdg(Number(e.target.value))}
+            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
-            <option value="all">Semua Bidang</option>
-            <option value="ti">Teknologi Informasi</option>
-            <option value="med">Kedokteran</option>
-            <option value="agr">Pertanian</option>
-            <option value="eng">Teknik</option>
-            <option value="soc">Sosial Ekonomi</option>
+            <option value={0}>{t('filter.sdg_all')}</option>
+            {Array.from({ length: 17 }, (_, i) => i + 1).map(n => (
+              <option key={n} value={n}>{t('filter.sdg_label', { number: n })}</option>
+            ))}
           </select>
-          <select 
-            className="border rounded-md px-4 py-2.5 text-sm"
-            value={timeRange}
-            onChange={(e) => setTimeRange(e.target.value)}
+          <select
+            value={years}
+            onChange={e => setYears(Number(e.target.value))}
+            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
-            <option value="all">Semua Waktu</option>
-            <option value="year">1 Tahun Terakhir</option>
-            <option value="3years">3 Tahun Terakhir</option>
-            <option value="5years">5 Tahun Terakhir</option>
+            {PERIOD_OPTIONS.map(opt => (
+              <option key={opt.value} value={opt.value}>{t(`filter.period.${opt.key}`)}</option>
+            ))}
           </select>
-          <button className="bg-blue-600 text-white px-4 py-2.5 rounded-md shadow-sm transition-colors text-sm">
-            Terapkan Filter
-          </button>
-        </div>
-      </div>
-
-      {/* Penjelasan Skor Dampak */}
-      <div className="bg-blue-50 p-4 rounded-lg mb-6">
-        <h3 className="text-lg font-semibold mb-2">Tentang Skor Dampak Artikel</h3>
-        <p className="text-m text-gray-700">
-          Skor dampak di Wizdam Impact Score menggabungkan tiga dimensi utama pengukuran dampak penelitian:
-        </p>
-        <div className="mt-2 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white rounded p-3 shadow-sm">
-            <div className="flex items-center">
-              <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
-                <svg className="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
-              <h4 className="font-medium font-semibold">Dampak Akademik (45%)</h4>
-            </div>
-            <p className="text-sm mt-2 text-gray-600">
-              Mengukur sitasi, indeks h artikel, kualitas jurnal, dan faktor dampak akademis lainnya.
-            </p>
-          </div>
-          <div className="bg-white rounded p-3 shadow-sm">
-            <div className="flex items-center">
-              <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center mr-2">
-                <svg className="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <h4 className="font-medium font-semibold">Dampak Media Sosial (25%)</h4>
-            </div>
-            <p className="text-sm mt-2 text-gray-600">
-              Mengukur penyebaran dan diskusi penelitian di platform sosial, media berita, dan blog.
-            </p>
-          </div>
-          <div className="bg-white rounded p-3 shadow-sm">
-            <div className="flex items-center">
-              <div className="h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center mr-2">
-                <svg className="h-5 w-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h4 className="font-medium font-semibold">Dampak Penggunaan (30%)</h4>
-            </div>
-            <p className="text-sm mt-2 text-gray-600">
-              Mengukur implementasi praktis, pengaruh pada kebijakan, produk, dan manfaat langsung pada masyarakat.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Detail Artikel yang Dipilih */}
-      {selectedArticle && (
-        <div className="mt-6 bg-blue-50 p-4 rounded-lg">
-          <div className="flex justify-between items-start">
-            <h3 className="text-m font-semibold">Detail Artikel: {selectedArticle.title}</h3>
-            <button 
-              className="text-gray-500 hover:text-gray-700"
-              onClick={() => setSelectedArticle(null)}
+          <select
+            value={sort}
+            onChange={e => setSort(e.target.value)}
+            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          >
+            {SORT_OPTIONS.map(s => (
+              <option key={s} value={s}>{t(`filter.sort.${s}`)}</option>
+            ))}
+          </select>
+          {hasActiveFilters && (
+            <button
+              onClick={resetFilters}
+              className="px-3 py-2 text-sm text-indigo-600 font-medium hover:bg-indigo-50 rounded-lg transition-colors"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
+              {t('filter.reset')}
             </button>
-          </div>
-          
-          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <p className="text-m text-gray-600 mb-2">
-                <b>Penulis:</b> {selectedArticle.authors}
-              </p>
-              <p className="text-m text-gray-600 mb-2">
-                <b>Jurnal:</b> {selectedArticle.journal} ({selectedArticle.year}) - {selectedArticle.sintaAccreditation}
-              </p>
-              <p className="text-m text-gray-600 mb-2">
-                <b>Skor Dampak Total:</b> <span className="font-semibold">{selectedArticle.impactScore}</span>
-              </p>
-              
-              <div className="mt-4">
-                <h4 className="text-m font-semibold mb-2">Komponen Dampak:</h4>
-                <div className="space-y-2">
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Dampak Akademik</span>
-                      <span>{selectedArticle.academicImpact}</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-1.5">
-                      <div 
-                        className="bg-blue-600 h-1.5 rounded-full" 
-                        style={{ width: `${selectedArticle.academicImpact}%` }}
-                      ></div>
-                    </div>
+          )}
+        </div>
+      </div>
+
+      {/* Impact score explanation */}
+      <div className="bg-blue-50 p-5 rounded-xl border border-blue-100 mb-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('explanation.title')}</h3>
+        <p className="text-sm text-gray-600 mb-4">{t('explanation.subtitle')}</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {['academic', 'social', 'practical'].map(dim => {
+            const s = DIM_STYLE[dim];
+            return (
+              <div key={dim} className="bg-white rounded-lg p-3 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className={`h-8 w-8 rounded-full flex items-center justify-center ${s.bg} ${s.icon}`}>
+                    <DimensionIcon dim={dim} />
                   </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Dampak Media Sosial</span>
-                      <span>{selectedArticle.socialImpact}</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-1.5">
-                      <div 
-                        className="bg-green-600 h-1.5 rounded-full" 
-                        style={{ width: `${selectedArticle.socialImpact}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Dampak Penggunaan Praktis</span>
-                      <span>{selectedArticle.practicalImpact}</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-1.5">
-                      <div 
-                        className="bg-yellow-600 h-1.5 rounded-full" 
-                        style={{ width: `${selectedArticle.practicalImpact}%` }}
-                      ></div>
-                    </div>
-                  </div>
+                  <h4 className={`font-semibold text-sm ${s.text}`}>
+                    {t(`explanation.dimensions.${dim}.title`)} ({t(`explanation.dimensions.${dim}.weight`)})
+                  </h4>
                 </div>
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  {t(`explanation.dimensions.${dim}.desc`)}
+                </p>
               </div>
-            </div>
-            
-            <div>
-              <h4 className="text-m font-semibold mb-3">Profil Dampak:</h4>
-              <ArticleImpactChart article={selectedArticle} />
-            </div>
-          </div>
+            );
+          })}
+        </div>
+        {(!dimsAvailable.social || !dimsAvailable.practical) && (
+          <p className="text-xs text-gray-500 mt-3 italic">* {t('explanation.data_note')}</p>
+        )}
+      </div>
+
+      {/* Loading */}
+      {loading && (
+        <div className="flex items-center justify-center gap-3 py-16 text-gray-500">
+          <div className="animate-spin rounded-full h-6 w-6 border-2 border-indigo-600 border-t-transparent" />
+          <span>{t('loading')}</span>
         </div>
       )}
 
-      {/* Tabel Artikel */}
-      <div className="mt-6">
-        <h3 className="text-lg font-semibold mb-4">Artikel dengan Dampak Tertinggi</h3>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Judul & Penulis</th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Jurnal</th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Tahun</th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Akademik</th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Sosial</th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Praktis</th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Skor Dampak</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {topArticlesData.map(article => (
-                <tr 
-                  key={article.id} 
-                  className="hover:bg-gray-50 cursor-pointer"
-                  onClick={() => setSelectedArticle(article)}
+      {/* Error */}
+      {error && !loading && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-center gap-3">
+          <svg className="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span className="text-red-700 text-sm flex-grow">{error}</span>
+          <button onClick={fetchData} className="text-sm text-red-600 underline shrink-0">{t('retry')}</button>
+        </div>
+      )}
+
+      {!loading && (
+        <>
+          {/* Selected article detail panel */}
+          {selectedArticle && (
+            <div className="bg-indigo-50 border border-indigo-200 p-5 rounded-xl mb-6">
+              <div className="flex justify-between items-start gap-4 mb-4">
+                <div>
+                  <p className="text-xs font-semibold text-indigo-600 mb-1 uppercase tracking-wide">{t('detail.title')}</p>
+                  <h3 className="font-bold text-gray-900 text-lg leading-snug">{selectedArticle.title}</h3>
+                </div>
+                <button
+                  className="p-1.5 rounded-lg hover:bg-white text-gray-500 hover:text-gray-700 shrink-0"
+                  onClick={() => setSelectedArticle(null)}
+                  aria-label={t('detail.close')}
                 >
-                  <td className="px-4 py-2">
-                    <div className="text-sm font-medium text-gray-900">{article.title}</div>
-                    <div className="text-sm text-gray-500">{article.authors}</div>
-                  </td>
-                  <td className="px-4 py-2 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{article.journal}</div>
-                    <div className="text-sm text-gray-500">
-                      <span className={`px-2 py-0.5 rounded-full text-xs ${
-                        article.sintaAccreditation === 'SINTA 1' ? 'bg-green-100 text-green-800' :
-                        article.sintaAccreditation === 'SINTA 2' ? 'bg-blue-100 text-blue-800' :
-                        'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {article.sintaAccreditation}
-                      </span>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2 text-sm text-gray-700">
+                  <p><b>{t('detail.authors')}:</b> {(selectedArticle.authors ?? []).join(', ') || '—'}</p>
+                  <p><b>{t('detail.journal')}:</b> {selectedArticle.journal || '—'}</p>
+                  <p><b>{t('detail.year')}:</b> {selectedArticle.year || '—'}</p>
+                  <p><b>{t('detail.quartile')}:</b> <QuartileChip q={selectedArticle.quartile} /></p>
+                  <p><b>{t('detail.total_score')}:</b> <span className="font-bold text-indigo-600">{selectedArticle.total_impact}</span></p>
+
+                  <div className="mt-4">
+                    <h4 className="font-semibold text-gray-800 mb-2">{t('detail.components')}</h4>
+                    <div className="space-y-2">
+                      {['academic', 'social', 'practical'].map(dim => (
+                        <div key={dim}>
+                          <div className="flex justify-between text-xs mb-1">
+                            <span className="text-gray-700">{t(`impact_dims.${dim}`)}</span>
+                            <span className="font-semibold">{selectedArticle[`${dim}_impact`] ?? 0}</span>
+                          </div>
+                          <ImpactBar value={selectedArticle[`${dim}_impact`] ?? 0} color={DIM_STYLE[dim].bar} />
+                        </div>
+                      ))}
                     </div>
-                  </td>
-                  <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">
-                    {article.year}
-                  </td>
-                  <td className="px-4 py-2 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <svg className="w-4 h-4 text-blue-500 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"></path>
-                      </svg>
-                      {article.citations}
-                    </div>
-                  </td>
-                  <td className="px-4 py-2 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <svg className="w-4 h-4 text-green-500 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
-                      </svg>
-                      {article.social_mentions}
-                    </div>
-                  </td>
-                  <td className="px-4 py-2 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <svg className="w-4 h-4 text-yellow-500 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd"></path>
-                      </svg>
-                      {article.practical_uses}
-                    </div>
-                  </td>
-                  <td className="px-4 py-2 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="w-full bg-gray-200 rounded-full h-2.5 mr-2">
-                        <div 
-                          className="bg-blue-600 h-2.5 rounded-full" 
-                          style={{ width: `${article.impactScore}%` }}
-                        ></div>
+                  </div>
+
+                  {selectedArticle.doi && (
+                    <Link
+                      to={`/doi/${encodeURIComponent(selectedArticle.doi)}`}
+                      className="inline-flex items-center gap-1 mt-3 text-sm text-indigo-600 font-medium hover:text-indigo-700"
+                    >
+                      {t('detail.open_article')} →
+                    </Link>
+                  )}
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-gray-800 mb-2">{t('detail.profile')}</h4>
+                  <ResponsiveContainer width="100%" height={260}>
+                    <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
+                      <PolarGrid />
+                      <PolarAngleAxis dataKey="name" tick={{ fontSize: 10 }} />
+                      <PolarRadiusAxis angle={30} domain={[0, 100]} />
+                      <Radar dataKey="value" stroke="#6366f1" fill="#6366f1" fillOpacity={0.5} />
+                      <Tooltip />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Article table */}
+          <div className="mb-6 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-gray-100 flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-gray-900">{t('table.title')}</h3>
+              {total > 0 && (
+                <span className="text-xs text-gray-500">
+                  {t('pagination.showing', { from: fromIdx, to: toIdx, total: total.toLocaleString() })}
+                </span>
+              )}
+            </div>
+
+            {articles.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-sm">
+                  <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
+                    <tr>
+                      <th className="px-4 py-3 text-left font-medium">{t('table.columns.title_authors')}</th>
+                      <th className="px-4 py-3 text-left font-medium">{t('table.columns.journal')}</th>
+                      <th className="px-4 py-3 text-left font-medium">{t('table.columns.year')}</th>
+                      <th className="px-4 py-3 text-right font-medium">{t('table.columns.citations')}</th>
+                      <th className="px-4 py-3 text-right font-medium">{t('table.columns.academic')}</th>
+                      <th className="px-4 py-3 text-right font-medium">{t('table.columns.social')}</th>
+                      <th className="px-4 py-3 text-right font-medium">{t('table.columns.practical')}</th>
+                      <th className="px-4 py-3 text-left font-medium">{t('table.columns.impact_score')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-100">
+                    {articles.map(article => (
+                      <tr
+                        key={article.doi}
+                        className={`hover:bg-gray-50 cursor-pointer transition-colors ${
+                          selectedArticle?.doi === article.doi ? 'bg-indigo-50/50' : ''
+                        }`}
+                        onClick={() => setSelectedArticle(article)}
+                      >
+                        <td className="px-4 py-3 max-w-md">
+                          <div className="text-sm font-medium text-gray-900 line-clamp-2">{article.title}</div>
+                          <div className="text-xs text-gray-500 truncate">{(article.authors ?? []).join(', ')}</div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="text-sm text-gray-700 truncate max-w-[180px]">{article.journal || '—'}</div>
+                          <div className="mt-0.5"><QuartileChip q={article.quartile} /></div>
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-700">{article.year || '—'}</td>
+                        <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900">{article.citations.toLocaleString()}</td>
+                        <td className="px-4 py-3 text-right text-sm text-gray-700">{article.academic_impact}</td>
+                        <td className="px-4 py-3 text-right text-sm text-gray-400">
+                          {dimsAvailable.social ? article.social_impact : '—'}
+                        </td>
+                        <td className="px-4 py-3 text-right text-sm text-gray-400">
+                          {dimsAvailable.practical ? article.practical_impact : '—'}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-2 min-w-[120px]">
+                            <div className="flex-grow bg-gray-200 rounded-full h-2">
+                              <div className="bg-indigo-600 h-2 rounded-full transition-all"
+                                style={{ width: `${Math.max(0, Math.min(100, article.total_impact))}%` }} />
+                            </div>
+                            <span className="text-xs font-semibold text-gray-900 shrink-0">{article.total_impact}</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <EmptySection
+                title={t(hasActiveFilters ? 'table.no_match.title' : 'table.no_data.title')}
+                subtitle={t(hasActiveFilters ? 'table.no_match.subtitle' : 'table.no_data.subtitle')}
+              />
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && articles.length > 0 && (
+              <div className="p-4 border-t border-gray-100 flex justify-between items-center">
+                <button
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page <= 1}
+                  className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  {t('pagination.prev')}
+                </button>
+                <div className="flex gap-1">
+                  {pageNumbers.map(p => (
+                    <button
+                      key={p}
+                      onClick={() => setPage(p)}
+                      className={`text-sm px-3 py-1.5 rounded-lg ${
+                        page === p
+                          ? 'bg-indigo-600 text-white'
+                          : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={page >= totalPages}
+                  className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  {t('pagination.next')}
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Analysis charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Impact by SDG (radar) */}
+            <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+              <h3 className="font-semibold text-gray-900 mb-1">{t('by_sdg.title')}</h3>
+              <p className="text-xs text-gray-500 mb-4">{t('by_sdg.subtitle')}</p>
+              {impactBySdg.length > 0 ? (
+                <ResponsiveContainer width="100%" height={320}>
+                  <RadarChart outerRadius={110} data={impactBySdg}>
+                    <PolarGrid />
+                    <PolarAngleAxis dataKey="sdg" tick={{ fontSize: 10 }} />
+                    <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 9 }} />
+                    <Radar
+                      name={t('impact_dims.academic')}
+                      dataKey="academic"
+                      stroke="#6366f1"
+                      fill="#6366f1"
+                      fillOpacity={0.5}
+                    />
+                    <Tooltip
+                      formatter={(v) => v}
+                      labelFormatter={(label) => {
+                        const item = impactBySdg.find(s => s.sdg === label);
+                        return item ? `SDG ${label}: ${item.name}` : `SDG ${label}`;
+                      }}
+                    />
+                  </RadarChart>
+                </ResponsiveContainer>
+              ) : (
+                <EmptySection title={t('by_sdg.no_data.title')} subtitle={t('by_sdg.no_data.subtitle')} />
+              )}
+            </div>
+
+            {/* Quartile breakdown (horizontal stacked bar) */}
+            <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+              <h3 className="font-semibold text-gray-900 mb-1">{t('by_quartile.title')}</h3>
+              <p className="text-xs text-gray-500 mb-4">{t('by_quartile.subtitle')}</p>
+              {quartileBreakdown.length > 0 ? (
+                <>
+                  <ResponsiveContainer width="100%" height={260}>
+                    <BarChart data={quartileBreakdown} layout="vertical" margin={{ left: 20 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                      <XAxis type="number" domain={[0, 100]} stroke="#6b7280" fontSize={11} />
+                      <YAxis dataKey="quartile" type="category" stroke="#6b7280" fontSize={11} width={40} />
+                      <Tooltip />
+                      <Bar dataKey="academic" name={t('impact_dims.academic')} radius={[0, 4, 4, 0]}>
+                        {quartileBreakdown.map((row, i) => {
+                          const color = row.quartile === 'Q1' ? '#10b981'
+                            : row.quartile === 'Q2' ? '#3b82f6'
+                            : row.quartile === 'Q3' ? '#f59e0b' : '#9ca3af';
+                          return <Cell key={i} fill={color} />;
+                        })}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                  <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {quartileBreakdown.map(row => (
+                      <div key={row.quartile} className="bg-gray-50 p-2 rounded text-center">
+                        <QuartileChip q={row.quartile} />
+                        <p className="text-sm font-bold text-gray-900 mt-1">{row.article_count.toLocaleString()}</p>
+                        <p className="text-[10px] text-gray-500">{t('by_quartile.articles')}</p>
                       </div>
-                      <span className="text-sm font-medium text-gray-900">{article.impactScore}</span>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="mt-4 flex justify-between items-center">
-          <div className="text-sm text-gray-500">
-            Menampilkan 1-5 dari 1,245 artikel
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <EmptySection title={t('by_quartile.no_data.title')} subtitle={t('by_quartile.no_data.subtitle')} />
+              )}
+            </div>
           </div>
-          <div className="flex space-x-2">
-            <button className="border rounded px-3 py-1 text-sm text-gray-500">Sebelumnya</button>
-            <button className="bg-blue-600 text-white rounded px-3 py-1 text-sm">1</button>
-            <button className="border rounded px-3 py-1 text-sm text-gray-500">2</button>
-            <button className="border rounded px-3 py-1 text-sm text-gray-500">3</button>
-            <button className="border rounded px-3 py-1 text-sm text-gray-500">Berikutnya</button>
-          </div>
-        </div>
-      </div>
-
-      {/* Komponen Dampak */}
-      <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white p-4 rounded-lg shadow-sm">
-          <h3 className="text-md font-semibold mb-4">Analisis Komponen Dampak</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <RadarChart outerRadius={90} data={impactComponents}>
-              <PolarGrid />
-              <PolarAngleAxis dataKey="name" />
-              <PolarRadiusAxis angle={30} domain={[0, 100]} />
-              <Radar name="Dampak Akademik" dataKey="akademik" stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
-              <Radar name="Dampak Media Sosial" dataKey="sosial" stroke="#82ca9d" fill="#82ca9d" fillOpacity={0.6} />
-              <Radar name="Dampak Penggunaan Praktis" dataKey="praktis" stroke="#ffc658" fill="#ffc658" fillOpacity={0.6} />
-              <Legend />
-              <Tooltip />
-            </RadarChart>
-          </ResponsiveContainer>
-        </div>
-        
-        <div className="bg-white p-4 rounded-lg shadow-sm">
-          <h3 className="text-md font-semibold mb-4">Dampak Berdasarkan Akreditasi SINTA</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart
-              data={[
-                { name: 'SINTA 1', akademik: 45, sosial: 35, praktis: 28 },
-                { name: 'SINTA 2', akademik: 38, sosial: 32, praktis: 24 },
-                { name: 'SINTA 3', akademik: 30, sosial: 28, praktis: 18 },
-                { name: 'SINTA 4', akademik: 22, sosial: 25, praktis: 14 },
-                { name: 'SINTA 5', akademik: 15, sosial: 20, praktis: 10 },
-                { name: 'SINTA 6', akademik: 10, sosial: 15, praktis: 8 }
-              ]}
-              layout="vertical"
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis dataKey="name" type="category" />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="akademik" stackId="a" fill="#8884d8" name="Dampak Akademik" />
-              <Bar dataKey="sosial" stackId="a" fill="#82ca9d" name="Dampak Media Sosial" />
-              <Bar dataKey="praktis" stackId="a" fill="#ffc658" name="Dampak Penggunaan Praktis" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
+        </>
+      )}
     </main>
   );
 };
