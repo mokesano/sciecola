@@ -1,34 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Search, BarChart2, Users, Globe, Zap, BookOpen,
+  Search, BarChart2, Users, Globe,
   ArrowRight, CheckCircle, Star, ChevronRight,
   FlaskConical, Building2, FileText, Target, Brain, Handshake
 } from 'lucide-react';
 
 // =====================================================================
-// DATA
+// KONTEN NARATIF APLIKASI
+// Bagian FEATURES dan HOW_IT_WORKS adalah copy/marketing yang
+// menjelaskan aplikasi Sciecola itu sendiri — bukan data platform yang
+// berubah-ubah. Konten semacam ini tidak diambil dari database.
 // =====================================================================
-
-const SDG_LIST = [
-  { id: 1, name: 'No Poverty', color: '#E5243B' },
-  { id: 2, name: 'Zero Hunger', color: '#DDA63A' },
-  { id: 3, name: 'Good Health', color: '#4C9F38' },
-  { id: 4, name: 'Quality Education', color: '#C5192D' },
-  { id: 5, name: 'Gender Equality', color: '#FF3A21' },
-  { id: 6, name: 'Clean Water', color: '#26BDE2' },
-  { id: 7, name: 'Clean Energy', color: '#FCC30B' },
-  { id: 8, name: 'Decent Work', color: '#A21942' },
-  { id: 9, name: 'Innovation', color: '#FD6925' },
-  { id: 10, name: 'Reduced Inequalities', color: '#DD1367' },
-  { id: 11, name: 'Sustainable Cities', color: '#FD9D24' },
-  { id: 12, name: 'Responsible Consumption', color: '#BF8B2E' },
-  { id: 13, name: 'Climate Action', color: '#3F7E44' },
-  { id: 14, name: 'Life Below Water', color: '#0A97D9' },
-  { id: 15, name: 'Life on Land', color: '#56C02B' },
-  { id: 16, name: 'Peace & Justice', color: '#00689D' },
-  { id: 17, name: 'Partnerships', color: '#19486A' },
-];
 
 const FEATURES = [
   {
@@ -105,80 +88,77 @@ const HOW_IT_WORKS = [
   },
 ];
 
-const DEFAULT_STATS = [
-  { label: 'Peneliti', value: '12,843', icon: Users, color: 'text-blue-600', bg: 'bg-blue-50' },
-  { label: 'Artikel Terklasifikasi', value: '24,751', icon: FileText, color: 'text-violet-600', bg: 'bg-violet-50' },
-  { label: 'Jurnal Terindeks', value: '1,259', icon: Building2, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-  { label: 'SDGs Terwakili', value: '17 / 17', icon: Target, color: 'text-orange-600', bg: 'bg-orange-50' },
-];
-
-// Cari nilai dari payload API berdasarkan kata kunci pada label.
-// API mengembalikan: data = [{label, value}, ...] dengan label seperti
-// "Peneliti", "Artikel Terklasifikasi", "Jurnal", "SDGs Terwakili".
-const pickStat = (items, keyword) => {
-  const found = items.find(item =>
-    typeof item?.label === 'string' &&
-    item.label.toLowerCase().includes(keyword.toLowerCase())
-  );
-  return found?.value;
-};
-
-const INSIGHT_PREVIEWS = [
-  {
-    sdg: 13,
-    sdgColor: '#3F7E44',
-    title: 'Akselerasi Riset Iklim',
-    desc: 'Publikasi bertema perubahan iklim meningkat 34% dalam 2 tahun terakhir, didominasi oleh peneliti dari Asia Tenggara.',
-    trend: '+34%',
-  },
-  {
-    sdg: 3,
-    sdgColor: '#4C9F38',
-    title: 'Inovasi Kesehatan Global',
-    desc: 'SDG 3 menjadi fokus riset paling banyak — 28% dari seluruh publikasi yang terklasifikasi berkaitan dengan kesehatan.',
-    trend: '+28%',
-  },
-  {
-    sdg: 4,
-    sdgColor: '#C5192D',
-    title: 'Transformasi Pendidikan',
-    desc: 'Riset tentang pendidikan berkualitas dan pembelajaran digital mengalami lonjakan signifikan pasca pandemi.',
-    trend: '+19%',
-  },
-];
-
-const PARTNERS = [
-  'Universitas Indonesia', 'ITB', 'UGM', 'IPB University',
-  'BRIN', 'Kemendikbud', 'LPDP', 'OpenAlex',
+// Pemetaan icon untuk kartu statistik — diberikan berurutan pada
+// entry pertama, kedua, dst. yang dikirim API.
+const STAT_ICON_MAP = [
+  { icon: FileText,  color: 'text-violet-600',  bg: 'bg-violet-50' },
+  { icon: Users,     color: 'text-blue-600',    bg: 'bg-blue-50' },
+  { icon: Building2, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+  { icon: Target,    color: 'text-orange-600',  bg: 'bg-orange-50' },
 ];
 
 // =====================================================================
 // KOMPONEN UTAMA
 // =====================================================================
 const PublicHomePage = () => {
-  const [stats, setStats] = useState(DEFAULT_STATS);
+  const [stats, setStats]       = useState([]);
+  const [sdgList, setSdgList]   = useState([]);
+  const [insights, setInsights] = useState([]);
+  const [partners, setPartners] = useState([]);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await fetch('/api/platform_stats.php');
-        if (!res.ok) return;
-        const json = await res.json();
-        if (json.status !== 'success' || !Array.isArray(json.data)) return;
+    // ---- Platform statistics ----
+    fetch('/api/platform_stats.php')
+      .then(r => r.json())
+      .then(json => {
+        if (json.status === 'success' && Array.isArray(json.data)) {
+          setStats(
+            json.data.slice(0, 4).map((s, i) => ({
+              label: s.label,
+              value: s.value,
+              ...(STAT_ICON_MAP[i] || STAT_ICON_MAP[0]),
+            }))
+          );
+        }
+      })
+      .catch(() => {});
 
-        const items = json.data;
-        setStats([
-          { label: 'Peneliti',               value: pickStat(items, 'peneliti')  ?? DEFAULT_STATS[0].value, icon: Users,      color: 'text-blue-600',    bg: 'bg-blue-50' },
-          { label: 'Artikel Terklasifikasi', value: pickStat(items, 'artikel')   ?? DEFAULT_STATS[1].value, icon: FileText,   color: 'text-violet-600',  bg: 'bg-violet-50' },
-          { label: 'Jurnal Terindeks',       value: pickStat(items, 'jurnal')    ?? DEFAULT_STATS[2].value, icon: Building2,  color: 'text-emerald-600', bg: 'bg-emerald-50' },
-          { label: 'SDGs Terwakili',         value: pickStat(items, 'sdg')       ?? DEFAULT_STATS[3].value, icon: Target,     color: 'text-orange-600',  bg: 'bg-orange-50' },
-        ]);
-      } catch {
-        // silently keep default stats
-      }
-    };
-    fetchStats();
+    // ---- SDG list (17 SDGs dengan nama & warna) ----
+    fetch('/api/sdg_distribution.php?sort=id&limit=17')
+      .then(r => r.json())
+      .then(json => {
+        if (json.status === 'success' && Array.isArray(json.data)) {
+          setSdgList(json.data);
+        }
+      })
+      .catch(() => {});
+
+    // ---- AI Insights (ambil 3 pertama) ----
+    fetch('/api/insights.php')
+      .then(r => r.json())
+      .then(json => {
+        if (json.status === 'ok' && Array.isArray(json.insights)) {
+          setInsights(json.insights.slice(0, 3));
+        }
+      })
+      .catch(() => {});
+
+    // ---- Partner & sponsor ----
+    fetch('/api/partners.php?limit=8')
+      .then(r => r.json())
+      .then(json => {
+        if (json.status === 'success' && Array.isArray(json.partners)) {
+          setPartners(json.partners);
+        }
+      })
+      .catch(() => {});
   }, []);
+
+  // Peta SDG number → warna, untuk pewarnaan badge insight
+  const sdgColorById = sdgList.reduce((acc, s) => {
+    acc[s.sdg] = s.color;
+    return acc;
+  }, {});
 
   return (
     <main className="min-h-screen bg-white">
@@ -187,7 +167,6 @@ const PublicHomePage = () => {
       {/* HERO                                                          */}
       {/* ============================================================ */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-900 pt-28 pb-20">
-        {/* Decorative blobs */}
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl" />
           <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-indigo-500/20 blur-3xl" />
@@ -228,7 +207,6 @@ const PublicHomePage = () => {
             </Link>
           </div>
 
-          {/* Quick ORCID hint */}
           <p className="mt-6 text-sm text-slate-400">
             Sudah punya ORCID?&nbsp;
             <Link to="/login" className="font-medium text-blue-400 hover:text-blue-300 underline underline-offset-2">
@@ -239,26 +217,28 @@ const PublicHomePage = () => {
       </section>
 
       {/* ============================================================ */}
-      {/* PLATFORM STATS                                                */}
+      {/* PLATFORM STATS (dari API)                                     */}
       {/* ============================================================ */}
-      <section className="bg-white py-14">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            {stats.map((s, i) => (
-              <div key={i} className={`flex flex-col items-center rounded-2xl border ${s.bg} border-gray-100 p-6 text-center shadow-sm`}>
-                <div className={`mb-3 flex h-12 w-12 items-center justify-center rounded-xl ${s.bg}`}>
-                  <s.icon className={`h-6 w-6 ${s.color}`} />
+      {stats.length > 0 && (
+        <section className="bg-white py-14">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+              {stats.map((s, i) => (
+                <div key={i} className={`flex flex-col items-center rounded-2xl border ${s.bg} border-gray-100 p-6 text-center shadow-sm`}>
+                  <div className={`mb-3 flex h-12 w-12 items-center justify-center rounded-xl ${s.bg}`}>
+                    <s.icon className={`h-6 w-6 ${s.color}`} />
+                  </div>
+                  <div className={`text-3xl font-extrabold ${s.color}`}>{s.value}</div>
+                  <div className="mt-1 text-sm font-medium text-gray-500">{s.label}</div>
                 </div>
-                <div className={`text-3xl font-extrabold ${s.color}`}>{s.value}</div>
-                <div className="mt-1 text-sm font-medium text-gray-500">{s.label}</div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ============================================================ */}
-      {/* FITUR UTAMA                                                   */}
+      {/* FITUR UTAMA (konten naratif aplikasi)                         */}
       {/* ============================================================ */}
       <section className="bg-gray-50 py-20">
         <div className="mx-auto max-w-6xl px-6">
@@ -284,59 +264,61 @@ const PublicHomePage = () => {
       </section>
 
       {/* ============================================================ */}
-      {/* 17 SDGs OVERVIEW                                              */}
+      {/* 17 SDGs OVERVIEW (dari API)                                   */}
       {/* ============================================================ */}
-      <section className="py-20 bg-white">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="mb-14 text-center">
-            <h2 className="mb-4 text-4xl font-bold text-gray-900">17 Tujuan Pembangunan Berkelanjutan</h2>
-            <p className="mx-auto max-w-2xl text-lg text-gray-500">
-              Platform kami mencakup seluruh 17 SDG PBB 2030 — setiap publikasi dipetakan secara presisi ke tujuan yang relevan.
-            </p>
-          </div>
+      {sdgList.length > 0 && (
+        <section className="py-20 bg-white">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="mb-14 text-center">
+              <h2 className="mb-4 text-4xl font-bold text-gray-900">17 Tujuan Pembangunan Berkelanjutan</h2>
+              <p className="mx-auto max-w-2xl text-lg text-gray-500">
+                Platform kami mencakup seluruh SDG PBB 2030 — setiap publikasi dipetakan secara presisi ke tujuan yang relevan.
+              </p>
+            </div>
 
-          <div className="grid grid-cols-4 gap-3 sm:grid-cols-6 md:grid-cols-9 lg:grid-cols-9">
-            {SDG_LIST.map((sdg) => (
-              <Link
-                key={sdg.id}
-                to={`/sdgs`}
-                className="group flex flex-col items-center"
-              >
-                <div
-                  className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl shadow-sm transition-all group-hover:-translate-y-1 group-hover:shadow-md"
-                  style={{ backgroundColor: sdg.color }}
+            <div className="grid grid-cols-4 gap-3 sm:grid-cols-6 md:grid-cols-9 lg:grid-cols-9">
+              {sdgList.map((sdg) => (
+                <Link
+                  key={sdg.sdg}
+                  to="/sdgs"
+                  className="group flex flex-col items-center"
                 >
-                  <img
-                    src={`/assets/sdgs/icons/sdg-${sdg.id}.svg`}
-                    alt={`SDG ${sdg.id}`}
-                    className="h-12 w-12 object-contain"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.parentElement.innerHTML = `<span class="text-white font-bold text-lg">${sdg.id}</span>`;
-                    }}
-                  />
-                </div>
-                <span className="mt-1.5 text-center text-[10px] font-medium leading-tight text-gray-500 group-hover:text-gray-800">
-                  {sdg.name}
-                </span>
-              </Link>
-            ))}
-          </div>
+                  <div
+                    className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl shadow-sm transition-all group-hover:-translate-y-1 group-hover:shadow-md"
+                    style={{ backgroundColor: sdg.color }}
+                  >
+                    <img
+                      src={`/assets/sdgs/icons/sdg-${sdg.sdg}.svg`}
+                      alt={`SDG ${sdg.sdg}`}
+                      className="h-12 w-12 object-contain"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerHTML = `<span class="text-white font-bold text-lg">${sdg.sdg}</span>`;
+                      }}
+                    />
+                  </div>
+                  <span className="mt-1.5 text-center text-[10px] font-medium leading-tight text-gray-500 group-hover:text-gray-800">
+                    {sdg.name}
+                  </span>
+                </Link>
+              ))}
+            </div>
 
-          <div className="mt-10 text-center">
-            <Link
-              to="/sdgs"
-              className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-gray-700"
-            >
-              Jelajahi Semua SDG
-              <ChevronRight className="h-4 w-4" />
-            </Link>
+            <div className="mt-10 text-center">
+              <Link
+                to="/sdgs"
+                className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-gray-700"
+              >
+                Jelajahi Semua SDG
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ============================================================ */}
-      {/* HOW IT WORKS                                                  */}
+      {/* HOW IT WORKS (konten naratif aplikasi)                        */}
       {/* ============================================================ */}
       <section className="bg-gradient-to-br from-slate-50 to-blue-50 py-20">
         <div className="mx-auto max-w-6xl px-6">
@@ -348,12 +330,10 @@ const PublicHomePage = () => {
           </div>
 
           <div className="relative grid grid-cols-1 gap-8 md:grid-cols-3">
-            {/* Connector line (desktop) */}
             <div className="absolute top-10 left-[calc(16.67%+2rem)] right-[calc(16.67%+2rem)] hidden h-0.5 bg-gradient-to-r from-blue-200 via-violet-200 to-emerald-200 md:block" />
 
             {HOW_IT_WORKS.map((item) => (
               <div key={item.step} className="relative flex flex-col items-center text-center">
-                {/* Step number badge */}
                 <div className="relative mb-6 flex h-20 w-20 items-center justify-center">
                   <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${item.color} opacity-10`} />
                   <div className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${item.color} text-white shadow-lg`}>
@@ -372,83 +352,92 @@ const PublicHomePage = () => {
       </section>
 
       {/* ============================================================ */}
-      {/* AI INSIGHTS PREVIEW                                           */}
+      {/* AI INSIGHTS (dari API)                                        */}
       {/* ============================================================ */}
-      <section className="bg-white py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="mb-14 flex flex-col items-center gap-4 text-center md:flex-row md:justify-between md:text-left">
-            <div>
-              <h2 className="mb-3 text-4xl font-bold text-gray-900">AI Insights Terkini</h2>
-              <p className="max-w-xl text-lg text-gray-500">
-                Wawasan otomatis berbasis data riset global — diperbarui setiap minggu.
-              </p>
-            </div>
-            <Link
-              to="/insights"
-              className="inline-flex items-center gap-2 rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-700 transition-all hover:border-gray-300 hover:bg-gray-50 whitespace-nowrap"
-            >
-              Lihat Semua Insights
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            {INSIGHT_PREVIEWS.map((ins, i) => (
-              <div key={i} className="rounded-2xl border border-gray-100 p-6 shadow-sm transition-all hover:shadow-md">
-                <div className="mb-4 flex items-center gap-3">
-                  <div
-                    className="flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold text-white"
-                    style={{ backgroundColor: ins.sdgColor }}
-                  >
-                    {ins.sdg}
-                  </div>
-                  <span
-                    className="rounded-full px-3 py-1 text-xs font-bold text-white"
-                    style={{ backgroundColor: ins.sdgColor }}
-                  >
-                    {ins.trend}
-                  </span>
-                </div>
-                <h3 className="mb-2 text-base font-bold text-gray-900">{ins.title}</h3>
-                <p className="text-sm leading-relaxed text-gray-500">{ins.desc}</p>
+      {insights.length > 0 && (
+        <section className="bg-white py-20">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="mb-14 flex flex-col items-center gap-4 text-center md:flex-row md:justify-between md:text-left">
+              <div>
+                <h2 className="mb-3 text-4xl font-bold text-gray-900">AI Insights Terkini</h2>
+                <p className="max-w-xl text-lg text-gray-500">
+                  Wawasan otomatis berbasis data riset global — diperbarui setiap minggu.
+                </p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================================ */}
-      {/* PARTNERS & SPONSORS                                           */}
-      {/* ============================================================ */}
-      <section className="bg-gray-50 py-16">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="mb-10 text-center">
-            <h2 className="mb-3 text-2xl font-bold text-gray-900">Dipercaya oleh Institusi Terkemuka</h2>
-            <p className="text-gray-500">Bergabung bersama ratusan universitas, lembaga riset, dan mitra industri.</p>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            {PARTNERS.map((name, i) => (
-              <div
-                key={i}
-                className="rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-600 shadow-sm transition-all hover:shadow-md"
+              <Link
+                to="/insights"
+                className="inline-flex items-center gap-2 rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-700 transition-all hover:border-gray-300 hover:bg-gray-50 whitespace-nowrap"
               >
-                {name}
-              </div>
-            ))}
-          </div>
+                Lihat Semua Insights
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
 
-          <div className="mt-8 text-center">
-            <Link
-              to="/partners"
-              className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
-            >
-              Lihat semua partner &amp; sponsor
-              <ChevronRight className="h-4 w-4" />
-            </Link>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              {insights.map((ins) => {
+                const color = sdgColorById[ins.sdg] || '#6b7280';
+                return (
+                  <div key={ins.id} className="rounded-2xl border border-gray-100 p-6 shadow-sm transition-all hover:shadow-md">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div
+                        className="flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold text-white"
+                        style={{ backgroundColor: color }}
+                      >
+                        {ins.sdg}
+                      </div>
+                      {ins.trend && (
+                        <span
+                          className="rounded-full px-3 py-1 text-xs font-bold text-white"
+                          style={{ backgroundColor: color }}
+                        >
+                          {ins.trend}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="mb-2 text-base font-bold text-gray-900">{ins.title}</h3>
+                    <p className="text-sm leading-relaxed text-gray-500">{ins.text}</p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* ============================================================ */}
+      {/* PARTNERS & SPONSORS (dari API)                                */}
+      {/* ============================================================ */}
+      {partners.length > 0 && (
+        <section className="bg-gray-50 py-16">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="mb-10 text-center">
+              <h2 className="mb-3 text-2xl font-bold text-gray-900">Dipercaya oleh Institusi Terkemuka</h2>
+              <p className="text-gray-500">Bergabung bersama ratusan universitas, lembaga riset, dan mitra industri.</p>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              {partners.map((p) => (
+                <div
+                  key={p.id ?? p.name}
+                  className="rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-600 shadow-sm transition-all hover:shadow-md"
+                >
+                  {p.name}
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 text-center">
+              <Link
+                to="/partners"
+                className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
+              >
+                Lihat semua partner &amp; sponsor
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ============================================================ */}
       {/* CTA                                                           */}
@@ -488,7 +477,6 @@ const PublicHomePage = () => {
             </Link>
           </div>
 
-          {/* Trust signals */}
           <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-blue-200">
             {['Tidak perlu kartu kredit', 'Tersedia dalam Bahasa Indonesia', 'Data peneliti dilindungi'].map((t, i) => (
               <span key={i} className="flex items-center gap-1.5">
