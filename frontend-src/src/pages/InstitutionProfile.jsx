@@ -52,6 +52,35 @@ const InstitutionProfile = () => {
       if (data.status === 'success' && data.institution) {
         const inst = data.institution;
         const stats = data.statistics || {};
+
+        // API returns publication_trend as [{year, publications, citations, average_citation}].
+        // Derive citation_trend from the same rows so the area chart has data.
+        const pubTrend = Array.isArray(data.publication_trend) ? data.publication_trend : [];
+        const citationTrend = Array.isArray(data.citation_trend) && data.citation_trend.length
+          ? data.citation_trend
+          : pubTrend.map((row) => ({ year: row.year, citations: row.citations || 0 }));
+
+        // API returns sdg_focus as a numeric array [4, 7, 9, 11, 13] OR already-shaped objects.
+        // Normalize to {sdg, count, name} so Pie/Bar/labels render correctly.
+        const rawSdg = Array.isArray(stats.sdg_focus) ? stats.sdg_focus : [];
+        const sdgList = rawSdg.map((entry) => {
+          if (typeof entry === 'number') {
+            return { sdg: entry, count: 1, name: `SDG ${entry}` };
+          }
+          const num = entry?.sdg ?? entry?.number ?? entry?.id;
+          return {
+            sdg:   typeof num === 'number' ? num : parseInt(num, 10),
+            count: entry?.count ?? entry?.publications ?? 1,
+            name:  entry?.name ?? (num != null ? `SDG ${num}` : ''),
+          };
+        }).filter((e) => Number.isFinite(e.sdg));
+
+        // API researchers use h_index (snake_case); normalize to hIndex for the UI.
+        const topResearchers = (data.top_researchers || []).map((r) => ({
+          ...r,
+          hIndex: r.hIndex ?? r.h_index ?? 0,
+        }));
+
         setProfileData({
           institution: {
             ...inst,
@@ -62,15 +91,15 @@ const InstitutionProfile = () => {
             i10Index:       stats.i10Index       || 0,
             journals:       stats.journals       || 0,
             collaborations: stats.collaborations || 0,
-            sdgs:           (stats.sdg_focus     || []).length,
+            sdgs:           sdgList.length,
             location:       [inst.city, inst.country].filter(Boolean).join(', '),
           },
-          publication_trend:   data.publication_trend   || [],
-          citation_trend:      data.citation_trend       || [],
-          top_researchers:     data.top_researchers      || [],
+          publication_trend:   pubTrend,
+          citation_trend:      citationTrend,
+          top_researchers:     topResearchers,
           top_publications:    data.top_publications     || [],
           news:                data.news                 || [],
-          sdg_list:            stats.sdg_focus           || [],
+          sdg_list:            sdgList,
           collaborators:       data.collaborators        || data.top_collaborators || [],
           affiliated_journals: data.affiliated_journals  || data.journals || [],
           research_topics:     data.research_topics      || [],
@@ -323,7 +352,7 @@ const InstitutionProfile = () => {
                         <XAxis dataKey="year" stroke="#6b7280" fontSize={12}/>
                         <YAxis stroke="#6b7280" fontSize={12}/>
                         <Tooltip content={<CustomTooltip />}/>
-                        <Bar dataKey="count" fill="#6366f1" radius={[4,4,0,0]}/>
+                        <Bar dataKey="publications" fill="#6366f1" radius={[4,4,0,0]}/>
                       </BarChart>
                     </ResponsiveContainer>
                   ) : (
