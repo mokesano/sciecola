@@ -118,7 +118,7 @@ const setByPath = (obj, path, value) => {
 };
 
 const AdminLandingContent = () => {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('homepage');
   const { user } = useAuth();
 
   const [lang, setLang]       = useState('id');
@@ -130,7 +130,7 @@ const AdminLandingContent = () => {
   // Tentukan baseline locale untuk placeholder/seed default.
   // Diambil dari t() pada bahasa yang sama agar admin tahu nilai bawaan.
   const localeBaseline = useMemo(() => {
-    return t('publicHome', { returnObjects: true, lng: lang }) || {};
+    return t('', { returnObjects: true, lng: lang, ns: 'homepage' }) || {};
   }, [t, lang, i18n.language]);
 
   useEffect(() => {
