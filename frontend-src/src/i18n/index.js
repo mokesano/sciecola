@@ -31,6 +31,8 @@ import idJournalProfile     from './locales/id/journal_profile.json';
 import enJournalProfile     from './locales/en/journal_profile.json';
 import idInstitutionProfile from './locales/id/institution_profile.json';
 import enInstitutionProfile from './locales/en/institution_profile.json';
+import idMyCollections      from './locales/id/my_collections.json';
+import enMyCollections      from './locales/en/my_collections.json';
 
 // ─── Deteksi bahasa awal ─────────────────────────────────────────────
 // Prioritas: (1) preferensi tersimpan user → (2) bahasa browser →
@@ -66,6 +68,7 @@ i18n
         article_profile:     idArticleProfile,
         journal_profile:     idJournalProfile,
         institution_profile: idInstitutionProfile,
+        my_collections:      idMyCollections,
       },
       en: {
         translation: enCommon,
@@ -81,12 +84,13 @@ i18n
         article_profile:     enArticleProfile,
         journal_profile:     enJournalProfile,
         institution_profile: enInstitutionProfile,
+        my_collections:      enMyCollections,
       },
     },
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections'],
     interpolation: { escapeValue: false },
   });
 
