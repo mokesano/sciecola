@@ -24,24 +24,15 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  analyze:
-    name: Analyze (${{ matrix.language }})
+  # JOB 1: SCAN JAVASCRIPT
+  analyze-js:
+    name: Analyze JavaScript
     runs-on: ubuntu-latest
     permissions:
       security-events: write
       packages: read
       actions: read
       contents: read
-
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-        # SCAN KEDUA BAHASA UTAMA: PHP DAN JAVASCRIPT
-        - language: php
-          build-mode: none
-        - language: javascript-typescript
-          build-mode: none
 
     steps:
     - name: Checkout repository
@@ -50,19 +41,35 @@ jobs:
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
-        languages: ${{ matrix.language }}
-        build-mode: ${{ matrix.build-mode }}
+        languages: javascript-typescript
         queries: security-and-quality
-        
-        # PENTING: Eksklusi folder yang tidak perlu untuk mempercepat scan
-        # dan mengurangi noise.
-        # paths-ignore:
-        #   - node_modules
-        #   - '**/*.test.js'
-        #   - '**/*.spec.js'
-        #   - vendor
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
       with:
-        category: "${{ matrix.language }}"
+        category: "javascript-typescript"
+
+  # JOB 2: SCAN PHP
+  analyze-php:
+    name: Analyze PHP
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: php
+        queries: security-and-quality
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "php"
