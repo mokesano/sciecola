@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { leadershipList, advisorsList } from '../data/teamMembersDatabase';
+import { LoadingSpinner } from '../components/shared';
 
 // ─── Kartu anggota leadership ─────────────────────────────────────────────────
 const LeaderCard = ({ person }) => (
@@ -46,14 +46,14 @@ const AdvisorCard = ({ advisor }) => (
         width="80"
         height="80"
         className="w-20 h-20 rounded-full object-cover mx-auto border-4 border-gray-50 group-hover:border-purple-100 transition-colors"
-        onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
+        onError={(e) => {e.target.src = '/assets/img/researcher-default.svg'}}
       />
     </div>
     <p className="text-[10px] font-mono text-gray-300 mb-0.5">{advisor.code}</p>
     <h3 className="font-bold text-gray-900 mb-1 text-sm group-hover:text-purple-700 transition-colors">{advisor.name}</h3>
     <p className="text-xs text-purple-600 font-medium mb-1">{advisor.role}</p>
     <p className="text-xs text-gray-500 mb-1">{advisor.affiliation}</p>
-    <p className="text-xs text-gray-400 mb-3">{advisor.expertise.slice(0, 2).join(' · ')}</p>
+    <p className="text-xs text-gray-400 mb-3">{(advisor.expertise ?? []).slice(0, 2).join(' · ')}</p>
     <span className="inline-block text-xs text-purple-500 font-medium group-hover:underline">
       Lihat Profil →
     </span>
@@ -62,6 +62,90 @@ const AdvisorCard = ({ advisor }) => (
 
 // ─── Halaman Utama ────────────────────────────────────────────────────────────
 const Teams = () => {
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch team members from API
+  useEffect(() => {
+    const fetchTeamMembers = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/teams.php?limit=100');
+        const data = await response.json();
+        if (data.status === 'success' && data.members) {
+          setTeamMembers(data.members);
+          setError(null);
+        } else {
+          setTeamMembers(getDefaultTeamMembers());
+        }
+      } catch (err) {
+        console.error('Error fetching team members:', err);
+        setTeamMembers(getDefaultTeamMembers());
+        setError('Failed to load team members');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTeamMembers();
+  }, []);
+
+  // Default/Fallback Team Data
+  const getDefaultTeamMembers = () => [
+    {
+      id: 1,
+      name: 'Dr. Budi Santoso',
+      slug: 'budi-santoso',
+      code: 'TM-L001',
+      email: 'budi.santoso@sdgmapper.org',
+      phone: '+62-812-3456-7890',
+      bio: 'Director, SDG Research & Analytics',
+      long_bio: 'PhD in Computer Science from MIT. 15+ years experience in research analytics and SDG classification.',
+      avatar: 'https://via.placeholder.com/200/6366f1/ffffff?text=BS',
+      role: 'Leadership',
+      location: 'Jakarta, Indonesia',
+      joined_year: 2020,
+      department: 'Leadership',
+      sdg_focus: [4, 9, 17]
+    },
+    {
+      id: 2,
+      name: 'Siti Nurhaliza',
+      slug: 'siti-nurhaliza',
+      code: 'TM-A001',
+      email: 'siti.nurhaliza@sdgmapper.org',
+      phone: '+62-812-9876-5432',
+      bio: 'Senior AI/ML Engineer',
+      long_bio: 'M.Tech in AI from IIT Delhi. Expert in machine learning and NLP for SDG classification.',
+      avatar: 'https://via.placeholder.com/200/10b981/ffffff?text=SN',
+      role: 'Engineering',
+      location: 'Bandung, Indonesia',
+      joined_year: 2021,
+      department: 'Engineering',
+      sdg_focus: [4, 9]
+    },
+    {
+      id: 3,
+      name: 'Eko Wijaya',
+      slug: 'eko-wijaya',
+      code: 'TM-R001',
+      email: 'eko.wijaya@sdgmapper.org',
+      phone: '+62-812-1122-3344',
+      bio: 'Research Analyst',
+      long_bio: 'MSc in Environmental Science. Focus on SDG impact assessment and research trends.',
+      avatar: 'https://via.placeholder.com/200/f59e0b/ffffff?text=EW',
+      role: 'Research',
+      location: 'Surabaya, Indonesia',
+      joined_year: 2022,
+      department: 'Research',
+      sdg_focus: [13, 14, 15]
+    }
+  ];
+
+  // Separate team members by role for display
+  const leadershipList = teamMembers.filter(m => m.role === 'Leadership');
+  const advisorsList = teamMembers.filter(m => m.role !== 'Leadership');
+
   const divisions = [
     {
       id: 1,
@@ -174,6 +258,25 @@ const Teams = () => {
         </svg>
         <span className="text-gray-900 font-medium">Tim Kami</span>
       </nav>
+
+      {/* Loading State */}
+      {loading && (
+        <div className="flex justify-center py-12">
+          <LoadingSpinner />
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+          {error}
+        </div>
+      )}
+
+      {!loading && (
+      <>
+
+      {/* Main Content */}
 
       {/* Hero */}
       <section className="mb-16">
@@ -362,6 +465,9 @@ const Teams = () => {
           </Link>
         </div>
       </section>
+
+      </>
+      )}
     </main>
   );
 };

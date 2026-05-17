@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ScrollToTop from './components/shared/ScrollToTop';
 
@@ -118,6 +118,7 @@ import CollaborationHub from './pages/CollaborationHub';
 import ProjectManagement from './pages/ProjectManagement';
 import ResearchMatching from './pages/ResearchMatching';
 import InnovationMarketplace from './pages/InnovationMarketplace';
+import AdminPanel from './pages/AdminPanel';
 
 // =====================================================================
 // KOMPONEN BERANDA (HOME)
@@ -177,6 +178,18 @@ const Home = () => {
 };
 
 // =====================================================================
+// LAYOUT UTAMA (dengan Navbar, Footer, Chatbot)
+// =====================================================================
+const MainLayout = () => (
+  <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
+    <Navbar />
+    <Outlet />
+    <Footer />
+    <Chatbot />
+  </div>
+);
+
+// =====================================================================
 // APLIKASI UTAMA (ROUTER)
 // =====================================================================
 function App() {
@@ -184,123 +197,120 @@ function App() {
     <AuthProvider>
       <Router>
         <ErrorBoundary>
-          <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
-          
-          {/* Navbar selalu tampil di semua halaman */}
-          <Navbar />
-
           {/* Scroll ke atas setiap perpindahan halaman */}
           <ScrollToTop />
 
           {/* Pengatur Lalu Lintas Halaman */}
           <Routes>
-            {/* Halaman Utama */}
-            <Route path="/" element={<Home />} />
-            
-            {/* Rute Jurnal */}
-            <Route path="/journals" element={<JournalList />} />
-            <Route path="/journals/:journalId" element={<JournalProfile />} />
-            
-            {/* Rute Institusi */}
-            <Route path="/institutions" element={<InstitutionsList />} />
-            <Route path="/institutions/:institutionId" element={<InstitutionProfile />} />
-            
-            {/* Rute Peneliti */}
-            <Route path="/researchers" element={<ResearchersList />} />
-            <Route path="/orcid/:orcidCode" element={<ResearcherProfile />} />
-            
-            {/* Rute Artikel (Baru) */}
-            <Route path="/articles" element={<ArticleList />} />
-            <Route path="/doi/*" element={<ArticleProfile />} />
+            {/* ============================================== */}
+            {/* HALAMAN DENGAN NAVBAR + FOOTER + CHATBOT      */}
+            {/* ============================================== */}
+            <Route element={<MainLayout />}>
+              {/* Halaman Utama */}
+              <Route path="/" element={<Home />} />
 
-            {/* Rute SDGs Cluster dan Analytics */}
-            <Route path="/sdgs" element={<SdgsCluster />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/trends-analysis" element={<TrendsAnalysis />} />
-            <Route path="/article-impact" element={<ArticleImpactMetrics />} />
-            <Route path="/top-researchers" element={<TopResearchers />} />
-            <Route path="/researcher-distribution" element={<ResearcherDistribution />} />
+              {/* Rute Jurnal */}
+              <Route path="/journals" element={<JournalList />} />
+              <Route path="/journals/:journalId" element={<JournalProfile />} />
 
-            {/* Rute Leaderboard */}
-            <Route path="/leaderboard" element={<Leaderboard />} />
+              {/* Rute Institusi */}
+              <Route path="/institutions" element={<InstitutionsList />} />
+              <Route path="/institutions/:institutionId" element={<InstitutionProfile />} />
 
-            {/* Rute Tentang */}
-            <Route path="/about" element={<About />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/teams" element={<Teams />} />
-            <Route path="/teams/:memberSlug" element={<TeamMemberProfile />} />
-            <Route path="/sponsors" element={<Sponsors />} />
-            <Route path="/become-sponsor" element={<BecomeSponsor />} />
-            <Route path="/partners" element={<Partners />} />
+              {/* Rute Peneliti */}
+              <Route path="/researchers" element={<ResearchersList />} />
+              <Route path="/orcid/:orcidCode" element={<ResearcherProfile />} />
 
-            {/* Rute Syarat dan Ketentuan */}
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/privacy" element={<Privacy />} />
+              {/* Rute Artikel (Baru) */}
+              <Route path="/articles" element={<ArticleList />} />
+              <Route path="/doi/*" element={<ArticleProfile />} />
 
-            {/* Rute Kontak dan Bantuan */}
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/help" element={<Help />} />
-            <Route path="/tutorial-orcid" element={<TutorialOrcid />} />
-            <Route path="/tutorial-doi" element={<TutorialDOI />} />
-            <Route path="/tutorial-results" element={<TutorialResults />} />
-            <Route path="/tutorial-export" element={<TutorialExport />} />
+              {/* Rute SDGs Cluster dan Analytics */}
+              <Route path="/sdgs" element={<SdgsCluster />} />
+              <Route path="/analytics" element={<Analytics />} />
+              <Route path="/trends-analysis" element={<TrendsAnalysis />} />
+              <Route path="/article-impact" element={<ArticleImpactMetrics />} />
+              <Route path="/top-researchers" element={<TopResearchers />} />
+              <Route path="/researcher-distribution" element={<ResearcherDistribution />} />
 
-            {/* Rute Dokumentasi — MDX-based */}
-            <Route path="/docs/documentation" element={<Doc />} />
-            <Route path="/docs/faq" element={<Faq />} />
-            <Route path="/docs/api-reference" element={<Api />} />
+              {/* Rute Leaderboard */}
+              <Route path="/leaderboard" element={<Leaderboard />} />
 
-            {/* Rute Admin Dashboard */}
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/monitoring" element={<Monitoring />} />
+              {/* Rute Tentang */}
+              <Route path="/about" element={<About />} />
+              <Route path="/history" element={<History />} />
+              <Route path="/teams" element={<Teams />} />
+              <Route path="/teams/:memberSlug" element={<TeamMemberProfile />} />
+              <Route path="/sponsors" element={<Sponsors />} />
+              <Route path="/become-sponsor" element={<BecomeSponsor />} />
+              <Route path="/partners" element={<Partners />} />
 
-            {/* Rute Dashboard */}
-            <Route path="/feeds" element={<Feeds />} />
-            <Route path="/sciecodash" element={<SciecoDashboard />} />
-            <Route path="/my-profile" element={<MyProfile />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/messages" element={<Messages />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/my-articles" element={<MyArticles />} />
-            <Route path="/my-collections" element={<MyCollections />} />
-            <Route path="/collections/:id" element={<CollectionDetail />} />
-            <Route path="/my-statistics" element={<MyStatistics />} />
-            <Route path="/settings" element={<Settings />} />
-            
-            {/* Rute Log History/Activity */}
-            <Route path="/my-activity" element={<MyActivity />} />
-            <Route path="/log-history" element={<LogHistory />} />
+              {/* Rute Syarat dan Ketentuan */}
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/privacy" element={<Privacy />} />
 
-            {/* Rute Insights AI */}
-            <Route path="/insights" element={<InsightsPage />} />
+              {/* Rute Kontak dan Bantuan */}
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/help" element={<Help />} />
+              <Route path="/tutorial-orcid" element={<TutorialOrcid />} />
+              <Route path="/tutorial-doi" element={<TutorialDOI />} />
+              <Route path="/tutorial-results" element={<TutorialResults />} />
+              <Route path="/tutorial-export" element={<TutorialExport />} />
 
-            {/* Rute Register */}
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
+              {/* Rute Dokumentasi — MDX-based */}
+              <Route path="/docs/documentation" element={<Doc />} />
+              <Route path="/docs/faq" element={<Faq />} />
+              <Route path="/docs/api-reference" element={<Api />} />
 
-            {/* Rute Error Pages */}
+              {/* Rute Admin Dashboard */}
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/monitoring" element={<Monitoring />} />
+
+              {/* Rute Dashboard */}
+              <Route path="/feeds" element={<Feeds />} />
+              <Route path="/sciecodash" element={<SciecoDashboard />} />
+              <Route path="/my-profile" element={<MyProfile />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/messages" element={<Messages />} />
+              <Route path="/notifications" element={<Notifications />} />
+              <Route path="/my-articles" element={<MyArticles />} />
+              <Route path="/my-collections" element={<MyCollections />} />
+              <Route path="/collections/:id" element={<CollectionDetail />} />
+              <Route path="/my-statistics" element={<MyStatistics />} />
+              <Route path="/settings" element={<Settings />} />
+
+              {/* Rute Log History/Activity */}
+              <Route path="/my-activity" element={<MyActivity />} />
+              <Route path="/log-history" element={<LogHistory />} />
+
+              {/* Rute Insights AI */}
+              <Route path="/insights" element={<InsightsPage />} />
+
+              {/* Rute Register */}
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+
+              {/* Rute Collaboration & Networking */}
+              <Route path="/collaboration" element={<CollaborationHub />} />
+              <Route path="/projects" element={<ProjectManagement />} />
+              <Route path="/research-matching" element={<ResearchMatching />} />
+              <Route path="/innovation-marketplace" element={<InnovationMarketplace />} />
+
+              {/* Admin Panel */}
+              <Route path="/admin/data-management" element={<AdminPanel />} />
+            </Route>
+
+            {/* ============================================== */}
+            {/* HALAMAN ERROR (TANPA Navbar/Footer/Chatbot)   */}
+            {/* ============================================== */}
             <Route path="/404" element={<NotFound404 />} />
             <Route path="/500" element={<ServerError500 />} />
             <Route path="/maintenance" element={<MaintenanceMode />} />
             <Route path="/offline" element={<OfflineError />} />
 
-            {/* Rute Collaboration & Networking */}
-            <Route path="/collaboration" element={<CollaborationHub />} />
-            <Route path="/projects" element={<ProjectManagement />} />
-            <Route path="/research-matching" element={<ResearchMatching />} />
-            <Route path="/innovation-marketplace" element={<InnovationMarketplace />} />
-            
-            {/* Catch-all route untuk 404 */}
+            {/* Catch-all route untuk 404 (tanpa layout) */}
             <Route path="*" element={<NotFound404 />} />
           </Routes>
-
-          {/* Footer selalu tampil di semua halaman */}
-          <Footer />
-
-          {/* Floating Chatbot */}
-          <Chatbot />
-
-        </div>
         </ErrorBoundary>
       </Router>
     </AuthProvider>
