@@ -39,7 +39,7 @@ const STAT_COLOR = {
 };
 
 const MAP_GEO_FALLBACK = [
-  { id:1,  lat:-6.21,  lng:106.85, city:'Jakarta',      pubs:3247 },
+  { id:1,  lat:-6.21,  lng:106.85, city:'Jakarta',       pubs:3247 },
   { id:2,  lat:-6.89,  lng:107.61, city:'Bandung',       pubs:2156 },
   { id:3,  lat:-7.26,  lng:112.75, city:'Surabaya',      pubs:1856 },
   { id:4,  lat:-7.80,  lng:110.36, city:'Yogyakarta',    pubs:1634 },
@@ -433,7 +433,7 @@ const SdgsCluster = () => {
                             <span className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-700">
                               {sdg.rank}
                             </span>
-                            <img src={`/assets/sdgs/icons/sdg-${sdg.sdg}.svg`} alt={`SDG ${sdg.sdg}`} className="w-8 h-8 rounded" />
+                            <img src={`/assets/sdgs/logos/Arthboard_SDG${sdg.sdg}.svg`} alt={`SDG ${sdg.sdg}`} className="w-8 h-8 rounded" />
                           </div>
                           <span className="text-xs font-bold text-gray-400">SDG {sdg.sdg}</span>
                         </div>
@@ -449,7 +449,7 @@ const SdgsCluster = () => {
               {/* All 17 SDG Cards */}
               <div className="mb-8">
                 <h3 className="text-lg font-bold text-gray-900 mb-6">{t('sdg_cards.title')}</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-9 gap-3">
                   {allSdgs.map(sdg => (
                     <button
                       key={sdg.sdg}
@@ -465,7 +465,7 @@ const SdgsCluster = () => {
                       {/* SDG icon fills the card */}
                       <div className="aspect-square relative">
                         <img
-                          src={`/assets/sdgs/icons/sdg-${sdg.sdg}.svg`}
+                          src={`/assets/sdgs/logos/Artboard_SDG${sdg.sdg}.svg`}
                           alt={`SDG ${sdg.sdg}`}
                           className="w-full h-full object-cover"
                         />
@@ -655,10 +655,10 @@ const SdgsCluster = () => {
               </div>
               <div className="h-[520px] w-full relative" style={{ zIndex: 0 }}>
                 <MapContainer
-                  center={[0, 110]}
-                  zoom={3}
+                  center={[20, 0]}
+                  zoom={2}
                   minZoom={2}
-                  maxZoom={8}
+                  maxZoom={6}
                   style={{ height: '100%', width: '100%', zIndex: 0 }}
                   scrollWheelZoom={false}
                   dragging={true}
