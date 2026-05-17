@@ -1,0 +1,49 @@
+{
+  "breadcrumb": {
+    "home":    "Beranda",
+    "current": "Institusi"
+  },
+  "header": {
+    "title":    "Daftar Institusi",
+    "subtitle": "Jelajahi profil institusi penelitian dan kontribusi mereka terhadap SDGs."
+  },
+  "filters": {
+    "search_placeholder": "Cari nama institusi…",
+    "all_countries":      "Semua Negara",
+    "sort": {
+      "relevance":    "Relevansi",
+      "publications": "Publikasi Terbanyak",
+      "citations":    "Sitasi Tertinggi",
+      "hIndex":       "H-Index Tertinggi"
+    },
+    "view": {
+      "list_aria": "Tampilan daftar",
+      "card_aria": "Tampilan kartu"
+    }
+  },
+  "results": {
+    "count":        "Menampilkan <strong>{{shown}}</strong> institusi",
+    "established":  "Berdiri sejak {{year}}",
+    "metrics": {
+      "publications": "Publikasi",
+      "researchers":  "Peneliti",
+      "hindex":       "H-Index"
+    },
+    "footer": {
+      "journals":       "{{count}} Jurnal",
+      "collaborations": "{{count}} Kolaborasi",
+      "sdgs":           "{{count}} SDGs"
+    }
+  },
+  "empty": {
+    "no_match": {
+      "title":    "Tidak ada institusi yang cocok",
+      "subtitle": "Filter atau kata kunci Anda tidak menemukan institusi. Coba longgarkan filter atau ubah kata kunci.",
+      "reset":    "Reset Filter"
+    },
+    "no_data": {
+      "title":    "Data institusi belum tersedia",
+      "subtitle": "Belum ada institusi yang terindeks di database. Data akan muncul setelah administrator mengisi direktori institusi."
+    }
+  }
+}

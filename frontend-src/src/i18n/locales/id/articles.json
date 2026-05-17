@@ -1,0 +1,54 @@
+{
+  "breadcrumb": {
+    "home":    "Beranda",
+    "current": "Data Artikel"
+  },
+  "header": {
+    "title":    "Data Artikel",
+    "subtitle": "Jelajahi artikel penelitian terklasifikasi berdasarkan target SDGs."
+  },
+  "filters": {
+    "search_placeholder": "Cari judul artikel, DOI, atau kata kunci…",
+    "all_sdgs":           "Semua SDGs",
+    "sdg_label":          "SDG {{number}}",
+    "all_years":          "Semua Tahun",
+    "year_label":         "Tahun {{year}}",
+    "sort": {
+      "relevance": "Relevansi",
+      "citations": "Sitasi Tertinggi",
+      "views":     "Views Tertinggi",
+      "date":      "Terbaru"
+    },
+    "active_label": "Filter aktif:",
+    "reset_all":    "Reset semua"
+  },
+  "results": {
+    "count":         "Menampilkan <strong>{{shown}}</strong> dari <strong>{{total}}</strong> artikel",
+    "open_access":   "Open Access",
+    "article_type":  "Research Article",
+    "metrics": {
+      "citations": "Sitasi",
+      "views":     "Views",
+      "downloads": "Downloads"
+    },
+    "view": {
+      "list_aria": "Tampilan daftar",
+      "card_aria": "Tampilan kartu"
+    }
+  },
+  "empty": {
+    "no_match": {
+      "title":    "Tidak ada artikel yang cocok",
+      "subtitle": "Filter atau kata kunci Anda tidak menemukan artikel. Coba longgarkan filter atau ubah kata kunci.",
+      "reset":    "Reset Filter"
+    },
+    "no_data": {
+      "title":    "Data artikel belum tersedia",
+      "subtitle": "Belum ada artikel yang terindeks di database. Data akan muncul setelah administrator menjalankan crawl CrossRef/OpenAlex."
+    }
+  },
+  "pagination": {
+    "prev": "Sebelumnya",
+    "next": "Selanjutnya"
+  }
+}
