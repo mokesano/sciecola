@@ -109,6 +109,7 @@ import PublicHomePage from './pages/PublicHomePage';
 
 // Impor Halaman Admin: editor konten halaman publik
 import AdminLandingContent from './pages/AdminLandingContent';
+import AdminTeams from './pages/AdminTeams';
 
 // Impor Chatbot
 import Chatbot from './components/layout/Chatbot';
@@ -316,6 +317,7 @@ function App() {
               {/* Admin Panel */}
               <Route path="/admin/data-management" element={<AdminPanel />} />
               <Route path="/admin/landing-content" element={<AdminLandingContent />} />
+              <Route path="/admin/teams" element={<AdminTeams />} />
             </Route>
 
             {/* ============================================== */}
