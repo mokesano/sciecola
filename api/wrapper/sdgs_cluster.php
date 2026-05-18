@@ -1,8 +1,15 @@
 <?php
 /**
- * Research Trends API
- * GET /api/trends.php?years=5&sdg=13
- * Reads from: work_sdgs JOIN publications (aggregated by publication_year + sdg_number)
+ * SDGs Cluster Timeline API
+ * GET /api/sdgs_cluster.php[?years=5&sdg=13]
+ *   years = 3..10 → range tahun (default 5)
+ *   sdg   = 1..17 → filter satu SDG (opsional)
+ *
+ * Dipakai oleh halaman SdgsCluster.jsx untuk membangun:
+ *   - AreaChart timeline per SDG (kunci: sdg1..sdg17)
+ *   - Identifikasi top-5 SDGs berdasarkan total publikasi pada rentang waktu
+ *
+ * Sumber data: work_sdgs JOIN publications (group by publication_year + sdg_number).
  */
 
 declare(strict_types=1);
@@ -20,7 +27,7 @@ try {
 
     echo json_encode([
         'status'    => 'success',
-        'data'      => fetchTrendsData($years, $sdgFilter),
+        'data'      => fetchSdgClusterTimeline($years, $sdgFilter),
         'timestamp' => date('c'),
     ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 
@@ -29,7 +36,12 @@ try {
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
 
-function fetchTrendsData(int $years, int $sdgFilter): array
+/**
+ * Bangun timeline publikasi per SDG dalam rentang tahun yang diminta.
+ *
+ * @return array{timeline: array<int,array<string,mixed>>, top_sdgs: int[], sdg_totals: array<int,int>}
+ */
+function fetchSdgClusterTimeline(int $years, int $sdgFilter): array
 {
     $startYear = (int) date('Y') - $years + 1;
 
@@ -57,42 +69,58 @@ function fetchTrendsData(int $years, int $sdgFilter): array
                  ORDER BY p.publication_year ASC, article_count DESC'
             );
             $stmt->execute($params);
-            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            if (!empty($data)) {
-                $yearData  = [];
-                $sdgTotals = [];
-                foreach ($data as $row) {
-                    $y = $row['year'];
-                    $s = (int) $row['sdg_number'];
-                    if (!isset($yearData[$y])) $yearData[$y] = ['year' => (string) $y];
-                    $yearData[$y]["sdg{$s}"] = (int) $row['article_count'];
-                    $sdgTotals[$s]           = ($sdgTotals[$s] ?? 0) + (int) $row['article_count'];
-                }
-                arsort($sdgTotals);
-                return [
-                    'timeline'   => array_values($yearData),
-                    'top_sdgs'   => array_slice(array_keys($sdgTotals), 0, 5),
-                    'sdg_totals' => $sdgTotals,
-                ];
+            if (!empty($rows)) {
+                return assembleClusterTimeline($rows);
             }
         } catch (Exception $e) {
-            // Fall through
+            // Fall through to sample data
         }
     }
 
-    return getSampleTrendsData($startYear);
+    return getSampleClusterTimeline($startYear);
 }
 
-function getSampleTrendsData(int $startYear): array
+/**
+ * Transformasi baris [year, sdg_number, article_count] menjadi struktur timeline
+ * yang dipakai chart frontend ({year, sdg1, sdg2, ...}).
+ */
+function assembleClusterTimeline(array $rows): array
+{
+    $yearData  = [];
+    $sdgTotals = [];
+
+    foreach ($rows as $row) {
+        $y = $row['year'];
+        $s = (int) $row['sdg_number'];
+        if (!isset($yearData[$y])) {
+            $yearData[$y] = ['year' => (string) $y];
+        }
+        $yearData[$y]["sdg{$s}"] = (int) $row['article_count'];
+        $sdgTotals[$s]           = ($sdgTotals[$s] ?? 0) + (int) $row['article_count'];
+    }
+    arsort($sdgTotals);
+
+    return [
+        'timeline'   => array_values($yearData),
+        'top_sdgs'   => array_slice(array_keys($sdgTotals), 0, 5),
+        'sdg_totals' => $sdgTotals,
+    ];
+}
+
+/**
+ * Data sampel ketika DB belum berisi publikasi terklasifikasi SDG.
+ */
+function getSampleClusterTimeline(int $startYear): array
 {
     $timeline = [];
     for ($y = $startYear; $y <= (int) date('Y'); $y++) {
         $base = 100 + ($y - $startYear) * 80;
         $timeline[] = [
             'year' => (string) $y,
-            'sdg3' => $base + 80,  'sdg4' => $base + 60,  'sdg13' => $base + 55,
-            'sdg9' => $base + 40,  'sdg11' => $base + 35,
+            'sdg3' => $base + 80, 'sdg4' => $base + 60, 'sdg13' => $base + 55,
+            'sdg9' => $base + 40, 'sdg11' => $base + 35,
         ];
     }
     return [

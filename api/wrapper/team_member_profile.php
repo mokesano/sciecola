@@ -1,7 +1,10 @@
 <?php
 /**
- * Team Member Profile API
- * GET /api/team_member_profile.php?id={memberId} or ?slug={slug}
+ * Team Member Profile API — single team member with education + achievements.
+ * Schema-aware: name comes from researchers via orcid FK.
+ *
+ * GET /api/wrapper/team_member_profile.php?id={id}  or  ?slug={slug}
+ * Returns: { status, member{}, education[], achievements[] }
  */
 
 declare(strict_types=1);
@@ -14,31 +17,26 @@ try {
     $configFile = ROOT_PATH . '/config/config.php';
     if (file_exists($configFile)) require_once $configFile;
 
-    $method = $_SERVER['REQUEST_METHOD'];
+    $memberId = (int)($_GET['id'] ?? 0);
+    $slug     = trim($_GET['slug'] ?? '');
 
-    if ($method === 'GET') {
-        $memberId = (int)($_GET['id'] ?? 0);
-        $slug     = trim($_GET['slug'] ?? '');
-
-        if (!$memberId && !$slug) {
-            http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'Member ID or slug required']);
-            exit;
-        }
-
-        echo json_encode(getTeamMemberProfile($memberId, $slug));
-    } else {
-        http_response_code(405);
-        echo json_encode(['status' => 'error', 'message' => 'Method not allowed']);
+    if (!$memberId && !$slug) {
+        http_response_code(400);
+        echo json_encode(['status' => 'error', 'message' => 'Member ID or slug required']);
+        exit;
     }
+
+    echo json_encode(fetchMember($memberId, $slug), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
 
-function getTeamMemberProfile(int $memberId, string $slug): array {
+function fetchMember(int $memberId, string $slug): array
+{
     if (!defined('DB_HOST') || !DB_HOST) {
-        return getSampleTeamMemberProfile();
+        return sampleProfile();
     }
 
     try {
@@ -49,150 +47,109 @@ function getTeamMemberProfile(int $memberId, string $slug): array {
         );
 
         $where  = $memberId > 0 ? 'tm.id = ?' : 'tm.slug = ?';
-        $params = [$memberId > 0 ? $memberId : $slug];
+        $param  = $memberId > 0 ? $memberId : $slug;
 
-        $stmt = $pdo->prepare("
-            SELECT tm.id, tm.name, tm.slug, tm.code, tm.email, tm.phone,
-                   tm.bio, tm.long_bio, tm.avatar_url, tm.role, tm.location,
-                   tm.joined_year, td.name as department, tm.sdg_focus
-            FROM team_members tm
-            LEFT JOIN team_departments td ON td.id = tm.department_id
-            WHERE $where
-        ");
-        $stmt->execute($params);
-        $member = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt = $pdo->prepare(
+            "SELECT tm.id, tm.orcid, tm.slug, tm.code, tm.position, tm.bio,
+                    tm.long_bio, tm.photo_url, tm.location, tm.joined_year,
+                    tm.expertise, tm.social_links, tm.sdg_focus, tm.is_visible,
+                    td.name AS department,
+                    r.name AS researcher_name, r.email_address
+             FROM team_members tm
+             LEFT JOIN team_departments td ON td.id = tm.department_id
+             LEFT JOIN researchers r        ON r.orcid = tm.orcid
+             WHERE $where AND tm.is_visible = 1
+             LIMIT 1"
+        );
+        $stmt->execute([$param]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$member) {
+        if (!$row) {
+            http_response_code(404);
             return ['status' => 'error', 'message' => 'Team member not found'];
         }
 
-        $sdgFocus = json_decode($member['sdg_focus'] ?? '[]', true);
+        /* education */
+        $eduStmt = $pdo->prepare(
+            "SELECT degree_level, field_of_study, institution, graduation_year, honors
+             FROM team_member_education
+             WHERE team_member_id = ?
+             ORDER BY graduation_year DESC"
+        );
+        $eduStmt->execute([$row['id']]);
+        $education = array_map(fn (array $e): array => [
+            'degree'      => $e['degree_level'],
+            'field'       => $e['field_of_study'],
+            'institution' => $e['institution'],
+            'graduation'  => (int)$e['graduation_year'],
+            'honors'      => $e['honors'],
+        ], $eduStmt->fetchAll(PDO::FETCH_ASSOC));
 
-        // Fetch education history
-        $eduStmt = $pdo->prepare("
-            SELECT degree_level, field_of_study, institution, graduation_year, honors
-            FROM team_member_education
-            WHERE team_member_id = ?
-            ORDER BY graduation_year DESC
-        ");
-        $eduStmt->execute([$member['id']]);
-        $education = $eduStmt->fetchAll(PDO::FETCH_ASSOC);
-
-        // Fetch achievements
-        $achStmt = $pdo->prepare("
-            SELECT title, description, achievement_year, category, issuer, proof_url
-            FROM team_member_achievements
-            WHERE team_member_id = ?
-            ORDER BY achievement_year DESC
-        ");
-        $achStmt->execute([$member['id']]);
-        $achievements = $achStmt->fetchAll(PDO::FETCH_ASSOC);
+        /* achievements */
+        $achStmt = $pdo->prepare(
+            "SELECT title, description, achievement_year, category, issuer, proof_url
+             FROM team_member_achievements
+             WHERE team_member_id = ?
+             ORDER BY achievement_year DESC"
+        );
+        $achStmt->execute([$row['id']]);
+        $achievements = array_map(fn (array $a): array => [
+            'title'       => $a['title'],
+            'description' => $a['description'],
+            'year'        => (int)$a['achievement_year'],
+            'category'    => $a['category'],
+            'issuer'      => $a['issuer'],
+            'proof_url'   => $a['proof_url'],
+        ], $achStmt->fetchAll(PDO::FETCH_ASSOC));
 
         return [
-            'status'  => 'success',
-            'member'  => [
-                'id'         => (int)$member['id'],
-                'name'       => $member['name'],
-                'slug'       => $member['slug'],
-                'code'       => $member['code'],
-                'email'      => $member['email'],
-                'phone'      => $member['phone'],
-                'bio'        => $member['bio'],
-                'long_bio'   => $member['long_bio'],
-                'avatar'     => $member['avatar_url'],
-                'role'       => $member['role'],
-                'location'   => $member['location'],
-                'joined_year' => (int)($member['joined_year'] ?? 0),
-                'department' => $member['department'],
-                'sdg_focus'  => is_array($sdgFocus) ? $sdgFocus : []
+            'status' => 'success',
+            'member' => [
+                'id'          => (int)$row['id'],
+                'orcid'       => $row['orcid'],
+                'slug'        => $row['slug'] ?: 'tm-' . $row['id'],
+                'code'        => $row['code'],
+                'name'        => $row['researcher_name'] ?? 'Team Member',
+                'position'    => $row['position'],
+                'bio'         => $row['bio'],
+                'long_bio'    => $row['long_bio'],
+                'photo'       => $row['photo_url'],
+                'email'       => $row['email_address'],
+                'location'    => $row['location'],
+                'joined_year' => (int)($row['joined_year'] ?? 0),
+                'department'  => $row['department'] ?? 'Team',
+                'expertise'   => $row['expertise']    ? json_decode($row['expertise'], true)    : [],
+                'social'      => $row['social_links'] ? json_decode($row['social_links'], true) : [],
+                'sdg_focus'   => $row['sdg_focus']    ? json_decode($row['sdg_focus'], true)    : [],
             ],
-            'education' => array_map(function ($row) {
-                return [
-                    'degree'     => $row['degree_level'],
-                    'field'      => $row['field_of_study'],
-                    'institution' => $row['institution'],
-                    'graduation' => (int)$row['graduation_year'],
-                    'honors'     => $row['honors']
-                ];
-            }, $education),
-            'achievements' => array_map(function ($row) {
-                return [
-                    'title'    => $row['title'],
-                    'description' => $row['description'],
-                    'year'     => (int)$row['achievement_year'],
-                    'category' => $row['category'],
-                    'issuer'   => $row['issuer'],
-                    'proof_url' => $row['proof_url']
-                ];
-            }, $achievements),
-            'timestamp' => date('c')
+            'education'    => $education,
+            'achievements' => $achievements,
         ];
     } catch (Exception $e) {
-        error_log($e->getMessage());
-        return getSampleTeamMemberProfile();
+        return sampleProfile();
     }
 }
 
-function getSampleTeamMemberProfile(): array {
+function sampleProfile(): array
+{
     return [
-        'status'  => 'success',
-        'member'  => [
-            'id'         => 1,
-            'name'       => 'Dr. Budi Santoso',
-            'slug'       => 'budi-santoso',
-            'code'       => 'TM-L001',
-            'email'      => 'budi.santoso@sdgmapper.org',
-            'phone'      => '+62-812-3456-7890',
-            'bio'        => 'Director, SDG Research & Analytics',
-            'long_bio'   => 'PhD in Computer Science from MIT. 15+ years experience in research analytics and SDG classification. Led development of Wizdam Impact Score methodology.',
-            'avatar'     => 'https://via.placeholder.com/300/6366f1/ffffff?text=BS',
-            'role'       => 'Leadership',
-            'location'   => 'Jakarta, Indonesia',
-            'joined_year' => 2020,
-            'department' => 'Leadership',
-            'sdg_focus'  => [4, 9, 17]
+        'status' => 'success',
+        'member' => [
+            'id'=>1,'orcid'=>'0000-0001-0000-0001','slug'=>'budi-santoso','code'=>'TM-L001',
+            'name'=>'Dr. Budi Santoso','position'=>'Director, SDG Research & Analytics',
+            'bio'=>'Director, SDG Research & Analytics',
+            'long_bio'=>'PhD in Computer Science. 15+ years experience in research analytics and SDG classification.',
+            'photo'=>null,'email'=>'budi.santoso@example.org','location'=>'Jakarta, Indonesia',
+            'joined_year'=>2020,'department'=>'Leadership',
+            'expertise'=>['Research Analytics','AI/ML','SDG Methodology'],
+            'social'=>[],'sdg_focus'=>[4,9,17],
         ],
         'education' => [
-            [
-                'degree'      => 'PhD',
-                'field'       => 'Computer Science',
-                'institution' => 'Massachusetts Institute of Technology',
-                'graduation'  => 2009,
-                'honors'      => 'Cum Laude'
-            ],
-            [
-                'degree'      => 'M.Tech',
-                'field'       => 'Computer Science',
-                'institution' => 'Indian Institute of Technology Delhi',
-                'graduation'  => 2007,
-                'honors'      => null
-            ],
-            [
-                'degree'      => 'B.Tech',
-                'field'       => 'Information Technology',
-                'institution' => 'Universitas Indonesia',
-                'graduation'  => 2005,
-                'honors'      => 'Cum Laude'
-            ]
+            ['degree'=>'PhD','field'=>'Computer Science','institution'=>'MIT','graduation'=>2009,'honors'=>'Cum Laude'],
+            ['degree'=>'B.Tech','field'=>'Information Technology','institution'=>'Universitas Indonesia','graduation'=>2005,'honors'=>null],
         ],
         'achievements' => [
-            [
-                'title'       => 'Fellow of the Royal Society',
-                'description' => 'Elected for contributions to AI and sustainable development',
-                'year'        => 2023,
-                'category'    => 'award',
-                'issuer'      => 'Royal Society',
-                'proof_url'   => 'https://example.com/frs-certificate'
-            ],
-            [
-                'title'       => 'SDG Impact Award',
-                'description' => 'For development of innovative SDG classification methodology',
-                'year'        => 2022,
-                'category'    => 'award',
-                'issuer'      => 'UN SDGAA',
-                'proof_url'   => null
-            ]
+            ['title'=>'SDG Impact Award','description'=>'For development of innovative SDG classification methodology','year'=>2022,'category'=>'award','issuer'=>'UN SDGAA','proof_url'=>null],
         ],
-        'timestamp' => date('c')
     ];
 }

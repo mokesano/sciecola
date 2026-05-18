@@ -1,385 +1,377 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { LoadingSpinner } from '../components/shared';
+import { useTranslation } from 'react-i18next';
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
 
-const Sponsors = () => {
-  const [activeTier, setActiveTier] = useState('all');
-  const [sponsors, setSponsors] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+/* ─── constants ─────────────────────────────────────────────────────────── */
 
-  // Sponsor Tiers Configuration with dynamic counts
-  const tierCounts = {
-    all: sponsors.length,
-    platinum: sponsors.filter(s => s.tier === 'platinum').length,
-    gold: sponsors.filter(s => s.tier === 'gold').length,
-    silver: sponsors.filter(s => s.tier === 'silver').length,
-    bronze: sponsors.filter(s => s.tier === 'bronze').length
-  };
+const TIER_CFG = {
+  platinum: {
+    ring:    'ring-2 ring-slate-300',
+    header:  'bg-gradient-to-r from-slate-50 via-white to-slate-50 border-b border-slate-200',
+    badge:   'bg-gradient-to-r from-slate-200 to-slate-100 text-slate-700 border border-slate-300',
+    label:   'text-slate-600',
+    accent:  '#94a3b8',
+  },
+  gold: {
+    ring:    'ring-2 ring-yellow-200',
+    header:  'bg-gradient-to-r from-yellow-50 via-white to-yellow-50 border-b border-yellow-100',
+    badge:   'bg-gradient-to-r from-yellow-200 to-yellow-100 text-yellow-800 border border-yellow-300',
+    label:   'text-yellow-700',
+    accent:  '#f59e0b',
+  },
+  silver: {
+    ring:    'ring-1 ring-gray-200',
+    header:  'bg-gray-50 border-b border-gray-100',
+    badge:   'bg-gray-100 text-gray-600 border border-gray-200',
+    label:   'text-gray-500',
+    accent:  '#9ca3af',
+  },
+  bronze: {
+    ring:    'ring-1 ring-amber-100',
+    header:  'bg-amber-50 border-b border-amber-100',
+    badge:   'bg-amber-100 text-amber-700 border border-amber-200',
+    label:   'text-amber-600',
+    accent:  '#d97706',
+  },
+};
 
-  const tiers = [
-    { id: 'all', label: 'Semua', count: tierCounts.all, color: '' },
-    { id: 'platinum', label: 'Platinum', count: tierCounts.platinum, color: 'bg-gradient-to-r from-gray-300 via-gray-100 to-gray-300 text-gray-800 border-gray-400' },
-    { id: 'gold', label: 'Gold', count: tierCounts.gold, color: 'bg-gradient-to-r from-yellow-200 via-yellow-50 to-yellow-200 text-yellow-800 border-yellow-400' },
-    { id: 'silver', label: 'Silver', count: tierCounts.silver, color: 'bg-gradient-to-r from-gray-200 via-gray-50 to-gray-200 text-gray-700 border-gray-300' },
-    { id: 'bronze', label: 'Bronze', count: tierCounts.bronze, color: 'bg-gradient-to-r from-amber-100 via-amber-50 to-amber-100 text-amber-800 border-amber-300' }
-  ];
+const TIER_ORDER = ['platinum', 'gold', 'silver', 'bronze'];
 
-  // Fetch sponsors from API
-  useEffect(() => {
-    const fetchSponsors = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/sponsors.php?limit=100');
-        const data = await response.json();
+/* ─── OrgInitials fallback ───────────────────────────────────────────────── */
+const OrgAvatar = ({ name, tier }) => {
+  const accent = TIER_CFG[tier]?.accent ?? '#6366f1';
+  const initials = (name ?? '').split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+  return (
+    <span className="w-16 h-16 rounded-xl flex items-center justify-center text-white font-bold text-lg flex-shrink-0"
+      style={{ backgroundColor: accent }}>
+      {initials}
+    </span>
+  );
+};
 
-        if (data.status === 'success' && data.sponsors) {
-          setSponsors(data.sponsors);
-          setError(null);
-        } else {
-          setSponsors(getDefaultSponsors());
-        }
-      } catch (err) {
-        console.error('Error fetching sponsors:', err);
-        setSponsors(getDefaultSponsors());
-        setError('Failed to load sponsors');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSponsors();
-  }, []);
-
-  // Default/Fallback Sponsor Data
-  const getDefaultSponsors = () => [
-    {
-      id: 1,
-      name: "Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi",
-      tier: 'platinum',
-      logo: "https://via.placeholder.com/200x80/fbbf24/ffffff?text=Kemdikbudristek",
-      description: "Mendukung digitalisasi riset Indonesia dan akselerasi pencapaian SDGs melalui inovasi teknologi.",
-      since: 2021,
-      website: "https://www.kemdikbud.go.id",
-      type: 'Government'
-    },
-    {
-      id: 2,
-      name: "Badan Riset dan Inovasi Nasional (BRIN)",
-      tier: 'platinum',
-      logo: "https://via.placeholder.com/200x80/6366f1/ffffff?text=BRIN",
-      description: "Memperkuat ekosistem riset nasional melalui platform analitik berbasis kecerdasan buatan.",
-      since: 2022,
-      website: "https://www.brin.go.id",
-      type: 'Government'
-    },
-    {
-      id: 3,
-      name: "Google.org",
-      tier: 'platinum',
-      logo: "https://via.placeholder.com/200x80/4285f4/ffffff?text=Google.org",
-      description: "Mendukung inisiatif teknologi untuk kebaikan sosial dan pembangunan berkelanjutan di Asia Tenggara.",
-      since: 2023,
-      website: "https://www.google.org",
-      type: 'Corporate'
-    }
-  ];
-
-  // Benefits Data
-  const benefits = [
-    {
-      icon: 'M13 10V3L4 14h7v7l9-11h-7z',
-      title: 'Visibilitas Global',
-      description: 'Logo dan profil sponsor ditampilkan di platform yang diakses peneliti dari 150+ negara.'
-    },
-    {
-      icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
-      title: 'Credibility & Trust',
-      description: 'Asosiasi dengan platform terverifikasi yang digunakan oleh institusi riset terkemuka.'
-    },
-    {
-      icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z',
-      title: 'Akses Data Eksklusif',
-      description: 'Dashboard analitik khusus sponsor dengan insights tren riset dan dampak SDGs.'
-    },
-    {
-      icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z',
-      title: 'Co-Branding Opportunities',
-      description: 'Kesempatan kolaborasi konten, webinar, dan publikasi bersama tim editorial Wizdam.'
-    },
-    {
-      icon: 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
-      title: 'Impact Reporting',
-      description: 'Laporan triwulanan terukur tentang kontribusi sponsor terhadap pencapaian SDGs.'
-    },
-    {
-      icon: 'M12 6v6m0 0v6m0-6h6m-6 0H6',
-      title: 'Priority Support',
-      description: 'Tim dedicated account manager dan prioritas dalam pengembangan fitur custom.'
-    }
-  ];
-
-  // Filter sponsors based on active tier
-  const filteredSponsors = activeTier === 'all' 
-    ? sponsors 
-    : sponsors.filter(s => s.tier === activeTier);
-
-  // Get tier color class
-  const getTierBadgeClass = (tier) => {
-    const colors = {
-      platinum: 'bg-gradient-to-r from-gray-300 via-gray-100 to-gray-300 text-gray-800 border-gray-400',
-      gold: 'bg-gradient-to-r from-yellow-200 via-yellow-50 to-yellow-200 text-yellow-800 border-yellow-400',
-      silver: 'bg-gradient-to-r from-gray-200 via-gray-50 to-gray-200 text-gray-700 border-gray-300',
-      bronze: 'bg-gradient-to-r from-amber-100 via-amber-50 to-amber-100 text-amber-800 border-amber-300'
-    };
-    return colors[tier] || 'bg-gray-100 text-gray-700 border-gray-200';
-  };
+/* ─── sponsor card ───────────────────────────────────────────────────────── */
+const SponsorCard = ({ sponsor, t, large = false }) => {
+  const [imgErr, setImgErr] = useState(false);
+  const cfg = TIER_CFG[sponsor.tier] ?? TIER_CFG.bronze;
 
   return (
-    <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
-        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
-        <span className="text-gray-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+    <div className={`bg-white rounded-2xl shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col ${cfg.ring}`}>
+      {/* tier strip */}
+      <div className={`px-5 py-2.5 flex items-center justify-between ${cfg.header}`}>
+        <span className={`text-[11px] font-bold uppercase tracking-widest ${cfg.label}`}>
+          {t('tier_label', { tier: sponsor.tier.charAt(0).toUpperCase() + sponsor.tier.slice(1) })}
         </span>
-        <span className="text-gray-900 font-medium">Sponsor</span>
-      </nav>
-
-      {/* Header */}
-      <div className="text-center mb-12">
-        <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-          Mitra & Sponsor Wizdam
-        </h1>
-        <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-          Bersama para mitra strategis, kami mempercepat dampak riset Indonesia terhadap pencapaian
-          Tujuan Pembangunan Berkelanjutan (SDGs) global.
-        </p>
+        {sponsor.since > 0 && (
+          <span className="text-[11px] text-gray-400">{t('card.since', { year: sponsor.since })}</span>
+        )}
       </div>
 
-      {/* Loading State */}
-      {loading && (
-        <div className="flex justify-center py-12">
-          <LoadingSpinner />
-        </div>
-      )}
-
-      {/* Error State */}
-      {error && !loading && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-          {error}
-        </div>
-      )}
-
-      {/* Main Content */}
-      {!loading && (
-      <>
-
-      {/* Stats Overview */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-        {[
-          { label: 'Total Sponsor', value: '24', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
-          { label: 'Negara Terwakili', value: '12', icon: 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
-          { label: 'Sektor', value: '5', icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' },
-          { label: 'Tahun Bermitra', value: '3+', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' }
-        ].map((stat, idx) => (
-          <div key={idx} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm text-center">
-            <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center mx-auto mb-3">
-              <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={stat.icon} />
-              </svg>
-            </div>
-            <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-            <p className="text-sm text-gray-600">{stat.label}</p>
+      {/* body */}
+      <div className={`p-5 flex flex-col flex-1 ${large ? 'gap-4' : 'gap-3'}`}>
+        <div className="flex items-start gap-4">
+          {!imgErr && sponsor.logo ? (
+            <img src={sponsor.logo} alt={sponsor.name}
+              onError={() => setImgErr(true)}
+              className="w-16 h-16 rounded-xl object-contain flex-shrink-0 bg-gray-50 p-1" />
+          ) : (
+            <OrgAvatar name={sponsor.name} tier={sponsor.tier} />
+          )}
+          <div className="flex-1 min-w-0">
+            <h3 className={`font-bold text-gray-900 leading-snug ${large ? 'text-lg' : 'text-base'}`}>
+              {sponsor.name}
+            </h3>
           </div>
-        ))}
-      </div>
+        </div>
 
-      {/* Tier Filter Tabs */}
-      <div className="flex flex-wrap justify-center gap-2 mb-8">
-        {tiers.map((tier) => (
-          <button
-            key={tier.id}
-            onClick={() => setActiveTier(tier.id)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-              activeTier === tier.id
-                ? `${tier.color || 'bg-indigo-600 text-white'} shadow-md border`
-                : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
-            }`}
-          >
-            {tier.label}
-            <span className={`px-2 py-0.5 rounded-full text-xs ${
-              activeTier === tier.id 
-                ? 'bg-white/30' 
-                : 'bg-gray-100 text-gray-600'
-            }`}>
-              {tier.count}
-            </span>
-          </button>
-        ))}
-      </div>
-
-      {/* Sponsors Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        {filteredSponsors.map((sponsor) => (
-          <div 
-            key={sponsor.id} 
-            className={`bg-white rounded-2xl border shadow-sm hover:shadow-lg transition-all overflow-hidden group ${
-              activeTier !== 'all' ? `border-l-4 ${getTierBadgeClass(sponsor.tier).split(' ').pop()}` : 'border-gray-200'
-            }`}
-          >
-            {/* Tier Badge */}
-            {activeTier === 'all' && (
-              <div className={`px-4 py-2 text-xs font-bold uppercase tracking-wide border-b ${getTierBadgeClass(sponsor.tier)}`}>
-                {sponsor.tier}
-              </div>
-            )}
-            
-            <div className="p-6">
-              {/* Logo */}
-              <div className="flex items-center justify-center mb-4">
-                <img
-                  src={sponsor.logo}
-                  alt={sponsor.name}
-                  className="h-16 object-contain group-hover:scale-105 transition-transform"
-                  onError={(e) => {e.target.src = 'https://via.placeholder.com/200x80/9ca3af/ffffff?text=Logo'}}
-                />
-              </div>
-              
-              {/* Name & Type */}
-              <div className="text-center mb-4">
-                <h3 className="font-bold text-gray-900 text-lg mb-1">{sponsor.name}</h3>
-                <div className="flex items-center justify-center gap-2">
-                  <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs font-medium">
-                    {sponsor.type}
-                  </span>
-                  <span className="text-xs text-gray-500">Sejak {sponsor.since}</span>
-                </div>
-              </div>
-              
-              {/* Description */}
-              <p className="text-sm text-gray-600 mb-6 text-center leading-relaxed">
-                {sponsor.description}
-              </p>
-
-              {/* Website Link */}
-              <a 
-                href={sponsor.website} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-sm text-indigo-600 font-medium hover:text-indigo-700 hover:underline"
-              >
-                Kunjungi Website
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-              </a>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Benefits Section */}
-      <section className="mb-12">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Manfaat Menjadi Sponsor</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Bergabunglah dengan ekosistem riset berkelanjutan dan tingkatkan dampak organisasi Anda.
+        {sponsor.description && (
+          <p className="text-sm text-gray-600 leading-relaxed flex-1 line-clamp-3">
+            {sponsor.description}
           </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {benefits.map((benefit, idx) => (
-            <div key={idx} className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-all">
-              <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 mb-4">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={benefit.icon} />
-                </svg>
-              </div>
-              <h3 className="font-bold text-gray-900 mb-2">{benefit.title}</h3>
-              <p className="text-sm text-gray-600 leading-relaxed">{benefit.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+        )}
 
-      {/* Sponsorship Tiers Info */}
-      <section className="mb-12">
-        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-8 border border-indigo-100">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Tiers Sponsorship</h2>
-            <p className="text-gray-600">Pilih tingkat kemitraan yang sesuai dengan visi organisasi Anda.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { tier: 'Platinum', price: 'Custom', features: ['Logo di header platform', 'Dashboard analitik premium', 'Co-branding webinar', 'Priority feature requests', 'Dedicated account manager'], highlight: true },
-              { tier: 'Gold', price: 'Custom', features: ['Logo di halaman sponsor', 'Akses dashboard dasar', 'Mention di newsletter', 'Quarterly impact report'], highlight: false },
-              { tier: 'Silver', price: 'Custom', features: ['Logo di halaman sponsor', 'Mention di laporan tahunan', 'Akses publikasi riset'], highlight: false },
-              { tier: 'Bronze', price: 'Custom', features: ['Logo di halaman sponsor', 'Sertifikat kemitraan', 'Update newsletter bulanan'], highlight: false }
-            ].map((plan, idx) => (
-              <div 
-                key={idx} 
-                className={`bg-white rounded-xl p-6 border-2 ${
-                  plan.highlight 
-                    ? 'border-indigo-600 shadow-lg relative' 
-                    : 'border-gray-200'
-                }`}
-              >
-                {plan.highlight && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-indigo-600 text-white text-xs font-bold rounded-full">
-                    Most Popular
-                  </span>
-                )}
-                <h3 className={`font-bold text-lg mb-1 ${plan.highlight ? 'text-indigo-600' : 'text-gray-900'}`}>
-                  {plan.tier}
-                </h3>
-                <p className="text-2xl font-bold text-gray-900 mb-4">{plan.price}</p>
-                <ul className="space-y-2 mb-6">
-                  {plan.features.map((feature, fIdx) => (
-                    <li key={fIdx} className="flex items-start gap-2 text-sm text-gray-600">
-                      <svg className="w-4 h-4 text-green-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                      </svg>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <button className={`w-full py-2.5 rounded-lg font-medium text-sm transition-colors ${
-                  plan.highlight
-                    ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}>
-                  Hubungi Kami
-                </button>
-              </div>
+        {sponsor.focus_areas?.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {sponsor.focus_areas.slice(0, 4).map((area, i) => (
+              <span key={i} className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${cfg.badge}`}>
+                {area}
+              </span>
             ))}
           </div>
-        </div>
-      </section>
+        )}
 
-      </>
-      )}
-
-      {/* CTA Section */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-8 text-white shadow-lg">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-          <div>
-            <h3 className="text-2xl font-bold mb-2">Tertarik Menjadi Sponsor?</h3>
-            <p className="text-indigo-100">Mari diskusikan bagaimana kemitraan ini dapat memperkuat dampak riset dan kontribusi SDGs Anda.</p>
-          </div>
-          <Link 
-            to="/contact"
-            className="px-8 py-3 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition-colors whitespace-nowrap flex items-center gap-2"
-          >
-            Ajukan Proposal Kemitraan
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+        {sponsor.website && (
+          <a href={sponsor.website} target="_blank" rel="noopener noreferrer"
+            className="mt-auto inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
+            {t('card.website')}
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
             </svg>
-          </Link>
-        </div>
+          </a>
+        )}
       </div>
-    </main>
+    </div>
+  );
+};
+
+/* ─── main ────────────────────────────────────────────────────────────────── */
+const Sponsors = () => {
+  const { t } = useTranslation('sponsors');
+
+  const [sponsors,    setSponsors]    = useState([]);
+  const [tierCounts,  setTierCounts]  = useState({});
+  const [activeTier,  setActiveTier]  = useState('all');
+  const [search,      setSearch]      = useState('');
+  const [loading,     setLoading]     = useState(true);
+  const [error,       setError]       = useState(null);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams({ limit: '200' });
+      const res  = await fetch(`/api/wrapper/sponsors.php?${params}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      if (json.status !== 'success') throw new Error(json.message || 'error');
+      setSponsors(json.sponsors ?? []);
+      setTierCounts(json.tier_counts ?? {});
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
+
+  /* filter client-side so tabs respond instantly */
+  const filtered = sponsors.filter(s => {
+    const matchTier   = activeTier === 'all' || s.tier === activeTier;
+    const matchSearch = !search.trim() ||
+      s.name.toLowerCase().includes(search.toLowerCase()) ||
+      (s.description ?? '').toLowerCase().includes(search.toLowerCase());
+    return matchTier && matchSearch;
+  });
+
+  const totalActive = sponsors.length;
+  const hasFilter = activeTier !== 'all' || search.trim() !== '';
+
+  /* group by tier for section headers */
+  const byTier = TIER_ORDER.reduce((acc, t) => {
+    acc[t] = filtered.filter(s => s.tier === t);
+    return acc;
+  }, {});
+
+  const showSection = (tier) => byTier[tier].length > 0;
+
+  return (
+    <>
+      <Navbar />
+      <main className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+          <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
+          <span className="text-gray-400">›</span>
+          <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
+        </nav>
+
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">{t('header.title')}</h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">{t('header.subtitle')}</p>
+        </div>
+
+        {/* Stats row */}
+        {!loading && !error && (
+          <div className="flex flex-wrap justify-center gap-3 mb-10">
+            <StatChip icon="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+              value={totalActive} label={t('stats.total')} color="indigo" />
+            {TIER_ORDER.map(tier => (
+              <StatChip key={tier}
+                value={tierCounts[tier] ?? 0}
+                label={t(`stats.${tier}`)}
+                color={tier === 'platinum' ? 'slate' : tier === 'gold' ? 'amber' : tier === 'silver' ? 'gray' : 'orange'}
+                accent={TIER_CFG[tier].accent} />
+            ))}
+          </div>
+        )}
+
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-8">
+          <div className="relative flex-1 max-w-sm">
+            <input value={search} onChange={e => setSearch(e.target.value)}
+              placeholder={t('filter.search')}
+              className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
+            <svg className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {['all', ...TIER_ORDER].map(tier => {
+              const count = tier === 'all'
+                ? sponsors.length
+                : (tierCounts[tier] ?? 0);
+              return (
+                <button key={tier} onClick={() => setActiveTier(tier)}
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                    activeTier === tier
+                      ? 'bg-indigo-600 text-white shadow-sm'
+                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
+                  }`}>
+                  {t(`filter.${tier}`)}
+                  <span className={`text-xs px-1.5 py-0.5 rounded-full ${activeTier === tier ? 'bg-white/25' : 'bg-gray-100 text-gray-500'}`}>
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Loading */}
+        {loading && (
+          <div className="flex items-center justify-center gap-3 py-20 text-gray-500">
+            <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+            {t('loading')}
+          </div>
+        )}
+
+        {/* Error */}
+        {error && !loading && (
+          <div className="flex flex-col items-center gap-3 py-16">
+            <p className="text-red-600 font-medium">{t('error')}</p>
+            <button onClick={fetchData}
+              className="px-5 py-2 bg-red-600 text-white rounded-xl text-sm font-medium hover:bg-red-700 transition-colors">
+              {t('retry')}
+            </button>
+          </div>
+        )}
+
+        {/* Content */}
+        {!loading && !error && (
+          <>
+            {filtered.length === 0 ? (
+              <EmptyState hasFilter={hasFilter} t={t}
+                onReset={() => { setActiveTier('all'); setSearch(''); }} />
+            ) : (
+              <div className="space-y-12">
+                {/* Platinum — hero layout */}
+                {showSection('platinum') && (
+                  <TierSection tier="platinum" sponsors={byTier.platinum} t={t}
+                    gridCols="grid-cols-1 md:grid-cols-2" large />
+                )}
+                {/* Gold */}
+                {showSection('gold') && (
+                  <TierSection tier="gold" sponsors={byTier.gold} t={t}
+                    gridCols="grid-cols-1 md:grid-cols-2 lg:grid-cols-3" />
+                )}
+                {/* Silver */}
+                {showSection('silver') && (
+                  <TierSection tier="silver" sponsors={byTier.silver} t={t}
+                    gridCols="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" />
+                )}
+                {/* Bronze */}
+                {showSection('bronze') && (
+                  <TierSection tier="bronze" sponsors={byTier.bronze} t={t}
+                    gridCols="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" />
+                )}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* CTA */}
+        <div className="mt-16 bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-8 text-white shadow-lg">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+            <div>
+              <h3 className="text-2xl font-bold mb-2">{t('cta.title')}</h3>
+              <p className="text-indigo-100 max-w-xl">{t('cta.subtitle')}</p>
+            </div>
+            <Link to="/become-sponsor"
+              className="px-8 py-3.5 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition-colors whitespace-nowrap flex items-center gap-2 text-sm">
+              {t('cta.button')}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+
+      </main>
+      <Footer />
+    </>
+  );
+};
+
+/* ─── tier section ───────────────────────────────────────────────────────── */
+const TierSection = ({ tier, sponsors, t, gridCols, large = false }) => {
+  const cfg = TIER_CFG[tier];
+  return (
+    <section>
+      <div className="flex items-center gap-3 mb-5">
+        <div className="w-1 h-6 rounded-full" style={{ backgroundColor: cfg.accent }} />
+        <h2 className="text-lg font-bold text-gray-900 capitalize">
+          {tier.charAt(0).toUpperCase() + tier.slice(1)} Sponsors
+        </h2>
+        <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${cfg.badge}`}>
+          {sponsors.length}
+        </span>
+      </div>
+      <div className={`grid ${gridCols} gap-5`}>
+        {sponsors.map(s => (
+          <SponsorCard key={s.id} sponsor={s} t={t} large={large} />
+        ))}
+      </div>
+    </section>
+  );
+};
+
+/* ─── stat chip ──────────────────────────────────────────────────────────── */
+const StatChip = ({ icon, value, label, color, accent }) => (
+  <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-4 py-2.5 shadow-sm">
+    {icon ? (
+      <svg className={`w-4 h-4 text-${color}-600`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={icon} />
+      </svg>
+    ) : (
+      <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: accent }} />
+    )}
+    <span className="text-lg font-bold text-gray-900">{value}</span>
+    <span className="text-xs text-gray-500">{label}</span>
+  </div>
+);
+
+/* ─── empty state ────────────────────────────────────────────────────────── */
+const EmptyState = ({ hasFilter, onReset, t }) => {
+  const variant = hasFilter ? 'no_match' : 'no_data';
+  return (
+    <div className="flex flex-col items-center py-20 gap-4">
+      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
+        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"
+            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+        </svg>
+      </div>
+      <p className="font-semibold text-gray-800">{t(`empty.${variant}.title`)}</p>
+      <p className="text-sm text-gray-500 text-center max-w-sm">{t(`empty.${variant}.subtitle`)}</p>
+      {hasFilter && (
+        <button onClick={onReset}
+          className="mt-1 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors">
+          Reset
+        </button>
+      )}
+      {!hasFilter && (
+        <Link to="/become-sponsor"
+          className="mt-1 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors">
+          {t('cta.button')}
+        </Link>
+      )}
+    </div>
   );
 };
 
