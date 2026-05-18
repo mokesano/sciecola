@@ -49,6 +49,10 @@ import idLeaderboard        from './locales/id/leaderboard.json';
 import enLeaderboard        from './locales/en/leaderboard.json';
 import idBecomeSponsor      from './locales/id/become_sponsor.json';
 import enBecomeSponsor      from './locales/en/become_sponsor.json';
+import idSponsors           from './locales/id/sponsors.json';
+import enSponsors           from './locales/en/sponsors.json';
+import idPartners           from './locales/id/partners.json';
+import enPartners           from './locales/en/partners.json';
 
 // ─── Deteksi bahasa awal ─────────────────────────────────────────────
 // Prioritas: (1) preferensi tersimpan user → (2) bahasa browser →
@@ -93,6 +97,8 @@ i18n
         researcher_distribution: idResearcherDist,
         leaderboard:             idLeaderboard,
         become_sponsor:          idBecomeSponsor,
+        sponsors:                idSponsors,
+        partners:                idPartners,
       },
       en: {
         translation: enCommon,
@@ -117,12 +123,14 @@ i18n
         researcher_distribution: enResearcherDist,
         leaderboard:             enLeaderboard,
         become_sponsor:          enBecomeSponsor,
+        sponsors:                enSponsors,
+        partners:                enPartners,
       },
     },
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners'],
     interpolation: { escapeValue: false },
   });
 
