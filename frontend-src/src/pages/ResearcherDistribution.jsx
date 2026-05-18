@@ -84,21 +84,6 @@ const ResearcherDistribution = () => {
     return null;
   };
   
-  // Hitung center peta berdasarkan distribusi data peneliti global
-  const calculateMapCenter = () => {
-    if (provinceResearcherData.length === 0) {
-      return { lat: 20, lng: 0 }; // Default: pusat Dunia
-    }
-
-    // Rata-rata koordinat dari semua negara dengan peneliti
-    const avgLat = provinceResearcherData.reduce((sum, item) => sum + item.lat, 0) / provinceResearcherData.length;
-    const avgLng = provinceResearcherData.reduce((sum, item) => sum + item.lng, 0) / provinceResearcherData.length;
-
-    return { lat: avgLat, lng: avgLng };
-  };
-
-  const mapCenter = calculateMapCenter();
-
   // Fungsi untuk mengubah tampilan peta
   const toggleMapView = (view) => {
     setLoading(true);
