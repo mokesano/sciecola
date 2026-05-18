@@ -65,8 +65,6 @@ const History = () => {
   const localeStr = i18n.language === 'id' ? 'id-ID' : 'en-US';
 
   return (
-    <>
-      <Navbar />
       <main className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
 
         {/* Breadcrumb */}
@@ -259,8 +257,6 @@ const History = () => {
         </div>
 
       </main>
-      <Footer />
-    </>
   );
 };
 
