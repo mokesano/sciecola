@@ -75,6 +75,10 @@ import Partners from './pages/Partners';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 
+// Impor Halaman Dokumentasi
+import Doc from './pages/Doc';
+import Api from './pages/Api';
+
 // Impor Halaman Bantuan dan FAQ
 import Contact from './pages/Contact';
 import Help from './pages/Help';
@@ -84,15 +88,11 @@ import TutorialDOI from './pages/TutorialDOI';
 import TutorialResults from './pages/TutorialResults';
 import TutorialExport from './pages/TutorialExport';
 
-// Impor Halaman Dokumentasi
-import Doc from './pages/Doc';
-import Api from './pages/Api';
-
 // Impor Halaman Register
 import Register from './pages/Register';
 import Login from './pages/Login';
 
-// Impor Halaman Admin Dashboard
+// Impor Halaman Admin Dashboard Panel
 import Admin from './pages/Admin';
 import Monitoring from './pages/Monitoring';
 import AdminPanel from './pages/AdminPanel';
