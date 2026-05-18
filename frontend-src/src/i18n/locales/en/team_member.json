@@ -1,0 +1,26 @@
+{
+  "breadcrumb": { "home": "Home", "teams": "Our Team" },
+  "section": {
+    "about":         "About",
+    "sdg_focus":     "SDG Focus",
+    "education":     "Education",
+    "achievements":  "Awards & Achievements",
+    "membership":    "Membership Info",
+    "expertise":     "Expertise"
+  },
+  "meta": {
+    "department":  "Department",
+    "joined":      "Joined {{year}}",
+    "location":    "Location",
+    "code":        "Member ID",
+    "role":        "Role"
+  },
+  "back":         "Back to Team",
+  "not_found": {
+    "title":      "Team Member Not Found",
+    "subtitle":   "No member exists with the identifier",
+    "button":     "Back to Team"
+  },
+  "loading":      "Loading profile…",
+  "error":        "Failed to load profile."
+}
