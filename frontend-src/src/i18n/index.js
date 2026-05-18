@@ -47,6 +47,8 @@ import idResearcherDist     from './locales/id/researcher_distribution.json';
 import enResearcherDist     from './locales/en/researcher_distribution.json';
 import idLeaderboard        from './locales/id/leaderboard.json';
 import enLeaderboard        from './locales/en/leaderboard.json';
+import idBecomeSponsor      from './locales/id/become_sponsor.json';
+import enBecomeSponsor      from './locales/en/become_sponsor.json';
 
 // ─── Deteksi bahasa awal ─────────────────────────────────────────────
 // Prioritas: (1) preferensi tersimpan user → (2) bahasa browser →
@@ -90,6 +92,7 @@ i18n
         top_researchers:         idTopResearchers,
         researcher_distribution: idResearcherDist,
         leaderboard:             idLeaderboard,
+        become_sponsor:          idBecomeSponsor,
       },
       en: {
         translation: enCommon,
@@ -113,12 +116,13 @@ i18n
         top_researchers:         enTopResearchers,
         researcher_distribution: enResearcherDist,
         leaderboard:             enLeaderboard,
+        become_sponsor:          enBecomeSponsor,
       },
     },
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor'],
     interpolation: { escapeValue: false },
   });
 
