@@ -125,6 +125,7 @@ import ServerError500 from './pages/ServerError500';
 import MaintenanceMode from './pages/MaintenanceMode';
 import OfflineError from './pages/OfflineError';
 import SystemStatus from './pages/SystemStatus';
+import Sitemap from './pages/Sitemap';
 import ErrorBoundary from './components/shared/ErrorBoundary';
 
 // =====================================================================
@@ -277,6 +278,7 @@ function App() {
 
               {/* Rute Kontak dan Bantuan */}
               <Route path="/contact" element={<Contact />} />
+              <Route path="/sitemap" element={<Sitemap />} />
               <Route path="/system-status" element={<SystemStatus />} />
               <Route path="/uptime" element={<SystemStatus />} />
               <Route path="/help" element={<Help />} />
