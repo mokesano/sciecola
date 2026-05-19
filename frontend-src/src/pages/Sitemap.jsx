@@ -23,7 +23,7 @@ const Sitemap = () => {
 
     const fetchSitemap = async () => {
       try {
-        const response = await fetch('/api/wrapper/sitemap.php', {
+        const response = await fetch('/api/sitemap.php', {
           headers: { Accept: 'application/json' },
         });
 

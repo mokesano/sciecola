@@ -33,8 +33,8 @@ function buildSitemap(): array
             [
                 'title' => 'Konten Dinamis',
                 'links' => [
-                    ['label' => 'Contoh Artikel', 'to' => '/articles/10.1016/j.jclepro.2023.001'],
-                    ['label' => 'Contoh Peneliti', 'to' => '/researchers/0000-0002-5152-9727'],
+                    ['label' => 'Contoh Artikel', 'to' => '/doi/10.1016%2Fj.jclepro.2023.001'],
+                    ['label' => 'Contoh Peneliti', 'to' => '/orcid/0000-0002-5152-9727'],
                     ['label' => 'Contoh Jurnal', 'to' => '/journals/jcp-2024'],
                     ['label' => 'Contoh Institusi', 'to' => '/institutions/1'],
                 ],
@@ -53,11 +53,11 @@ function buildSitemap(): array
         $dynamicGroups = [
             [
                 'title' => 'Artikel Terbaru',
-                'links' => fetchDynamicLinks($pdo, 'publications', 'doi', 'title', '/articles/', 8, 'created_at'),
+                'links' => fetchDynamicLinks($pdo, 'publications', 'doi', 'title', '/doi/', 8, 'created_at'),
             ],
             [
                 'title' => 'Peneliti Teratas',
-                'links' => fetchDynamicLinks($pdo, 'researchers', 'orcid', 'name', '/researchers/', 8, 'citation_count'),
+                'links' => fetchDynamicLinks($pdo, 'researchers', 'orcid', 'name', '/orcid/', 8, 'citation_count'),
             ],
             [
                 'title' => 'Jurnal Populer',

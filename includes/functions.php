@@ -193,7 +193,7 @@ function route_api_wrapper(): void {
         'my_articles.php', 'my_collections.php', 'my_profile.php',
         'my_statistics.php', 'platform_stats.php', 'projects.php',
         'researcher_distribution.php', 'researcher_profile.php', 'researchers.php',
-        'research_matching.php', 'sdg_distribution.php', 'trends.php',
+        'research_matching.php', 'sdg_distribution.php', 'sitemap.php', 'trends.php',
     ];
 
     static $admin_allowed = [
