@@ -124,6 +124,7 @@ import NotFound404 from './pages/NotFound404';
 import ServerError500 from './pages/ServerError500';
 import MaintenanceMode from './pages/MaintenanceMode';
 import OfflineError from './pages/OfflineError';
+import SystemStatus from './pages/SystemStatus';
 import ErrorBoundary from './components/shared/ErrorBoundary';
 
 // =====================================================================
@@ -276,6 +277,8 @@ function App() {
 
               {/* Rute Kontak dan Bantuan */}
               <Route path="/contact" element={<Contact />} />
+              <Route path="/system-status" element={<SystemStatus />} />
+              <Route path="/uptime" element={<SystemStatus />} />
               <Route path="/help" element={<Help />} />
               <Route path="/tutorial-orcid" element={<TutorialOrcid />} />
               <Route path="/tutorial-doi" element={<TutorialDOI />} />
