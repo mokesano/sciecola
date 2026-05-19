@@ -280,7 +280,6 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/sitemap" element={<Sitemap />} />
               <Route path="/system-status" element={<SystemStatus />} />
-              <Route path="/uptime" element={<SystemStatus />} />
               <Route path="/help" element={<Help />} />
               <Route path="/tutorial-orcid" element={<TutorialOrcid />} />
               <Route path="/tutorial-doi" element={<TutorialDOI />} />
