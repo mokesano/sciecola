@@ -1,0 +1,85 @@
+{
+  "breadcrumb": {
+    "home":    "Beranda",
+    "current": "Leaderboard"
+  },
+  "header": {
+    "title":    "Leaderboard",
+    "subtitle": "Mengapresiasi peneliti, institusi, dan jurnal yang memberikan kontribusi terbesar terhadap pencapaian SDGs melalui riset berkualitas dan berdampak."
+  },
+  "stats": {
+    "researchers":  "Total Peneliti",
+    "publications": "Total Publikasi",
+    "citations":    "Total Sitasi",
+    "growth":       "dari tahun lalu"
+  },
+  "filter": {
+    "category": {
+      "researchers":  "Peneliti",
+      "institutions": "Institusi",
+      "journals":     "Jurnal"
+    },
+    "rank_global":   "Peringkat Global",
+    "rank_national": "Peringkat Nasional",
+    "sdg_all":       "Semua SDGs",
+    "sdg_label":     "SDG {{number}}",
+    "country_all":   "Semua Negara",
+    "reset":         "Reset Filter"
+  },
+  "table": {
+    "rank":         "Peringkat",
+    "researcher":   "Peneliti",
+    "institution":  "Institusi",
+    "journal":      "Jurnal",
+    "country":      "Negara",
+    "publications": "Publikasi",
+    "citations":    "Sitasi",
+    "h_index":      "h-index",
+    "impact":       "Skor Impact",
+    "citescore":    "CiteScore",
+    "sinta":        "SINTA",
+    "sjr":          "SJR",
+    "articles":     "Artikel",
+    "researchers":  "Peneliti",
+    "load_more":    "Muat Lebih Banyak"
+  },
+  "empty": {
+    "no_match": {
+      "title":    "Tidak ada hasil yang cocok",
+      "subtitle": "Coba sesuaikan filter SDG atau negara."
+    },
+    "no_data": {
+      "title":    "Data leaderboard belum tersedia",
+      "subtitle": "Data akan muncul setelah peneliti dan publikasi dimuat ke database."
+    }
+  },
+  "method": {
+    "title":       "Cara Perhitungan Skor Impact",
+    "description": "Skor Impact dihitung berdasarkan kombinasi beberapa indikator penting dalam kontribusi riset terhadap SDGs.",
+    "factors": {
+      "publications": "Kuantitas Publikasi",
+      "citations":    "Kualitas Sitasi",
+      "h_index":      "h-Index",
+      "sdg_impact":   "Dampak SDGs"
+    },
+    "learn_more": "Pelajari lebih lanjut tentang metode perhitungan →"
+  },
+  "sdg_dist": {
+    "title":    "SDG Teratas berdasarkan Jumlah Publikasi",
+    "subtitle": "SDG paling banyak diteliti di platform",
+    "publications": "publikasi"
+  },
+  "achievements": {
+    "title":       "Pencapaian Tertinggi",
+    "description": "Apresiasi khusus bagi peneliti dengan skor impact tertinggi.",
+    "score_label": "Skor Impact"
+  },
+  "cta": {
+    "title":    "Tingkatkan Peringkat Anda",
+    "subtitle": "Terus hasilkan riset berkualitas dan berkontribusi pada pencapaian SDGs global.",
+    "button":   "Mulai Berkontribusi"
+  },
+  "loading": "Memuat data leaderboard...",
+  "retry":   "Coba lagi",
+  "error":   "Gagal memuat data. Silakan coba lagi."
+}

@@ -1,0 +1,85 @@
+{
+  "breadcrumb": {
+    "home":    "Home",
+    "current": "Leaderboard"
+  },
+  "header": {
+    "title":    "Leaderboard",
+    "subtitle": "Recognising researchers, institutions, and journals making the greatest contributions to SDG achievement through impactful research."
+  },
+  "stats": {
+    "researchers":  "Total Researchers",
+    "publications": "Total Publications",
+    "citations":    "Total Citations",
+    "growth":       "from last year"
+  },
+  "filter": {
+    "category": {
+      "researchers":  "Researchers",
+      "institutions": "Institutions",
+      "journals":     "Journals"
+    },
+    "rank_global":   "Global Ranking",
+    "rank_national": "National Ranking",
+    "sdg_all":       "All SDGs",
+    "sdg_label":     "SDG {{number}}",
+    "country_all":   "All Countries",
+    "reset":         "Reset Filters"
+  },
+  "table": {
+    "rank":         "Rank",
+    "researcher":   "Researcher",
+    "institution":  "Institution",
+    "journal":      "Journal",
+    "country":      "Country",
+    "publications": "Publications",
+    "citations":    "Citations",
+    "h_index":      "h-index",
+    "impact":       "Impact Score",
+    "citescore":    "CiteScore",
+    "sinta":        "SINTA",
+    "sjr":          "SJR",
+    "articles":     "Articles",
+    "researchers":  "Researchers",
+    "load_more":    "Load More"
+  },
+  "empty": {
+    "no_match": {
+      "title":    "No matching results",
+      "subtitle": "Try adjusting the SDG or country filter."
+    },
+    "no_data": {
+      "title":    "No leaderboard data yet",
+      "subtitle": "Data will appear once researchers and publications are loaded into the database."
+    }
+  },
+  "method": {
+    "title":       "How the Impact Score is Calculated",
+    "description": "The Impact Score combines several key research contribution indicators.",
+    "factors": {
+      "publications": "Publication Quantity",
+      "citations":    "Citation Quality",
+      "h_index":      "h-Index",
+      "sdg_impact":   "SDG Impact"
+    },
+    "learn_more": "Learn more about the calculation method →"
+  },
+  "sdg_dist": {
+    "title":    "Top SDGs by Publication Count",
+    "subtitle": "Most-researched SDGs in the platform",
+    "publications": "publications"
+  },
+  "achievements": {
+    "title":       "Top Achievers",
+    "description": "Special recognition for researchers with the highest impact scores.",
+    "score_label": "Impact Score"
+  },
+  "cta": {
+    "title":    "Boost Your Ranking",
+    "subtitle": "Keep producing high-quality research and contributing to global SDG achievement.",
+    "button":   "Start Contributing"
+  },
+  "loading": "Loading leaderboard data...",
+  "retry":   "Try again",
+  "error":   "Failed to load data. Please try again."
+}

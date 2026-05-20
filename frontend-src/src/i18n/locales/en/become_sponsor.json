@@ -1,0 +1,170 @@
+{
+  "breadcrumb": {
+    "home":     "Home",
+    "sponsors": "Sponsors",
+    "current":  "Become a Sponsor"
+  },
+  "header": {
+    "title":    "Become a Strategic Partner",
+    "subtitle": "Support faster impact of research on global SDGs. Join an innovation ecosystem connecting researchers, institutions, and policy makers."
+  },
+  "stats": {
+    "active_sponsors":  "Active Sponsors",
+    "researcher_reach": "Researchers Reached",
+    "countries":        "Countries",
+    "publications":     "Publications Indexed"
+  },
+  "benefits": {
+    "title":       "Why Become a Sponsor?",
+    "global": {
+      "title": "Global Visibility",
+      "description": "Logo and sponsor profile displayed on a platform accessed by researchers from 150+ countries."
+    },
+    "credibility": {
+      "title": "Credibility & Trust",
+      "description": "Associate with a verified platform used by leading research institutions."
+    },
+    "data_access": {
+      "title": "Exclusive Data Access",
+      "description": "Sponsor-only analytics dashboard with research trend insights and SDG impact."
+    }
+  },
+  "tiers": {
+    "title":        "Sponsorship Tier Options",
+    "subtitle":     "Choose the partnership level that suits your organisation. All tiers include platform access and quarterly impact reports.",
+    "price_custom": "Custom",
+    "select":       "Select {{tier}}",
+    "selected":     "Selected",
+    "active_count": "{{count}} active sponsors",
+    "loading":      "Loading tiers…",
+    "empty":        "No tier definitions available."
+  },
+  "tier_features": {
+    "platinum": [
+      "Logo on platform header (all pages)",
+      "Premium analytics dashboard with custom metrics",
+      "Co-branded webinars & events (4x/year)",
+      "Priority feature requests & roadmap input",
+      "Dedicated account manager & technical support",
+      "Quarterly impact report with executive summary"
+    ],
+    "gold": [
+      "Logo on sponsor page & footer",
+      "Basic analytics dashboard access",
+      "Newsletter mentions (2x/year)",
+      "Quarterly standard impact report",
+      "Access to exclusive research publications"
+    ],
+    "silver": [
+      "Logo on sponsor page",
+      "Mention in annual report",
+      "Access to public research publications",
+      "Digital partnership certificate",
+      "Monthly newsletter updates"
+    ],
+    "bronze": [
+      "Logo on sponsor page",
+      "Partnership certificate",
+      "Monthly newsletter updates",
+      "Access to public resources"
+    ]
+  },
+  "form": {
+    "step_org":     "Organisation Info",
+    "step_review":  "Review & Send",
+    "selected_tier": "{{tier}} Sponsor",
+    "change_tier":  "Change tier",
+    "section_org":  "Organisation Information",
+    "section_review": "Review & Confirm",
+    "summary_title":   "Proposal Summary",
+    "summary_org":     "Organisation",
+    "summary_type":    "Type",
+    "summary_contact": "Contact",
+    "summary_tier":    "Selected Tier",
+    "field": {
+      "organization_name":  "Organisation Name *",
+      "organization_type":  "Organisation Type *",
+      "contact_name":       "Contact Name *",
+      "email":              "Work Email *",
+      "phone":              "Phone Number",
+      "website":            "Organisation Website",
+      "country":            "Country",
+      "message":            "Tell us about your partnership interest *",
+      "newsletter":         "I want to receive the monthly newsletter on platform updates and SDG research insights",
+      "privacy":            "I agree to the <1>Privacy Policy</1> and <3>Terms of Service</3> for sponsorship *"
+    },
+    "placeholder": {
+      "organization_name":  "e.g. PT Telkom Indonesia",
+      "contact_name":       "Full name of the person in charge",
+      "email":              "name@organisation.id",
+      "phone":              "+62 812 3456 7890",
+      "website":            "https://organisation.id",
+      "message":            "Explain partnership goals, target SDGs, and collaboration expectations…"
+    },
+    "org_type": {
+      "placeholder":    "Select organisation type",
+      "government":     "Government / Public Body",
+      "academic":       "University / Research Institute",
+      "corporate":      "Company / Corporation",
+      "ngo":            "NGO / Non-profit",
+      "international":  "International Organisation",
+      "other":          "Other"
+    },
+    "country": {
+      "placeholder":  "Select country"
+    },
+    "char_count":   "{{count}} / 500 characters",
+    "back":         "← Back",
+    "next":         "Continue →",
+    "submit":       "Submit Proposal",
+    "submitting":   "Submitting…",
+    "errors": {
+      "required":   "This field is required",
+      "email":      "Invalid email format",
+      "message":    "Message must be at least 20 characters",
+      "tier":       "Please pick a sponsorship tier",
+      "privacy":    "You must agree to the Privacy Policy",
+      "server":     "Failed to submit. Please try again."
+    }
+  },
+  "success": {
+    "title":    "Proposal Submitted!",
+    "subtitle": "Thanks for applying. Our team will review your application and contact you within 5–7 business days.",
+    "view_sponsors": "See Sponsor List",
+    "submit_another": "Submit Another"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "items": [
+      {
+        "q": "How long does the proposal review take?",
+        "a": "Our team reviews proposals within 5–7 business days. If approved, we will contact you to discuss the contract and implementation."
+      },
+      {
+        "q": "Can I change my sponsorship tier mid-period?",
+        "a": "Yes, sponsors can upgrade at any time. Downgrades take effect at the next renewal. Our account team will assist with the transition."
+      },
+      {
+        "q": "How does the sponsor analytics dashboard work?",
+        "a": "Once activated, you receive access to a dedicated dashboard with metrics such as logo traffic, co-branded content engagement, and SDG impact reports. Accessible 24/7 via the sponsor portal."
+      },
+      {
+        "q": "Is there a minimum commitment period?",
+        "a": "Yes, all tiers have a minimum 12-month commitment. This allows us to plan branding integration and measure impact meaningfully."
+      },
+      {
+        "q": "What if our organisation is based outside Indonesia?",
+        "a": "We welcome sponsors from around the world. The Wizdam platform is accessed globally, so your partnership has international reach."
+      },
+      {
+        "q": "What happens during platform downtime?",
+        "a": "We guarantee 99.5% uptime with a written SLA for Platinum and Gold tiers. If downtime affects sponsor visibility, we compensate via extended period or service credit."
+      }
+    ]
+  },
+  "testimonials": {
+    "title":   "What Partners Say",
+    "loading": "Loading testimonials…",
+    "empty":   "No sponsor testimonials available yet."
+  }
+}

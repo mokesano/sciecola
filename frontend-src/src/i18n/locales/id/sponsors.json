@@ -1,0 +1,46 @@
+{
+  "breadcrumb": { "home": "Beranda", "current": "Sponsor" },
+  "header": {
+    "title":    "Sponsor Platform Kami",
+    "subtitle": "Organisasi yang mendanai misi kami untuk mempercepat riset berbasis SDGs. Dukungan mereka memungkinkan platform ini terus berkembang."
+  },
+  "stats": {
+    "total":    "Sponsor Aktif",
+    "platinum": "Platinum",
+    "gold":     "Gold",
+    "silver":   "Silver",
+    "bronze":   "Bronze"
+  },
+  "filter": {
+    "all":      "Semua",
+    "platinum": "Platinum",
+    "gold":     "Gold",
+    "silver":   "Silver",
+    "bronze":   "Bronze",
+    "search":   "Cari sponsor…"
+  },
+  "card": {
+    "since":   "Sponsor sejak {{year}}",
+    "website": "Kunjungi website",
+    "focus":   "Area fokus"
+  },
+  "tier_label": "Sponsor {{tier}}",
+  "empty": {
+    "no_match": {
+      "title":    "Tidak ada sponsor ditemukan",
+      "subtitle": "Coba ubah filter tier atau kata kunci pencarian."
+    },
+    "no_data": {
+      "title":    "Belum ada sponsor aktif",
+      "subtitle": "Aplikasi sponsorship yang telah disetujui akan muncul di sini. Jadilah yang pertama mendukung kami."
+    }
+  },
+  "cta": {
+    "title":    "Tertarik Menjadi Sponsor?",
+    "subtitle": "Bergabunglah dengan organisasi yang mendanai riset SDGs berdampak. Pilih tier yang sesuai dengan tujuan organisasi Anda.",
+    "button":   "Jadi Sponsor"
+  },
+  "loading": "Memuat data sponsor…",
+  "retry":   "Coba lagi",
+  "error":   "Gagal memuat data sponsor. Silakan coba lagi."
+}
