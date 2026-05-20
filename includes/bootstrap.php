@@ -65,6 +65,13 @@ if (is_api_request()) {
      */
     route_api_wrapper();
 
+} elseif (is_sitemap_xml_request()) {
+    /*
+     * JALUR C: SEO XML SITEMAP
+     * Request /sitemap.xml → XML sitemap dinamis
+     */
+    route_sitemap_xml();
+
 } else {
     /*
      * JALUR C: FRONTEND (HTML)

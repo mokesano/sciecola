@@ -1,7 +1,16 @@
 <?php
 /**
- * Partners API
- * GET /api/partners.php?category=all&limit=50
+ * Partners API — returns research/data/policy collaborators from the partners table.
+ * Partners are NOT financial sponsors; they are institutions collaborating
+ * on data, research, policy, or technology.
+ *
+ * GET /api/wrapper/partners.php?type=all|academic|nonprofit|industry|government
+ *                               &search=keyword&limit=100
+ * Returns: { status, partners[], total, type_counts{}, timestamp }
+ *
+ * Tables: partners (id, organization, category_id, logo_url, website, description,
+ *                   type, since_date, contact_email, cooperation_areas JSON, is_active)
+ *         partner_categories (id, name, description)
  */
 
 declare(strict_types=1);
@@ -14,28 +23,34 @@ try {
     $configFile = ROOT_PATH . '/config/config.php';
     if (file_exists($configFile)) require_once $configFile;
 
-    $method = $_SERVER['REQUEST_METHOD'];
+    $type   = trim($_GET['type']   ?? 'all');
+    $search = trim($_GET['search'] ?? '');
+    $limit  = min(200, max(1, (int)($_GET['limit'] ?? 100)));
 
-    if ($method === 'GET') {
-        $category = trim($_GET['category'] ?? 'all');
-        $limit    = (int)($_GET['limit'] ?? 50);
+    $validTypes = ['all','academic','nonprofit','industry','government'];
+    if (!in_array($type, $validTypes, true)) $type = 'all';
 
-        if ($limit > 500) $limit = 500;
-        if ($limit < 1)   $limit = 1;
+    [$partners, $typeCounts] = fetchPartners($type, $search, $limit);
 
-        echo json_encode(getPartners($category, $limit));
-    } else {
-        http_response_code(405);
-        echo json_encode(['status' => 'error', 'message' => 'Method not allowed']);
-    }
+    echo json_encode([
+        'status'      => 'success',
+        'partners'    => $partners,
+        'total'       => count($partners),
+        'type_counts' => $typeCounts,
+        'timestamp'   => date('c'),
+    ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
 
-function getPartners(string $category, int $limit): array {
+/* ─── fetch ───────────────────────────────────────────────────────────────── */
+
+function fetchPartners(string $type, string $search, int $limit): array
+{
     if (!defined('DB_HOST') || !DB_HOST) {
-        return getSamplePartners();
+        return [samplePartners(), sampleTypeCounts()];
     }
 
     try {
@@ -45,93 +60,85 @@ function getPartners(string $category, int $limit): array {
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
         );
 
-        $where  = [];
-        $params = [];
-
-        if ($category !== 'all' && $category !== '') {
-            $where[] = 'pc.slug = ?';
-            $params[] = $category;
+        /* ── type counts ── */
+        $tcStmt = $pdo->query(
+            "SELECT type, COUNT(*) AS cnt FROM partners WHERE is_active = 1 GROUP BY type"
+        );
+        $typeCounts = ['academic'=>0,'nonprofit'=>0,'industry'=>0,'government'=>0];
+        foreach ($tcStmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            if (isset($typeCounts[$r['type']])) {
+                $typeCounts[$r['type']] = (int)$r['cnt'];
+            }
         }
 
-        $whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
+        /* ── main query ── */
+        $where  = ['p.is_active = 1'];
+        $params = [];
 
-        $sql = "SELECT p.id, p.name, pc.slug as category, p.logo_url, p.description,
-                       p.website_url, p.partnership_type, p.start_date
+        if ($type !== 'all') {
+            $where[] = 'p.type = ?';
+            $params[] = $type;
+        }
+        if ($search !== '') {
+            $where[] = '(p.organization LIKE ? OR p.description LIKE ?)';
+            $params[] = "%$search%";
+            $params[] = "%$search%";
+        }
+
+        $whereClause = 'WHERE ' . implode(' AND ', $where);
+
+        $sql = "SELECT p.id, p.organization, p.type, p.logo_url, p.website,
+                       p.description, p.cooperation_areas,
+                       YEAR(p.since_date) AS since_year,
+                       pc.name AS category_name
                 FROM partners p
                 LEFT JOIN partner_categories pc ON pc.id = p.category_id
                 $whereClause
-                ORDER BY p.name ASC
-                LIMIT $limit";
+                ORDER BY p.organization ASC
+                LIMIT ?";
+        $params[] = $limit;
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $partners = array_map(function ($row) {
-            return [
-                'id'               => (int)$row['id'],
-                'name'             => $row['name'],
-                'category'         => $row['category'],
-                'logo'             => $row['logo_url'],
-                'description'      => $row['description'],
-                'website'          => $row['website_url'],
-                'partnership_type' => $row['partnership_type'],
-                'start_date'       => $row['start_date']
-            ];
-        }, $rows);
+        if (!empty($rows)) {
+            $partners = array_map(fn (array $r): array => [
+                'id'                => (int)$r['id'],
+                'name'              => $r['organization'],
+                'type'              => $r['type'],
+                'category'          => $r['category_name'],
+                'logo'              => $r['logo_url'],
+                'website'           => $r['website'],
+                'description'       => $r['description'],
+                'cooperation_areas' => $r['cooperation_areas']
+                    ? json_decode($r['cooperation_areas'], true) : [],
+                'since'             => (int)$r['since_year'],
+            ], $rows);
+            return [$partners, $typeCounts];
+        }
+    } catch (Exception $e) { /* fall through */ }
 
-        $countStmt = $pdo->prepare("SELECT COUNT(*) as count FROM partners p LEFT JOIN partner_categories pc ON pc.id = p.category_id $whereClause");
-        $countStmt->execute($params);
-        $total = (int)$countStmt->fetch(PDO::FETCH_ASSOC)['count'];
-
-        return [
-            'status'    => 'success',
-            'partners'  => $partners,
-            'total'     => $total,
-            'timestamp' => date('c')
-        ];
-    } catch (Exception $e) {
-        error_log($e->getMessage());
-        return getSamplePartners();
-    }
+    return [samplePartners(), sampleTypeCounts()];
 }
 
-function getSamplePartners(): array {
+/* ─── sample data ─────────────────────────────────────────────────────────── */
+
+function sampleTypeCounts(): array
+{
+    return ['academic'=>5,'nonprofit'=>4,'industry'=>3,'government'=>4];
+}
+
+function samplePartners(): array
+{
     return [
-        'status'   => 'success',
-        'partners' => [
-            [
-                'id'               => 1,
-                'name'             => 'University of Melbourne',
-                'category'         => 'academic',
-                'logo'             => 'https://via.placeholder.com/150x60/ef4444/ffffff?text=UoM',
-                'description'      => 'Kolaborasi riset iklim dan keberlanjutan',
-                'website'          => 'https://www.unimelb.edu.au',
-                'partnership_type' => 'Research',
-                'start_date'       => '2022-01-15'
-            ],
-            [
-                'id'               => 2,
-                'name'             => 'UNEP - United Nations Environment Programme',
-                'category'         => 'ngo',
-                'logo'             => 'https://via.placeholder.com/150x60/10b981/ffffff?text=UNEP',
-                'description'      => 'Program lingkungan dan SDGs',
-                'website'          => 'https://www.unep.org',
-                'partnership_type' => 'Policy',
-                'start_date'       => '2023-06-01'
-            ],
-            [
-                'id'               => 3,
-                'name'             => 'World Bank',
-                'category'         => 'organization',
-                'logo'             => 'https://via.placeholder.com/150x60/0ea5e9/ffffff?text=WorldBank',
-                'description'      => 'Program pembangunan berkelanjutan',
-                'website'          => 'https://www.worldbank.org',
-                'partnership_type' => 'Development',
-                'start_date'       => '2023-03-01'
-            ]
-        ],
-        'total'     => 3,
-        'timestamp' => date('c')
+        ['id'=>1, 'name'=>'University of Melbourne',                'type'=>'academic',    'category'=>'Research', 'logo'=>null,'website'=>'https://www.unimelb.edu.au',    'description'=>'Joint research on climate change and sustainability indicators.','cooperation_areas'=>['Climate Research','SDG 13','Data Sharing'],'since'=>2022],
+        ['id'=>2, 'name'=>'UNEP — United Nations Environment',       'type'=>'nonprofit',   'category'=>'Policy',   'logo'=>null,'website'=>'https://www.unep.org',           'description'=>'Collaboration on environmental data standards and SDG indicators.',  'cooperation_areas'=>['SDG 13','SDG 14','SDG 15','Policy'],'since'=>2023],
+        ['id'=>3, 'name'=>'World Bank Open Data',                   'type'=>'nonprofit',   'category'=>'Data',     'logo'=>null,'website'=>'https://data.worldbank.org',     'description'=>'Access to global development datasets for SDG analysis.',             'cooperation_areas'=>['Open Data','Development','Finance'],'since'=>2023],
+        ['id'=>4, 'name'=>'Institut Teknologi Bandung',             'type'=>'academic',    'category'=>'Research', 'logo'=>null,'website'=>'https://www.itb.ac.id',          'description'=>'Technology and engineering research collaboration for SDG 9.',         'cooperation_areas'=>['Engineering','SDG 9','Innovation'],'since'=>2022],
+        ['id'=>5, 'name'=>'Kementerian Lingkungan Hidup',           'type'=>'government',  'category'=>'Policy',   'logo'=>null,'website'=>'https://www.menlhk.go.id',       'description'=>'Environmental policy data and forest monitoring integration.',         'cooperation_areas'=>['Environment','SDG 15','Policy'],'since'=>2021],
+        ['id'=>6, 'name'=>'CrossRef',                               'type'=>'nonprofit',   'category'=>'Data',     'logo'=>null,'website'=>'https://www.crossref.org',       'description'=>'DOI metadata provider and citation network data.',                    'cooperation_areas'=>['DOI','Citations','Metadata'],'since'=>2020],
+        ['id'=>7, 'name'=>'Scopus — Elsevier',                      'type'=>'industry',    'category'=>'Data',     'logo'=>null,'website'=>'https://www.scopus.com',         'description'=>'Bibliometric data and journal indexing for research analytics.',       'cooperation_areas'=>['Bibliometrics','Journals','Citations'],'since'=>2022],
+        ['id'=>8, 'name'=>'BPS — Badan Pusat Statistik',           'type'=>'government',  'category'=>'Data',     'logo'=>null,'website'=>'https://www.bps.go.id',          'description'=>'Official statistical data on socioeconomic SDG indicators.',          'cooperation_areas'=>['Statistics','SDG 1','SDG 8'],'since'=>2021],
     ];
 }

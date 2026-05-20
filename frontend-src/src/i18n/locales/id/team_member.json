@@ -1,0 +1,26 @@
+{
+  "breadcrumb": { "home": "Beranda", "teams": "Tim Kami" },
+  "section": {
+    "about":         "Tentang",
+    "sdg_focus":     "Fokus SDG",
+    "education":     "Pendidikan",
+    "achievements":  "Penghargaan & Pencapaian",
+    "membership":    "Info Keanggotaan",
+    "expertise":     "Keahlian"
+  },
+  "meta": {
+    "department":  "Divisi",
+    "joined":      "Bergabung {{year}}",
+    "location":    "Lokasi",
+    "code":        "ID Anggota",
+    "role":        "Peran"
+  },
+  "back":         "Kembali ke Tim",
+  "not_found": {
+    "title":      "Anggota Tim Tidak Ditemukan",
+    "subtitle":   "Tidak ada anggota dengan identifier",
+    "button":     "Kembali ke Tim"
+  },
+  "loading":      "Memuat profil…",
+  "error":        "Gagal memuat profil."
+}

@@ -44,27 +44,6 @@ const NotFound404 = () => {
           )}
         </p>
 
-        {/* Possible Reasons */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">
-            {t('error.possibleReasons', 'Kemungkinan Penyebab')}
-          </h3>
-          <ul className="text-left text-gray-600 space-y-2">
-            <li className="flex items-start">
-              <span className="text-red-500 mr-2">•</span>
-              {t('error.reason1', 'URL yang dimasukkan salah atau tidak lengkap')}
-            </li>
-            <li className="flex items-start">
-              <span className="text-red-500 mr-2">•</span>
-              {t('error.reason2', 'Halaman telah dipindahkan ke lokasi baru')}
-            </li>
-            <li className="flex items-start">
-              <span className="text-red-500 mr-2">•</span>
-              {t('error.reason3', 'Halaman telah dihapus atau tidak tersedia')}
-            </li>
-          </ul>
-        </div>
-
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link

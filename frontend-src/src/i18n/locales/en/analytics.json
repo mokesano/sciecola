@@ -1,0 +1,121 @@
+{
+  "breadcrumb": {
+    "home":    "Home",
+    "current": "Analytics"
+  },
+  "header": {
+    "title":    "Analytics",
+    "subtitle": "Explore data and visualizations to understand trends, impact, and research contributions toward SDG achievement."
+  },
+  "period": {
+    "label":    "Data Range",
+    "all_time": "All Time",
+    "years_3":  "Last 3 Years",
+    "years_5":  "Last 5 Years",
+    "years_10": "Last 10 Years",
+    "export":   "Export Report"
+  },
+  "tabs": {
+    "ringkasan":    "Overview",
+    "publikasi":    "Publications",
+    "sdgs":         "SDGs",
+    "peneliti":     "Researchers",
+    "institusi":    "Institutions",
+    "tren":         "Trends",
+    "perbandingan": "Comparison"
+  },
+  "summary": {
+    "articles":     "Total Articles",
+    "researchers":  "Total Researchers",
+    "citations":    "Total Citations",
+    "hindex":       "Avg. H-Index",
+    "journals":     "Total Journals",
+    "institutions": "Total Institutions",
+    "change_suffix": "from previous period"
+  },
+  "pub_trend": {
+    "title":       "Publication Trend",
+    "per_year":    "Per Year",
+    "articles":    "Articles",
+    "researchers": "Researchers"
+  },
+  "sdg_dist": {
+    "title":        "SDG Distribution",
+    "publications": "Publications",
+    "percentage":   "Percentage",
+    "view_all":     "View all SDGs"
+  },
+  "top_journals": {
+    "title":           "Top Journals",
+    "by_publications": "By Publications",
+    "view_all":        "View all journals",
+    "articles":        "Articles",
+    "citescore":       "CiteScore",
+    "quartile":        "Quartile"
+  },
+  "doc_types": {
+    "title":               "Document Types",
+    "journal-article":     "Journal Article",
+    "review":              "Review",
+    "conference-paper":    "Conference Paper",
+    "proceedings-article": "Proceedings",
+    "book-chapter":        "Book Chapter",
+    "book":                "Book",
+    "posted-content":      "Preprint",
+    "other":               "Other",
+    "count":               "Count",
+    "percent":             "Percentage"
+  },
+  "cit_trend": {
+    "title":     "Citation Trend",
+    "citations": "Citations"
+  },
+  "top_researchers": {
+    "title":        "Top Researchers",
+    "by_citations": "By Citations",
+    "by_hindex":    "By H-Index",
+    "view_all":     "View all researchers",
+    "citations":    "Citations",
+    "hindex":       "H-Index",
+    "publications": "Publications",
+    "no_data": {
+      "title":    "No researcher data yet",
+      "subtitle": "Data will appear once researcher profiles are synced from ORCID."
+    }
+  },
+  "top_institutions": {
+    "title":       "Top Institutions",
+    "researchers": "Researchers",
+    "citations":   "Citations",
+    "view_all":    "View all institutions",
+    "no_data": {
+      "title":    "No institution data yet",
+      "subtitle": "Data will appear once researchers are linked to their institutions."
+    }
+  },
+  "comparison": {
+    "title":       "Year Comparison",
+    "articles":    "Articles",
+    "researchers": "Researchers",
+    "prev_period": "Previous Period",
+    "curr_period": "Current Period",
+    "no_data": {
+      "title":    "Not enough data for comparison",
+      "subtitle": "At least 2 years of data are needed to display a comparison."
+    }
+  },
+  "empty": {
+    "no_data": {
+      "title":    "No data available yet",
+      "subtitle": "Analytics data will appear once publications are indexed in the database."
+    }
+  },
+  "loading": "Loading analytics data...",
+  "retry":   "Try again",
+  "error":   "Failed to load data. Please try again.",
+  "cta": {
+    "title":    "Need more specific data?",
+    "subtitle": "Use filters to get analytics data tailored to your needs.",
+    "button":   "Explore Articles"
+  }
+}

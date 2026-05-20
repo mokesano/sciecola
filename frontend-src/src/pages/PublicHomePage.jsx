@@ -155,19 +155,19 @@ const PublicHomePage = () => {
     : t('cta_section.trust_signals', { returnObjects: true });
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white pt-20">
 
       {/* ============================================================ */}
       {/* HERO                                                          */}
       {/* ============================================================ */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-900 pt-28 pb-20">
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-900 py-28">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl" />
           <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-indigo-500/20 blur-3xl" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-violet-600/10 blur-3xl" />
         </div>
 
-        <div className="relative z-10 mx-auto max-w-6xl px-6 text-center">
+        <div className="relative z-10 mx-auto max-w-7xl px-8 text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-sm">
             <Globe className="h-4 w-4 text-blue-300" />
             <span className="text-sm font-medium text-blue-200">
@@ -175,14 +175,14 @@ const PublicHomePage = () => {
             </span>
           </div>
 
-          <h1 className="mb-6 text-5xl font-extrabold leading-tight tracking-tight text-white md:text-6xl lg:text-7xl">
+          <h1 className="mb-6 text-6xl font-extrabold leading-tight tracking-tight text-white md:text-6xl lg:text-7xl">
             {text(pick('hero.title_1'), t, 'hero.title_1')} <br />
             <span className="bg-gradient-to-r from-blue-400 via-violet-400 to-emerald-400 bg-clip-text text-transparent">
               {text(pick('hero.title_2'), t, 'hero.title_2')}
             </span>
           </h1>
 
-          <p className="mx-auto mb-10 max-w-2xl text-lg text-slate-300 md:text-xl">
+          <p className="mx-auto mb-10 max-w-4xl text-lg text-slate-300 md:text-xl">
             {text(pick('hero.subtitle'), t, 'hero.subtitle')}
           </p>
 
@@ -216,7 +216,7 @@ const PublicHomePage = () => {
       {/* ============================================================ */}
       {stats.length > 0 && (
         <section className="bg-white py-14">
-          <div className="mx-auto max-w-6xl px-6">
+          <div className="mx-auto max-w-7xl px-8">
             <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
               {stats.map((s, i) => (
                 <div key={i} className={`flex flex-col items-center rounded-2xl border ${s.bg} border-gray-100 p-6 text-center shadow-sm`}>
@@ -236,12 +236,12 @@ const PublicHomePage = () => {
       {/* FITUR UTAMA                                                   */}
       {/* ============================================================ */}
       <section className="bg-gray-50 py-20">
-        <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-7xl px-8">
           <div className="mb-14 text-center">
-            <h2 className="mb-4 text-4xl font-bold text-gray-900">
+            <h2 className="mb-4 text-6xl font-bold text-gray-900">
               {text(pick('features_section.title'), t, 'features_section.title')}
             </h2>
-            <p className="mx-auto max-w-2xl text-lg text-gray-500">
+            <p className="mx-auto max-w-4xl text-lg text-gray-500">
               {text(pick('features_section.subtitle'), t, 'features_section.subtitle')}
             </p>
           </div>
@@ -265,12 +265,12 @@ const PublicHomePage = () => {
       {/* ============================================================ */}
       {sdgList.length > 0 && (
         <section className="py-20 bg-white">
-          <div className="mx-auto max-w-6xl px-6">
+          <div className="mx-auto max-w-7xl px-8">
             <div className="mb-14 text-center">
-              <h2 className="mb-4 text-4xl font-bold text-gray-900">
+              <h2 className="mb-4 text-6xl font-bold text-gray-900">
                 {text(pick('sdg_section.title'), t, 'sdg_section.title')}
               </h2>
-              <p className="mx-auto max-w-2xl text-lg text-gray-500">
+              <p className="mx-auto max-w-4xl text-lg text-gray-500">
                 {text(pick('sdg_section.subtitle'), t, 'sdg_section.subtitle')}
               </p>
             </div>
@@ -316,12 +316,12 @@ const PublicHomePage = () => {
       {/* HOW IT WORKS                                                  */}
       {/* ============================================================ */}
       <section className="bg-gradient-to-br from-slate-50 to-blue-50 py-20">
-        <div className="mx-auto max-w-6xl px-6">
+        <div className="mx-auto max-w-7xl px-8">
           <div className="mb-14 text-center">
-            <h2 className="mb-4 text-4xl font-bold text-gray-900">
+            <h2 className="mb-4 text-6xl font-bold text-gray-900">
               {text(pick('how_it_works_section.title'), t, 'how_it_works_section.title')}
             </h2>
-            <p className="mx-auto max-w-xl text-lg text-gray-500">
+            <p className="mx-auto max-w-4xl text-lg text-gray-500">
               {text(pick('how_it_works_section.subtitle'), t, 'how_it_works_section.subtitle')}
             </p>
           </div>
@@ -353,13 +353,13 @@ const PublicHomePage = () => {
       {/* ============================================================ */}
       {insights.length > 0 && (
         <section className="bg-white py-20">
-          <div className="mx-auto max-w-6xl px-6">
+          <div className="mx-auto max-w-7xl px-8">
             <div className="mb-14 flex flex-col items-center gap-4 text-center md:flex-row md:justify-between md:text-left">
               <div>
-                <h2 className="mb-3 text-4xl font-bold text-gray-900">
+                <h2 className="mb-3 text-6xl font-bold text-gray-900">
                   {text(pick('insights_section.title'), t, 'insights_section.title')}
                 </h2>
-                <p className="max-w-xl text-lg text-gray-500">
+                <p className="max-w-4xl text-lg text-gray-500">
                   {text(pick('insights_section.subtitle'), t, 'insights_section.subtitle')}
                 </p>
               </div>
@@ -376,7 +376,7 @@ const PublicHomePage = () => {
               {insights.map((ins) => {
                 const color = sdgColorById[ins.sdg] || '#6b7280';
                 return (
-                  <div key={ins.id} className="rounded-2xl border border-gray-100 p-6 shadow-sm transition-all hover:shadow-md">
+                  <div key={ins.id} className="rounded-4xl border border-gray-100 p-6 shadow-sm transition-all hover:shadow-md">
                     <div className="mb-4 flex items-center gap-3">
                       <div
                         className="flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold text-white"
@@ -408,9 +408,9 @@ const PublicHomePage = () => {
       {/* ============================================================ */}
       {partners.length > 0 && (
         <section className="bg-gray-50 py-16">
-          <div className="mx-auto max-w-6xl px-6">
+          <div className="mx-auto max-w-7xl px-8">
             <div className="mb-10 text-center">
-              <h2 className="mb-3 text-2xl font-bold text-gray-900">
+              <h2 className="mb-3 text-6xl font-bold text-gray-900">
                 {text(pick('partners_section.title'), t, 'partners_section.title')}
               </h2>
               <p className="text-gray-500">
@@ -451,17 +451,17 @@ const PublicHomePage = () => {
           <div className="absolute bottom-0 left-0 h-80 w-80 rounded-full bg-indigo-300/10 blur-3xl" />
         </div>
 
-        <div className="relative mx-auto max-w-4xl px-6 text-center">
+        <div className="relative mx-auto max-w-7xl px-8 text-center">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2">
             <Star className="h-4 w-4 text-yellow-300" />
             <span className="text-sm font-medium">
               {text(pick('cta_section.badge'), t, 'cta_section.badge')}
             </span>
           </div>
-          <h2 className="mb-6 text-4xl font-extrabold leading-tight md:text-5xl">
+          <h2 className="mb-6 text-6xl font-extrabold leading-tight md:text-5xl">
             {text(pick('cta_section.title'), t, 'cta_section.title')}
           </h2>
-          <p className="mx-auto mb-10 max-w-xl text-lg text-blue-100">
+          <p className="mx-auto mb-10 max-w-4xl text-lg text-blue-100">
             {text(pick('cta_section.subtitle'), t, 'cta_section.subtitle')}
           </p>
 
