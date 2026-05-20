@@ -142,6 +142,9 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
  RewriteCond %{QUERY_STRING} ^$
  RewriteRule ^$ index.php [L]
  
+ # SEO SITEMAP XML (dynamic via front controller)
+ RewriteRule ^sitemap\.xml$ index.php [L,QSA]
+
  # ----------------------------------------------------------------
  # BAGIAN 6: API ENDPOINTS - SCIECOLA SERVICES
  # Mengarahkan URL API ke handler yang sesuai
