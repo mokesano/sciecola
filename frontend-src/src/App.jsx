@@ -8,6 +8,9 @@ import ScrollToTop from './components/shared/ScrollToTop';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 
+// Impor Halaman Public (landing page untuk user belum login)
+import PublicHomePage from './pages/PublicHomePage';
+
 // Komponen Halaman Beranda (Home)
 import Hero from './components/layout/Hero';
 import StatCards from './components/sdg/StatCards';
@@ -50,6 +53,15 @@ import ResearcherDistribution from './pages/ResearcherDistribution';
 // Impor Halaman Leaderboard
 import Leaderboard from './pages/Leaderboard';
 
+// Impor Halaman Insights AI
+import InsightsPage from './pages/InsightsPage';
+
+// Impor Halaman Collaboration & Networking
+import CollaborationHub from './pages/CollaborationHub';
+import ProjectManagement from './pages/ProjectManagement';
+import ResearchMatching from './pages/ResearchMatching';
+import InnovationMarketplace from './pages/InnovationMarketplace';
+
 // Impor Halaman Tentang dan Tim
 import About from './pages/About';
 import History from './pages/History';
@@ -63,6 +75,10 @@ import Partners from './pages/Partners';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 
+// Impor Halaman Dokumentasi
+import Doc from './pages/Doc';
+import Api from './pages/Api';
+
 // Impor Halaman Bantuan dan FAQ
 import Contact from './pages/Contact';
 import Help from './pages/Help';
@@ -72,17 +88,16 @@ import TutorialDOI from './pages/TutorialDOI';
 import TutorialResults from './pages/TutorialResults';
 import TutorialExport from './pages/TutorialExport';
 
-// Impor Halaman Dokumentasi
-import Doc from './pages/Doc';
-import Api from './pages/Api';
-
 // Impor Halaman Register
 import Register from './pages/Register';
 import Login from './pages/Login';
 
-// Impor Halaman Admin Dashboard
+// Impor Halaman Admin Dashboard Panel
 import Admin from './pages/Admin';
 import Monitoring from './pages/Monitoring';
+import AdminPanel from './pages/AdminPanel';
+import AdminLandingContent from './pages/AdminLandingContent';
+import AdminTeams from './pages/AdminTeams';
 
 // Impor Halaman User Dashboard 
 import Feeds from './pages/Feeds';
@@ -101,15 +116,6 @@ import Settings from './pages/Settings';
 import MyActivity from './pages/MyActivity';
 import LogHistory from './pages/LogHistory';
 
-// Impor Halaman Insights AI
-import InsightsPage from './pages/InsightsPage';
-
-// Impor Halaman Public (landing page untuk user belum login)
-import PublicHomePage from './pages/PublicHomePage';
-
-// Impor Halaman Admin: editor konten halaman publik
-import AdminLandingContent from './pages/AdminLandingContent';
-
 // Impor Chatbot
 import Chatbot from './components/layout/Chatbot';
 
@@ -118,14 +124,9 @@ import NotFound404 from './pages/NotFound404';
 import ServerError500 from './pages/ServerError500';
 import MaintenanceMode from './pages/MaintenanceMode';
 import OfflineError from './pages/OfflineError';
+import SystemStatus from './pages/SystemStatus';
+import Sitemap from './pages/Sitemap';
 import ErrorBoundary from './components/shared/ErrorBoundary';
-
-// Impor Halaman Collaboration & Networking
-import CollaborationHub from './pages/CollaborationHub';
-import ProjectManagement from './pages/ProjectManagement';
-import ResearchMatching from './pages/ResearchMatching';
-import InnovationMarketplace from './pages/InnovationMarketplace';
-import AdminPanel from './pages/AdminPanel';
 
 // =====================================================================
 // KOMPONEN BERANDA (HOME)
@@ -253,6 +254,15 @@ function App() {
               {/* Rute Leaderboard */}
               <Route path="/leaderboard" element={<Leaderboard />} />
 
+              {/* Rute Insights AI */}
+              <Route path="/insights" element={<InsightsPage />} />
+
+              {/* Rute Collaboration & Networking */}
+              <Route path="/collaboration" element={<CollaborationHub />} />
+              <Route path="/projects" element={<ProjectManagement />} />
+              <Route path="/research-matching" element={<ResearchMatching />} />
+              <Route path="/innovation-marketplace" element={<InnovationMarketplace />} />
+
               {/* Rute Tentang */}
               <Route path="/about" element={<About />} />
               <Route path="/history" element={<History />} />
@@ -268,6 +278,8 @@ function App() {
 
               {/* Rute Kontak dan Bantuan */}
               <Route path="/contact" element={<Contact />} />
+              <Route path="/sitemap" element={<Sitemap />} />
+              <Route path="/system-status" element={<SystemStatus />} />
               <Route path="/help" element={<Help />} />
               <Route path="/tutorial-orcid" element={<TutorialOrcid />} />
               <Route path="/tutorial-doi" element={<TutorialDOI />} />
@@ -278,10 +290,6 @@ function App() {
               <Route path="/docs/documentation" element={<Doc />} />
               <Route path="/docs/faq" element={<Faq />} />
               <Route path="/docs/api-reference" element={<Api />} />
-
-              {/* Rute Admin Dashboard */}
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/monitoring" element={<Monitoring />} />
 
               {/* Rute Dashboard */}
               <Route path="/feeds" element={<Feeds />} />
@@ -300,22 +308,16 @@ function App() {
               <Route path="/my-activity" element={<MyActivity />} />
               <Route path="/log-history" element={<LogHistory />} />
 
-              {/* Rute Insights AI */}
-              <Route path="/insights" element={<InsightsPage />} />
-
               {/* Rute Register */}
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<Login />} />
 
-              {/* Rute Collaboration & Networking */}
-              <Route path="/collaboration" element={<CollaborationHub />} />
-              <Route path="/projects" element={<ProjectManagement />} />
-              <Route path="/research-matching" element={<ResearchMatching />} />
-              <Route path="/innovation-marketplace" element={<InnovationMarketplace />} />
-
-              {/* Admin Panel */}
+              {/* Rute Admin Panel Dashboard */}
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/admin/monitoring" element={<Monitoring />} />
               <Route path="/admin/data-management" element={<AdminPanel />} />
               <Route path="/admin/landing-content" element={<AdminLandingContent />} />
+              <Route path="/admin/teams" element={<AdminTeams />} />
             </Route>
 
             {/* ============================================== */}

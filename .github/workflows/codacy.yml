@@ -24,6 +24,7 @@ on:
 
 jobs:
   codacy-security-scan:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     name: Codacy Security Scan
     runs-on: ubuntu-latest
     permissions:
@@ -57,7 +58,7 @@ jobs:
           verbose: true
 
       - name: Upload SARIF to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v3  # Gunakan tag stabil
+        uses: github/codeql-action/upload-sarif@v4
         if: always()  # Tetap upload meski step sebelumnya warning/error
         with:
           sarif_file: results.sarif

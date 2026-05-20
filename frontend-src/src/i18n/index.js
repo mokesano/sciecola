@@ -35,6 +35,34 @@ import idMyCollections      from './locales/id/my_collections.json';
 import enMyCollections      from './locales/en/my_collections.json';
 import idSdgsCluster        from './locales/id/sdgs_cluster.json';
 import enSdgsCluster        from './locales/en/sdgs_cluster.json';
+import idAnalytics          from './locales/id/analytics.json';
+import enAnalytics          from './locales/en/analytics.json';
+import idTrendsAnalysis     from './locales/id/trends_analysis.json';
+import enTrendsAnalysis     from './locales/en/trends_analysis.json';
+import idArticleImpact      from './locales/id/article_impact.json';
+import enArticleImpact      from './locales/en/article_impact.json';
+import idTopResearchers     from './locales/id/top_researchers.json';
+import enTopResearchers     from './locales/en/top_researchers.json';
+import idResearcherDist     from './locales/id/researcher_distribution.json';
+import enResearcherDist     from './locales/en/researcher_distribution.json';
+import idLeaderboard        from './locales/id/leaderboard.json';
+import enLeaderboard        from './locales/en/leaderboard.json';
+import idBecomeSponsor      from './locales/id/become_sponsor.json';
+import enBecomeSponsor      from './locales/en/become_sponsor.json';
+import idSponsors           from './locales/id/sponsors.json';
+import enSponsors           from './locales/en/sponsors.json';
+import idPartners           from './locales/id/partners.json';
+import enPartners           from './locales/en/partners.json';
+import idAbout              from './locales/id/about.json';
+import enAbout              from './locales/en/about.json';
+import idHistory            from './locales/id/history.json';
+import enHistory            from './locales/en/history.json';
+import idTeams              from './locales/id/teams.json';
+import enTeams              from './locales/en/teams.json';
+import idTeamMember         from './locales/id/team_member.json';
+import enTeamMember         from './locales/en/team_member.json';
+import idAdminTeams         from './locales/id/admin_teams.json';
+import enAdminTeams         from './locales/en/admin_teams.json';
 
 // ─── Deteksi bahasa awal ─────────────────────────────────────────────
 // Prioritas: (1) preferensi tersimpan user → (2) bahasa browser →
@@ -72,6 +100,20 @@ i18n
         institution_profile: idInstitutionProfile,
         my_collections:      idMyCollections,
         sdgs_cluster:        idSdgsCluster,
+        analytics:           idAnalytics,
+        trends_analysis:     idTrendsAnalysis,
+        article_impact:      idArticleImpact,
+        top_researchers:         idTopResearchers,
+        researcher_distribution: idResearcherDist,
+        leaderboard:             idLeaderboard,
+        become_sponsor:          idBecomeSponsor,
+        sponsors:                idSponsors,
+        partners:                idPartners,
+        about:                   idAbout,
+        history:                 idHistory,
+        teams:                   idTeams,
+        team_member:             idTeamMember,
+        admin_teams:             idAdminTeams,
       },
       en: {
         translation: enCommon,
@@ -89,12 +131,26 @@ i18n
         institution_profile: enInstitutionProfile,
         my_collections:      enMyCollections,
         sdgs_cluster:        enSdgsCluster,
+        analytics:           enAnalytics,
+        trends_analysis:     enTrendsAnalysis,
+        article_impact:      enArticleImpact,
+        top_researchers:         enTopResearchers,
+        researcher_distribution: enResearcherDist,
+        leaderboard:             enLeaderboard,
+        become_sponsor:          enBecomeSponsor,
+        sponsors:                enSponsors,
+        partners:                enPartners,
+        about:                   enAbout,
+        history:                 enHistory,
+        teams:                   enTeams,
+        team_member:             enTeamMember,
+        admin_teams:             enAdminTeams,
       },
     },
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams'],
     interpolation: { escapeValue: false },
   });
 

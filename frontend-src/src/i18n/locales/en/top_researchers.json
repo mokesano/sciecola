@@ -1,0 +1,110 @@
+{
+  "breadcrumb": {
+    "home":      "Home",
+    "analytics": "Analytics",
+    "current":   "Top Researchers"
+  },
+  "header": {
+    "title":    "Top Researchers",
+    "subtitle": "Researcher ranking based on a combination of academic metrics, publication impact, and collaboration reach."
+  },
+  "filter": {
+    "search_placeholder": "Search researcher name or institution…",
+    "sdg_all":   "All SDGs",
+    "sdg_label": "SDG {{number}}",
+    "country_all": "All Countries",
+    "sort": {
+      "label":        "Sort by",
+      "impact":       "Impact Score",
+      "citations":    "Most Cited",
+      "hindex":       "H-Index",
+      "publications": "Publication Count"
+    },
+    "reset": "Reset Filters"
+  },
+  "detail": {
+    "title":           "Researcher Detail",
+    "affiliation":     "Affiliation",
+    "country":         "Country",
+    "impact_score":    "Impact Score",
+    "metrics":         "Academic Metrics",
+    "hindex":          "H-Index",
+    "citations":       "Citations",
+    "publications":    "Publications",
+    "top_pubs":        "Top Publications",
+    "collab_network":  "Collaboration Network",
+    "collab_total":    "Total",
+    "collab_domestic": "Domestic",
+    "collab_intl":     "International",
+    "profile_radar":   "Impact Profile (Multi-dimensional)",
+    "open_profile":    "Open Researcher Profile",
+    "close":           "Close",
+    "no_top_pubs":     "No top publications yet",
+    "no_collab":       "No collaboration data yet"
+  },
+  "table": {
+    "title": "Researcher List",
+    "columns": {
+      "researcher":    "Researcher",
+      "affiliation":   "Affiliation",
+      "hindex":        "H-Index",
+      "publications":  "Publications",
+      "citations":     "Citations",
+      "collab":        "Collaboration",
+      "impact_score":  "Impact Score"
+    },
+    "collab_domestic": "{{n}} domestic",
+    "collab_intl":     "{{n}} int'l",
+    "no_match": {
+      "title":    "No matching researchers",
+      "subtitle": "Try changing the SDG, country, or search keyword."
+    },
+    "no_data": {
+      "title":    "No researcher data yet",
+      "subtitle": "No researchers indexed yet. Data will appear once researcher profiles are synced from ORCID."
+    }
+  },
+  "pagination": {
+    "prev":     "Previous",
+    "next":     "Next",
+    "showing":  "Showing {{from}}-{{to}} of {{total}} researchers"
+  },
+  "explanation": {
+    "title":    "About Researcher Impact Score",
+    "subtitle": "Impact score is a weighted combination of multiple metrics (0-100).",
+    "components": {
+      "academic": {
+        "title":  "Academic Metric",
+        "weight": "40%",
+        "desc":   "H-Index normalized against the researcher with the highest H-Index in the database."
+      },
+      "citation": {
+        "title":  "Citation Impact",
+        "weight": "30%",
+        "desc":   "Citation count (log scale) to give proportional weight to researchers with very high citation counts."
+      },
+      "productivity": {
+        "title":  "Productivity",
+        "weight": "20%",
+        "desc":   "Publication count (log scale) as an indicator of research productivity."
+      },
+      "collab": {
+        "title":  "Collaboration Reach",
+        "weight": "10%",
+        "desc":   "Number of distinct co-authors (domestic + international) as an indicator of research network."
+      }
+    }
+  },
+  "distribution": {
+    "title":    "Researcher Distribution by SDG",
+    "subtitle": "Number of researchers contributing to each SDG (top 8)",
+    "researchers": "Researchers",
+    "no_data": {
+      "title":    "No distribution data yet",
+      "subtitle": "Data will appear once researchers have publications classified per SDG."
+    }
+  },
+  "loading": "Loading researcher data...",
+  "retry":   "Try again",
+  "error":   "Failed to load data. Please try again."
+}
