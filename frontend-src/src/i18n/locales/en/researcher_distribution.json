@@ -1,0 +1,90 @@
+{
+  "breadcrumb": {
+    "home":      "Home",
+    "analytics": "Analytics",
+    "current":   "Global Researcher Distribution"
+  },
+  "header": {
+    "title":    "Global Researcher Distribution",
+    "subtitle": "Researcher distribution per country and institution worldwide based on ORCID and publication data."
+  },
+  "stats": {
+    "total_researchers":  "Total Researchers",
+    "total_countries":    "Countries",
+    "total_institutions": "Institutions"
+  },
+  "filter": {
+    "search_placeholder": "Search country or institution name…",
+    "sdg_all":   "All SDGs",
+    "sdg_label": "SDG {{number}}",
+    "view": {
+      "country":     "Country",
+      "institution": "Institution"
+    },
+    "reset": "Reset Filters"
+  },
+  "map": {
+    "title_country":     "Distribution Map by Country",
+    "title_institution": "Institution Location Map",
+    "legend_label":      "Researchers:",
+    "legend_zero":       "0",
+    "legend_low":        "Few",
+    "legend_medium":     "Moderate",
+    "legend_high":       "Many",
+    "legend_highest":    "Highest",
+    "popup": {
+      "researchers":  "researchers",
+      "publications": "publications"
+    }
+  },
+  "table": {
+    "title_country":     "Researcher Statistics per Country",
+    "title_institution": "Researcher Statistics per Institution",
+    "columns": {
+      "country":      "Country",
+      "institution":  "Institution",
+      "researchers":  "Researchers",
+      "institutions": "Institutions",
+      "publications": "Publications",
+      "top_sdg":      "Dominant SDG",
+      "avg_impact":   "Avg. Impact"
+    },
+    "no_match": {
+      "title":    "No matching results",
+      "subtitle": "Try changing the SDG filter or search keyword."
+    },
+    "no_data": {
+      "title":    "No distribution data yet",
+      "subtitle": "Data will appear once researchers are linked to institutions and countries in the database."
+    }
+  },
+  "top_countries": {
+    "title":    "Top 10 Countries by Researcher Count",
+    "subtitle": "Comparison of researcher count and average impact per country",
+    "researchers": "Researchers",
+    "avg_impact":  "Avg. Impact",
+    "no_data": {
+      "title":    "No ranking data yet",
+      "subtitle": "Data will appear once researchers are associated with countries."
+    }
+  },
+  "detail": {
+    "country_title":      "Country Detail",
+    "institution_title":  "Institution Detail",
+    "top_institutions":   "Top 5 Institutions in this Country",
+    "key_stats":          "Key Statistics",
+    "total_researchers":  "Total Researchers",
+    "total_institutions": "Institution Count",
+    "avg_impact":         "Average Impact",
+    "total_publications": "Total Publications",
+    "top_sdg":            "Dominant SDG",
+    "close":              "Close",
+    "no_institutions": {
+      "title":    "No institutions listed",
+      "subtitle": "No institutions are linked to this country in the database yet."
+    }
+  },
+  "loading": "Loading distribution data...",
+  "retry":   "Try again",
+  "error":   "Failed to load data. Please try again."
+}

@@ -1,0 +1,170 @@
+{
+  "breadcrumb": {
+    "home":     "Beranda",
+    "sponsors": "Sponsor",
+    "current":  "Jadi Sponsor"
+  },
+  "header": {
+    "title":    "Jadilah Mitra Strategis",
+    "subtitle": "Dukung percepatan dampak riset terhadap SDGs global. Bergabunglah dengan ekosistem inovasi yang menghubungkan peneliti, institusi, dan pembuat kebijakan."
+  },
+  "stats": {
+    "active_sponsors":  "Sponsor Aktif",
+    "researcher_reach": "Peneliti Terjangkau",
+    "countries":        "Negara",
+    "publications":     "Publikasi Terindeks"
+  },
+  "benefits": {
+    "title":       "Mengapa Menjadi Sponsor?",
+    "global": {
+      "title": "Visibilitas Global",
+      "description": "Logo dan profil sponsor ditampilkan di platform yang diakses peneliti dari 150+ negara."
+    },
+    "credibility": {
+      "title": "Credibility & Trust",
+      "description": "Asosiasi dengan platform terverifikasi yang digunakan oleh institusi riset terkemuka."
+    },
+    "data_access": {
+      "title": "Akses Data Eksklusif",
+      "description": "Dashboard analitik khusus sponsor dengan insights tren riset dan dampak SDGs."
+    }
+  },
+  "tiers": {
+    "title":        "Pilihan Tier Sponsorship",
+    "subtitle":     "Pilih tingkat kemitraan yang sesuai dengan visi organisasi Anda. Semua tier mencakup akses ke platform dan laporan impact triwulanan.",
+    "price_custom": "Custom",
+    "select":       "Pilih {{tier}}",
+    "selected":     "Terpilih",
+    "active_count": "{{count}} sponsor aktif",
+    "loading":      "Memuat tier…",
+    "empty":        "Definisi tier belum tersedia."
+  },
+  "tier_features": {
+    "platinum": [
+      "Logo di header platform (semua halaman)",
+      "Dashboard analitik premium dengan custom metrics",
+      "Co-branding webinar & event (4x/tahun)",
+      "Priority feature requests & roadmap input",
+      "Dedicated account manager & technical support",
+      "Quarterly impact report dengan executive summary"
+    ],
+    "gold": [
+      "Logo di halaman sponsor & footer",
+      "Akses dashboard analitik dasar",
+      "Mention di newsletter (2x/tahun)",
+      "Quarterly impact report standar",
+      "Akses ke publikasi riset eksklusif"
+    ],
+    "silver": [
+      "Logo di halaman sponsor",
+      "Mention di laporan tahunan",
+      "Akses ke publikasi riset publik",
+      "Sertifikat kemitraan digital",
+      "Update newsletter bulanan"
+    ],
+    "bronze": [
+      "Logo di halaman sponsor",
+      "Sertifikat kemitraan",
+      "Update newsletter bulanan",
+      "Akses ke resource publik"
+    ]
+  },
+  "form": {
+    "step_org":     "Informasi Organisasi",
+    "step_review":  "Review & Kirim",
+    "selected_tier": "{{tier}} Sponsor",
+    "change_tier":  "Ganti tier",
+    "section_org":  "Informasi Organisasi",
+    "section_review": "Review & Konfirmasi",
+    "summary_title":   "Ringkasan Proposal",
+    "summary_org":     "Organisasi",
+    "summary_type":    "Jenis",
+    "summary_contact": "Kontak",
+    "summary_tier":    "Tier Dipilih",
+    "field": {
+      "organization_name":  "Nama Organisasi *",
+      "organization_type":  "Jenis Organisasi *",
+      "contact_name":       "Nama Kontak *",
+      "email":              "Email Kerja *",
+      "phone":              "Nomor Telepon",
+      "website":            "Website Organisasi",
+      "country":            "Negara",
+      "message":            "Ceritakan minat kemitraan Anda *",
+      "newsletter":         "Saya ingin menerima newsletter bulanan tentang update platform dan insights riset SDGs",
+      "privacy":            "Saya menyetujui <1>Kebijakan Privasi</1> dan <3>Syarat & Ketentuan</3> sponsorship *"
+    },
+    "placeholder": {
+      "organization_name":  "Contoh: PT Telkom Indonesia",
+      "contact_name":       "Nama lengkap penanggung jawab",
+      "email":              "nama@organisasi.id",
+      "phone":              "+62 812 3456 7890",
+      "website":            "https://organisasi.id",
+      "message":            "Jelaskan tujuan kemitraan, target SDGs, dan ekspektasi kolaborasi…"
+    },
+    "org_type": {
+      "placeholder":    "Pilih jenis organisasi",
+      "government":     "Pemerintah / Lembaga Publik",
+      "academic":       "Universitas / Institusi Riset",
+      "corporate":      "Perusahaan / Korporasi",
+      "ngo":            "NGO / Organisasi Nirlaba",
+      "international":  "Organisasi Internasional",
+      "other":          "Lainnya"
+    },
+    "country": {
+      "placeholder":  "Pilih negara"
+    },
+    "char_count":   "{{count}} / 500 karakter",
+    "back":         "← Kembali",
+    "next":         "Lanjutkan →",
+    "submit":       "Kirim Proposal",
+    "submitting":   "Mengirim…",
+    "errors": {
+      "required":   "Field ini wajib diisi",
+      "email":      "Format email tidak valid",
+      "message":    "Pesan minimal 20 karakter",
+      "tier":       "Silakan pilih tier sponsorship",
+      "privacy":    "Anda harus menyetujui Kebijakan Privasi",
+      "server":     "Gagal mengirim. Silakan coba lagi."
+    }
+  },
+  "success": {
+    "title":    "Proposal Terkirim!",
+    "subtitle": "Terima kasih telah mengajukan proposal. Tim kami akan meninjau aplikasi Anda dan menghubungi dalam 5–7 hari kerja.",
+    "view_sponsors": "Lihat Daftar Sponsor",
+    "submit_another": "Ajukan Proposal Lain"
+  },
+  "faq": {
+    "title": "Pertanyaan Umum",
+    "items": [
+      {
+        "q": "Berapa lama proses review proposal sponsorship?",
+        "a": "Tim kami meninjau proposal dalam 5–7 hari kerja. Jika disetujui, kami akan menghubungi Anda untuk diskusi kontrak dan implementasi."
+      },
+      {
+        "q": "Apakah saya bisa mengubah tier sponsorship di tengah periode?",
+        "a": "Ya, sponsor dapat upgrade kapan saja. Untuk downgrade, perubahan berlaku pada periode perpanjangan berikutnya. Tim account manager akan membantu proses transisi."
+      },
+      {
+        "q": "Bagaimana cara kerja dashboard analitik untuk sponsor?",
+        "a": "Setelah aktivasi, Anda menerima akses ke dashboard khusus yang menampilkan metrics seperti traffic logo sponsor, engagement konten co-branded, dan impact report SDGs. Dapat diakses 24/7 via portal sponsor."
+      },
+      {
+        "q": "Apakah ada komitmen minimum periode sponsorship?",
+        "a": "Ya, semua tier memiliki komitmen minimum 12 bulan. Ini memungkinkan kami untuk merencanakan integrasi branding dan mengukur impact secara meaningful."
+      },
+      {
+        "q": "Bagaimana jika organisasi kami berbasis di luar Indonesia?",
+        "a": "Kami menerima sponsor dari seluruh dunia. Platform diakses oleh peneliti global, sehingga kemitraan Anda memiliki jangkauan internasional."
+      },
+      {
+        "q": "Apa yang terjadi jika platform mengalami downtime?",
+        "a": "Kami menjamin uptime 99.5% dengan SLA tertulis untuk tier Platinum dan Gold. Jika downtime mempengaruhi visibilitas sponsor, kami memberikan kompensasi berupa perpanjangan periode atau credit layanan."
+      }
+    ]
+  },
+  "testimonials": {
+    "title":   "Kata Mereka Tentang Kemitraan",
+    "loading": "Memuat testimoni…",
+    "empty":   "Belum ada testimoni sponsor yang tersedia."
+  }
+}

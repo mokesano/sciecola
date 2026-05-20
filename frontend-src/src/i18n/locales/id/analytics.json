@@ -1,0 +1,121 @@
+{
+  "breadcrumb": {
+    "home":    "Beranda",
+    "current": "Analytics"
+  },
+  "header": {
+    "title":    "Analytics",
+    "subtitle": "Jelajahi data dan visualisasi untuk memahami tren, dampak, dan kontribusi riset terhadap pencapaian SDGs."
+  },
+  "period": {
+    "label":    "Rentang Data",
+    "all_time": "Semua Waktu",
+    "years_3":  "3 Tahun Terakhir",
+    "years_5":  "5 Tahun Terakhir",
+    "years_10": "10 Tahun Terakhir",
+    "export":   "Ekspor Laporan"
+  },
+  "tabs": {
+    "ringkasan":    "Ringkasan",
+    "publikasi":    "Publikasi",
+    "sdgs":         "SDGs",
+    "peneliti":     "Peneliti",
+    "institusi":    "Institusi",
+    "tren":         "Tren",
+    "perbandingan": "Perbandingan"
+  },
+  "summary": {
+    "articles":     "Total Artikel",
+    "researchers":  "Total Peneliti",
+    "citations":    "Total Sitasi",
+    "hindex":       "H-Index Rata-rata",
+    "journals":     "Total Jurnal",
+    "institutions": "Total Institusi",
+    "change_suffix": "dari periode lalu"
+  },
+  "pub_trend": {
+    "title":       "Tren Publikasi",
+    "per_year":    "Per Tahun",
+    "articles":    "Artikel",
+    "researchers": "Peneliti"
+  },
+  "sdg_dist": {
+    "title":       "Distribusi SDGs",
+    "publications": "Publikasi",
+    "percentage":  "Persentase",
+    "view_all":    "Lihat semua SDGs"
+  },
+  "top_journals": {
+    "title":          "Jurnal Teratas",
+    "by_publications": "Berdasarkan Publikasi",
+    "view_all":       "Lihat semua jurnal",
+    "articles":       "Artikel",
+    "citescore":      "CiteScore",
+    "quartile":       "Kuartil"
+  },
+  "doc_types": {
+    "title":               "Jenis Dokumen",
+    "journal-article":     "Artikel Jurnal",
+    "review":              "Review",
+    "conference-paper":    "Konferensi",
+    "proceedings-article": "Prosiding",
+    "book-chapter":        "Book Chapter",
+    "book":                "Buku",
+    "posted-content":      "Preprint",
+    "other":               "Lainnya",
+    "count":               "Jumlah",
+    "percent":             "Persentase"
+  },
+  "cit_trend": {
+    "title":     "Tren Sitasi",
+    "citations": "Sitasi"
+  },
+  "top_researchers": {
+    "title":          "Top Peneliti",
+    "by_citations":   "Berdasarkan Sitasi",
+    "by_hindex":      "Berdasarkan H-Index",
+    "view_all":       "Lihat semua peneliti",
+    "citations":      "Sitasi",
+    "hindex":         "H-Index",
+    "publications":   "Publikasi",
+    "no_data": {
+      "title":    "Data peneliti belum tersedia",
+      "subtitle": "Data akan muncul setelah profil peneliti disinkronisasi dari ORCID."
+    }
+  },
+  "top_institutions": {
+    "title":       "Institusi Teratas",
+    "researchers": "Peneliti",
+    "citations":   "Sitasi",
+    "view_all":    "Lihat semua institusi",
+    "no_data": {
+      "title":    "Data institusi belum tersedia",
+      "subtitle": "Data akan muncul setelah peneliti dikaitkan dengan institusi mereka."
+    }
+  },
+  "comparison": {
+    "title":        "Perbandingan Tahun",
+    "articles":     "Artikel",
+    "researchers":  "Peneliti",
+    "prev_period":  "Periode Sebelumnya",
+    "curr_period":  "Periode Ini",
+    "no_data": {
+      "title":    "Data perbandingan belum cukup",
+      "subtitle": "Dibutuhkan data minimal 2 tahun untuk menampilkan perbandingan."
+    }
+  },
+  "empty": {
+    "no_data": {
+      "title":    "Data belum tersedia",
+      "subtitle": "Data analytics akan muncul setelah publikasi terindeks di database."
+    }
+  },
+  "loading": "Memuat data analytics...",
+  "retry":   "Coba lagi",
+  "error":   "Gagal memuat data. Silakan coba lagi.",
+  "cta": {
+    "title":    "Butuh data lebih spesifik?",
+    "subtitle": "Gunakan filter untuk mendapatkan data analytics sesuai kebutuhan Anda.",
+    "button":   "Jelajahi Artikel"
+  }
+}

@@ -42,8 +42,8 @@ const Navbar = () => {
   const isResearchersActive = location.pathname === '/researchers' || location.pathname.startsWith('/orcid/');
   const isArticlesActive    = location.pathname === '/articles'    || location.pathname.startsWith('/doi/');
 
-  const activeClass   = 'text-indigo-600 font-bold border-b-[4px] border-indigo-600 pb-6 transition-all';
-  const inactiveClass = 'text-gray-500 group-hover:text-indigo-600 font-medium border-b-[4px] border-transparent group-hover:border-indigo-600 pb-6 transition-all';
+  const activeClass   = 'text-indigo-600 font-bold border-b-[4px] border-indigo-600 pb-7 transition-all';
+  const inactiveClass = 'text-gray-500 group-hover:text-indigo-600 font-medium border-b-[4px] border-transparent group-hover:border-indigo-600 pb-7 transition-all';
 
   // Data bahasa dari locale — fallback inline jika namespace belum muat
   const langData = {
@@ -70,7 +70,7 @@ const Navbar = () => {
           </NavLink>
 
           {/* ── Navigasi Desktop ── */}
-          <div className="hidden lg:flex space-x-1 mt-1">
+          <div className="hidden lg:flex space-x-1">
             {[
               { to: '/',             label: t('nav.home'),        exact: true },
               { to: '/researchers',  label: t('nav.researchers'), active: isResearchersActive },
