@@ -25,15 +25,10 @@ concurrency:
 
 jobs:
   analyze:
-    # IMPORTANT:
-    # GitHub CodeQL "Default setup" and "Advanced setup" cannot both upload
-    # CodeQL SARIF for the same repository. If default setup is enabled,
-    # advanced workflow uploads will fail with:
-    # "CodeQL analyses from advanced configurations cannot be processed when the default setup is enabled".
-    #
-    # Keep this job disabled by default, then opt-in by creating a repository
-    # variable CODEQL_ADVANCED_ENABLED=true *after* default setup is disabled.
-    if: vars.CODEQL_ADVANCED_ENABLED == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+    # Tetap jalankan advanced analysis bersamaan dengan Default Setup.
+    # Hindari konflik pemrosesan SARIF Code Scanning dengan menonaktifkan upload
+    # hasil CodeQL advanced ke Code Scanning (scan tetap dieksekusi sebagai CI check).
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     name: Analyze (${{ matrix.language }})
     # Runner size impacts CodeQL analysis time. To learn more, please see:
     #   - https://gh.io/recommended-hardware-resources-for-running-codeql
@@ -112,4 +107,5 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4
       with:
+        upload: false
         category: "/language:${{matrix.language}}/codeql"
