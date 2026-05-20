@@ -1,0 +1,39 @@
+{
+  "breadcrumb": { "home": "Beranda", "about": "Tentang Kami", "current": "Tim Kami" },
+  "header": {
+    "title":    "Orang-orang di Balik Sciecola",
+    "subtitle": "Tim multidisiplin terdiri dari peneliti, data scientist, engineer, dan desainer yang membangun platform analitik riset terpercaya dan berdampak global."
+  },
+  "stats": {
+    "members":     "Anggota Tim",
+    "departments": "Divisi",
+    "countries":   "Negara Terwakili"
+  },
+  "filter": {
+    "all":         "Semua Divisi",
+    "search":      "Cari nama atau keahlian…"
+  },
+  "card": {
+    "view_profile": "Lihat profil →",
+    "joined":       "Bergabung {{year}}"
+  },
+  "empty": {
+    "no_match": {
+      "title":    "Tidak ada anggota tim ditemukan",
+      "subtitle": "Coba divisi atau kata kunci lain."
+    },
+    "no_data": {
+      "title":    "Tim belum dikonfigurasi",
+      "subtitle": "Super admin dapat menambahkan anggota tim melalui dashboard admin."
+    }
+  },
+  "admin_note": "Anggota tim dikelola oleh super admin melalui dashboard.",
+  "cta": {
+    "title":    "Ingin Bekerja Bersama Kami?",
+    "subtitle": "Hubungi kami untuk peluang kolaborasi, magang, atau karir.",
+    "button":   "Hubungi Kami"
+  },
+  "loading": "Memuat tim…",
+  "retry":   "Coba lagi",
+  "error":   "Gagal memuat data tim."
+}

@@ -1,0 +1,39 @@
+{
+  "breadcrumb": { "home": "Home", "about": "About Us", "current": "Our Team" },
+  "header": {
+    "title":    "The People Behind Sciecola",
+    "subtitle": "A multidisciplinary team of researchers, data scientists, engineers and designers building a trusted, globally impactful research analytics platform."
+  },
+  "stats": {
+    "members":     "Team Members",
+    "departments": "Departments",
+    "countries":   "Countries Represented"
+  },
+  "filter": {
+    "all":         "All Departments",
+    "search":      "Search by name or expertise…"
+  },
+  "card": {
+    "view_profile": "View profile →",
+    "joined":       "Joined {{year}}"
+  },
+  "empty": {
+    "no_match": {
+      "title":    "No team members found",
+      "subtitle": "Try a different department or search term."
+    },
+    "no_data": {
+      "title":    "Team not configured yet",
+      "subtitle": "Super admin can add team members via the admin dashboard."
+    }
+  },
+  "admin_note": "Team members are managed by the super admin via the dashboard.",
+  "cta": {
+    "title":    "Want to Work With Us?",
+    "subtitle": "Reach out for collaboration opportunities, internships, or career enquiries.",
+    "button":   "Get in Touch"
+  },
+  "loading": "Loading team…",
+  "retry":   "Try again",
+  "error":   "Failed to load team data."
+}
