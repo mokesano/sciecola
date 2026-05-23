@@ -105,7 +105,20 @@ jobs:
         exit 1
 
     - name: Perform CodeQL Analysis
+      id: analyze
       uses: github/codeql-action/analyze@v4
       with:
         upload: false
+        category: "/language:${{matrix.language}}/codeql"
+
+    # Optional publication path:
+    # Set repository variable CODEQL_UPLOAD_RESULTS=true to publish SARIF from
+    # this advanced workflow via an explicit upload step.
+    # Keep this false when GitHub CodeQL Default Setup is enabled, otherwise
+    # GitHub will reject advanced SARIF processing.
+    - name: Upload CodeQL SARIF (explicit)
+      if: vars.CODEQL_UPLOAD_RESULTS == 'true'
+      uses: github/codeql-action/upload-sarif@v4
+      with:
+        sarif_file: ${{ steps.analyze.outputs.sarif-output }}
         category: "/language:${{matrix.language}}/codeql"
