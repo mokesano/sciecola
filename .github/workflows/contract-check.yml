@@ -1,0 +1,83 @@
+# .github/workflows/contract-check.yml
+#
+# Letakkan file ini di KEDUA repo:
+#   - wizdam-sikola/.github/workflows/contract-check.yml
+#   - sdgs-mapper/.github/workflows/contract-check.yml
+#
+# Cara kerja:
+#   1. Saat ada push/PR ke branch utama, workflow ini berjalan
+#   2. Memanggil endpoint /api/contract_check.php di staging
+#   3. Jika kontrak dilanggar → PR tidak bisa di-merge
+#
+# Untuk sangia-apis: tambahkan workflow yang mem-publish schema baru
+# ke GitHub Release saat ada perubahan di contract/
+
+name: Sangia API Contract Check
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  contract-check:
+    name: Validasi kontrak sangia-apis
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+
+      # ── Jalankan PHP contract check lokal ──────────────────────────────────
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: curl, json
+
+      - name: Install dependencies
+        run: composer install --no-dev --prefer-dist --quiet
+
+      - name: Jalankan contract self-test
+        run: php tools/contract_selftest.php
+        env:
+          SANGIA_STRICT_CONTRACT: "true"
+          SANGIA_API_URL: ${{ secrets.SANGIA_API_URL_STAGING }}
+          SANGIA_API_KEY: ${{ secrets.SANGIA_API_KEY_STAGING }}
+
+      # ── Validasi JSON Schema ────────────────────────────────────────────────
+      - name: Setup Node.js untuk schema validation
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install ajv-cli
+        run: npm install -g ajv-cli@5
+
+      - name: Validasi format JSON Schema
+        run: |
+          ajv validate \
+            -s contract/sangia-apis.schema.json \
+            -d contract/examples/orcid_analysis_example.json \
+            --strict=false
+
+      # ── Notifikasi saat gagal ───────────────────────────────────────────────
+      - name: Tandai PR dengan label jika gagal
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['contract-violation']
+            });
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: '⚠️ **Contract Check Gagal**\n\nResponse dari sangia-apis tidak sesuai kontrak yang didefinisikan di `contract/sangia-apis.schema.json`. Lihat log workflow untuk detail.\n\nPastikan perubahan di sangia-apis sudah di-update di schema sebelum merge.'
+            });
