@@ -12,7 +12,7 @@
 # Untuk wizdam-apis: tambahkan workflow yang mem-publish schema baru
 # ke GitHub Release saat ada perubahan di contract/
 
-name: Wizdam API Contract Check
+name: Sangia API Contract Check
 
 on:
   push:
@@ -22,7 +22,7 @@ on:
 
 jobs:
   contract-check:
-    name: Validasi kontrak wizdam-apis
+    name: Validasi kontrak sangia-apis
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -59,7 +59,7 @@ jobs:
       - name: Validasi format JSON Schema
         run: |
           ajv validate \
-            -s contract/wizdam-apis.schema.json \
+            -s contract/sangia-apis.schema.json \
             -d contract/examples/orcid_analysis_example.json \
             --strict=false
 
@@ -79,5 +79,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: '⚠️ **Contract Check Gagal**\n\nResponse dari wizdam-apis tidak sesuai kontrak yang didefinisikan di `contract/wizdam-apis.schema.json`. Lihat log workflow untuk detail.\n\nPastikan perubahan di wizdam-apis sudah di-update di schema sebelum merge.'
+              body: '⚠️ **Contract Check Gagal**\n\nResponse dari sangia-apis tidak sesuai kontrak yang didefinisikan di `contract/sangia-apis.schema.json`. Lihat log workflow untuk detail.\n\nPastikan perubahan di sangia-apis sudah di-update di schema sebelum merge.'
             });
