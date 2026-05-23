@@ -10,6 +10,48 @@ const Feeds = () => {
   const [feedPosts, setFeedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Data dummy untuk sidebar (nanti bisa diganti dengan fetch API real)
+  const groups = [
+    { name: 'Riset Iklim', members: 120, icon: '🌍' },
+    { name: 'AI dalam Pendidikan', members: 85, icon: '🤖' },
+    { name: 'Penulis Jurnal', members: 340, icon: '✍️' }
+  ];
+
+  const popularTopics = [
+    { tag: 'SDGs2026', posts: '1.2k' },
+    { tag: 'OpenAccess', posts: '850' },
+    { tag: 'KolaborasiRiset', posts: '540' }
+  ];
+
+  const connections = [
+    { name: 'Dr. Ani Lestari', aff: 'UI Jakarta', avatar: 'https://i.pravatar.cc/150?img=5' },
+    { name: 'Prof. John Doe', aff: 'MIT USA', avatar: 'https://i.pravatar.cc/150?img=3' },
+    { name: 'Siti Nurhaliza', aff: 'ITB Bandung', avatar: 'https://i.pravatar.cc/150?img=9' }
+  ];
+
+  const recentActivities = [
+    { name: 'Budi S.', action: 'mengunggah artikel baru', time: '5m lalu', icon: '📄' },
+    { name: 'Ani L.', action: 'bergabung dengan grup Iklim', time: '1j lalu', icon: '👥' },
+    { name: 'John D.', action: 'memberikan komentar', time: '2j lalu', icon: '💬' }
+  ];
+
+  const invitations = [
+    { name: 'Grup Energi Terbarukan', action: 'mengundang Anda', logo: '⚡' },
+    { name: 'Konferensi Asia 2026', action: 'mengundang Anda', logo: '🎤' }
+  ];
+
+  const events = [
+    { day: '25', month: 'MEI', title: 'Webinar SDG 13', time: '10:00 WIB', location: 'Zoom' },
+    { day: '02', month: 'JUN', title: 'Workshop Penulisan', time: '13:00 WIB', location: 'Jakarta' }
+  ];
+
+  const activeUsers = [
+    { name: 'Rina M.', status: 'online', avatar: 'https://i.pravatar.cc/150?img=10' },
+    { name: 'Dimas P.', status: 'away', avatar: 'https://i.pravatar.cc/150?img=12' },
+    { name: 'Sarah K.', status: 'online', avatar: 'https://i.pravatar.cc/150?img=20' }
+  ];
+  // ----------------------------
+
   // Fetch feed posts on mount
   useEffect(() => {
     const fetchFeedPosts = async () => {
@@ -35,17 +77,45 @@ const Feeds = () => {
   const getSampleFeedPosts = () => [
     {
       id: 1,
-      author_id: 1,
-      author_name: 'Dr. Budi Santoso',
-      author_avatar: 'https://via.placeholder.com/40/6366f1/ffffff?text=BS',
-      post_type: 'announcement',
-      title: 'Peluncuran Platform Baru',
+      type: 'text', // Tambahkan tipe default
+      likes: 12,    // Sesuaikan dengan post.likes di JSX
+      comments: 5,  // Sesuaikan dengan post.comments di JSX
+      shares: 2,    // Sesuaikan dengan post.shares di JSX
+      author: {     // UBAH STRUKTUR INI MENJADI NESTED OBJECT
+        name: 'Dr. Budi Santoso',
+        handle: '@budisantoso',
+        avatar: 'https://via.placeholder.com/40/6366f1/ffffff?text=BS',
+        affiliation: 'Universitas Indonesia',
+        isGroup: false,
+        time: '2 jam yang lalu'
+      },
       content: 'Kami dengan bangga mengumumkan peluncuran fitur baru untuk analisis kolaborasi riset.',
-      image_url: null,
-      likes_count: 12,
-      comments_count: 5,
-      is_pinned: true,
-      created_at: '2026-05-16T10:00:00Z'
+      article: null, // Atau isi jika tipe article
+      file: null,
+      images: null
+    },
+    {
+      id: 2,
+      type: 'article',
+      likes: 45,
+      comments: 12,
+      shares: 8,
+      author: {
+        name: 'Prof. Siti Aminah',
+        handle: '@sitiaminah',
+        avatar: 'https://i.pravatar.cc/150?img=5',
+        affiliation: 'ITB',
+        isGroup: false,
+        time: '5 jam yang lalu'
+      },
+      content: 'Temuan terbaru kami tentang dampak perubahan iklim terhadap biodiversitas laut.',
+      article: {
+        title: 'Dampak Perubahan Iklim pada Biodiversitas Laut',
+        journal: 'Jurnal Ilmu Kelautan',
+        vol: 'Vol. 12, No. 3 (2026)',
+        image: 'https://via.placeholder.com/600x300/10b981/ffffff?text=Artikel+Riset',
+        sdgs: [13, 14]
+      }
     }
   ];
 
