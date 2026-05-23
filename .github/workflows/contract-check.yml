@@ -9,7 +9,7 @@
 #   2. Memanggil endpoint /api/contract_check.php di staging
 #   3. Jika kontrak dilanggar → PR tidak bisa di-merge
 #
-# Untuk wizdam-apis: tambahkan workflow yang mem-publish schema baru
+# Untuk sangia-apis: tambahkan workflow yang mem-publish schema baru
 # ke GitHub Release saat ada perubahan di contract/
 
 name: Sangia API Contract Check
@@ -43,9 +43,9 @@ jobs:
       - name: Jalankan contract self-test
         run: php tools/contract_selftest.php
         env:
-          WIZDAM_STRICT_CONTRACT: "true"
-          WIZDAM_API_URL: ${{ secrets.WIZDAM_API_URL_STAGING }}
-          WIZDAM_API_KEY: ${{ secrets.WIZDAM_API_KEY_STAGING }}
+          SANGIA_STRICT_CONTRACT: "true"
+          SANGIA_API_URL: ${{ secrets.SANGIA_API_URL_STAGING }}
+          SANGIA_API_KEY: ${{ secrets.SANGIA_API_KEY_STAGING }}
 
       # ── Validasi JSON Schema ────────────────────────────────────────────────
       - name: Setup Node.js untuk schema validation
