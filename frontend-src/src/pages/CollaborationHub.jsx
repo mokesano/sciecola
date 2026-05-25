@@ -351,7 +351,7 @@ const CollaborationHub = () => {
                     </div>
                   </div>
                   
-                  <div className="p-6 -mt-12 relative">
+                  <div className="p-6 -mt-24 relative">
                     <img
                       src={researcher.avatar || `https://i.pravatar.cc/150?u=${researcher.orcid}`}
                       alt={researcher.name}
@@ -482,7 +482,7 @@ const CollaborationHub = () => {
       </section>
 
       {/* Collaboration Features */}
-      <section className="py-16 bg-white">
+      <section className="py-28 bg-white">
         <div className="container max-w-7xl mx-auto w-full px-8">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Why Use Collaboration Hub?</h2>
@@ -531,7 +531,7 @@ const CollaborationHub = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white">
+      <section className="py-28 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white">
         <div className="container mx-auto px-8 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to Expand Your Research Network?</h2>
           <p className="text-xl mb-8 text-white/90 max-w-3xl mx-auto">
