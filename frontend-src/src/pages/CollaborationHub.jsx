@@ -5,8 +5,6 @@ import { Users, Network, TrendingUp, Globe, Search, Filter,
   BookOpen, Building2, MapPin, Calendar, ArrowRight, Zap,
   Target, Lightbulb, Handshake
 } from 'lucide-react';
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
 
 const CollaborationHub = () => {
   const navigate = useNavigate();
