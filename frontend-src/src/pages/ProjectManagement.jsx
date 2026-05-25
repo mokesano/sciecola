@@ -4,8 +4,6 @@ import { FolderOpen, Users, Calendar, CheckCircle, Clock, AlertCircle, Plus,
   Search, Filter, MoreVertical, Edit2, Trash2, Share2, Download, MessageSquare,
   FileText, BarChart3, Settings, Eye, Star, Zap, Target, TrendingUp, Award
 } from 'lucide-react';
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
 
 const ProjectManagement = () => {
   const navigate = useNavigate();
@@ -189,7 +187,7 @@ const ProjectManagement = () => {
     <main className="min-h-screen pt-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white py-20 overflow-hidden">
+      <section className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white py-28 overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="container px-8 max-w-7xl mx-auto relative z-10">
           <div className="flex justify-between items-center">
@@ -421,7 +419,7 @@ const ProjectManagement = () => {
       </section>
 
       {/* Quick Actions */}
-      <section className="py-12 bg-white">
+      <section className="pt-20 pb-28 bg-white">
         <div className="container px-8 max-w-7xl mx-auto relative z-10">
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
