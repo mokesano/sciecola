@@ -126,7 +126,7 @@ const ResearchMatching = () => {
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="absolute inset-0">
           <div className="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-300/20 rounded-full blur-4xl animate-pulse delay-1000"></div>
+          <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-300/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
         
         <div className="container px-8 max-w-7xl mx-auto relative z-10">
