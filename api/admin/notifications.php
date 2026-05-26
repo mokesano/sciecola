@@ -1,11 +1,21 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Admin Notifications API
+ * @file api/admin/notifications.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Admin Notifications API - Manages notifications for admin users.
+ * 
+ * Endpoint: Admin Notifications API
  * POST /api/admin/notifications (create/send notification)
  * GET /api/admin/notifications?action=list (list all notifications)
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

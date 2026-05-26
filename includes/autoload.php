@@ -2,6 +2,15 @@
 declare(strict_types=1);
 
 /**
+ * @file includes/autoload.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup includes
+ * @brief PSR-4 autoloader for the Sciecola\ namespace.
+ * 
  * PSR-4 autoloader for the Sciecola\ namespace.
  * Maps Sciecola\Foo\Bar → src/Foo/Bar.php
  *

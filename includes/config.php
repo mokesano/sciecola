@@ -2,7 +2,14 @@
 declare(strict_types=1);
 
 /**
- * SDG Frontend - Configuration File
+ * @file includes/config.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup includes
+ * @brief SDG Frontend - Configuration File
  * Konfigurasi utama untuk aplikasi SDG Classification Analysis
  *
  * @version 1.0.0

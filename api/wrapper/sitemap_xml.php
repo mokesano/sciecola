@@ -1,10 +1,20 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Dynamic XML Sitemap Endpoint
+ * @file api/wrapper/sitemap_xml.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Dynamic XML Sitemap Endpoint.
+ * 
+ * Endpoints:
  * GET /sitemap.xml
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/xml; charset=utf-8');
 

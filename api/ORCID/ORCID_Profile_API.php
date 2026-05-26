@@ -2,6 +2,15 @@
 declare(strict_types=1);
 
 /**
+ * @file api/ORCID/ORCID_Profile_API.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief API untuk menampilkan profil peneliti berdasarkan ORCID.
+ * 
  * API Data Peneliti dengan ORCID - ORCID_Profile_API.php (High-Performance Version)
  * 
  * API untuk menampilkan karya ilmiah peneliti berdasarkan Data ORCID.

@@ -2,6 +2,15 @@
 declare(strict_types=1);
 
 /**
+ * @file api/sdgs/SDGsClassification_v520.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief API untuk klasifikasi dan analisis SDG.
+ * 
  * SDG Classification API Enhanced - Versi yang Benar
  * Hanya menambahkan metadata enhancement tanpa mengubah core analisis SDG
  * 

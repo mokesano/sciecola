@@ -1,12 +1,22 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Admin API: Researchers Management
+ * @file api/admin/researchers.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Researchers Management API for admin users.
+ * 
+ * Endpoint: Researchers Management
  * POST /api/admin/researchers (create)
  * PUT /api/admin/researchers (update)
  * DELETE /api/admin/researchers?orcid=... (delete)
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

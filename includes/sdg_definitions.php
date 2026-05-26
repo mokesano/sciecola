@@ -2,8 +2,14 @@
 declare(strict_types=1);
 
 /**
- * SDG Frontend - SDG Definitions
- * Definisi lengkap 17 Sustainable Development Goals sesuai standar UN
+ * @file includes/sdg_definitions.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup includes
+ * @brief SDG Frontend - SDG Definitions
  * 
  * @version 1.0.0
  * @author Rochmady and Sciecola Team

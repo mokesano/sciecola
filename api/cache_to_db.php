@@ -1,7 +1,15 @@
 <?php
 declare(strict_types=1);
-
 /**
+ * @file api/cache_to_db.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Cache to Database Migration API.
+ * 
  * AJAX endpoint: Migrate file-based cache to database
  * POST /api/cache_to_db.php
  * Body: { "action": "migrate" | "status" | "clear_cache" }

@@ -1,7 +1,15 @@
 <?php
 declare(strict_types=1);
-
 /**
+ * @file api/crawl_queue.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Crawling Queue Manager API.
+ * 
  * Crawling Queue Manager
  * Handles queuing and processing of ORCID/DOI crawl jobs
  *

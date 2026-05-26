@@ -2,6 +2,15 @@
 declare(strict_types=1);
 
 /**
+ * @file api/proxy.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Reverse proxy for handling API requests to wizdam-apis.
+ * 
  * Reverse proxy to wizdam-apis (https://api.sangia.org).
  * Adds API key server-side so the key is never exposed to the browser.
  */

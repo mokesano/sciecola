@@ -1,6 +1,17 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @file tools/cache-migrator.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup tools
+ * @brief Tool untuk memigrasi file cache ke database.
+ */
+
 // =============================================================
 // WIZDAM CACHE MIGRATOR: WEB BATCH MODE
 // Memindahkan file cache JSON dari /cache/ ke database terpusat

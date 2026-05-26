@@ -1,9 +1,19 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Partners API — returns research/data/policy collaborators from the partners table.
+ * @file api/wrapper/partners.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Partners API — returns research/data/policy collaborators from the partners table.
  * Partners are NOT financial sponsors; they are institutions collaborating
  * on data, research, policy, or technology.
- *
+ * 
+ * Endpoints:
  * GET /api/wrapper/partners.php?type=all|academic|nonprofit|industry|government
  *                               &search=keyword&limit=100
  * Returns: { status, partners[], total, type_counts{}, timestamp }
@@ -13,7 +23,6 @@
  *         partner_categories (id, name, description)
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

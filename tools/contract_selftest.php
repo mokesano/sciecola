@@ -2,19 +2,19 @@
 declare(strict_types=1);
 
 /**
- * contract_selftest.php — v2 (dengan diagnostik lengkap)
+ * @file tools/contract_selftest.php
  *
- * Letakkan di: /tools/contract_selftest.php
- *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup tools
+ * @brief Tool untuk menguji kontrak API Wizdam.
+ * 
  * Jalankan:
  *   php tools/contract_selftest.php
  *   php tools/contract_selftest.php --diagnose   (mode diagnosa penuh)
- *
- * Perbaikan dari v1:
- *   - Tampilkan raw response saat JSON gagal parse
- *   - Detect HTML/PHP error page dan beri penjelasan
- *   - Probe endpoint dulu sebelum validasi kontrak
- *   - Tangani HTTP 404/500 secara eksplisit
+ *   php tools/contract_selftest.php --verbose    (tampilkan raw response)
  */
 
 require_once __DIR__ . '/../library/WizdamApiContractValidator.php';

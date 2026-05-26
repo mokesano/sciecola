@@ -1,15 +1,24 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Cache Handler API
- * Prioritizes: Cache Folder → Database → External API → Queue
+ * @file api/wrapper/cache_handler.php
  *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Cache Handler API - Manages caching logic for API responses.
+ * Prioritizes: Cache Folder → Database → External API → Queue
+ * 
+ * Endpoints:
  * GET  /api/cache_handler.php?type=orcid&identifier=0000-0002-5152-9727
  * GET  /api/cache_handler.php?type=doi&identifier=10.1234/...
  * POST /api/cache_handler.php { action:"sync", type:"orcid", limit:10 }
  * GET  /api/cache_handler.php?action=status&type=orcid
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

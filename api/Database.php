@@ -2,7 +2,16 @@
 declare(strict_types=1);
 
 /**
- * Database.php — PDO wrapper supporting MariaDB and PostgreSQL.
+ * @file api/Database.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Database class for SDG Classification Analysis API.
+ * 
+ * PDO wrapper supporting MariaDB and PostgreSQL.
  * Replaces the old gzip file-based cache with persistent DB storage.
  *
  * Usage:

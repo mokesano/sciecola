@@ -2,8 +2,15 @@
 declare(strict_types=1);
 
 /**
- * File: /includes/functions.php
- * Kumpulan fungsi utama untuk Sicola (Diambil dari logika inti wizdam-sicola.php v2.0.1)
+ * @file includes/functions.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup includes
+ * @brief Fungsi-fungsi utama untuk aplikasi Sicola.
+ * 
  * Fitur Utama: Anti-Timeout Proxy & Batching Processor
  */
 

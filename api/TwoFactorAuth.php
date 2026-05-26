@@ -1,8 +1,16 @@
 <?php
 declare(strict_types=1);
 /**
- * TwoFactorAuth — TOTP-based 2FA implementation (RFC 6238 / Google Authenticator compatible)
+ * @file api/TwoFactorAuth.php
  *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Implementation of two-factor authentication using TOTP (Time-Based One-Time Password).
+ * 
+ * TwoFactorAuth — TOTP-based 2FA implementation (RFC 6238 / Google Authenticator compatible)
  * Does NOT require any external library — uses pure PHP HMAC-SHA1 per the TOTP spec.
  * For production, you can replace this with the `pragmarx/google2fa` Composer package.
  *

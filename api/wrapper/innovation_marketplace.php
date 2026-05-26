@@ -1,11 +1,21 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Innovation Marketplace API
+ * @file api/wrapper/innovation_marketplace.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Innovation Marketplace API - Aggregates innovation opportunities with SDG classification.
+ * 
+ * Endpoints:
  * GET /api/innovation_marketplace?category=all&search=
  * POST /api/innovation_marketplace/apply
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

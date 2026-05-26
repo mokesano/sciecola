@@ -2,8 +2,16 @@
 declare(strict_types=1);
 
 /**
- * Admin Teams API — super admin CRUD for team_members.
+ * @file api/wrapper/admin_teams.php
  *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Admin Teams API — super admin CRUD for team_members.
+ * 
+ * Endpoints:
  *   GET    ?action=list                → all members incl. hidden
  *   GET    ?action=departments         → departments + researcher candidates
  *   POST   ?action=create              → insert team member

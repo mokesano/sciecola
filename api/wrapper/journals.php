@@ -2,14 +2,22 @@
 declare(strict_types=1);
 
 /**
- * Journals List API - Returns paginated list of journals with Scopus metrics
+ * @file api/wrapper/journals.php
  *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Journals List API - Returns paginated list of journals with Scopus metrics
+ * 
+ * Endpoint:
  * GET /api/journals.php?page=1&limit=20&sort=citescore&search=environmental
  *
  * Reads from: journals table (with optional ecosystem_cache for metrics)
  * Falls back to: sample data if DB is unavailable
  *
- * @author Claude Code
+ * @author Rochmady and Claude Code
  * @version 1.0.0
  */
 

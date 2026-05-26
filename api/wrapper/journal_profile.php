@@ -2,15 +2,22 @@
 declare(strict_types=1);
 
 /**
- * Journal Profile API - Aggregates journal metrics with SDG classification
+ * @file api/wrapper/journal_profile.php
  *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Journal Profile API - Aggregates journal metrics with SDG classification.
+ * 
  * Combines data from:
  * - Scopus journal-checker: Journal metrics (CiteScore, Quartile, SJR, SNIP)
  * - SDG Classification API: Article distribution by SDGs (optional)
  *
  * Response includes: journal info, metrics, coverage, SDG distribution
  *
- * @author Claude Code
+ * @author Rochmady and Claude Code
  * @version 1.0.0
  */
 
