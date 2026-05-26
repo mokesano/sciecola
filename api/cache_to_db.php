@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * @file api/cache_to_db.php
  *
@@ -16,6 +17,7 @@ declare(strict_types=1);
  *
  * Migrates to: ecosystem_cache, researchers, publications
  */
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
