@@ -6,8 +6,8 @@ const BOT_GREETING =
 
 const KNOWLEDGE_BASE = [
   { q: 'cara menggunakan orcid analisis profil',        a: 'Masukkan ORCID (format: 0000-0000-0000-0000) di form analisis pada halaman utama untuk melihat profil lengkap beserta distribusi SDGs dari publikasi Anda.' },
-  { q: 'apa itu orcid nomor id peneliti',                a: 'ORCID adalah identifikasi unik peneliti internasional berformat 0000-0000-0000-0000. Platform ini menggunakannya untuk mengambil data publikasi secara otomatis.' },
-  { q: 'cari profil peneliti',                           a: 'Kunjungi halaman Peneliti untuk mencari berdasarkan nama atau institusi, atau langsung ketik ORCID di form analisis di halaman utama.' },
+  { q: 'apa itu orcid nomor id peneliti',               a: 'ORCID adalah identifikasi unik peneliti internasional berformat 0000-0000-0000-0000. Platform ini menggunakannya untuk mengambil data publikasi secara otomatis.' },
+  { q: 'cari profil peneliti',                          a: 'Kunjungi halaman Peneliti untuk mencari berdasarkan nama atau institusi, atau langsung ketik ORCID di form analisis di halaman utama.' },
   { q: 'cara menggunakan doi analisis artikel',         a: 'Masukkan DOI artikel (contoh: 10.1234/example) di form analisis untuk melihat klasifikasi SDGs, metrik dampak, dan sitasi artikel tersebut.' },
   { q: 'apa itu doi digital object identifier',         a: 'DOI (Digital Object Identifier) adalah identifikasi unik untuk artikel ilmiah. Format umum: 10.xxxx/... Gunakan DOI untuk mengakses profil artikel di platform ini.' },
   { q: 'cari artikel riset publikasi',                  a: 'Kunjungi halaman Artikel untuk mencari berdasarkan judul, penulis, atau tahun. Atau gunakan form DOI di halaman utama untuk analisis langsung.' },
@@ -157,7 +157,7 @@ const Chatbot = () => {
       {isOpen && (
         <div
           className="fixed bottom-24 right-6 z-50 flex flex-col rounded-2xl shadow-2xl overflow-hidden bg-white"
-          style={{ width: '400px', height: '600px', maxHeight: 'calc(100vh - 120px)' }}
+          style={{ width: '400px', height: '680px', maxHeight: 'calc(100vh - 120px)' }}
         >
           {/* ── HOME TAB ────────────────────────────────────────── */}
           {activeTab === 'home' && (
