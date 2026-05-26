@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * File: /includes/bootstrap.php
  * Pusat inisialisasi dan Routing utama (Front Controller) Sciecola.

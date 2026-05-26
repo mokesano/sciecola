@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * SDG Frontend - SDG Definitions
  * Definisi lengkap 17 Sustainable Development Goals sesuai standar UN

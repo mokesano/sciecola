@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * TwoFactorAuth — TOTP-based 2FA implementation (RFC 6238 / Google Authenticator compatible)
  *

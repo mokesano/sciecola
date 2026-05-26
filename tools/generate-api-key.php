@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 // =============================================================
 // WIZDAM API KEY GENERATOR
 // Membuat API key untuk sdgs-mapper agar bisa memanggil wizdam-apis

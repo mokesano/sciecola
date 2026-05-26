@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Article Profile API - Aggregates DOI article data with SDG classification and journal metrics
  *

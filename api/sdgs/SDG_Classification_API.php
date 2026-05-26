@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * API of SDG Classification and Analysis
  * Sistem klasifikasi SDG dengan orientasi dampak yang lebih kuat

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * File: /includes/functions.php
  * Kumpulan fungsi utama untuk Sicola (Diambil dari logika inti wizdam-sicola.php v2.0.1)

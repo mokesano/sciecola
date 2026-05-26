@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Journal Profile API - Aggregates journal metrics with SDG classification
  *

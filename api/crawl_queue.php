@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Crawling Queue Manager
  * Handles queuing and processing of ORCID/DOI crawl jobs

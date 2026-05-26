@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * File: config/config.php
  * Konfigurasi Utama Sicola — loads .env then exposes typed constants.

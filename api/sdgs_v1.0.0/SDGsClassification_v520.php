@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * SDG Classification API Enhanced - Versi yang Benar
  * Hanya menambahkan metadata enhancement tanpa mengubah core analisis SDG

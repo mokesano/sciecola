@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Database.php — PDO wrapper supporting MariaDB and PostgreSQL.
  * Replaces the old gzip file-based cache with persistent DB storage.

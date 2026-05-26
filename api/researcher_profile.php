@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * researcher_profile.php — dengan integrasi WizdamApiContractValidator

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * SDG Classification API Enhanced - WORKING TIMEOUT FIX
  * Versi yang benar-benar berfungsi untuk mengatasi error 524

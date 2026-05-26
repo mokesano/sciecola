@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * API Data Peneliti dengan ORCID - ORCID_Profile_API.php (High-Performance Version)
  * 

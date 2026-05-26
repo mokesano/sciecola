@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * SDG Frontend - Configuration File
  * Konfigurasi utama untuk aplikasi SDG Classification Analysis

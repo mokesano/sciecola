@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 // =============================================================
 // WIZDAM CACHE MIGRATOR: WEB BATCH MODE
 // Memindahkan file cache JSON dari /cache/ ke database terpusat

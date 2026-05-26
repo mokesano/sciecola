@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * MailService — Email notification dispatcher
  * Uses PHPMailer when available; falls back to PHP mail() for local testing.

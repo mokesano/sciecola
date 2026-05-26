@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Reverse proxy to wizdam-apis (https://api.sangia.org).
  * Adds API key server-side so the key is never exposed to the browser.

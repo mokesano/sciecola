@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Admin Teams API — super admin CRUD for team_members.
  *
@@ -19,7 +21,6 @@
  *       Frontend uses /admin route which already requires admin.
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * AJAX endpoint: Migrate file-based cache to database
  * POST /api/cache_to_db.php
