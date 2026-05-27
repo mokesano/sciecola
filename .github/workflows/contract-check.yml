@@ -34,6 +34,37 @@ jobs:
       - name: Checkout kode
         uses: actions/checkout@v4
 
+      # ── Cek ketersediaan API endpoint ──────────────────────────────────
+      - name: Check API availability
+        id: api_check
+        run: |
+          API_URL="${{ secrets.SANGIA_API_URL_STAGING }}"
+          if [ -n "$API_URL" ]; then
+            echo "Checking API availability at $API_URL..."
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$API_URL/health" 2>/dev/null || echo "000")
+            if [ "$HTTP_STATUS" = "200" ] || [ "$HTTP_STATUS" = "204" ]; then
+              echo "API_AVAILABLE=true" >> $GITHUB_OUTPUT
+              echo "✅ API is available (HTTP $HTTP_STATUS)"
+            else
+              echo "API_AVAILABLE=false" >> $GITHUB_OUTPUT
+              echo "⚠️ API not available (HTTP $HTTP_STATUS), will use local schema"
+            fi
+          else
+            echo "API_AVAILABLE=false" >> $GITHUB_OUTPUT
+            echo "⚠️ SANGIA_API_URL_STAGING not set, will use local schema"
+          fi
+
+      # ── Fallback: Gunakan schema lokal jika API tidak tersedia ──────────────────────────────────
+      - name: Use local schema (fallback)
+        if: steps.api_check.outputs.API_AVAILABLE == 'false'
+        run: |
+          echo "📁 Using local schema from contract/ directory"
+          echo "SCHEMA_SOURCE=local" >> $GITHUB_OUTPUT
+          if [ ! -f "contract/sangia-apis.schema.json" ]; then
+            echo "::error::Local schema file not found! Please ensure contract/sangia-apis.schema.json exists."
+            exit 1
+          fi
+
       # ── Jalankan PHP contract check lokal ──────────────────────────────────
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -48,8 +79,9 @@ jobs:
         run: php tools/contract_selftest.php
         env:
           SANGIA_STRICT_CONTRACT: "true"
-          SANGIA_API_URL: ${{ secrets.SANGIA_API_URL_STAGING }}
-          SANGIA_API_KEY: ${{ secrets.SANGIA_API_KEY_STAGING }}
+          SANGIA_API_URL: ${{ steps.api_check.outputs.API_AVAILABLE == 'true' && secrets.SANGIA_API_URL_STAGING || '' }}
+          SANGIA_API_KEY: ${{ steps.api_check.outputs.API_AVAILABLE == 'true' && secrets.SANGIA_API_KEY_STAGING || '' }}
+          SANGIA_SCHEMA_PATH: ${{ steps.api_check.outputs.API_AVAILABLE == 'false' && 'contract/sangia-apis.schema.json' || '' }}
 
       # ── Validasi JSON Schema ────────────────────────────────────────────────
       - name: Setup Node.js untuk schema validation
