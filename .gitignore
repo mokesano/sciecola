@@ -1,29 +1,83 @@
-```yaml
-name: Contract Check
-on:
-  pull_request:
-    branches: [ main ]
-  push:
-    branches: [ main ]
+# Sicola .gitignore
 
-jobs:
-  check-contracts:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Run contract tests
-      run: npm test contracts/
-      
-    - name: Verify contract addresses
-      run: |
-        node scripts/verify-contracts.js
-```
+# Database
+/database/sciecola.db
+/database/*.db
+/database/*.sqlite
+
+# Runtime / Storage
+/storage/
+/api/cache/
+/logs/*.log
+!/logs/.gitkeep
+
+# Dependencies
+/vendor/
+/node_modules/
+node_modules/
+frontend-src/node_modules/
+# frontend-src/package-lock.json
+.pnpm/
+.yarn/
+yarn.lock
+# package-lock.json
+
+# PHP
+*.phar
+Library/
+
+# Vite/Rollup
+dist/
+build/
+.vite/
+*.map
+
+# Environment
+.env.local
+.env*.local
+*.env
+.env
+.env.*
+!.env.example
+
+# Testing
+coverage/
+.nyc_output/
+*.test.*
+*.spec.*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build artifacts
+/dist/
+/public/build/
+/public/assets/sicola-ui/
+
+# Editor / OS
+.DS_Store
+.DS_Store?
+desktop.ini
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Optional: Jika pakai TypeScript
+*.tsbuildinfo
+
+# Debug files
+/public/debug.php
+
+# Deployment artifacts
+.github/workflows/webdeploy.yml
