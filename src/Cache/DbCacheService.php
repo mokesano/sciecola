@@ -7,6 +7,14 @@ namespace Sciecola\Cache;
 use Sciecola\Database\Connection;
 
 /**
+ * @file src/Cache/DbCacheService.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup src
+ * @brief Implementation for database-backed cache service.
  * Database-backed cache using wizdam_ecosystem unified schema.
  *
  * Tables used:
@@ -14,6 +22,7 @@ use Sciecola\Database\Connection;
  *   researchers      — ORCID profile cache (profile_cache_json column)
  *   publications     — DOI raw data cache (raw_data_json + sdg_cache_json columns)
  */
+
 class DbCacheService
 {
     private Connection $db;

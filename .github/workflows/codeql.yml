@@ -105,6 +105,7 @@ jobs:
         exit 1
 
     - name: Perform CodeQL Analysis
+      id: analyze
       uses: github/codeql-action/analyze@v4
       with:
         upload: false
@@ -119,5 +120,5 @@ jobs:
       if: vars.CODEQL_UPLOAD_RESULTS == 'true'
       uses: github/codeql-action/upload-sarif@v4
       with:
-        sarif_file: ${{ runner.temp }}/codeql_databases/${{ matrix.language }}/results.sarif
+        sarif_file: ${{ steps.analyze.outputs.sarif-output }}
         category: "/language:${{matrix.language}}/codeql"

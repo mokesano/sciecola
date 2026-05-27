@@ -1,14 +1,21 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Aggregated ORCID Researcher Profile API
+ * @file api/wrapper/researcher_profile.php
  *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Aggregated ORCID Researcher Profile API.
  * Menggabungkan: ORCID init + semua batch works + wizdam-apis impact score
  * Output: JSON terpadu siap digunakan ResearcherProfile.jsx
- *
+ * 
+ * Endpoints:
  * GET /api/researcher_profile.php?orcid=0000-0000-0000-0000
  */
-
-declare(strict_types=1);
 
 define('SCIECOLA_API_CONTEXT', true);
 $configFile = __DIR__ . '/../../config/config.php';

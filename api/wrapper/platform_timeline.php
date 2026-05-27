@@ -1,10 +1,20 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Platform Timeline API
+ * @file api/wrapper/platform_timeline.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Platform Timeline API.
+ * 
+ * Endpoints:
  * GET /api/platform_timeline.php?limit=50&sort=date
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

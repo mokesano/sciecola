@@ -1,7 +1,15 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Article Profile API - Aggregates DOI article data with SDG classification and journal metrics
+ * @file api/wrapper/article_profile.php
  *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Article Profile API - Aggregates DOI article data with SDG classification and journal metrics.
  * Combines data from:
  * - SDG_Classification_API.php: Article metadata + SDG classification
  * - Crossref API: Journal ISSN (via Crossref direct call)
@@ -9,7 +17,7 @@
  *
  * Response includes: article info, authors, SDG distribution, journal metrics, citation trends
  *
- * @author Claude Code
+ * @author Rochmady and Claude Code
  * @version 1.0.0
  */
 
