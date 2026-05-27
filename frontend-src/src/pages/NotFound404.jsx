@@ -16,23 +16,6 @@ const NotFound404 = () => {
           <div className="absolute inset-0 blur-3xl opacity-30 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></div>
         </div>
 
-        {/* Icon */}
-        <div className="mb-6">
-          <svg
-            className="w-24 h-24 mx-auto text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        </div>
-
         {/* Message */}
         <h2 className="text-3xl font-bold text-gray-900 mb-4">
           {t('error.pageNotFound', 'Halaman Tidak Ditemukan')}
@@ -43,27 +26,6 @@ const NotFound404 = () => {
             'Maaf, halaman yang Anda cari tidak dapat ditemukan. Mungkin halaman telah dipindahkan atau dihapus.'
           )}
         </p>
-
-        {/* Possible Reasons */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">
-            {t('error.possibleReasons', 'Kemungkinan Penyebab')}
-          </h3>
-          <ul className="text-left text-gray-600 space-y-2">
-            <li className="flex items-start">
-              <span className="text-red-500 mr-2">•</span>
-              {t('error.reason1', 'URL yang dimasukkan salah atau tidak lengkap')}
-            </li>
-            <li className="flex items-start">
-              <span className="text-red-500 mr-2">•</span>
-              {t('error.reason2', 'Halaman telah dipindahkan ke lokasi baru')}
-            </li>
-            <li className="flex items-start">
-              <span className="text-red-500 mr-2">•</span>
-              {t('error.reason3', 'Halaman telah dihapus atau tidak tersedia')}
-            </li>
-          </ul>
-        </div>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">

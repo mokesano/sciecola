@@ -1,7 +1,16 @@
 <?php
+declare(strict_types=1);
+
 /**
- * File: /includes/functions.php
- * Kumpulan fungsi utama untuk Sicola (Diambil dari logika inti wizdam-sicola.php v2.0.1)
+ * @file includes/functions.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup includes
+ * @brief Fungsi-fungsi utama untuk aplikasi Sicola.
+ * 
  * Fitur Utama: Anti-Timeout Proxy & Batching Processor
  */
 
@@ -171,6 +180,24 @@ function send_json_response(array $data, int $status = 200): void {
 // 4. API WRAPPER ROUTER
 // ================================================================
 
+
+function is_sitemap_xml_request(): bool {
+    $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+    return $uri === '/sitemap.xml';
+}
+
+function route_sitemap_xml(): void {
+    $apiFile = ROOT_PATH . '/api/wrapper/sitemap_xml.php';
+    if (!file_exists($apiFile)) {
+        http_response_code(503);
+        header('Content-Type: application/xml; charset=utf-8');
+        echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>';
+        exit;
+    }
+    require $apiFile;
+    exit;
+}
+
 function is_wrapper_api_request(): bool {
     $uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
     return (bool) preg_match('#^/api/([a-z]+/)?[^/]+\.php$#i', $uri);
@@ -193,7 +220,7 @@ function route_api_wrapper(): void {
         'my_articles.php', 'my_collections.php', 'my_profile.php',
         'my_statistics.php', 'platform_stats.php', 'projects.php',
         'researcher_distribution.php', 'researcher_profile.php', 'researchers.php',
-        'research_matching.php', 'sdg_distribution.php', 'trends.php',
+        'research_matching.php', 'sdg_distribution.php', 'sitemap.php', 'trends.php',
     ];
 
     static $admin_allowed = [

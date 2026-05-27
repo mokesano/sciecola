@@ -1,5 +1,16 @@
 <?php
+declare(strict_types=1);
+
 /**
+ * @file api/MailService.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Email notification service for SDG Classification Analysis API.
+ * 
  * MailService — Email notification dispatcher
  * Uses PHPMailer when available; falls back to PHP mail() for local testing.
  *

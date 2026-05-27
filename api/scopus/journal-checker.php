@@ -1,5 +1,16 @@
 <?php
+declare(strict_types=1);
+
 /**
+ * @file api/scopus/journal-checker.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief API untuk mengecek metrik jurnal Scopus.
+ * 
  * Scopus Journal Metrics Checker - Enhanced Version
  * 
  * Fitur: CiteScore, Quartile, SJR, SNIP, Subject Areas, Discontinued Status

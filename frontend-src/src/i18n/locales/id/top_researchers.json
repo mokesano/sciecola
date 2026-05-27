@@ -1,0 +1,110 @@
+{
+  "breadcrumb": {
+    "home":      "Beranda",
+    "analytics": "Analytics",
+    "current":   "Peneliti Terkemuka"
+  },
+  "header": {
+    "title":    "Peneliti Terkemuka",
+    "subtitle": "Peringkat peneliti berdasarkan kombinasi metrik akademik, dampak publikasi, dan jangkauan kolaborasi."
+  },
+  "filter": {
+    "search_placeholder": "Cari nama peneliti atau institusi…",
+    "sdg_all":   "Semua SDGs",
+    "sdg_label": "SDG {{number}}",
+    "country_all": "Semua Negara",
+    "sort": {
+      "label":        "Urutkan",
+      "impact":       "Skor Dampak",
+      "citations":    "Sitasi Tertinggi",
+      "hindex":       "H-Index",
+      "publications": "Jumlah Publikasi"
+    },
+    "reset": "Reset Filter"
+  },
+  "detail": {
+    "title":           "Detail Peneliti",
+    "affiliation":     "Afiliasi",
+    "country":         "Negara",
+    "impact_score":    "Skor Dampak",
+    "metrics":         "Metrik Akademik",
+    "hindex":          "H-Index",
+    "citations":       "Sitasi",
+    "publications":    "Publikasi",
+    "top_pubs":        "Publikasi Teratas",
+    "collab_network":  "Jaringan Kolaborasi",
+    "collab_total":    "Total",
+    "collab_domestic": "Domestik",
+    "collab_intl":     "Internasional",
+    "profile_radar":   "Profil Dampak (Multi-dimensi)",
+    "open_profile":    "Buka Profil Peneliti",
+    "close":           "Tutup",
+    "no_top_pubs":     "Belum ada data publikasi teratas",
+    "no_collab":       "Belum ada data kolaborasi"
+  },
+  "table": {
+    "title": "Daftar Peneliti",
+    "columns": {
+      "researcher":    "Peneliti",
+      "affiliation":   "Afiliasi",
+      "hindex":        "H-Index",
+      "publications":  "Publikasi",
+      "citations":     "Sitasi",
+      "collab":        "Kolaborasi",
+      "impact_score":  "Skor Dampak"
+    },
+    "collab_domestic": "{{n}} domestik",
+    "collab_intl":     "{{n}} int'l",
+    "no_match": {
+      "title":    "Tidak ada peneliti yang cocok",
+      "subtitle": "Coba ubah filter SDG, negara, atau kata kunci pencarian."
+    },
+    "no_data": {
+      "title":    "Data peneliti belum tersedia",
+      "subtitle": "Belum ada peneliti terindeks. Data akan muncul setelah profil peneliti disinkronisasi dari ORCID."
+    }
+  },
+  "pagination": {
+    "prev":     "Sebelumnya",
+    "next":     "Berikutnya",
+    "showing":  "Menampilkan {{from}}-{{to}} dari {{total}} peneliti"
+  },
+  "explanation": {
+    "title":    "Tentang Skor Dampak Peneliti",
+    "subtitle": "Skor dampak adalah kombinasi terbobot dari beberapa metrik (0-100).",
+    "components": {
+      "academic": {
+        "title":  "Metrik Akademik",
+        "weight": "40%",
+        "desc":   "H-Index dinormalisasi terhadap peneliti dengan H-Index tertinggi pada database."
+      },
+      "citation": {
+        "title":  "Dampak Sitasi",
+        "weight": "30%",
+        "desc":   "Jumlah sitasi (skala logaritmik) untuk memberikan bobot proporsional pada peneliti dengan sitasi sangat tinggi."
+      },
+      "productivity": {
+        "title":  "Produktivitas",
+        "weight": "20%",
+        "desc":   "Jumlah publikasi (skala logaritmik) sebagai indikator produktivitas riset."
+      },
+      "collab": {
+        "title":  "Jangkauan Kolaborasi",
+        "weight": "10%",
+        "desc":   "Jumlah ko-penulis berbeda (domestik + internasional) sebagai indikator jejaring riset."
+      }
+    }
+  },
+  "distribution": {
+    "title":    "Distribusi Peneliti per SDG",
+    "subtitle": "Jumlah peneliti yang berkontribusi pada masing-masing SDG (top 8)",
+    "researchers": "Peneliti",
+    "no_data": {
+      "title":    "Belum ada data distribusi",
+      "subtitle": "Data akan muncul setelah peneliti memiliki publikasi yang terklasifikasi per SDG."
+    }
+  },
+  "loading": "Memuat data peneliti...",
+  "retry":   "Coba lagi",
+  "error":   "Gagal memuat data. Silakan coba lagi."
+}

@@ -1,12 +1,22 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Admin API: Innovation Opportunities Management
+ * @file api/admin/opportunities.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Innovation Opportunities Management API for admin users.
+ * 
+ * Endpoint: Innovation Opportunities Management
  * POST /api/admin/opportunities.php (create)
  * PUT /api/admin/opportunities.php (update)
  * DELETE /api/admin/opportunities.php?id=... (delete)
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

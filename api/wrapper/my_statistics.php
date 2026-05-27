@@ -1,12 +1,21 @@
 <?php
+declare(strict_types=1);
+
 /**
- * My Statistics API
- * Returns time-series impact data derived from the researcher's ORCID profile.
+ * @file api/wrapper/my_statistics.php
  *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief My Statistics API.
+ * Returns time-series impact data derived from the researcher's ORCID profile.
+ * 
+ * Endpoints:
  * GET /api/my_statistics.php?orcid=...&range=12
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

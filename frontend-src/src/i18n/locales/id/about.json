@@ -1,0 +1,53 @@
+{
+  "breadcrumb": { "home": "Beranda", "current": "Tentang Kami" },
+  "header": {
+    "title":    "Tentang Sciecola",
+    "subtitle": "Memajukan Tujuan Pembangunan Berkelanjutan melalui analitik riset berbasis kecerdasan buatan."
+  },
+  "mission": {
+    "title":       "Misi Kami",
+    "paragraph":   "Kami percaya kecerdasan buatan dapat menjadi kekuatan untuk perubahan positif. Misi kami adalah mempercepat kemajuan menuju SDGs PBB dengan membuat dampak riset lebih terlihat, terukur, dan dapat ditindaklanjuti.",
+    "cards": {
+      "global":      { "title": "Dampak Global",        "description": "Memberdayakan peneliti di seluruh dunia untuk memahami dan memperkuat kontribusi mereka terhadap pembangunan berkelanjutan." },
+      "ai":          { "title": "Inovasi AI",           "description": "Memanfaatkan AI terkini untuk memberikan klasifikasi SDG yang akurat dan komprehensif." },
+      "community":   { "title": "Berbasis Komunitas",   "description": "Membangun platform kolaboratif yang menghubungkan peneliti, institusi, dan pembuat kebijakan." }
+    }
+  },
+  "tech": {
+    "title":       "Teknologi Kami",
+    "subtitle":    "Sistem klasifikasi SDG kami menggabungkan beberapa pendekatan AI untuk analisis yang komprehensif dan akurat:",
+    "items": {
+      "keyword":     { "title": "Analisis Kata Kunci",      "description": "Pencocokan semantik canggih terhadap kosakata dan taksonomi SDG yang komprehensif.", "weight": 30 },
+      "similarity":  { "title": "Pemetaan Kemiripan",       "description": "Model deep learning yang memahami hubungan kontekstual antara konten riset dan tema SDG.", "weight": 30 },
+      "substantive": { "title": "Analisis Substantif",      "description": "Evaluasi kedalaman riset dan relevansi metodologi terhadap target dan indikator SDG spesifik.", "weight": 20 },
+      "causal":      { "title": "Inferensi Kausal",         "description": "Deteksi hubungan kausal dan bukti dampak langsung terhadap hasil SDG.", "weight": 20 }
+    }
+  },
+  "stats": {
+    "title":       "Dampak dalam Angka",
+    "subtitle":    "Indikator langsung dari database kami — diperbarui seiring pertumbuhan platform.",
+    "loading":     "Memuat statistik platform…",
+    "empty":       "Statistik belum tersedia."
+  },
+  "values": {
+    "title":       "Nilai Kami",
+    "items": {
+      "transparency":  { "title": "Transparansi", "description": "Kami percaya pada AI yang terbuka dan dapat dijelaskan yang dapat dipercaya peneliti." },
+      "collaboration": { "title": "Kolaborasi",   "description": "Kami bekerja erat dengan komunitas riset untuk terus meningkatkan platform." },
+      "sustainability":{ "title": "Keberlanjutan","description": "Kami berkomitmen pada tanggung jawab lingkungan dalam semua operasi dan keputusan." },
+      "equity":        { "title": "Kesetaraan",   "description": "Kami berupaya membuat alat kami dapat diakses oleh peneliti dan institusi di seluruh dunia." }
+    }
+  },
+  "see_also": {
+    "title":    "Lihat Juga",
+    "history":  { "title": "Sejarah Platform", "subtitle": "Baca perjalanan dan tonggak penting platform." },
+    "team":     { "title": "Kenali Tim",       "subtitle": "Mengenal orang-orang di balik Sciecola." }
+  },
+  "cta": {
+    "title":      "Bergabunglah dengan Misi Kami",
+    "subtitle":   "Siap menemukan dampak SDG dari riset Anda? Mulai hari ini atau pelajari lebih lanjut tentang solusi enterprise kami.",
+    "analyze":    "Mulai Analisis",
+    "contact":    "Hubungi Kami",
+    "learn":      "Pelajari Lebih Lanjut"
+  }
+}

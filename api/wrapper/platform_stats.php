@@ -1,11 +1,21 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Platform Statistics API
+ * @file api/wrapper/platform_stats.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Platform Statistics API.
+ * 
+ * Endpoints:
  * GET /api/platform_stats.php
  * Reads from: publications, researchers, journals, work_sdgs
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

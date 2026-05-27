@@ -1,0 +1,121 @@
+{
+  "breadcrumb": {
+    "home":      "Home",
+    "analytics": "Analytics",
+    "current":   "Trends Analysis"
+  },
+  "header": {
+    "title":    "Research Trends Analysis",
+    "subtitle": "In-depth analysis of research impact, collaboration, and trending topics based on publication data."
+  },
+  "filter": {
+    "sdg_all":    "All SDGs",
+    "sdg_label":  "SDG {{number}}",
+    "period": {
+      "all":      "All Time",
+      "years_3":  "Last 3 Years",
+      "years_5":  "Last 5 Years",
+      "years_7":  "Last 7 Years",
+      "years_10": "Last 10 Years"
+    },
+    "show_insights": "Show Insights",
+    "hide_insights": "Hide Insights"
+  },
+  "insights": {
+    "title":            "Trends Analysis Overview",
+    "main_trends":      "Main Trends",
+    "policy_recs":      "Policy Recommendations",
+    "summary_template": "Research impact trends show progress with total growth of {{total}}% over the last {{years}} years. Forecast for the next {{nextYears}} years: score {{nextScore}}.",
+    "trend_1":  "Academic impact growth of {{academic}}% reflects consistent improvement in publication quality",
+    "trend_2":  "International collaboration shows positive trends with cross-country researcher participation",
+    "trend_3":  "Focus on strategic SDGs (Climate, Industry, Energy) with the highest growth and impact",
+    "rec_1":    "Increase funding support for high-growth topics",
+    "rec_2":    "Strengthen international collaboration programs with key regional partners",
+    "rec_3":    "Develop dissemination mechanisms to expand social impact",
+    "rec_4":    "Maintain SDG research momentum with sustainable policies"
+  },
+  "topic_cards": {
+    "title":          "Promising Research Topics",
+    "subtitle":       "Topics with the highest growth based on publication data",
+    "growth_label":   "Growth",
+    "impact_label":   "Impact potential:",
+    "impact_high":    "Very High",
+    "impact_medium":  "High",
+    "impact_low":     "Medium",
+    "publications":   "publications",
+    "no_data": {
+      "title":    "No topics identified yet",
+      "subtitle": "Topics will appear once publication data is sufficient for growth calculation."
+    }
+  },
+  "prediction": {
+    "title":     "Research Impact Forecast",
+    "actual":    "Actual Impact",
+    "predicted": "Predicted Impact",
+    "insight":   "Linear projection shows a {{direction}} trend with a score approaching {{score}} by {{year}}.",
+    "direction_up":   "upward",
+    "direction_down": "downward",
+    "no_data": {
+      "title":    "No forecast data yet",
+      "subtitle": "At least 2 years of data are required to generate a forecast."
+    }
+  },
+  "topics_growth": {
+    "title":      "Topics with Highest Growth",
+    "growth_pct": "Growth (%)",
+    "insight":    "Top 3 growing topics: {{top3}}. These topics show strong momentum in the research ecosystem.",
+    "no_data": {
+      "title":    "No growth data yet",
+      "subtitle": "Data will appear once publications have been classified for at least 2 years."
+    }
+  },
+  "impact_trends": {
+    "title":             "Research Impact Trends",
+    "academic":          "Academic Impact",
+    "social":            "Social Media Impact",
+    "practical":         "Practical Impact",
+    "total":             "Total Impact Score",
+    "delta_label":       "Change from {{year}}",
+    "social_unavailable": "Social media impact data not available",
+    "practical_unavailable": "Practical impact data not available",
+    "no_data": {
+      "title":    "No impact trend data yet",
+      "subtitle": "Data will appear once publications are indexed with sufficient citation data."
+    }
+  },
+  "field_trends": {
+    "title":   "Trends per SDG (Top 5)",
+    "insight": "Highest-impact SDGs: {{top}}. These trends indicate dominant research focus areas.",
+    "no_data": {
+      "title":    "No per-SDG trend data yet",
+      "subtitle": "Data will appear once publications are classified by SDG over multiple years."
+    }
+  },
+  "collab_trend": {
+    "title":          "Collaboration Trends",
+    "national":       "National Collaboration",
+    "international":  "International Collaboration",
+    "insight":        "International collaboration trends reflect successful internationalization programs.",
+    "no_data": {
+      "title":    "No collaboration data yet",
+      "subtitle": "Data will appear once researchers are linked to institutions with country information."
+    }
+  },
+  "top_countries": {
+    "title":          "Top Collaborator Countries",
+    "collaborations": "Collaborations",
+    "no_data": {
+      "title":    "No collaborator country data yet",
+      "subtitle": "Data will appear once there are publications with foreign collaborators."
+    }
+  },
+  "regional": {
+    "title":           "Regional Impact Comparison",
+    "impact_label":    "Average Impact Score",
+    "growth_label":    "Impact Growth (%)",
+    "insight":         "Indonesia shows high impact growth in the ASEAN region. With this trend, Indonesia has the potential to surpass higher-ranked countries in the coming years."
+  },
+  "loading": "Loading trends data...",
+  "retry":   "Try again",
+  "error":   "Failed to load data. Please try again."
+}

@@ -1,0 +1,53 @@
+{
+  "breadcrumb": { "home": "Home", "current": "About Us" },
+  "header": {
+    "title":    "About Sciecola",
+    "subtitle": "Advancing the UN Sustainable Development Goals through AI-powered research analytics."
+  },
+  "mission": {
+    "title":       "Our Mission",
+    "paragraph":   "We believe artificial intelligence can be a powerful force for positive change. Our mission is to accelerate progress toward the UN Sustainable Development Goals by making research impact more visible, measurable, and actionable.",
+    "cards": {
+      "global":      { "title": "Global Impact",        "description": "Empowering researchers worldwide to understand and strengthen their contribution to sustainable development." },
+      "ai":          { "title": "AI Innovation",        "description": "Using state-of-the-art AI to deliver accurate and comprehensive SDG classifications." },
+      "community":   { "title": "Community Driven",     "description": "Building a collaborative platform connecting researchers, institutions, and policy makers." }
+    }
+  },
+  "tech": {
+    "title":       "Our Technology",
+    "subtitle":    "Our SDG classification system combines several AI approaches for comprehensive, accurate analysis:",
+    "items": {
+      "keyword":     { "title": "Keyword Analysis",       "description": "Advanced semantic matching against a comprehensive SDG vocabulary and taxonomy.", "weight": 30 },
+      "similarity":  { "title": "Similarity Mapping",     "description": "Deep learning models understanding contextual relationships between research and SDG themes.", "weight": 30 },
+      "substantive": { "title": "Substantive Analysis",   "description": "Evaluating research depth and methodological relevance to specific SDG targets and indicators.", "weight": 20 },
+      "causal":      { "title": "Causal Inference",       "description": "Detecting causal relationships and evidence of direct impact on SDG outcomes.", "weight": 20 }
+    }
+  },
+  "stats": {
+    "title":       "Impact in Numbers",
+    "subtitle":    "Live indicators from our database — updated as the platform grows.",
+    "loading":     "Loading platform stats…",
+    "empty":       "Stats not available yet."
+  },
+  "values": {
+    "title":       "Our Values",
+    "items": {
+      "transparency":  { "title": "Transparency",  "description": "We believe in open, explainable AI that researchers can trust and understand." },
+      "collaboration": { "title": "Collaboration", "description": "We work closely with the research community to continuously improve our platform." },
+      "sustainability":{ "title": "Sustainability","description": "We are committed to environmental responsibility in all our operations and decisions." },
+      "equity":        { "title": "Equity",        "description": "We strive to make our tools accessible to researchers and institutions worldwide." }
+    }
+  },
+  "see_also": {
+    "title":    "See Also",
+    "history":  { "title": "Platform History",   "subtitle": "Read the platform's journey and milestones." },
+    "team":     { "title": "Meet the Team",      "subtitle": "Get to know the people building Sciecola." }
+  },
+  "cta": {
+    "title":      "Join Our Mission",
+    "subtitle":   "Ready to discover the SDG impact of your research? Get started today or learn more about our enterprise solutions.",
+    "analyze":    "Analyze Now",
+    "contact":    "Contact Us",
+    "learn":      "Learn More"
+  }
+}
