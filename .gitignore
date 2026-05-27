@@ -2,24 +2,28 @@
 name: Contract Check
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches: [ main ]
   push:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
-  check-contract:
+  check-contracts:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Run contract checks
-        run: npm run test:contract
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run contract tests
+      run: npm test contracts/
+      
+    - name: Verify contract addresses
+      run: |
+        node scripts/verify-contracts.js
 ```
