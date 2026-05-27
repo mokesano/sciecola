@@ -1,6 +1,16 @@
 <?php
+declare(strict_types=1);
+
 /**
- * File: config/config.php
+ * @file config/config.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup config
+ * @brief Konfigurasi utama untuk aplikasi Sicola.
+ * 
  * Konfigurasi Utama Sicola — loads .env then exposes typed constants.
  */
 

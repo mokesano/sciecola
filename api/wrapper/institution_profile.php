@@ -1,10 +1,20 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Institution Profile API
+ * @file api/wrapper/institution_profile.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Institution Profile API - Aggregates institution metrics with SDG classification.
+ * 
+ * Endpoint:
  * GET /api/institution_profile.php?id={institutionId}
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

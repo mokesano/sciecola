@@ -1,13 +1,23 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Leaderboard API
+ * @file api/wrapper/leaderboard.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Leaderboard API.
+ * 
+ * Endpoint:
  * GET /api/leaderboard.php?type=researchers|journals|institutions
  *                          &limit=20&sdg=0-17&country=Indonesia
  * Reads from: researchers, publications, publication_authors,
  *             journals, institutions, work_sdgs
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
