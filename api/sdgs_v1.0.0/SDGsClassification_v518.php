@@ -1,6 +1,16 @@
 <?php
+declare(strict_types=1);
+
 /**
- * SDG Classification API
+ * @file api/sdgs/SDGsClassification_v518.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief API untuk klasifikasi dan analisis SDG.
+ * 
  * Sistem klasifikasi SDG dengan orientasi dampak yang lebih kuat
  * Fokus pada kontribusi transformatif dan hubungan kausal dengan SDG
  * 

@@ -1,13 +1,22 @@
 <?php
+declare(strict_types=1);
+
 /**
- * My Activity API
- * DB-first, file-based fallback.
+ * @file api/wrapper/my_activity.php
  *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief My Activity API — records and retrieves user activities (views, saves, downloads, searches, etc).
+ * DB-first, file-based fallback.
+ * 
+ * Endpoints:
  * GET  /api/my_activity.php?orcid=...&range=7days&type=all&page=1
  * POST /api/my_activity.php { orcid, type, category, title, target_id, detail, metadata:{} }
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

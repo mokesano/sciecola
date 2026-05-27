@@ -1,11 +1,21 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Admin API: Researcher Expertise Management
+ * @file api/admin/expertise.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Admin Expertise Management API - Manages researcher expertise records for admin users.
+ * 
+ * Endpoint: Researcher Expertise Management
  * POST /api/admin/expertise.php (add expertise)
  * DELETE /api/admin/expertise.php?id=... (delete expertise)
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

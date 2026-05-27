@@ -1,11 +1,21 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Notifications API
+ * @file api/wrapper/notifications.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Notifications API.
+ * 
+ * Endpoints:
  * GET /api/notifications.php?orcid=&unread_only=1&type=&limit=50
  * PUT /api/notifications.php?id=&action=read|delete
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

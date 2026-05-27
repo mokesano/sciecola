@@ -1,6 +1,17 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Top Researchers API
+ * @file api/wrapper/top_researchers.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Top Researchers API.
+ * 
+ * Endpoints:
  * GET /api/top_researchers.php[?page=1&limit=10&sort=impact|citations|hindex|publications
  *                              &sdg=13&country=Indonesia&search=...]
  *
@@ -13,7 +24,6 @@
  *         journals, work_sdgs.
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

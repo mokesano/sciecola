@@ -1,6 +1,17 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Article Impact Metrics API
+ * @file api/wrapper/article_impact.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Article Impact Metrics API - Provides impact metrics for articles based on various criteria.
+ * 
+ * Endpoint:
  * GET /api/article_impact.php[?sdg=13&years=5&sort=impact|citations|year&page=1&limit=10]
  *
  * Dipakai oleh halaman ArticleImpactMetrics.jsx untuk:
@@ -12,7 +23,6 @@
  *          "social_impact" dan "practical_impact" → 0 (perlu sumber eksternal: Altmetric, dsb.)
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

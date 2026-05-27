@@ -1,8 +1,18 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Sponsors API — returns active financial sponsors from the sponsors table.
- * Sponsors are organizations approved after applying via BecomeSponsor.
+ * @file api/wrapper/sponsors.php
  *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Sponsors API — returns active financial sponsors from the sponsors table.
+ * Sponsors are organizations approved after applying via BecomeSponsor.
+ * 
+ * Endpoints:
  * GET /api/wrapper/sponsors.php?tier=all|platinum|gold|silver|bronze
  *                               &search=keyword&limit=100
  * Returns: { status, sponsors[], summary{}, tier_counts{}, timestamp }
@@ -11,7 +21,6 @@
  *                   focus_areas JSON, since_date, is_active)
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

@@ -1,4 +1,17 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file tools/generate-api-key.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup tools
+ * @brief Tool untuk menghasilkan API key untuk sdgs-mapper.
+ */
+
 // =============================================================
 // WIZDAM API KEY GENERATOR
 // Membuat API key untuk sdgs-mapper agar bisa memanggil wizdam-apis

@@ -1,12 +1,22 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Admin API: Projects Management
+ * @file api/admin/projects.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Projects Management API for admin users.
+ * 
+ * Endpoint: Projects Management
  * POST /api/admin/projects.php (create)
  * PUT /api/admin/projects.php (update)
  * DELETE /api/admin/projects.php?id=... (delete)
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
