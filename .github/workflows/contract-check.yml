@@ -20,6 +20,10 @@ on:
   pull_request:
     branches: [main, master]
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   contract-check:
     name: Validasi kontrak sangia-apis
