@@ -10,56 +10,91 @@
 # https://github.com/codacy/codacy-analysis-cli-action.
 # For more information on Codacy Analysis CLI in general, see
 # https://github.com/codacy/codacy-analysis-cli.
+# .github/workflows/codacy.yml
 
 name: Codacy Security Scan
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop", "production" ]  # ✅ Sesuaikan dengan workflow branch promotion Anda
   pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ "main" ]
+    branches: [ "main", "develop", "production" ]
   schedule:
-    - cron: '35 15 * * 2'
+    - cron: '35 15 * * 2'  # Tetap: Selasa 15:35 UTC
 
 jobs:
   codacy-security-scan:
+    # ✅ Mencegah eksekusi pada fork PR yang tidak memiliki akses secrets
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     name: Codacy Security Scan
     runs-on: ubuntu-latest
     permissions:
       contents: read              # Untuk actions/checkout
-      security-events: write      # Wajib untuk upload SARIF ke GitHub
-      actions: read               # Untuk status check pada private repo
-    
+      security-events: write      # Wajib untuk upload SARIF ke GitHub Code Scanning
+      actions: read               # Untuk status check
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Penting untuk analisis diff yang akurat
 
-      - name: Run Codacy Analysis CLI
-        uses: codacy/codacy-analysis-cli-action@v4.4.7  # Gunakan version tag resmi [[1]]
+      # ✅ Setup PHP environment (karena project menggunakan PHP backend)
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          # Token proyek Codacy (opsional jika hanya ingin generate SARIF lokal)
+          php-version: '8.1'
+          tools: composer
+          coverage: none
+
+      # ✅ Setup Node.js untuk frontend scanning
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
+
+      # ✅ Install dependencies (opsional, tapi membantu Codacy memahami struktur)
+      - name: Install dependencies
+        run: |
+          if [ -f composer.json ]; then composer install --no-dev --no-interaction; fi
+          if [ -f package.json ]; then npm ci --ignore-scripts; fi
+
+      # ✅ Run Codacy Analysis CLI dengan parameter yang benar
+      - name: Run Codacy Analysis
+        uses: codacy/codacy-analysis-cli-action@v4.4.7
+        with:
+          # ⚠️ Token opsional: jika tidak diisi, hasil hanya lokal (tidak dikirim ke Codacy dashboard)
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           
-          # Output SARIF untuk GitHub Code Scanning
+          # ✅ Output SARIF untuk GitHub Code Scanning
           output: results.sarif
           format: sarif
           
-          # Kompatibilitas dengan GitHub Code Scanning
-          gh-code-scanning-compat: true
+          # ✅ Aktifkan mode kompatibilitas GitHub (parameter yang benar)
+          code-scanning: true
           
-          # Force exit code 0 agar SARIF tetap ter-generate meski ada issue
+          # ✅ Force exit code 0 agar workflow tidak gagal meski ada temuan
           max-allowed-issues: 2147483647
           
-          # Verbosity untuk debugging
+          # ✅ Filter: skip folder yang tidak relevan untuk mengurangi false positive
+          exclude-paths: >-
+            **/node_modules/**,
+            **/vendor/**,
+            **/cache/**,
+            **/logs/**,
+            **/*.min.js,
+            **/dist/**,
+            **/build/**
+          
+          # ✅ Verbosity untuk debugging (bisa dihapus jika sudah stabil)
           verbose: true
 
-      - name: Upload SARIF to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v4
-        if: always()  # Tetap upload meski step sebelumnya warning/error
+      # ✅ Upload SARIF ke GitHub Code Scanning (dengan validasi file)
+      - name: Upload SARIF to GitHub
+        uses: github/codeql-action/upload-sarif@v3  # ✅ Gunakan v3 yang stabil
+        if: always() && hashFiles('results.sarif') != ''  # ✅ Hanya upload jika file SARIF ada
         with:
           sarif_file: results.sarif
-          category: codacy-security  # Penting jika ada multiple tools
+          category: codacy  # ✅ Unik, penting jika ada multiple tools
