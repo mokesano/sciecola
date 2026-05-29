@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * File: index.php
  *
@@ -15,7 +17,7 @@
  * - Jika ada ?proxy_action= → balas JSON (mode proxy)
  * - Jika tidak → tampilkan halaman HTML
  * 
- * @version 3.0.0 - React + PHP Backend (Opsi A)
+ * @version 1.0.0 - React + PHP Backend
  */
 
 // Aktifkan saat debugging, nonaktifkan di production:

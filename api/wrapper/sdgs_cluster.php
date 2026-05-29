@@ -1,6 +1,17 @@
 <?php
+declare(strict_types=1);
+
 /**
- * SDGs Cluster Timeline API
+ * @file api/wrapper/sdgs_cluster.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief SDGs Cluster Timeline API.
+ * 
+ * Endpoints:
  * GET /api/sdgs_cluster.php[?years=5&sdg=13]
  *   years = 3..10 → range tahun (default 5)
  *   sdg   = 1..17 → filter satu SDG (opsional)
@@ -12,7 +23,6 @@
  * Sumber data: work_sdgs JOIN publications (group by publication_year + sdg_number).
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

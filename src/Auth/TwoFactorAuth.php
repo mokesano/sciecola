@@ -5,10 +5,19 @@ declare(strict_types=1);
 namespace Sciecola\Auth;
 
 /**
+ * @file src/Auth/TwoFactorAuth.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup src
+ * @brief Implementation for two-factor authentication using TOTP.
  * TOTP-based 2FA (RFC 6238 / Google Authenticator compatible).
  *
  * No external library required — pure PHP HMAC-SHA1.
  */
+
 class TwoFactorAuth
 {
     private static ?self $instance = null;

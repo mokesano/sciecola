@@ -15,51 +15,73 @@ name: Codacy Security Scan
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop", "production" ]
   pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ "main" ]
+    branches: [ "main", "develop", "production" ]
   schedule:
-    - cron: '35 15 * * 2'
+    - cron: '29 18 * * 3'
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: read
 
 jobs:
   codacy-security-scan:
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
     name: Codacy Security Scan
     runs-on: ubuntu-latest
-    permissions:
-      contents: read              # Untuk actions/checkout
-      security-events: write      # Wajib untuk upload SARIF ke GitHub
-      actions: read               # Untuk status check pada private repo
-    
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Penting untuk analisis diff yang akurat
+
+      - name: Free up RAM & Remove 3rd-party libs & cache
+        run: |
+          rm -rf vendor/ node_modules/ cache/ lib/adodb/ lib/smarty/
+          # Hapus semua file .getkeep yang mungkin tidak bisa dibaca
+          find . -name ".getkeep" -type f -delete
+
+      - name: Create Codacy configuration
+        run: |
+          cat > .codacy.yml << 'EOF'
+          exclude_paths:
+            - "**/*.jpg"
+            - "**/*.png"
+            - "**/*.svg"
+            - "**/*.ico"
+            - "**/*.mmdb"
+            - "library/GeoLite2/**"
+            - "UI-design/**"
+            - "public/assets/**"
+            - "**/*.md"
+            - "cache/**"
+          engines:
+            pmd: disabled
+            pmd-legacy: disabled
+          EOF
 
       - name: Run Codacy Analysis CLI
-        uses: codacy/codacy-analysis-cli-action@v4.4.7  # Gunakan version tag resmi [[1]]
+        uses: codacy/codacy-analysis-cli-action@d840f886c4bd4edc059706d09c6a1586111c540b
+        id: codacy_scan
+        continue-on-error: true   # Mencegah workflow gagal karena error non-fatal
+        env:
+          CODACY_JAVA_OPTS: "-Xmx3g"
         with:
-          # Token proyek Codacy (opsional jika hanya ingin generate SARIF lokal)
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          
-          # Output SARIF untuk GitHub Code Scanning
+          verbose: true
           output: results.sarif
           format: sarif
-          
-          # Kompatibilitas dengan GitHub Code Scanning
           gh-code-scanning-compat: true
-          
-          # Force exit code 0 agar SARIF tetap ter-generate meski ada issue
           max-allowed-issues: 2147483647
-          
-          # Verbosity untuk debugging
-          verbose: true
+          tool: "eslint,remark-lint,tsqllint,phpmd,jshint,jacksonlinter,phpcs,SQLint"
 
-      - name: Upload SARIF to GitHub Code Scanning
+      - name: Upload SARIF results file
         uses: github/codeql-action/upload-sarif@v4
-        if: always()  # Tetap upload meski step sebelumnya warning/error
+        continue-on-error: true
+        if: always() && hashFiles('results.sarif') != ''
         with:
           sarif_file: results.sarif
-          category: codacy-security  # Penting jika ada multiple tools

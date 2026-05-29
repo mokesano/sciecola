@@ -1,13 +1,23 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Trends Analysis API
+ * @file api/wrapper/trends_analysis.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Trends Analysis API.
+ * 
+ * Endpoints:
  * GET /api/trends_analysis.php[?years=5&sdg=13]
  *   years = 0 → all time
  *   sdg   = 1..17 → filter by SDG (optional)
  * Reads from: publications, work_sdgs, publication_authors, researchers, institutions
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
