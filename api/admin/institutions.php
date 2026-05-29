@@ -1,12 +1,22 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Admin Institutions API
+ * @file api/admin/institutions.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Admin Institutions API - Manages institution records for admin users.
+ * 
+ * Endpoint: Admin Institutions API
  * POST /api/admin/institutions (create)
  * PUT /api/admin/institutions (update)
  * DELETE /api/admin/institutions (delete)
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

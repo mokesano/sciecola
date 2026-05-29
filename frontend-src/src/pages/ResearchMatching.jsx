@@ -1,31 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Brain,
-  Users,
-  Target,
-  Zap,
-  Search,
-  Filter,
-  Sparkles,
-  TrendingUp,
-  Award,
-  BookOpen,
-  Building2,
-  MapPin,
-  Mail,
-  ExternalLink,
-  CheckCircle,
-  Star,
-  Lightbulb,
-  Network,
-  ArrowRight,
-  Heart,
-  MessageSquare,
-  Share2
+import { Brain, Users, Target, Zap, Search, Filter, Sparkles, TrendingUp,
+  Award, BookOpen, Building2, MapPin, Mail, ExternalLink, CheckCircle,
+  Star, Lightbulb, Network, ArrowRight, Heart, MessageSquare, Share2
 } from 'lucide-react';
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
 
 const ResearchMatching = () => {
   const navigate = useNavigate();
@@ -144,7 +122,7 @@ const ResearchMatching = () => {
     <main className="min-h-screen pt-20 bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50">
       
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white py-20 overflow-hidden">
+      <section className="relative bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white py-28 overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="absolute inset-0">
           <div className="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
@@ -162,7 +140,7 @@ const ResearchMatching = () => {
               Research Matching
             </h1>
             
-            <p className="text-xl md:text-2xl mb-8 text-white/90 max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl mb-8 text-white/90 max-w-4xl mx-auto">
               Discover perfect research collaborators using advanced AI algorithms that analyze expertise, interests, and compatibility
             </p>
           </div>
@@ -170,11 +148,11 @@ const ResearchMatching = () => {
       </section>
 
       {/* Search Criteria Section */}
-      <section className="py-12 -mt-8">
+      <section className="py-28">
         <div className="container px-8 max-w-7xl mx-auto">
           <div className="bg-white rounded-3xl shadow-2xl p-8 mb-12">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Find Your Perfect Match</h2>
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">Find Your Perfect Match</h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
                 Tell us about your research interests and we'll find researchers with complementary expertise
               </p>
@@ -275,7 +253,7 @@ const ResearchMatching = () => {
 
           {/* AI Matching Features */}
           {!showResults && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                 {
                   icon: Brain,
@@ -312,7 +290,7 @@ const ResearchMatching = () => {
             <div>
               <div className="flex justify-between items-center mb-8">
                 <div>
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Top Matches Found</h2>
+                  <h2 className="text-4xl font-bold text-gray-900 mb-2">Top Matches Found</h2>
                   <p className="text-gray-600">Based on your research profile and preferences</p>
                 </div>
                 <div className="flex gap-2">
@@ -459,11 +437,11 @@ const ResearchMatching = () => {
 
       {/* How It Works */}
       {!showResults && (
-        <section className="py-16 bg-white">
+        <section className="pt-20 pb-28 bg-white">
           <div className="container px-8 max-w-7xl mx-auto relative">
             <div className="text-center mb-12">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">How AI Matching Works</h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              <p className="text-xl text-gray-600 max-w-4xl mx-auto">
                 Our advanced algorithm analyzes multiple dimensions to find your ideal research partners
               </p>
             </div>
@@ -487,7 +465,7 @@ const ResearchMatching = () => {
                     <p className="text-gray-600 text-sm">{item.desc}</p>
                   </div>
                   {index < 3 && (
-                    <ArrowRight className="hidden md:block absolute top-1/2 -right-4 w-8 h-8 text-purple-300 transform -translate-y-1/2" />
+                    <ArrowRight className="hidden md:block absolute top-1/2 -right-8 w-8 h-8 text-purple-300 transform -translate-y-1/2" />
                   )}
                 </div>
               ))}

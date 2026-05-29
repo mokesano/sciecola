@@ -8,7 +8,14 @@ use MaxMind\Db\Reader;
 use MaxMind\Db\Reader\InvalidDatabaseException;
 
 /**
- * MaxMind GeoLite2 IP geolocation service.
+ * @file src/Geo/GeoLite2Service.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup src
+ * @brief Implementation for MaxMind GeoLite2 IP geolocation service.
  *
  * Priority (graceful fallback):
  * 1. PHP geoip2 extension (reads .mmdb directly)
@@ -17,6 +24,7 @@ use MaxMind\Db\Reader\InvalidDatabaseException;
  *
  * If any method fails, silently falls through to next priority.
  */
+
 class GeoLite2Service
 {
     private static ?Reader $reader = null;

@@ -1,12 +1,22 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Collaboration Hub API
+ * @file api/wrapper/collaboration.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Collaboration Hub API - Aggregates collaboration opportunities with SDG classification.
+ * 
+ * Endpoints:
  * GET /api/collaboration/researchers?status=open&sdg=13
  * GET /api/collaboration/stats
  * POST /api/collaboration/request
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

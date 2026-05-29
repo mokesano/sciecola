@@ -9,9 +9,19 @@ use MaxMind\Db\Reader\InvalidDatabaseException;
 use MaxMind\Db\Reader\Metadata;
 
 /**
+ * @file library/MaxMind/Db/Reader.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup library
+ * @brief Reader for MaxMind DB files.
+ * 
  * Reads MaxMind DB files (.mmdb) — bundled from MaxMind's MIT-licensed PHP reader.
  * Source: https://github.com/maxmind/MaxMind-DB-Reader-php (MIT License)
  */
+
 class Reader
 {
     private const DATA_SECTION_SEPARATOR_SIZE = 16;

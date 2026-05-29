@@ -1,7 +1,21 @@
 <?php
+declare(strict_types=1);
+
 /**
- * File: /includes/bootstrap.php
- * Pusat inisialisasi dan Routing utama (Front Controller) Sciecola.
+ * @file includes/bootstrap.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup includes
+ * @brief Pusat inisialisasi dan Routing utama (Front Controller) Sciecola.
+ * 
+ * File ini di-include oleh public/index.php sebagai titik masuk utama aplikasi.
+ * 
+ * @author Rochmady and Sangia Publishing House
+ * @license MIT
+ * @version 1.0.0
  */
 
 // 1. Pastikan ROOT_PATH sudah ada (dari public/index.php)

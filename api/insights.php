@@ -1,4 +1,17 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @file api/insights.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief API untuk menampilkan wawasan tentang riset SDG.
+ */
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 

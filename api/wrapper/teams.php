@@ -1,15 +1,24 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Public Teams API — list of platform team members (managed by super admin).
+ * @file api/wrapper/teams.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Public Teams API — list of platform team members (managed by super admin).
  * Schema-aware: name comes from researchers via orcid FK; team_members holds
  *   position, bio, photo, expertise, social_links, display_order, slug, code,
  *   long_bio, joined_year, location, sdg_focus, is_visible.
- *
+ * 
+ * Endpoints:
  * GET /api/wrapper/teams.php?department=all|<slug>&limit=100
  * Returns: { status, members[], total, department_counts{}, timestamp }
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

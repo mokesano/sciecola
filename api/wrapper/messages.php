@@ -1,11 +1,21 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Messages API
+ * @file api/wrapper/messages.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Messages API.
+ * 
+ * Endpoints:
  * GET /api/messages.php?action=list|get|send
  * POST /api/messages.php
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

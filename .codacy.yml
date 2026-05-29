@@ -1,0 +1,38 @@
+# Abaikan direktori yang tidak perlu dianalisis
+exclude_paths:
+  - "library/GeoLite2/**"
+  - "UI-design/**"
+  - "public/assets/**"
+  - "**/*.mmdb"
+  - "**/*.jpg"
+  - "**/*.png"
+  - "**/*.ico"
+  - "**/*.svg"
+  - "**/*.md"
+
+# Atur bahasa dan tool yang relevan dengan proyek Anda
+languages:
+  javascript: true
+  typescript: true
+  php: true
+
+# Konfigurasi spesifik untuk setiap tool
+engines:
+  eslint:
+    enabled: true
+    # Jalankan ESLint untuk semua file JavaScript/TypeScript
+    include_paths:
+      - "frontend-src/**/*.js"
+      - "frontend-src/**/*.jsx"
+      - "frontend-src/**/*.ts"
+      - "frontend-src/**/*.tsx"
+  phpmd:
+    enabled: true
+    # Batasi analisis PHP hanya pada direktori yang relevan
+    include_paths:
+      - "src/**/*.php"
+  # Nonaktifkan tool yang tidak diperlukan untuk proyek ini
+  pmd: disabled
+  pmd-legacy: disabled
+  checkstyle: disabled
+  # ... (tool lain yang tidak relevan dapat dinonaktifkan juga)
