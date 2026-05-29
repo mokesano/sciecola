@@ -146,6 +146,12 @@ const setByPath = (obj, path, value) => {
   const lastKey = keys[keys.length - 1];
   if (!isSafeKey(lastKey)) return next;
   if (!Array.isArray(cursor) && !isPlainObject(cursor)) return next;
+
+  // Final write guard: only assign on safe containers and safe own/new slots.
+  // This keeps behavior (create/update field) while preventing dangerous chain writes.
+  const hasOwnLastKey = Object.prototype.hasOwnProperty.call(cursor, lastKey);
+  if (!hasOwnLastKey && BLOCKED_KEYS.has(lastKey)) return next;
+
   cursor[lastKey] = value;
   return next;
 };
