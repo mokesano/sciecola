@@ -6,8 +6,8 @@ const BOT_GREETING =
 
 const KNOWLEDGE_BASE = [
   { q: 'cara menggunakan orcid analisis profil',        a: 'Masukkan ORCID (format: 0000-0000-0000-0000) di form analisis pada halaman utama untuk melihat profil lengkap beserta distribusi SDGs dari publikasi Anda.' },
-  { q: 'apa itu orcid nomor id peneliti',                a: 'ORCID adalah identifikasi unik peneliti internasional berformat 0000-0000-0000-0000. Platform ini menggunakannya untuk mengambil data publikasi secara otomatis.' },
-  { q: 'cari profil peneliti',                           a: 'Kunjungi halaman Peneliti untuk mencari berdasarkan nama atau institusi, atau langsung ketik ORCID di form analisis di halaman utama.' },
+  { q: 'apa itu orcid nomor id peneliti',               a: 'ORCID adalah identifikasi unik peneliti internasional berformat 0000-0000-0000-0000. Platform ini menggunakannya untuk mengambil data publikasi secara otomatis.' },
+  { q: 'cari profil peneliti',                          a: 'Kunjungi halaman Peneliti untuk mencari berdasarkan nama atau institusi, atau langsung ketik ORCID di form analisis di halaman utama.' },
   { q: 'cara menggunakan doi analisis artikel',         a: 'Masukkan DOI artikel (contoh: 10.1234/example) di form analisis untuk melihat klasifikasi SDGs, metrik dampak, dan sitasi artikel tersebut.' },
   { q: 'apa itu doi digital object identifier',         a: 'DOI (Digital Object Identifier) adalah identifikasi unik untuk artikel ilmiah. Format umum: 10.xxxx/... Gunakan DOI untuk mengakses profil artikel di platform ini.' },
   { q: 'cari artikel riset publikasi',                  a: 'Kunjungi halaman Artikel untuk mencari berdasarkan judul, penulis, atau tahun. Atau gunakan form DOI di halaman utama untuk analisis langsung.' },
@@ -141,14 +141,14 @@ const Chatbot = () => {
       <button
         onClick={() => setIsOpen(v => !v)}
         aria-label={isOpen ? 'Tutup chatbot' : 'Buka chatbot'}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-xl flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95"
+        className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-xl flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95"
       >
         {isOpen ? (
           <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
           </svg>
         ) : (
-          <svg className="w-7 h-7" viewBox="0 0 28 32" fill="currentColor" stroke="none">
+          <svg className="w-6 h-6" viewBox="0 0 28 32" fill="currentColor" stroke="none">
             <path stroke="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M28 32s-4.714-1.855-8.527-3.34H3.437C1.54 28.66 0 27.026 0 25.013V3.644C0 1.633 1.54 0 3.437 0h21.125c1.898 0 3.437 1.632 3.437 3.645v18.404H28V32zm-4.139-11.982a.88.88 0 00-1.292-.105c-.03.026-3.015 2.681-8.57 2.681-5.486 0-8.517-2.636-8.571-2.684a.88.88 0 00-1.29.107 1.01 1.01 0 00-.219.708.992.992 0 00.318.664c.142.128 3.537 3.15 9.762 3.15 6.226 0 9.621-3.022 9.763-3.15a.992.992 0 00.317-.664 1.01 1.01 0 00-.218-.707z"></path>
           </svg>
         )}
@@ -157,7 +157,7 @@ const Chatbot = () => {
       {isOpen && (
         <div
           className="fixed bottom-24 right-6 z-50 flex flex-col rounded-2xl shadow-2xl overflow-hidden bg-white"
-          style={{ width: '400px', height: '600px', maxHeight: 'calc(100vh - 120px)' }}
+          style={{ width: '400px', height: '680px', maxHeight: 'calc(100vh - 120px)' }}
         >
           {/* ── HOME TAB ────────────────────────────────────────── */}
           {activeTab === 'home' && (

@@ -1,5 +1,16 @@
 <?php
+declare(strict_types=1);
+
 /**
+ * @file api/sdgs/SDG_Classification_API_NEW.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief API untuk klasifikasi dan analisis SDG.
+ * 
  * SDG Classification API Enhanced - WORKING TIMEOUT FIX
  * Versi yang benar-benar berfungsi untuk mengatasi error 524
  * 

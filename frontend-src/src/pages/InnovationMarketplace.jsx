@@ -4,8 +4,6 @@ import { Lightbulb, Handshake, Building2, TrendingUp, Search, Filter, ArrowRight
   DollarSign, Users, Calendar, MapPin, Target, Zap, Award, BookOpen, Globe, MessageSquare,
   Share2, ExternalLink, Star, CheckCircle, Clock, Briefcase
 } from 'lucide-react';
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
 
 const InnovationMarketplace = () => {
   const navigate = useNavigate();
@@ -158,7 +156,7 @@ const InnovationMarketplace = () => {
     <main className="min-h-screen pt-20 bg-gradient-to-br from-slate-50 via-orange-50 to-yellow-50">
       
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-orange-600 via-yellow-600 to-amber-600 text-white py-20 overflow-hidden">
+      <section className="relative bg-gradient-to-r from-orange-600 via-yellow-600 to-amber-600 text-white py-28 overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="absolute inset-0">
           <div className="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
@@ -199,7 +197,7 @@ const InnovationMarketplace = () => {
       </section>
 
       {/* Search & Filter Section */}
-      <section className="py-12 -mt-8">
+      <section className="py-28 -mt-8">
         <div className="container px-8 max-w-7xl mx-auto">
           <div className="bg-white rounded-3xl shadow-2xl p-8 mb-8">
             <div className="flex flex-col lg:flex-row gap-6 items-center justify-between">
@@ -384,7 +382,7 @@ const InnovationMarketplace = () => {
       </section>
 
       {/* How It Works */}
-      <section className="py-16 bg-white">
+      <section className="py-28 bg-white">
         <div className="container px-8 max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">How Innovation Marketplace Works</h2>
@@ -395,10 +393,10 @@ const InnovationMarketplace = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {[
-              { step: 1, title: 'Discover Opportunities', desc: 'Browse curated research partnerships from leading organizations', icon: Search, color: 'from-orange-500 to-yellow-500' },
-              { step: 2, title: 'Submit Proposal', desc: 'Apply with your research proposal and team credentials', icon: Briefcase, color: 'from-yellow-500 to-amber-500' },
-              { step: 3, title: 'Match & Collaborate', desc: 'Get matched and start your funded research project', icon: Handshake, color: 'from-amber-500 to-orange-500' },
-              { step: 4, title: 'Deploy & Scale', desc: 'Transform research into deployed solutions with commercialization support', icon: TrendingUp, color: 'from-orange-500 to-red-500' }
+              { step: 1, title: 'Discover Opportunities', desc: 'Browse curated research partnerships from leading organizations', icon: Search, color: 'from-emerald-500 to-teal-600' },
+              { step: 2, title: 'Submit Proposal', desc: 'Apply with your research proposal and team credentials', icon: Briefcase, color: 'from-blue-500 to-indigo-600' },
+              { step: 3, title: 'Match & Collaborate', desc: 'Get matched and start your funded research project', icon: Handshake, color: 'from-orange-500 to-red-500' },
+              { step: 4, title: 'Deploy & Scale', desc: 'Transform research into deployed solutions with commercialization support', icon: TrendingUp, color: 'from-pink-500 to-rose-600' }
             ].map((item, index) => (
               <div key={index} className="relative">
                 <div className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl text-center border border-gray-100 hover:shadow-xl transition-all duration-300">
@@ -418,7 +416,7 @@ const InnovationMarketplace = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-orange-600 via-yellow-600 to-amber-600 text-white">
+      <section className="py-28 bg-gradient-to-r from-orange-600 via-yellow-600 to-amber-600 text-white">
         <div className="container px-8 max-w-7xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to Transform Your Research?</h2>
           <p className="text-xl mb-8 text-white/90 max-w-3xl mx-auto">

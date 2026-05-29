@@ -1,13 +1,22 @@
 <?php
+declare(strict_types=1);
+
 /**
- * My Profile API – thin wrapper around researcher_profile.php
- * Uses the ORCID stored in the request (from frontend AuthContext).
+ * @file api/wrapper/my_profile.php
  *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief My Profile API – thin wrapper around researcher_profile.php
+ * Uses the ORCID stored in the request (from frontend AuthContext).
+ * 
+ * Endpoints:
  * GET  /api/my_profile.php?orcid=0000-0002-1234-5678
  * POST /api/my_profile.php { orcid, action:"update", fields:{...} }
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

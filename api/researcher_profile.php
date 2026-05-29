@@ -1,6 +1,16 @@
 <?php
+declare(strict_types=1);
 
 /**
+ * @file api/researcher_profile.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Endpoint untuk mengambil profil peneliti.
+ * 
  * researcher_profile.php — dengan integrasi WizdamApiContractValidator
  *
  * Ini adalah CONTOH PATCH untuk file yang sudah ada di sdgs-mapper.

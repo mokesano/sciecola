@@ -1,6 +1,18 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Become Sponsor API
+ * @file api/wrapper/become_sponsor.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Become Sponsor API - Manages sponsorship applications and related information.
+ * This API serves both public data (tiers, testimonials, stats) and handles sponsorship applications.
+ * 
+ * Endpoints:
  * GET  /api/wrapper/become_sponsor.php?action=tiers        → list of tiers + counts
  * GET  /api/wrapper/become_sponsor.php?action=testimonials → top sponsor testimonials
  * GET  /api/wrapper/become_sponsor.php?action=stats        → coverage stats
@@ -9,7 +21,6 @@
  * Tables: sponsors, sponsor_categories, sponsorship_applications
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

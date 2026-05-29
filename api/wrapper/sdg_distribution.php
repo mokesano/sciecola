@@ -1,11 +1,21 @@
 <?php
+declare(strict_types=1);
+
 /**
- * SDG Distribution API
+ * @file api/wrapper/sdg_distribution.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief SDG Distribution API.
+ * 
+ * Endpoints:
  * GET /api/sdg_distribution.php?limit=17&sort=count
  * Reads from: work_sdgs GROUP BY sdg_number
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

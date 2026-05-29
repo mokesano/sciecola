@@ -1,10 +1,20 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Institutions List API
+ * @file api/wrapper/institutions.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Institutions List API.
+ * 
+ * Endpoint:
  * GET /api/institutions?country=&type=&search=&sort=&limit=50
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

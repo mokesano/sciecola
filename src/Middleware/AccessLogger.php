@@ -8,9 +8,19 @@ use Sciecola\Database\Connection;
 use Sciecola\Geo\GeoLite2Service;
 
 /**
+ * @file src/Middleware/AccessLogger.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup src
+ * @brief Implementation for logging HTTP requests with geolocation and User-Agent information.
+ * 
  * Records each HTTP request into the access_logs table,
  * enriching with GeoLite2 geolocation and User-Agent parsing.
  */
+
 class AccessLogger
 {
     private Connection     $db;

@@ -1,6 +1,16 @@
 <?php
-
 declare(strict_types=1);
+
+/**
+ * @file api/monitoring.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief API untuk monitoring statistik aplikasi.
+ */
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');

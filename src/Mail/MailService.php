@@ -5,13 +5,21 @@ declare(strict_types=1);
 namespace Sciecola\Mail;
 
 /**
- * Email notification dispatcher.
+ * @file src/Mail/MailService.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup src
+ * @brief Implementation for email notification dispatcher.
  *
  * Drivers:
  *   log  — writes to /tmp/sciecola_mail.log (default for development)
  *   smtp — uses PHPMailer when available
  *   mail — PHP native mail()
  */
+
 class MailService
 {
     private static ?self $instance = null;
