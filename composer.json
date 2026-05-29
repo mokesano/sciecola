@@ -3,6 +3,9 @@
     "description": "SDG Classification and Research Analysis Platform",
     "type": "project",
     "license": "MIT",
+    "config": {
+        "vendor-dir": "library"
+    },
     "require": {
         "php": ">=8.0"
     },

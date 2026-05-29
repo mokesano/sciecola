@@ -1,12 +1,20 @@
 <?php
+declare(strict_types=1);
 /**
- * Frontend Shell for Sciecola React App
+ * @file includes/sicolaUI.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup includes
+ * @brief Frontend Shell for Sciecola React App.
  *
  * Routes all non-API requests to the React app entry point.
  * React handles routing internally via HashRouter (/#/route).
  * All API calls go through /api/* endpoints handled by bootstrap.php
  *
- * @version 3.0.0 - React + PHP Backend (Opsi A)
+ * @version 1.0.0 - React + PHP Backend
  */
 ?><!DOCTYPE html>
 <html lang="id">

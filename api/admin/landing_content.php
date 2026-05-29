@@ -1,14 +1,23 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Admin API: Landing-page content management
+ * @file api/admin/landing_content.php
  *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Landing Page Content Management API for admin users.
+ * 
+ * Endpoint: Landing Page Content Management
  * GET    /api/admin/landing_content.php?lang=id|en  — fetch current content for editing
  * POST   /api/admin/landing_content.php             — upsert content for a language
  *
  * POST body: { "lang": "id"|"en", "content": { ... }, "updated_by": "<admin id>" }
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

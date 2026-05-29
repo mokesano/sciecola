@@ -1,13 +1,22 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Team Member Profile API — single team member with education + achievements.
- * Schema-aware: name comes from researchers via orcid FK.
+ * @file api/wrapper/team_member_profile.php
  *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Team Member Profile API — single team member with education + achievements.
+ * Schema-aware: name comes from researchers via orcid FK.
+ * 
+ * Endpoints:
  * GET /api/wrapper/team_member_profile.php?id={id}  or  ?slug={slug}
  * Returns: { status, member{}, education[], achievements[] }
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

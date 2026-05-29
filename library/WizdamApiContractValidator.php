@@ -1,7 +1,16 @@
 <?php
+declare(strict_types=1);
 
 /**
- * WizdamApiContractValidator.php
+ * @file library/WizdamApiContractValidator.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup library
+ * @brief Validator untuk memvalidasi kontrak API Wizdam.
+ * Kontrak API mendefinisikan struktur dan tipe data yang harus dipatuhi oleh response dari api.sangia.org.
  *
  * Letakkan di: /library/WizdamApiContractValidator.php (sdgs-mapper)
  *              /library/WizdamApiContractValidator.php (wizdam-sikola)

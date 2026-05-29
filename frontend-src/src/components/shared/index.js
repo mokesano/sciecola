@@ -6,3 +6,4 @@ export { default as Avatar }         from './Avatar';
 export { default as SearchBar }      from './SearchBar';
 export { default as LoadingSpinner } from './LoadingSpinner';
 export { default as EmptyState }     from './EmptyState';
+export { default as DistributionMap } from './DistributionMap';
