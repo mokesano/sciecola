@@ -4,6 +4,17 @@ declare(strict_types=1);
 
 namespace MaxMind\Db\Reader;
 
+/**
+ * @file library/MaxMind/Db/Reader/Decoder.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup library
+ * @brief Decoder for MaxMind DB files.
+ */
+
 class Decoder
 {
     /** @var resource */

@@ -1,11 +1,21 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Articles List API
+ * @file api/wrapper/articles.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Articles List API - Provides a list of articles with filtering and sorting options.
+ * 
+ * Endpoint:
  * GET /api/articles.php?page=1&limit=20&sort=recent&search=...&sdg=3
  * Reads from: publications, publication_authors, journals, work_sdgs
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

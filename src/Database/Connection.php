@@ -8,8 +8,18 @@ use PDO;
 use PDOStatement;
 
 /**
+ * @file src/Database/Connection.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup src
+ * @brief Implementation for database connection using PDO.
+ * 
  * PDO singleton supporting MariaDB and PostgreSQL.
  */
+
 class Connection
 {
     private static ?self $instance = null;

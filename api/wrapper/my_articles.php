@@ -1,12 +1,21 @@
 <?php
+declare(strict_types=1);
+
 /**
- * My Articles API
- * Returns the articles from the logged-in researcher's ORCID profile.
+ * @file api/wrapper/my_articles.php
  *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief My Articles API
+ * Returns the articles from the logged-in researcher's ORCID profile.
+ * 
+ * Endpoints:
  * GET /api/my_articles.php?orcid=0000-0002-...&page=1&limit=10&search=&status=&sdg=&sort=date&dir=desc
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

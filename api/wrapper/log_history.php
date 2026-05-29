@@ -1,14 +1,23 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Log History API
+ * @file api/wrapper/log_history.php
+ *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Log History API.
  * Aggregates all backend events: crawl_queue, cache operations, API fetches.
  * Optionally filtered per ORCID (to show events related to logged-in user).
- *
+ * 
+ * Endpoints:
  * GET /api/log_history.php?orcid=...&type=all&range=7days&page=1&limit=20
  * POST /api/log_history.php { action:"append", level, type, message, context:{} }
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

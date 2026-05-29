@@ -1,17 +1,26 @@
 <?php
+declare(strict_types=1);
+
 /**
- * Public landing-page narrative content.
- * GET /api/landing_content.php?lang=id|en
+ * @file api/wrapper/landing_content.php
  *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief Public landing-page narrative content.
  * Mengembalikan JSON content untuk PublicHomePage. Frontend wajib
  * memiliki fallback (locale files) bila response tidak berisi konten —
  * endpoint ini TIDAK menyertakan teks bawaan/mock di sisi server.
+ * 
+ * Endpoint:
+ * GET /api/landing_content.php?lang=id|en
  *
- * @author Claude Code
+ * @author Rochmady and Claude Code
  * @version 1.0.0
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');

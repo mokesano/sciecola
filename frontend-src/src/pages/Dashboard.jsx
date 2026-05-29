@@ -349,7 +349,7 @@ const Dashboard = () => {
                       <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="text-2xl font-bold fill-gray-900">
                         {stats.articles}
                       </text>
-                      <text x="50%" y="55%" textAnchor="middle" dominantBaseline="middle" className="text-xs fill-gray-500">
+                      <text x="50%" y="60%" textAnchor="middle" dominantBaseline="middle" className="text-xs fill-gray-500">
                         Artikel
                       </text>
                     </PieChart>

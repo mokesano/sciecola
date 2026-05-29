@@ -1,8 +1,18 @@
 <?php
+declare(strict_types=1);
+
 /**
- * My Collections API
- * CRUD untuk user collections. DB-first, file-based fallback.
+ * @file api/wrapper/my_collections.php
  *
+ * Copyright (c) 2017-2026 Sangia Publishing House
+ * Copyright (c) 2017-2026 Rochmady
+ * Distributed under the MIT License.
+ * 
+ * @ingroup api
+ * @brief My Collections API
+ * CRUD untuk user collections. DB-first, file-based fallback.
+ * 
+ * Endpoints:
  * GET    /api/my_collections.php?orcid=...&search=&privacy=all&sort=updated
  * POST   /api/my_collections.php { orcid, action:"create", name, description, privacy, tags }
  * POST   /api/my_collections.php { orcid, action:"update", id, name, description, privacy, tags }
@@ -11,7 +21,6 @@
  * POST   /api/my_collections.php { orcid, action:"remove_item", collection_id, doi }
  */
 
-declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
