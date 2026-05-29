@@ -1,6 +1,6 @@
 {
-    "name": "sciecola/sdgs-mapper",
-    "description": "SDG Classification and Research Analysis Platform",
+    "name": "sangia/sciecola",
+    "description": "Research Analysis and SDG Classification Mapping Platform",
     "type": "project",
     "license": "MIT",
     "config": {
