@@ -4,7 +4,8 @@
     "type": "project",
     "license": "MIT",
     "config": {
-        "vendor-dir": "library"
+        "optimize-autoloader": true,
+        "sort-packages": true
     },
     "require": {
         "php": ">=8.0"
@@ -13,9 +14,5 @@
         "psr-4": {
             "Sciecola\\": "src/"
         }
-    },
-    "config": {
-        "optimize-autoloader": true,
-        "sort-packages": true
     }
 }
