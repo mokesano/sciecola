@@ -1,0 +1,89 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# This workflow checks out code, performs a Codacy security scan
+# and integrates the results with the
+# GitHub Advanced Security code scanning feature.  For more information on
+# the Codacy security scan action usage and parameters, see
+# https://github.com/codacy/codacy-analysis-cli-action.
+# For more information on Codacy Analysis CLI in general, see
+# https://github.com/codacy/codacy-analysis-cli.
+
+name: Codacy Security Scan
+
+on:
+  push:
+    branches: [ "main", "develop", "production" ]
+  pull_request:
+    branches: [ "main", "develop", "production" ]
+  schedule:
+    - cron: '29 18 * * 3'
+
+env:
+  # Menghilangkan peringatan depresiasi Node.js 20
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: read
+
+jobs:
+  codacy-security-scan:
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    name: Codacy Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Hapus direktori yang tidak perlu agar tidak membebani memori
+      - name: Free up RAM & Remove 3rd-party libs
+        run: rm -rf vendor/ node_modules/ cache/ lib/adodb/ lib/smarty/
+
+      # Buat file .codacy.yml untuk menonaktifkan PMD dan mengecualikan file biner
+      - name: Create Codacy configuration
+        run: |
+          cat > .codacy.yml << 'EOF'
+          exclude_paths:
+            - "**/*.jpg"
+            - "**/*.png"
+            - "**/*.svg"
+            - "**/*.ico"
+            - "**/*.mmdb"
+            - "library/GeoLite2/**"
+            - "UI-design/**"
+            - "public/assets/**"
+            - "**/*.md"
+          engines:
+            pmd: disabled
+            pmd-legacy: disabled
+          EOF
+
+      # Jalankan Codacy Analysis CLI dengan tool yang dipilih secara eksplisit
+      - name: Run Codacy Analysis CLI
+        uses: codacy/codacy-analysis-cli-action@d840f886c4bd4edc059706d09c6a1586111c540b
+        id: codacy_scan
+        env:
+          CODACY_JAVA_OPTS: "-Xmx3g"
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          verbose: true
+          output: results.sarif
+          format: sarif
+          gh-code-scanning-compat: true
+          max-allowed-issues: 2147483647
+          # Hanya jalankan tool yang kompatibel dengan proyek (tanpa PMD)
+          tool: "eslint,remark-lint,tsqllint,phpmd,jshint,jacksonlinter,phpcs,SQLint"
+
+      # Unggah hasil SARIF ke GitHub Advanced Security
+      - name: Upload SARIF results file
+        uses: github/codeql-action/upload-sarif@v4
+        continue-on-error: true
+        if: always() && hashFiles('results.sarif') != ''
+        with:
+          sarif_file: results.sarif
