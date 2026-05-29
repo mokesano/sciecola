@@ -1,6 +1,6 @@
 # Sciecola
 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/dcf536169d5c469ab5bdef5a9a5a0333)](https://app.codacy.com/gh/mokesano/sdgs-mapper/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/dcf536169d5c469ab5bdef5a9a5a0333)](https://app.codacy.com/gh/mokesano/sciecola/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 A comprehensive restructuring of the SDG Classification Analysis platform built with PHP, JavaScript, and modern web technologies. This project provides AI-powered analysis of research contributions to the United Nations Sustainable Development Goals (SDGs).
 
@@ -246,26 +246,6 @@ define('DEBUG_MODE', true);
 - **LinkedIn**: [Sciecola](https://linkedin.com/company/sciecola)
 - **GitHub**: [sciecola](https://github.com/sciecola)
 - **YouTube**: [@sciecola](https://youtube.com/@sciecola)
-
-## 🎯 Key Features Summary
-
-### For Researchers
-- **Personal Analysis**: Analyze your complete research profile
-- **Impact Measurement**: Understand SDG contributions
-- **Career Development**: Track research impact over time
-- **Collaboration**: Share results with colleagues
-
-### For Institutions
-- **Institutional Analytics**: Department and faculty analysis
-- **Strategic Planning**: Align research with SDG goals
-- **Reporting**: Generate comprehensive impact reports
-- **Benchmarking**: Compare with peer institutions
-
-### For Policymakers
-- **Evidence Base**: Data-driven policy development
-- **Impact Assessment**: Measure research effectiveness
-- **Resource Allocation**: Optimize funding decisions
-- **Progress Tracking**: Monitor SDG advancement
 
 ---
 

@@ -386,7 +386,7 @@ echo json_encode($impact);
 ```
 wizdam-apis         ← validates HMAC
 wizdam-sikola       ← can generateKey()
-sdg-mapper          ← can generateKey()
+sciecola            ← can generateKey()
 sdgs-analytics      ← can generateKey()
 sdg-mono            ← can generateKey()
 ```
@@ -402,7 +402,7 @@ key = "wz_" + userId + "_" + timestamp + "_" + HMAC-SHA256(userId+":"+timestamp,
 ### Generasi Key (dari aplikasi manapun)
 
 ```php
-// PHP — berlaku untuk wizdam-sikola, sdg-mapper, sdgs-analytics, sdg-mono
+// PHP — berlaku untuk wizdam-sikola, sciecola, sdgs-analytics, sdg-mono
 $secret = env('WIZDAM_SHARED_SECRET'); // sama di semua app
 $userId = (string) auth()->id();       // atau app-level ID
 $ts     = (string) time();
@@ -420,7 +420,7 @@ DB::table('api_keys')->insert([
 ```
 
 ```javascript
-// JavaScript / Node.js — untuk sdg-mapper backend
+// JavaScript / Node.js — untuk sciecola backend
 const crypto = require('crypto');
 function generateKey(userId, secret) {
   const ts    = Math.floor(Date.now() / 1000).toString();
