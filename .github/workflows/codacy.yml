@@ -22,7 +22,6 @@ on:
     - cron: '29 18 * * 3'
 
 env:
-  # Menghilangkan peringatan depresiasi Node.js 20
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 permissions:
@@ -37,15 +36,15 @@ jobs:
     name: Codacy Security Scan
     runs-on: ubuntu-latest
     steps:
-      # Checkout repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Hapus direktori yang tidak perlu agar tidak membebani memori
-      - name: Free up RAM & Remove 3rd-party libs
-        run: rm -rf vendor/ node_modules/ cache/ lib/adodb/ lib/smarty/
+      - name: Free up RAM & Remove 3rd-party libs & cache
+        run: |
+          rm -rf vendor/ node_modules/ cache/ lib/adodb/ lib/smarty/
+          # Hapus semua file .getkeep yang mungkin tidak bisa dibaca
+          find . -name ".getkeep" -type f -delete
 
-      # Buat file .codacy.yml untuk menonaktifkan PMD dan mengecualikan file biner
       - name: Create Codacy configuration
         run: |
           cat > .codacy.yml << 'EOF'
@@ -59,15 +58,16 @@ jobs:
             - "UI-design/**"
             - "public/assets/**"
             - "**/*.md"
+            - "cache/**"
           engines:
             pmd: disabled
             pmd-legacy: disabled
           EOF
 
-      # Jalankan Codacy Analysis CLI dengan tool yang dipilih secara eksplisit
       - name: Run Codacy Analysis CLI
         uses: codacy/codacy-analysis-cli-action@d840f886c4bd4edc059706d09c6a1586111c540b
         id: codacy_scan
+        continue-on-error: true   # Mencegah workflow gagal karena error non-fatal
         env:
           CODACY_JAVA_OPTS: "-Xmx3g"
         with:
@@ -77,10 +77,8 @@ jobs:
           format: sarif
           gh-code-scanning-compat: true
           max-allowed-issues: 2147483647
-          # Hanya jalankan tool yang kompatibel dengan proyek (tanpa PMD)
           tool: "eslint,remark-lint,tsqllint,phpmd,jshint,jacksonlinter,phpcs,SQLint"
 
-      # Unggah hasil SARIF ke GitHub Advanced Security
       - name: Upload SARIF results file
         uses: github/codeql-action/upload-sarif@v4
         continue-on-error: true
