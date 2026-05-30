@@ -1,17 +1,17 @@
 -- ═══════════════════════════════════════════════════════════════
--- wizdam_ecosystem — Canonical Schema
--- Owner     : sdgs-mapper / db/schema.sql
--- Digunakan : wizdam-apis · wizdam-sikola · sdgs-analytics · sdg-mono · sdgs-mapper
+-- sangia_ecosystem — Canonical Schema
+-- Owner     : sciecola / db/schema.sql
+-- Digunakan : sangia-apis · sangia-scieco · sdgs-analytics · sdg-mono · sdgs-mapper
 -- Engine    : MariaDB 10.6+ / MySQL 8.0+
 --
 -- Setup:
 --   mysql -u root -p < db/schema.sql
 -- ═══════════════════════════════════════════════════════════════
 
-CREATE DATABASE IF NOT EXISTS wizdam_ecosystem
+CREATE DATABASE IF NOT EXISTS sangia_ecosystem
   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-USE wizdam_ecosystem;
+USE sangia_ecosystem;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS researchers (
   citation_count      INT UNSIGNED    NOT NULL DEFAULT 0,
   sinta_id            VARCHAR(50)     NULL,
   country             VARCHAR(100)    NULL,
-  profile_cache_json  LONGTEXT        NULL  COMMENT 'Raw profile data dari wizdam-apis ORCID endpoint',
+  profile_cache_json  LONGTEXT        NULL  COMMENT 'Raw profile data dari sangia-apis ORCID endpoint',
   cache_expires_at    TIMESTAMP       NULL,
   created_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at          TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS publications (
   citation_count    INT UNSIGNED    NOT NULL DEFAULT 0  COMMENT 'Best count dari multi-source',
   citation_sources  JSON            NULL  COMMENT '{"crossref":12,"openalex":14}',
   sdg_cache_json    LONGTEXT        NULL  COMMENT 'Cached SDG classification result',
-  raw_data_json     LONGTEXT        NULL  COMMENT 'Raw data dari wizdam-apis',
+  raw_data_json     LONGTEXT        NULL  COMMENT 'Raw data dari sangia-apis',
   created_at        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY fk_publications_journal (journal_id) REFERENCES journals(id) ON DELETE SET NULL,
@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS work_sdgs (
   sdg_number            TINYINT UNSIGNED NOT NULL  COMMENT '1–17',
   sdg_version           VARCHAR(10)     NOT NULL DEFAULT 'v5'  COMMENT 'SDG classifier version',
   confidence            DECIMAL(5,4)    NULL  COMMENT '0.0000–1.0000',
-  classification_detail JSON            NULL  COMMENT 'Full result dari wizdam-apis SDG classifier',
+  classification_detail JSON            NULL  COMMENT 'Full result dari sangia-apis SDG classifier',
   classified_at         TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY uq_doi_sdg_ver (doi, sdg_number, sdg_version),
   FOREIGN KEY fk_work_sdgs_doi (doi) REFERENCES publications(doi) ON DELETE CASCADE,
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS ecosystem_cache (
   cache_key   VARCHAR(512)    NOT NULL PRIMARY KEY,
   payload     LONGTEXT        NOT NULL  COMMENT 'JSON',
   expires_at  TIMESTAMP       NOT NULL,
-  created_by  VARCHAR(50)     NULL  COMMENT 'mapper | sikola | apis | analytics',
+  created_by  VARCHAR(50)     NULL  COMMENT 'sciecola | scieco | apis | analytics',
   created_at  TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_expires (expires_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

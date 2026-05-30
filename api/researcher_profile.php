@@ -33,13 +33,13 @@ function callWizdamApiWithValidation(
     string $method = 'POST'
 ): array {
 
-    $apiBaseUrl = defined('WIZDAM_API_URL')
-        ? WIZDAM_API_URL
-        : getenv('WIZDAM_API_URL') ?? 'https://api.sangia.org/v1';
+    $apiBaseUrl = defined('SANGIA_API_URL')
+        ? SANGIA_API_URL
+        : getenv('SANGIA_API_URL') ?? 'https://api.sangia.org/v1';
 
-    $apiKey = defined('WIZDAM_API_KEY')
-        ? WIZDAM_API_KEY
-        : getenv('WIZDAM_API_KEY') ?? '';
+    $apiKey = defined('SANGIA_API_KEY')
+        ? SANGIA_API_KEY
+        : getenv('SANGIA_API_KEY') ?? '';
 
     // — cURL request ———————————————————————————————————————————————
     $ch = curl_init();
@@ -101,12 +101,12 @@ function callWizdamApiWithValidation(
 function fetchResearcherProfile(string $orcid): array
 {
     try {
-        // Panggil impact/calculate dari wizdam-apis
+        // Panggil impact/calculate dari sangia-apis
         $impactData = callWizdamApiWithValidation('impact/calculate', [
             'orcid' => $orcid,
         ]);
 
-        // Panggil SDG analysis (jika Wizdam APIs juga menyediakan ini)
+        // Panggil SDG analysis (jika Sangia APIs juga menyediakan ini)
         $sdgData = callWizdamApiWithValidation('analyze/orcid', [
             'orcid'           => $orcid,
             'include_details' => true,

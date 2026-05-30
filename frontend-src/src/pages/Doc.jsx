@@ -250,7 +250,7 @@ LOOP:
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Formula, Bobot, dan Metodologi</h1>
         <p className="text-gray-600 max-w-3xl">
           Dokumentasi teknis lengkap mengenai perhitungan Wizdam Impact Score (WIS), klasifikasi SDG, 
-          integrasi API, dan pola arsitektur sistem Wizdam Scola.
+          integrasi API, dan pola arsitektur sistem Sangia Scieco.
         </p>
       </div>
 
@@ -685,7 +685,7 @@ LOOP:
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">Contoh</h3>
                 <CodeBlock code={codeSnippets.apiKeyExample} id="api-key-example" language="plaintext" />
                 <p className="text-sm text-gray-600 mt-2">
-                  <code className="bg-gray-100 px-1.5 py-0.5 rounded">WIZDAM_SHARED_SECRET</code> harus sama antara wizdam-scola dan wizdam-apis untuk validasi silang.
+                  <code className="bg-gray-100 px-1.5 py-0.5 rounded">SANGIA_SHARED_SECRET</code> harus sama antara sangia-scieco dan sangia-apis untuk validasi silang.
                 </p>
               </div>
             </section>

@@ -9,12 +9,12 @@ declare(strict_types=1);
  * Distributed under the MIT License.
  * 
  * @ingroup tools
- * @brief Tool untuk menghasilkan API key untuk sdgs-mapper.
+ * @brief Tool untuk menghasilkan API key untuk sciecola.
  */
 
 // =============================================================
-// WIZDAM API KEY GENERATOR
-// Membuat API key untuk sdgs-mapper agar bisa memanggil wizdam-apis
+// SANGIA API KEY GENERATOR
+// Membuat API key untuk sciecola agar bisa memanggil sangia-apis
 // =============================================================
 // Jalankan sekali dari CLI:
 //   php tools/generate-api-key.php
@@ -63,13 +63,13 @@ function generate_wizdam_key(string $userId, string $sharedSecret): array
 $action = $_POST['action'] ?? $_GET['action'] ?? ($isCli ? 'generate' : null);
 
 if ($action === 'generate') {
-    $userId       = $_POST['user_id'] ?? 'sdgsmapper';
-    $sharedSecret = defined('WIZDAM_SHARED_SECRET')
-                  ? WIZDAM_SHARED_SECRET
-                  : (getenv('WIZDAM_SHARED_SECRET') ?: '');
+    $userId       = $_POST['user_id'] ?? 'sciecola';
+    $sharedSecret = defined('SANGIA_SHARED_SECRET')
+                  ? SANGIA_SHARED_SECRET
+                  : (getenv('SANGIA_SHARED_SECRET') ?: '');
 
     if (empty($sharedSecret)) {
-        $msg = 'ERROR: WIZDAM_SHARED_SECRET belum di-set di .env';
+        $msg = 'ERROR: SANGIA_SHARED_SECRET belum di-set di .env';
         if ($isCli) { echo $msg . PHP_EOL; exit(1); }
         else        { http_response_code(500); echo json_encode(['error' => $msg]); exit; }
     }
@@ -94,14 +94,14 @@ if ($action === 'generate') {
 
         if ($isCli) {
             echo "═══════════════════════════════════════════════" . PHP_EOL;
-            echo "  Wizdam API Key Generated" . PHP_EOL;
+            echo "  SANGIA API Key Generated" . PHP_EOL;
             echo "═══════════════════════════════════════════════" . PHP_EOL;
             echo "  User ID  : " . $key['user_id'] . PHP_EOL;
             echo "  Raw Key  : " . $key['raw'] . PHP_EOL;
             echo "  Key Hash : " . $key['hash'] . PHP_EOL;
             echo "═══════════════════════════════════════════════" . PHP_EOL;
             echo PHP_EOL . "Tambahkan baris berikut ke .env:" . PHP_EOL;
-            echo "WIZDAM_API_KEY=" . $key['raw'] . PHP_EOL;
+            echo "SANGIA_API_KEY=" . $key['raw'] . PHP_EOL;
         } else {
             header('Content-Type: application/json');
             echo json_encode([
@@ -109,7 +109,7 @@ if ($action === 'generate') {
                 'user_id'  => $key['user_id'],
                 'raw_key'  => $key['raw'],
                 'key_hash' => $key['hash'],
-                'note'     => 'Tambahkan WIZDAM_API_KEY=' . $key['raw'] . ' ke file .env',
+                'note'     => 'Tambahkan SANGIA_API_KEY=' . $key['raw'] . ' ke file .env',
             ]);
         }
 
@@ -128,7 +128,7 @@ if (!$isCli):
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Wizdam API Key Generator</title>
+    <title>Sangia API Key Generator</title>
     <style>
         body { font-family: monospace; background: #0f0f0f; color: #ccc; padding: 24px; }
         .wrap { max-width: 600px; margin: 0 auto; }
@@ -142,10 +142,10 @@ if (!$isCli):
 </head>
 <body>
 <div class="wrap">
-    <h2>🔑 Wizdam API Key Generator</h2>
+    <h2>🔑 Sangia API Key Generator</h2>
     <form id="form">
         <label>User ID (nama aplikasi)</label>
-        <input type="text" id="userId" value="sdgsmapper">
+        <input type="text" id="userId" value="sciecola">
         <button type="submit">Generate Key</button>
     </form>
     <pre id="result">Tekan Generate untuk membuat key baru...</pre>
@@ -169,7 +169,7 @@ document.getElementById('form').addEventListener('submit', e => {
             document.getElementById('result').textContent =
                 'Raw Key  : ' + d.raw_key + '\n' +
                 'Key Hash : ' + d.key_hash + '\n\n' +
-                '.env:\nWIZDAM_API_KEY=' + d.raw_key;
+                '.env:\nSANGIA_API_KEY=' + d.raw_key;
         }
     })
     .catch(e => {

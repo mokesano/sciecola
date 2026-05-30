@@ -839,28 +839,28 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
               
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
                 <p className="text-lg text-amber-800">
-                  <strong>Perhatian:</strong> wizdam-apis adalah <strong>pure analysis engine</strong> — tidak menyimpan hasil apapun secara permanen. 
-                  Semua persistensi data adalah tanggung jawab <strong>Wizdam Scola</strong>.
+                  <strong>Perhatian:</strong> sangia-apis adalah <strong>pure analysis engine</strong> — tidak menyimpan hasil apapun secara permanen. 
+                  Semua persistensi data adalah tanggung jawab <strong>Sangia Scieco</strong>.
                 </p>
               </div>
 
               <div id="supplied-data" className="mb-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">Pola <code>supplied_data</code></h3>
                 <p className="text-xm text-gray-600 mb-3">
-                  Jika Wizdam Scola sudah memiliki data di DB, kirimkan dalam request body. 
-                  wizdam-apis akan menggunakan data tersebut <strong>tanpa melakukan cURL ke API eksternal</strong>.
+                  Jika Sangia Scieco sudah memiliki data di DB, kirimkan dalam request body. 
+                  sangia-apis akan menggunakan data tersebut <strong>tanpa melakukan cURL ke API eksternal</strong>.
                 </p>
                 <CodeBlock code={codeSnippets.suppliedData} id="supplied-data-code" language="json" />
                 <p className="text-xm text-gray-600 mt-2">
-                  Response saat data disupply: <code className="bg-gray-100 px-1.5 py-0.5 rounded">"data_source": "wizdam_scola_db"</code>
+                  Response saat data disupply: <code className="bg-gray-100 px-1.5 py-0.5 rounded">"data_source": "sangia_scola_db"</code>
                 </p>
               </div>
 
               <div id="raw-data">
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">Pola <code>raw_data</code></h3>
                 <p className="text-xm text-gray-600 mb-3">
-                  Ketika wizdam-apis mengambil data dari API eksternal (ORCID/Scopus/dll), response menyertakan field <code className="bg-gray-100 px-1.5 py-0.5 rounded">raw_data</code> berisi data mentah beserta <code className="bg-gray-100 px-1.5 py-0.5 rounded">fetched_at</code>. 
-                  Wizdam Scola harus menyimpan ini ke tabelnya (citations_cache, author_profiles_cache, dll).
+                  Ketika sangia-apis mengambil data dari API eksternal (ORCID/Scopus/dll), response menyertakan field <code className="bg-gray-100 px-1.5 py-0.5 rounded">raw_data</code> berisi data mentah beserta <code className="bg-gray-100 px-1.5 py-0.5 rounded">fetched_at</code>. 
+                  Sangia Scieco harus menyimpan ini ke tabelnya (citations_cache, author_profiles_cache, dll).
                 </p>
                 <CodeBlock code={codeSnippets.rawDataResponse} id="raw-data-code" language="json" />
                 <p className="text-xm text-gray-600 mt-2">
@@ -882,7 +882,7 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
               
               <p className="text-gray-700 mb-4">
                 Semua endpoint SDG classify dan impact calculate menerima objek <code className="bg-gray-100 px-1.5 py-0.5 rounded">weights</code> dalam request body. 
-                Bobot dari Wizdam Scola admin panel <strong>selalu prioritas</strong>; nilai default dalam kode hanya fallback.
+                Bobot dari Sangia Scieco admin panel <strong>selalu prioritas</strong>; nilai default dalam kode hanya fallback.
               </p>
 
               <div id="sdg-weights" className="mb-6">
@@ -921,7 +921,7 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
               </div>
 
               <div id="batch-code" className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Contoh Alur (JavaScript/Wizdam Scola)</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Contoh Alur (JavaScript/Sangia Scieco)</h3>
                 <CodeBlock code={codeSnippets.batchCode} id="batch-code-js" language="javascript" />
               </div>
 

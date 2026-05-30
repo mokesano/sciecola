@@ -10,7 +10,7 @@ declare(strict_types=1);
  * 
  * @ingroup api
  * @brief Aggregated ORCID Researcher Profile API.
- * Menggabungkan: ORCID init + semua batch works + wizdam-apis impact score
+ * Menggabungkan: ORCID init + semua batch works + sangia-apis impact score
  * Output: JSON terpadu siap digunakan ResearcherProfile.jsx
  * 
  * Endpoints:
@@ -79,12 +79,12 @@ function callLocalApi(string $apiFile, array $params): array
 }
 
 /**
- * Call wizdam-apis (api.sangia.org) via cURL. Returns null if API key missing or error.
+ * Call sangia-apis (api.sangia.org) via cURL. Returns null if API key missing or error.
  */
-function callWizdamApi(string $endpoint, array $body): ?array
+function callSangiaApi(string $endpoint, array $body): ?array
 {
-    $apiKey  = defined('WIZDAM_API_KEY') ? WIZDAM_API_KEY : (getenv('WIZDAM_API_KEY') ?: '');
-    $baseUrl = defined('WIZDAM_API_BASE') ? WIZDAM_API_BASE : 'https://api.sangia.org';
+    $apiKey  = defined('SANGIA_API_KEY') ? SANGIA_API_KEY : (getenv('SANGIA_API_KEY') ?: '');
+    $baseUrl = defined('SANGIA_API_BASE') ? SANGIA_API_BASE : 'https://api.sangia.org';
     if (empty($apiKey)) return null;
 
     $ch = curl_init($baseUrl . $endpoint);
@@ -174,7 +174,7 @@ for ($offset = 0; $offset < $totalWorks && $offset < 200; $offset += $batchSize)
     }
 }
 
-// ── Step 3: wizdam-apis impact score (optional) ───────────────────────────────
+// ── Step 3: sangia-apis impact score (optional) ───────────────────────────────
 
 $scopusId = null;
 foreach (($personal['external_ids'] ?? []) as $extId) {
@@ -184,7 +184,7 @@ foreach (($personal['external_ids'] ?? []) as $extId) {
     }
 }
 
-$impactData = callWizdamApi('/api/v1/impact/calculate', [
+$impactData = callSangiaApi('/api/v1/impact/calculate', [
     'orcid'           => $orcid,
     'scopus_id'       => $scopusId,
     'batch_size'      => 20,
@@ -340,10 +340,10 @@ foreach (($personal['external_ids'] ?? []) as $extId) {
     }
 }
 
-// Impact metrics (from wizdam-apis, else 0)
+// Impact metrics (from sangia-apis, else 0)
 $totalCitations = (int)($impactData['total_citations'] ?? $impactData['citations'] ?? 0);
 $hIndex         = (int)($impactData['h_index']         ?? $impactData['hIndex']    ?? 0);
-$i10Index       = (int)($impactData['i10_index']        ?? $impactData['i10Index']  ?? 0);
+$i10Index       = (int)($impactData['i10_index']       ?? $impactData['i10Index']  ?? 0);
 $citationTrend  = [];
 foreach ($impactData['citation_trend'] ?? [] as $row) {
     $citationTrend[] = ['year' => (string)($row['year'] ?? ''), 'citations' => (int)($row['citations'] ?? 0)];

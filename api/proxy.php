@@ -9,9 +9,9 @@ declare(strict_types=1);
  * Distributed under the MIT License.
  * 
  * @ingroup api
- * @brief Reverse proxy for handling API requests to wizdam-apis.
+ * @brief Reverse proxy for handling API requests to sangia-apis.
  * 
- * Reverse proxy to wizdam-apis (https://api.sangia.org).
+ * Reverse proxy to sangia-apis (https://api.sangia.org).
  * Adds API key server-side so the key is never exposed to the browser.
  */
 
@@ -26,8 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 $configFile = __DIR__ . '/../config/config.php';
 if (file_exists($configFile)) require_once $configFile;
 
-$apiKey   = defined('WIZDAM_API_KEY') ? WIZDAM_API_KEY : getenv('WIZDAM_API_KEY');
-$baseUrl  = defined('WIZDAM_API_BASE') ? WIZDAM_API_BASE : 'https://api.sangia.org';
+$apiKey   = defined('SANGIA_API_KEY') ? SANGIA_API_KEY : getenv('SANGIA_API_KEY');
+$baseUrl  = defined('SANGIA_API_BASE') ? SANGIA_API_BASE : 'https://api.sangia.org';
 
 if (empty($apiKey)) {
     http_response_code(503);

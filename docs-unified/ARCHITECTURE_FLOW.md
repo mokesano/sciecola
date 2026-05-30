@@ -59,7 +59,7 @@ defines ROOT_PATH
 **Profile Pages:**
 - ✅ ResearcherProfile.jsx
   - Fetches: `/api/researcher_profile.php?orcid={orcidCode}`
-  - Source: ORCID API + Wizdam APIs + SDG Classification
+  - Source: ORCID API + Sangia APIs + SDG Classification
   - Stored in: orcid_profiles table
 
 - ✅ ArticleProfile.jsx
@@ -124,7 +124,7 @@ defines ROOT_PATH
 - `GET /api/platform/trends` (TrendsAnalysis data)
 - `GET /api/leaderboard?type=researchers|articles|journals` (Leaderboard data)
 
-## 5. WIZDAM-APIS INTEGRATION
+## 5. SANGIA-APIS INTEGRATION
 
 ### Expected from api.sangia.org
 ```
@@ -165,7 +165,7 @@ researcher_profile.php:
   2. If found AND not expired → Return cached JSON
   3. If NOT found OR expired:
      a. Call ORCID API (init + batch)
-     b. Call Wizdam API for impact metrics
+     b. Call Sangia APIs for impact metrics
      c. Call SDG Classification API
      d. INSERT/UPDATE orcid_profiles table
      e. Return aggregated JSON
@@ -272,7 +272,7 @@ define('DB_HOST', getenv('DB_HOST'));
 define('DB_NAME', getenv('DB_NAME'));
 define('DB_USER', getenv('DB_USER'));
 define('DB_PASS', getenv('DB_PASS'));
-define('WIZDAM_API_KEY', getenv('WIZDAM_API_KEY'));
+define('SANGIA_API_KEY', getenv('SANGIA_API_KEY'));
 define('CACHE_TTL', 604800);  // 7 days
 ```
 
