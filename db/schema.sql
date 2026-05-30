@@ -1,7 +1,7 @@
 -- ═══════════════════════════════════════════════════════════════
 -- sangia_ecosystem — Canonical Schema
 -- Owner     : sciecola / db/schema.sql
--- Digunakan : sangia-apis · sangia-scieco · sdgs-analytics · sdg-mono · sdgs-mapper
+-- Digunakan : sangia-apis · sangia-scieco · sangia-analytics · sdg-mono · sciecola-frontend
 -- Engine    : MariaDB 10.6+ / MySQL 8.0+
 --
 -- Setup:

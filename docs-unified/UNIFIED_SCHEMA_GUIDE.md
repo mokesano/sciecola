@@ -6,7 +6,7 @@ Panduan unified database dan API untuk keempat repository yang terintegrasi dala
 |---|---|---|---|
 | `sciecola` | sangia.org | Research knowledge base + SDG mapping UI | React + PHP backend |
 | `sangia-apis` | api.sangia.org | Stateless analysis API (multi-source citations, impact scoring, trends, recommendations) | PHP REST |
-| `SDGs-analytics` | sangia.org/analytics | Analytics dashboard & reporting | React / Chart library |
+| `sangia-analytics` | sangia.org/analytics | Analytics dashboard & reporting | React / Chart library |
 | `sangia-scieco` | stipwunaraha.ac.id | Academic profile platform (OJS-based) | OJS + PHP |
 | `sdg-mono` | Legacy monolith | Consolidated legacy system | PHP/Mixed |
 
@@ -20,7 +20,7 @@ Panduan unified database dan API untuk keempat repository yang terintegrasi dala
 ┌─────────────────────────────────────────────────────┐
 │  Frontend Layer (React/UI)                          │
 ├──────────────────────┬──────────────────────────────┤
-│  sciecola             │  SDGs-analytics              │
+│  sciecola             │  sangia-analytics              │
 │  (researcher mapping) │  (dashboard)                 │
 │  React + Material-UI  │  React + Chart.js            │
 │                       │                              │
@@ -318,10 +318,10 @@ public function calculateResearcherImpact(User $user): array {
 
 ---
 
-### 3️⃣ SDGs-analytics (React Dashboard) → sangia-apis (read-only)
+### 3️⃣ Sangia-analytics (React Dashboard) → sangia-apis (read-only)
 
 ```javascript
-// SDGs-analytics/src/pages/Dashboard.jsx
+// sangia-analytics/src/pages/Dashboard.jsx
 import { LineChart, Line, XAxis, YAxis } from 'recharts';
 
 export function TrendDashboard() {
@@ -387,7 +387,7 @@ echo json_encode($impact);
 sangia-apis         ← validates HMAC
 sangia-scieco       ← can generateKey()
 sciecola            ← can generateKey()
-sdgs-analytics      ← can generateKey()
+sangia-analytics    ← can generateKey()
 sdg-mono            ← can generateKey()
 ```
 
@@ -402,7 +402,7 @@ key = "wz_" + userId + "_" + timestamp + "_" + HMAC-SHA256(userId+":"+timestamp,
 ### Generasi Key (dari aplikasi manapun)
 
 ```php
-// PHP — berlaku untuk sangia-scieco, sciecola, sdgs-analytics, sdg-mono
+// PHP — berlaku untuk sangia-scieco, sciecola, sangia-analytics, sdg-mono
 $secret = env('SANGIA_SHARED_SECRET'); // sama di semua app
 $userId = (string) auth()->id();       // atau app-level ID
 $ts     = (string) time();
