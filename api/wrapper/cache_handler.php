@@ -151,7 +151,7 @@ function fetchFromDatabase(PDO $pdo, string $type, string $identifier): ?array
 
 function fetchFromExternalAPI(string $type, string $identifier): ?array
 {
-    // Placeholder — production calls ORCID/Crossref via wizdam-apis
+    // Placeholder — production calls ORCID/Crossref via sangia-apis
     return null;
 }
 
