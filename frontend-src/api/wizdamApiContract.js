@@ -1,7 +1,7 @@
 /**
  * wizdamApiContract.js
  *
- * Letakkan di: /frontend-src/src/api/wizdamApiContract.js (sdgs-mapper)
+ * Letakkan di: /frontend-src/src/api/wizdamApiContract.js (sciecola)
  *
  * Contract layer untuk semua panggilan ke api.sangia.org dari React.
  * Memastikan data yang masuk ke komponen sudah tervalidasi strukturnya.
@@ -292,7 +292,7 @@ export async function fetchDoiAnalysis(doi, signal) {
 
 /**
  * Hitung impact metrics (h-index, citations, dll)
- * Memanggil POST /api/v1/impact/calculate di wizdam-apis
+ * Memanggil POST /api/v1/impact/calculate di sangia-apis
  *
  * @param {{ orcid: string, identifiers?: string[] }} payload
  * @param {AbortSignal} [signal]

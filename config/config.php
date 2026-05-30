@@ -119,18 +119,18 @@ define('DB_PASS',     $_db_pass);  // alias
 unset($_db_name, $_db_user, $_db_pass);
 
 // ================================================================
-// 7. WIZDAM-APIS CONFIGURATION
+// 7. SANGIA-APIS CONFIGURATION
 // ================================================================
 
-define('WIZDAM_API_BASE', getenv('WIZDAM_API_BASE') ?: 'https://api.sangia.org');
-define('WIZDAM_API_KEY',  getenv('WIZDAM_API_KEY')  ?: '');
+define('SANGIA_API_BASE', getenv('SANGIA_API_BASE') ?: 'https://api.sangia.org');
+define('SANGIA_API_KEY',  getenv('SANGIA_API_KEY')  ?: '');
 
 // ================================================================
 // MAIL / SMTP CONFIGURATION
 // MAIL_DRIVER: 'log' (write to /tmp), 'smtp', 'mail' (PHP native)
 // ================================================================
 define('MAIL_DRIVER',    getenv('MAIL_DRIVER')    ?: 'log');
-define('MAIL_FROM',      getenv('MAIL_FROM')      ?: 'noreply@sciecola.id');
+define('MAIL_FROM',      getenv('MAIL_FROM')      ?: 'noreply@sangia.org');
 define('MAIL_FROM_NAME', getenv('MAIL_FROM_NAME') ?: 'Sciecola');
 define('SMTP_HOST',      getenv('SMTP_HOST')      ?: 'smtp.mailtrap.io');
 define('SMTP_PORT',      (int)(getenv('SMTP_PORT') ?: '2525'));
