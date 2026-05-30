@@ -9,7 +9,7 @@ declare(strict_types=1);
  * Distributed under the MIT License.
  * 
  * @ingroup tools
- * @brief Tool untuk menguji kontrak API Wizdam.
+ * @brief Tool untuk menguji kontrak API Sangia.
  * 
  * Jalankan:
  *   php tools/contract_selftest.php
@@ -24,8 +24,8 @@ require_once __DIR__ . '/../library/WizdamApiContractValidator.php';
 $DIAGNOSE_MODE = in_array('--diagnose', $argv ?? [], true);
 $VERBOSE       = in_array('--verbose', $argv ?? [], true) || $DIAGNOSE_MODE;
 
-$apiBaseUrl = getenv('WIZDAM_API_URL') ?: 'https://api.sangia.org/v1';
-$apiKey     = getenv('WIZDAM_API_KEY') ?: '';
+$apiBaseUrl = getenv('SANGIA_API_URL') ?: 'https://api.sangia.org/v1';
+$apiKey     = getenv('SANGIA_API_KEY') ?: '';
 $TEST_ORCID = getenv('TEST_ORCID') ?: '0000-0002-1825-0097';
 $TEST_DOI   = getenv('TEST_DOI')   ?: '10.1038/nature12373';
 
@@ -173,9 +173,9 @@ echo str_repeat('─', 52) . "\n";
 
 echo "\n\033[1m[PHASE 1] Probe endpoint — cek apa yang aktif di api.sangia.org\033[0m\n\n";
 
-// Daftar kandidat endpoint berdasarkan arsitektur wizdam-apis & sdgs-mapper
+// Daftar kandidat endpoint berdasarkan arsitektur sangia-apis & sciecola
 $candidateEndpoints = [
-    // Endpoint yang diharapkan kontrak (wizdam-apis v1)
+    // Endpoint yang diharapkan kontrak (sangia-apis v1)
     ['label' => 'POST /v1/impact/calculate',     'method' => 'POST', 'path' => 'impact/calculate',     'payload' => ['orcid' => $TEST_ORCID]],
     ['label' => 'POST /v1/analyze/orcid',        'method' => 'POST', 'path' => 'analyze/orcid',        'payload' => ['orcid' => $TEST_ORCID, 'include_details' => true]],
     ['label' => 'POST /v1/analyze/doi',          'method' => 'POST', 'path' => 'analyze/doi',          'payload' => ['doi' => $TEST_DOI]],
@@ -237,14 +237,14 @@ if (!$anyJsonEndpoint) {
     } elseif ($impactProbe['http_code'] === 404) {
         err("HTTP 404 — endpoint /v1/impact/calculate tidak ada.");
         info("Kemungkinan penyebab:");
-        info("  1. Endpoint belum diimplementasikan di wizdam-apis");
+        info("  1. Endpoint belum diimplementasikan di sangia-apis");
         info("  2. URL base salah — mungkin harusnya /api/v1/ bukan /v1/");
-        info("  3. Router wizdam-apis tidak mengenali path ini");
+        info("  3. Router sangia-apis tidak mengenali path ini");
         info("Cek: apakah ada file index.php atau router di api.sangia.org yang handle /v1/impact/calculate ?");
     } elseif ($impactProbe['http_code'] === 401 || $impactProbe['http_code'] === 403) {
         warn("HTTP {$impactProbe['http_code']} — endpoint ada tapi auth gagal.");
-        info("Cek WIZDAM_API_KEY di GitHub Secrets. Key yang digunakan: '" . mb_substr($apiKey, 0, 8) . "...'");
-        info("Tambahkan secret di: GitHub repo → Settings → Secrets → WIZDAM_API_KEY_STAGING");
+        info("Cek SANGIA_API_KEY di GitHub Secrets. Key yang digunakan: '" . mb_substr($apiKey, 0, 8) . "...'");
+        info("Tambahkan secret di: GitHub repo → Settings → Secrets → SANGIA_API_KEY_STAGING");
     } elseif ($impactProbe['http_code'] === 500) {
         err("HTTP 500 — server error saat endpoint dipanggil.");
         info("Cek error log PHP di server api.sangia.org.");
@@ -261,11 +261,11 @@ if (!$anyJsonEndpoint) {
     echo "  2. Akses langsung di browser:\n";
     echo "     " . rtrim($apiBaseUrl, '/') . "/impact/calculate\n";
     echo "     Jika dapat HTML → routing belum benar.\n\n";
-    echo "  3. Cek apakah endpoint memang SUDAH ada di wizdam-apis:\n";
+    echo "  3. Cek apakah endpoint memang SUDAH ada di sangia-apis:\n";
     echo "     Cari file yang menghandle 'impact/calculate' atau 'analyze/orcid'\n";
-    echo "     di repo wizdam-apis. Jika belum ada → perlu dibuat dulu.\n\n";
-    echo "  4. Update WIZDAM_API_URL di .env atau GitHub Secrets ke URL yang tepat.\n";
-    echo "     Contoh: WIZDAM_API_URL=https://api.sangia.org (tanpa /v1/)\n\n";
+    echo "     di repo sangia-apis. Jika belum ada → perlu dibuat dulu.\n\n";
+    echo "  4. Update SANGIA_API_URL di .env atau GitHub Secrets ke URL yang tepat.\n";
+    echo "     Contoh: SANGIA_API_URL=https://api.sangia.org (tanpa /v1/)\n\n";
 } else {
     warn("Beberapa endpoint merespons JSON. Contract check akan dilanjutkan untuk endpoint yang aktif.");
 }
