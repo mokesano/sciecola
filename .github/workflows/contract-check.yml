@@ -12,13 +12,13 @@
 # Untuk sangia-apis: tambahkan workflow yang mem-publish schema baru
 # ke GitHub Release saat ada perubahan di contract/
 
-name: Sangia API Contract Check
+name: Sangia APIs Contract Check
 
 on:
   push:
-    branches: [main, master, develop]
+    branches: [main, develop, production]
   pull_request:
-    branches: [main, master]
+    branches: [main, develop, production]
 
 permissions:
   contents: read
