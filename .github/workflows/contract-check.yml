@@ -78,14 +78,22 @@ jobs:
       - name: Install dependencies
         run: composer install --no-dev --prefer-dist --quiet
 
+      # PERBAIKAN: Hanya jalankan self-test jika API TERSEDIA (HTTP 200/204)
+      # Jika API diblokir Cloudflare (403), step ini akan di-skip agar workflow tidak gagal.
       - name: Jalankan contract self-test
+        if: steps.api_check.outputs.API_AVAILABLE == 'true'
         run: php tools/contract_selftest.php
         env:
           SANGIA_STRICT_CONTRACT: "true"
-          SANGIA_API_URL: ${{ steps.api_check.outputs.API_AVAILABLE == 'true' && secrets.SANGIA_API_URL_STAGING || '' }}
-          SANGIA_API_KEY: ${{ steps.api_check.outputs.API_AVAILABLE == 'true' && secrets.SANGIA_API_KEY_STAGING || '' }}
-          # PERBAIKAN: SANGIA_SCHEMA_PATH dihapus karena WizdamApiContractValidator.php 
-          # melakukan validasi secara programatik dan tidak membaca file schema JSON.
+          SANGIA_API_URL: ${{ secrets.SANGIA_API_URL_STAGING }}
+          SANGIA_API_KEY: ${{ secrets.SANGIA_API_KEY_STAGING }}
+
+      # PERBAIKAN: Tambahkan step info jika API tidak tersedia
+      - name: Skip API self-test (Fallback to local schema)
+        if: steps.api_check.outputs.API_AVAILABLE == 'false'
+        run: |
+          echo "::warning::API tidak tersedia atau diblokir oleh Cloudflare (HTTP 403)."
+          echo "Melewati PHP contract self-test. Validasi kontrak akan dilakukan secara offline menggunakan AJV CLI pada step berikutnya."
 
       # ── Validasi JSON Schema ────────────────────────────────────────────────
       - name: Setup Node.js untuk schema validation
