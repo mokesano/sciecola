@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Sangia API Contract Schema",
+  "description": "Skema kontrak untuk response API sangia-apis (Wizdam/Sciecola)",
+  "type": "object",
+  "required": ["status", "data"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["success", "error"],
+      "description": "Status umum dari response API"
+    },
+    "message": {
+      "type": "string",
+      "description": "Pesan status atau error dari API"
+    },
+    "data": {
+      "type": "object",
+      "description": "Payload data utama",
+      "properties": {
+        "researcher_info": { "type": "object" },
+        "sdg_summary": { "type": "object" },
+        "works": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "impact_score": { "type": "number" },
+        "doi_info": { "type": "object" }
+      }
+    }
+  }
+}

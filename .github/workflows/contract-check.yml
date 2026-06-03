@@ -40,6 +40,8 @@ jobs:
         run: |
           API_URL="${{ secrets.SANGIA_API_URL_STAGING }}"
           if [ -n "$API_URL" ]; then
+            # Bersihkan trailing slash untuk menghindari URL ganda (//health)
+            API_URL="${API_URL%/}"
             echo "Checking API availability at $API_URL..."
             HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$API_URL/health" 2>/dev/null || echo "000")
             if [ "$HTTP_STATUS" = "200" ] || [ "$HTTP_STATUS" = "204" ]; then
@@ -56,6 +58,7 @@ jobs:
 
       # ── Fallback: Gunakan schema lokal jika API tidak tersedia ──────────────────────────────────
       - name: Use local schema (fallback)
+        id: local_schema_check # PERBAIKAN: Menambahkan id agar $GITHUB_OUTPUT valid
         if: steps.api_check.outputs.API_AVAILABLE == 'false'
         run: |
           echo "📁 Using local schema from contract/ directory"
@@ -81,7 +84,8 @@ jobs:
           SANGIA_STRICT_CONTRACT: "true"
           SANGIA_API_URL: ${{ steps.api_check.outputs.API_AVAILABLE == 'true' && secrets.SANGIA_API_URL_STAGING || '' }}
           SANGIA_API_KEY: ${{ steps.api_check.outputs.API_AVAILABLE == 'true' && secrets.SANGIA_API_KEY_STAGING || '' }}
-          SANGIA_SCHEMA_PATH: ${{ steps.api_check.outputs.API_AVAILABLE == 'false' && 'contract/sangia-apis.schema.json' || '' }}
+          # PERBAIKAN: SANGIA_SCHEMA_PATH dihapus karena WizdamApiContractValidator.php 
+          # melakukan validasi secara programatik dan tidak membaca file schema JSON.
 
       # ── Validasi JSON Schema ────────────────────────────────────────────────
       - name: Setup Node.js untuk schema validation
@@ -91,6 +95,16 @@ jobs:
 
       - name: Install ajv-cli
         run: npm install -g ajv-cli@5
+
+      # PERBAIKAN: Cek keberadaan file schema sebelum validasi AJV agar error lebih jelas
+      - name: Check schema files existence
+        id: schema_files_check
+        run: |
+          if [ ! -f "contract/sangia-apis.schema.json" ] || [ ! -f "contract/examples/orcid_analysis_example.json" ]; then
+            echo "::error::Schema files not found! Please ensure contract/sangia-apis.schema.json and contract/examples/orcid_analysis_example.json exist in the repository."
+            exit 1
+          fi
+          echo "✅ Schema files found."
 
       - name: Validasi format JSON Schema
         run: |
@@ -115,5 +129,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: '⚠️ **Contract Check Gagal**\n\nResponse dari sangia-apis tidak sesuai kontrak yang didefinisikan di `contract/sangia-apis.schema.json`. Lihat log workflow untuk detail.\n\nPastikan perubahan di sangia-apis sudah di-update di schema sebelum merge.'
+              body: '⚠️ **Contract Check Gagal**\n\nResponse dari sangia-apis tidak sesuai kontrak yang didefinisikan di `contract/sangia-apis.schema.json` atau file schema tidak ditemukan. Lihat log workflow untuk detail.\n\nPastikan perubahan di sangia-apis sudah di-update di schema sebelum merge.'
             });

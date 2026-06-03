@@ -1,0 +1,23 @@
+{
+  "status": "success",
+  "message": "Orcid analysis completed successfully",
+  "data": {
+    "researcher_info": {
+      "orcid": "0000-0002-1825-0097",
+      "name": "Josiah Carberry",
+      "institution": "Brown University"
+    },
+    "sdg_summary": {
+      "sdg_1": 2,
+      "sdg_2": 5,
+      "total_publications": 8
+    },
+    "works": [
+      {
+        "title": "Studies in Hyperdimensional Iconics",
+        "doi": "10.1234/sample.doi.1",
+        "year": 2023
+      }
+    ]
+  }
+}
