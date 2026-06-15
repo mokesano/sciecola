@@ -1,19 +1,19 @@
 <?php return array(
     'root' => array(
-        'name' => 'sciecola/sdgs-mapper',
+        'name' => 'sangia/sciecola',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '2b4ed8c788b33a54463577de8842b69a3e5a0063',
+        'reference' => '8c5288eb7dc288fc309c1811af681281ad6fa9fe',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
         'dev' => true,
     ),
     'versions' => array(
-        'sciecola/sdgs-mapper' => array(
+        'sangia/sciecola' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '2b4ed8c788b33a54463577de8842b69a3e5a0063',
+            'reference' => '8c5288eb7dc288fc309c1811af681281ad6fa9fe',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
