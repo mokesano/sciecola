@@ -3,7 +3,7 @@
         'name' => 'sangia/sciecola',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '901c9284312fc2386226c5195fe4bcb9b8edab83',
+        'reference' => 'fbda0dcae0d69688ff467a511e48e852884da731',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'sangia/sciecola' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '901c9284312fc2386226c5195fe4bcb9b8edab83',
+            'reference' => 'fbda0dcae0d69688ff467a511e48e852884da731',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
