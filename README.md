@@ -229,7 +229,8 @@ define('DEBUG_MODE', true);
 - **Crossref**: For DOI resolution services
 - **Open Source Community**: For tools and libraries used
 
-...
+---
+
 <p align="center">
   <br>
   <creator>Built with ❤️ by <strong>Sangia Publishing House</strong> for the global scholarly community</creator>
