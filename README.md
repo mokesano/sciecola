@@ -228,3 +228,19 @@ define('DEBUG_MODE', true);
 - **ORCID**: For researcher identification infrastructure
 - **Crossref**: For DOI resolution services
 - **Open Source Community**: For tools and libraries used
+
+---
+
+<p align="center">
+  <br>
+  <creator>Built with ❤️ by <strong>Sangia Publishing House</strong> for the global scholarly community</creator>
+  <br><br>
+  <a href="https://github.com/mokesano/sciecola/stargazers">
+    <img src="https://img.shields.io/github/stars/mokesano/sciecola?style=social" alt="GitHub Stars">
+  </a>
+  <a href="https://github.com/mokesano/sciecola/network/members">
+    <img src="https://img.shields.io/github/forks/mokesano/sciecola?style=social" alt="GitHub Forks">
+  </a>
+  <br><br>
+  <copyright>© 2019 Sangia Publishing House. Licensed under GPL v3.0.</copyright>
+</p>
