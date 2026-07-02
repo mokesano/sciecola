@@ -12,7 +12,7 @@
 # Untuk sangia-apis: tambahkan workflow yang mem-publish schema baru
 # ke GitHub Release saat ada perubahan di contract/
 
-name: Sangia APIs Contract Check
+name: Sangia APIs Check
 
 on:
   push:
@@ -26,12 +26,12 @@ permissions:
 
 jobs:
   contract-check:
-    name: Validasi kontrak sangia-apis
+    name: Contract Validation APIs
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
-      - name: Checkout kode
+      - name: Checkout code
         uses: actions/checkout@v4
 
       # ── Cek ketersediaan API endpoint ──────────────────────────────────
