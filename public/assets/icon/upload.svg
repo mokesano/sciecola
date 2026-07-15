@@ -1,1 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 54.99 54.76"><defs><style>.cls-2{fill:#696e81}</style></defs><g id="图层_2" data-name="图层 2"><g id="图层_1-2" data-name="图层 1"><path d="M52.5 27.25v22a3 3 0 01-3 3H5.9a3.4 3.4 0 01-3.4-3.4V27.32" fill="none" stroke="#696e81" stroke-linecap="round" stroke-linejoin="round" stroke-width="4.99"/><path class="cls-2" d="M43.5 14.93L29.26.73a2.5 2.5 0 00-3.53 0L11.5 14.93"/><rect class="cls-2" x="25" y="3.96" width="5" height="39.91" rx="2.47"/></g></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 54.99 54.76">
+    <defs>
+        <style>.cls-2{fill:#696e81}</style>
+    </defs>
+    <g id="图层_2" data-name="图层 2">
+        <g id="图层_1-2" data-name="图层 1">
+            <path d="M52.5 27.25v22a3 3 0 01-3 3H5.9a3.4 3.4 0 01-3.4-3.4V27.32" fill="none" stroke="#696e81" stroke-linecap="round" stroke-linejoin="round" stroke-width="4.99"/>
+            <path class="cls-2" d="M43.5 14.93L29.26.73a2.5 2.5 0 00-3.53 0L11.5 14.93" />
+            <rect class="cls-2" x="25" y="3.96" width="5" height="39.91" rx="2.47" />
+        </g>
+    </g>
+</svg>
