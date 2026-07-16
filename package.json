@@ -3,6 +3,7 @@
   "description": "Root scripts for Sciecola PHP and React Hybrid",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "workspaces": [
     "frontend-src"
   ],
