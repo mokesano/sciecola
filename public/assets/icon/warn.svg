@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" focusable="false" class="chakra-icon css-1otbsyv">
+    <g stroke="currentColor" stroke-linecap="round" stroke-width="2" class="warning-triangle_svg__oi-warning-triangle">
+        <path stroke-linejoin="round" d="M11.874 13.5V9.979" class="warning-triangle_svg__oi-line"></path>
+        <path stroke-linejoin="round" stroke-miterlimit="10" d="M10.812 4.418a1.2 1.2 0 0 1 2.124 0l7.486 14.223A1.2 1.2 0 0 1 19.36 20.4H4.388a1.2 1.2 0 0 1-1.062-1.759l7.486-14.223Z" class="warning-triangle_svg__oi-triangle"></path>
+        <path d="M11.874 16.61h.008" class="warning-triangle_svg__oi-mini-dot"></path>
+    </g>
+</svg>
