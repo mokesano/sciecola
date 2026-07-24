@@ -18,7 +18,7 @@ export default defineConfig(({ command }) => ({
 
   publicDir: command === 'build' ? false : '../public',
 
-  base: command === 'build' ? '/assets/sicola-ui/' : '/',
+  base: command === 'build' ? '/app/' : '/',
 
   server: {
     proxy: {
@@ -31,13 +31,13 @@ export default defineConfig(({ command }) => ({
   },
 
   build: {
-    outDir: '../public/assets/sicola-ui',
+    outDir: '../public/app',
     emptyOutDir: true,
     rollupOptions: {
       output: {
-        entryFileNames: 'sicola-app.js',
-        assetFileNames: 'sicola-app.[ext]',
-        chunkFileNames: 'sicola-app-chunk.js',
+        entryFileNames: 'sciecola-app.js',
+        assetFileNames: 'sciecola-app.[ext]',
+        chunkFileNames: 'sciecola-app-chunk.js',
       },
     },
   },

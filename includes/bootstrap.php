@@ -69,7 +69,7 @@ if (is_api_request()) {
     if (file_exists($apiFile)) {
         handle_api_proxy_request($apiFile);
     } else {
-        send_json_response(['status' => 'error', 'message' => 'Endpoint API Sicola tidak ditemukan.'], 404);
+        send_json_response(['status' => 'error', 'message' => 'Endpoint API Sciecola tidak ditemukan.'], 404);
     }
 
 } elseif (is_wrapper_api_request()) {
@@ -90,12 +90,12 @@ if (is_api_request()) {
     /*
      * JALUR C: FRONTEND (HTML)
      */
-    $uiFile = __DIR__ . '/sicolaUI.php';
+    $uiFile = __DIR__ . '/sciecolaUI.php';
 
     if (file_exists($uiFile)) {
         require_once $uiFile;
     } else {
         http_response_code(404);
-        echo '<h1>404 - Antarmuka Tidak Ditemukan</h1><p>File sicolaUI.php hilang dari direktori includes.</p>';
+        echo '<h1>404 - Antarmuka Tidak Ditemukan</h1><p>File sciecolaUI.php hilang dari direktori includes.</p>';
     }
 }

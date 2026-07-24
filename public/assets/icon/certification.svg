@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+  <g id="Group_17939" data-name="Group 17939" transform="translate(-1371 -527)">
+    <rect id="Rectangle_7375" data-name="Rectangle 7375" width="40" height="40" rx="4" transform="translate(1371 527)" fill="#868686" opacity="0.1"/>
+    <g id="noun-badge-1086451" transform="translate(1365 529)">
+      <path id="Path_16217" data-name="Path 16217" d="M30.568,67.622l-1.892,5.947-2.162-2.7L23,71.947,25.162,66" transform="translate(-4.378 -43.782)" fill="none" stroke="#5a5a5a" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1" fill-rule="evenodd"/>
+      <path id="Path_16218" data-name="Path 16218" d="M53.892,68.1l2.676,4.3-3.244-.27L51.433,75.1,49,71.317" transform="translate(-23.35 -45.314)" fill="none" stroke="#5a5a5a" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1" fill-rule="evenodd"/>
+      <circle id="Ellipse_1" data-name="Ellipse 1" cx="9" cy="9" r="9" transform="translate(17 6)" fill="none" stroke="#5a5a5a" stroke-miterlimit="10" stroke-width="1"/>
+      <path id="Path_16219" data-name="Path 16219" d="M38.325,30.758l-2.676,1.352.487-2.919L34,27.108l2.973-.46L38.325,24l1.352,2.649,2.973.46L40.514,29.19,41,32.109Z" transform="translate(-12.405 -13.135)" fill="none" stroke="#5a5a5a" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1"/>
+    </g>
+  </g>
+</svg>

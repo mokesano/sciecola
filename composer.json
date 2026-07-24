@@ -1,6 +1,6 @@
 {
     "name": "sangia/sciecola",
-    "description": "Research Analysis and SDG Classification Mapping Platform",
+    "description": "Sciecola RCA uses a hybrid method combining keyword matching, semantic similarity, research depth, and causal analysis to assess research.",
     "type": "project",
     "license": "MIT",
     "config": {

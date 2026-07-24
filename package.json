@@ -1,8 +1,9 @@
 {
   "name": "sangia-sciecola",
-  "description": "Root scripts for Sciecola PHP and React Hybrid",
+  "description": "Sciecola RCA uses a hybrid method combining keyword matching, semantic similarity, research depth, and causal analysis to assess research.",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "workspaces": [
     "frontend-src"
   ],

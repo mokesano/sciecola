@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" class="speech-bubble_svg__oi-message">
+        <path d="M20 5H4a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h5l3 3 3-3h5a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1Z" class="speech-bubble_svg__oi-vector"></path>
+        <path d="M13 13.5H7M17 9.5H7" class="speech-bubble_svg__oi-line"></path>
+    </g>
+</svg>
