@@ -4,11 +4,7 @@
  * to keep the API key server-side and avoid CORS issues.
  */
 
-// Dinamis: Baca dari .env, fallback ke path relatif jika kosong
-const ENV_BASE = import.meta.env.VITE_API_BASE_URL || '';
-const BASE_URL = ENV_BASE 
-  ? `${ENV_BASE.replace(/\/$/, '')}/api/proxy.php`
-  : '/api/proxy.php';
+const BASE_URL = '/api/proxy.php';
 
 async function request(endpoint, method = 'GET', body = null, params = {}) {
   const url = new URL(BASE_URL, window.location.origin);

@@ -7,11 +7,7 @@
  * 4. Save to cache folder + enqueue for DB
  */
 
-// Dinamis: Baca dari .env, fallback ke path relatif jika kosong
-const ENV_BASE = import.meta.env.VITE_API_BASE_URL || '';
-const API_BASE = ENV_BASE 
-  ? `${ENV_BASE.replace(/\/$/, '')}/api/cache_handler.php`
-  : '/api/cache_handler.php';
+const API_BASE = '/api/cache_handler.php';
 
 /**
  * Fetch researcher profile by ORCID with cache-first strategy
