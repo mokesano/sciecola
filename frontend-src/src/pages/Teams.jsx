@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
 
 /* ─── helpers ────────────────────────────────────────────────────────────── */
 
