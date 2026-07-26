@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { Search, BookOpen, ExternalLink, Copy, CheckCircle, AlertCircle, ChevronRight, ArrowRight } from 'lucide-react';
 
 const TutorialDOI = () => {

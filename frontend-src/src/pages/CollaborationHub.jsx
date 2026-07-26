@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Users, Network, TrendingUp, Globe, Search, Filter, 
   Download, Share2, MessageSquare, Mail, ExternalLink, Award,
   BookOpen, Building2, MapPin, Calendar, ArrowRight, Zap,

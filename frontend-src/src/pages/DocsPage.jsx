@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { useParams, Link, Navigate } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router';
 
 // Lazy-load each MDX document
 const DOC_MODULES = {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { FolderOpen, Users, Calendar, CheckCircle, Clock, AlertCircle, Plus,
   Search, Filter, MoreVertical, Edit2, Trash2, Share2, Download, MessageSquare,
   FileText, BarChart3, Settings, Eye, Star, Zap, Target, TrendingUp, Award

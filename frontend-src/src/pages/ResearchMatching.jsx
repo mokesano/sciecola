@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Brain, Users, Target, Zap, Search, Filter, Sparkles, TrendingUp,
   Award, BookOpen, Building2, MapPin, Mail, ExternalLink, CheckCircle,
   Star, Lightbulb, Network, ArrowRight, Heart, MessageSquare, Share2
