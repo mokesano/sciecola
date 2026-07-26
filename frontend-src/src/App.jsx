@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { HashRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Outlet } from 'react-router';
 import { useAuth } from './context/AuthContext';
 import { AuthProvider } from './context/AuthContext';
 import ScrollToTop from './components/shared/ScrollToTop';
