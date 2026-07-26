@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Lightbulb, Handshake, Building2, TrendingUp, Search, Filter, ArrowRight,
   DollarSign, Users, Calendar, MapPin, Target, Zap, Award, BookOpen, Globe, MessageSquare,
   Share2, ExternalLink, Star, CheckCircle, Clock, Briefcase

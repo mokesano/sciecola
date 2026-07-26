@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import PageHeader from '../components/shared/PageHeader';
 
 // ─── Fallback hardcoded insights (12 items covering all 17 SDGs) ──────────────

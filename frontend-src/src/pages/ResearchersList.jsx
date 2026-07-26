@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
 
 // UN official SDG colour palette (1..17)
