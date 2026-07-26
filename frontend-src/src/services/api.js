@@ -3,7 +3,11 @@
  * Talks to the PHP layer at /api/SDG_Classification_API.php and related endpoints.
  */
 
-const API_BASE = '/api/SDG_Classification_API.php';
+// Dinamis: Baca dari .env, fallback ke path relatif jika kosong (untuk Vite proxy)
+const ENV_BASE = import.meta.env.VITE_API_BASE_URL || '';
+const API_BASE = ENV_BASE 
+  ? `${ENV_BASE.replace(/\/$/, '')}/api/SDG_Classification_API.php`
+  : '/api/SDG_Classification_API.php';
 
 async function get(params = {}) {
   const url = new URL(API_BASE, window.location.origin);
