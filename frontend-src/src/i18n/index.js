@@ -67,6 +67,8 @@ import idInsightsPage       from './locales/id/insights_page.json';
 import enInsightsPage       from './locales/en/insights_page.json';
 import idChangePassword     from './locales/id/change_password.json';
 import enChangePassword     from './locales/en/change_password.json';
+import idSettings           from './locales/id/settings.json';
+import enSettings           from './locales/en/settings.json';
 
 // ─── Deteksi bahasa awal ─────────────────────────────────────────────
 // Prioritas: (1) preferensi tersimpan user → (2) bahasa browser →
@@ -120,6 +122,7 @@ i18n
         admin_teams:             idAdminTeams,
         insights_page:           idInsightsPage,
         change_password:         idChangePassword,
+        settings:                idSettings,
       },
       en: {
         translation: enCommon,
@@ -153,12 +156,13 @@ i18n
         admin_teams:             enAdminTeams,
         insights_page:           enInsightsPage,
         change_password:         enChangePassword,
+        settings:                enSettings,
       },
     },
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams', 'insights_page', 'change_password'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams', 'insights_page', 'change_password', 'settings'],
     interpolation: { escapeValue: false },
   });
 

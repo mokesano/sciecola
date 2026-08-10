@@ -1,0 +1,110 @@
+{
+  "title":    "Settings",
+  "subtitle": "Manage your profile, preferences, and account security.",
+  "breadcrumb": {
+    "home":      "Home",
+    "dashboard": "Dashboard",
+    "current":   "Settings"
+  },
+  "actions": {
+    "save":    "Save Changes",
+    "saving":  "Saving…"
+  },
+  "toast": {
+    "saved": "Settings saved successfully"
+  },
+  "tabs": {
+    "profile":       "Profile",
+    "notifications": "Notifications",
+    "privacy":       "Privacy & Security",
+    "integrations":  "Integrations",
+    "account":       "Account"
+  },
+  "profile": {
+    "title":        "Profile Information",
+    "photo_change": "Change Photo",
+    "photo_help":   "JPG or PNG. Max 2MB.",
+    "name":         "Full Name",
+    "email":        "Email",
+    "orcid":        "ORCID ID",
+    "affiliation":  "Affiliation",
+    "bio":          "Short Bio",
+    "interests":    "Research Interests (comma-separated)"
+  },
+  "notifications": {
+    "title":    "Notification Preferences",
+    "subtitle": "Choose how and when you receive updates from the platform.",
+    "items": {
+      "citation": {
+        "title": "New Citation Alerts",
+        "desc":  "Email me when my articles are cited"
+      },
+      "collab": {
+        "title": "Collaboration Requests",
+        "desc":  "Notify me when other researchers invite me"
+      },
+      "digest": {
+        "title": "Weekly Digest",
+        "desc":  "Track research performance every Monday"
+      },
+      "marketing": {
+        "title": "Feature & Event Updates",
+        "desc":  "Webinars, new features, and SDG campaigns"
+      },
+      "security": {
+        "title": "Security Alerts",
+        "desc":  "New sign-ins, password changes, or suspicious activity"
+      }
+    }
+  },
+  "privacy": {
+    "title":               "Privacy & Security",
+    "visibility":          "Profile Visibility",
+    "visibility_public":   "Public (Everyone can view)",
+    "visibility_reg":      "Registered (Signed-in users only)",
+    "visibility_private":  "Private (Only you)",
+    "downloads":           "Show Download Statistics",
+    "downloads_desc":      "Let visitors see the number of article downloads",
+    "messages":            "Allow Direct Messages",
+    "messages_desc":       "Other researchers can message you through the platform",
+    "twofa":               "Two-Factor Authentication (2FA)",
+    "twofa_desc":          "Add an extra layer of security to your account"
+  },
+  "integrations": {
+    "linked":         "Linked Accounts",
+    "orcid_status":   "Verified & Synchronized",
+    "connected":      "Connected",
+    "api_keys":       "API Keys",
+    "api_new":        "Create New Key",
+    "api_name":       "Name",
+    "api_key":        "Key",
+    "api_created":    "Created",
+    "api_status":     "Status",
+    "api_actions":    "Actions",
+    "api_active":     "Active",
+    "api_inactive":   "Inactive",
+    "api_revoke":     "Revoke"
+  },
+  "account": {
+    "password_title": "Change Password",
+    "current":        "Current Password",
+    "new":            "New Password",
+    "confirm":        "Confirm Password",
+    "update":         "Update Password",
+    "danger_title":   "Danger Zone",
+    "danger_desc":    "The actions below cannot be undone. Please proceed with caution.",
+    "deactivate":     "Deactivate Account Temporarily",
+    "delete":         "Delete Account Permanently"
+  },
+  "help": {
+    "title":    "Need Help?",
+    "subtitle": "If you run into technical issues or have questions about a specific feature, our support team is ready to help.",
+    "button":   "Contact Support"
+  },
+  "tips": {
+    "title": "Security Tips",
+    "item1": "Use a unique password not reused across services.",
+    "item2": "Enable 2FA for extra protection.",
+    "item3": "Review API keys periodically and revoke unused ones."
+  }
+}
