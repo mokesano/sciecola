@@ -1,0 +1,56 @@
+{
+  "create_post": "Buat Postingan",
+  "nav": {
+    "feed":          "Feed",
+    "mentions":      "Mentions",
+    "messages":      "Pesan",
+    "saved":         "Simpan",
+    "notifications": "Notifikasi"
+  },
+  "sections": {
+    "groups":     "Grup & Komunitas",
+    "topics":     "Topik Populer",
+    "connections":"Terhubung",
+    "activities": "Aktivitas Terkini",
+    "invitations":"Undangan",
+    "events":     "Acara Mendatang",
+    "active":     "Siapa yang Aktif"
+  },
+  "see_all": {
+    "groups":      "Lihat semua grup",
+    "topics":      "Lihat semua topik",
+    "connections": "Lihat semua koneksi",
+    "activities":  "Lihat semua aktivitas",
+    "invitations": "Lihat semua undangan",
+    "events":      "Lihat semua acara",
+    "users":       "Lihat semua pengguna"
+  },
+  "members":     "{{count}} anggota",
+  "posts":       "{{count}} posts",
+  "composer": {
+    "placeholder": "Bagikan sesuatu dengan komunitas Anda…",
+    "article":     "Artikel",
+    "image":       "Gambar",
+    "poll":        "Poll",
+    "video":       "Video",
+    "event":       "Acara",
+    "submit":      "Posting"
+  },
+  "tabs": {
+    "semua":     "Semua",
+    "mengikuti": "Mengikuti",
+    "grup":      "Grup",
+    "mentions":  "Mentions"
+  },
+  "sort": {
+    "recent":   "Terbaru",
+    "popular":  "Populer",
+    "relevant": "Relevan"
+  },
+  "load_more": "Muat Lebih Banyak",
+  "invite": {
+    "reject": "Tolak",
+    "accept": "Terima"
+  },
+  "event_register": "Daftar"
+}
