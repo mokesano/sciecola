@@ -1,0 +1,40 @@
+{
+  "breadcrumb": {
+    "home":      "Home",
+    "dashboard": "Dashboard",
+    "current":   "My Activity"
+  },
+  "title":    "My Activity",
+  "subtitle": "History of interactions with articles, collections, and research analyses.",
+  "summary": {
+    "viewed":     "Viewed",
+    "saved":      "Saved",
+    "analyzed":   "Analyzed",
+    "shared":     "Shared",
+    "downloaded": "Downloaded"
+  },
+  "filter": {
+    "date": {
+      "today":  "Today",
+      "7days":  "7 Days",
+      "30days": "30 Days",
+      "all":    "All"
+    },
+    "type": {
+      "all":      "All Types",
+      "viewed":   "Viewed",
+      "saved":    "Saved",
+      "shared":   "Shared",
+      "analysis": "Analysis"
+    }
+  },
+  "loading":         "Loading activity…",
+  "error_prefix":    "Failed to load:",
+  "load_failed":     "Failed to load activity",
+  "empty":           "No activity for this period.",
+  "no_orcid": {
+    "title":    "ORCID Not Linked",
+    "subtitle": "Link your ORCID to see your activity history.",
+    "cta":      "Link ORCID"
+  }
+}
