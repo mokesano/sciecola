@@ -1,0 +1,89 @@
+{
+  "breadcrumb": {
+    "home":      "Home",
+    "dashboard": "Dashboard",
+    "current":   "My Profile"
+  },
+  "loading":       "Loading profile from ORCID…",
+  "load_error":    "Profile could not be loaded",
+  "load_error_prefix": "Failed to load profile:",
+  "profile_not_found": "Profile not found",
+  "retry":         "Try Again",
+  "no_orcid": {
+    "title":    "ORCID Not Linked",
+    "subtitle": "Link your ORCID to display your research profile, publications, and impact stats.",
+    "cta":      "Link ORCID"
+  },
+  "header": {
+    "view_public": "View Public Profile",
+    "edit":        "Edit Profile",
+    "location":    "Location",
+    "email":       "Email",
+    "orcid":       "ORCID"
+  },
+  "stats": {
+    "publications": "Publications",
+    "citations":    "Citations",
+    "hindex":       "h-Index",
+    "wis":          "WIS Score"
+  },
+  "external_ids": {
+    "title":       "External IDs Management",
+    "subtitle":    "IDs synchronized from ORCID or set manually.",
+    "sync_all":    "Sync All",
+    "platform":    "Platform",
+    "value":       "ID / Value",
+    "status":      "Status",
+    "last_sync":   "Last Sync",
+    "actions":     "Actions",
+    "not_set":     "Not set",
+    "cancel":      "Cancel",
+    "save":        "Save",
+    "edit":        "Edit",
+    "sync":        "Sync",
+    "via_orcid":   "Via ORCID",
+    "just_now":    "Just now",
+    "waiting":     "Waiting for sync"
+  },
+  "status": {
+    "synced":  "Synced",
+    "pending": "Pending",
+    "error":   "Failed",
+    "not_set": "Not Set"
+  },
+  "toasts": {
+    "sync_success": "{{platform}} data synced successfully",
+    "sync_error":   "Sync failed, please try again",
+    "sync_all_done":"{{count}} IDs synced successfully",
+    "all_synced":   "All IDs are already in sync",
+    "analyze_done": "Analysis complete! Profile refreshed from ORCID.",
+    "analyze_error":"Analysis failed, please try again",
+    "id_empty":     "ID value cannot be empty",
+    "id_updated":   "ID updated. Click Sync to fetch data.",
+    "fill_first":   "Fill in the ID value first"
+  },
+  "tabs": {
+    "ringkasan":   "Overview",
+    "publikasi":   "Publications",
+    "sdgs":        "SDGs",
+    "kolaborasi":  "Collaborations"
+  },
+  "content": {
+    "profile_summary":   "Profile Summary",
+    "default_bio":       "Researcher in {{department}} at {{univ}}. Active since {{yearsActive}}.",
+    "sdg_focus":         "SDG Focus",
+    "sdg_empty":         "No SDG data yet. Analysis required.",
+    "publications_note": "Publications preview loaded from ORCID.",
+    "manage_articles":   "Manage Articles →",
+    "sdgs_note":         "SDG visualization from ORCID analysis.",
+    "see_stats":         "See Statistics →",
+    "collab_count":      "{{count}} collaborations",
+    "collab_empty":      "No collaborator data yet. Run analysis to load data."
+  },
+  "footer": {
+    "data_note":     "Data loaded directly from the ORCID API via a cache-first system.",
+    "source":        "Source: {{source}}",
+    "analyzing":     "Analyzing from ORCID…",
+    "refresh":       "Refresh & Compute Wizdam Impact Score"
+  }
+}

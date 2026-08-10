@@ -1,10 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 
+const TABS = ['ringkasan', 'publikasi', 'sdgs', 'kolaborasi'];
+
+const EXTERNAL_ID_DEFS = [
+  { type: 'Scopus Author ID',    key: 'scopusId'     },
+  { type: 'ResearcherID',        key: 'researcherId' },
+  { type: 'Loop Profile',        key: 'loopId'       },
+  { type: 'SINTA ID',            key: 'sintaId'      },
+  { type: 'Google Scholar ID',   key: 'scholarId'    },
+];
+
 const MyProfile = () => {
+  const { t } = useTranslation('my_profile');
   const { user, updateUser } = useAuth();
-  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState('ringkasan');
   const [isSyncing, setIsSyncing] = useState({});
@@ -16,20 +27,12 @@ const MyProfile = () => {
   const [error, setError] = useState(null);
 
   const [profile, setProfile] = useState(null);
-  const [externalIds, setExternalIds] = useState([
-    { type: 'Scopus Author ID', key: 'scopusId',    value: '', status: 'not_set', lastSync: '-' },
-    { type: 'ResearcherID',     key: 'researcherId', value: '', status: 'not_set', lastSync: '-' },
-    { type: 'Loop Profile',     key: 'loopId',       value: '', status: 'not_set', lastSync: '-' },
-    { type: 'SINTA ID',         key: 'sintaId',      value: '', status: 'not_set', lastSync: '-' },
-    { type: 'Google Scholar ID', key: 'scholarId',   value: '', status: 'not_set', lastSync: '-' },
-  ]);
+  const [externalIds, setExternalIds] = useState(
+    EXTERNAL_ID_DEFS.map(d => ({ ...d, value: '', status: 'not_set', lastSync: '-' }))
+  );
 
-  // Fetch real profile via /api/my_profile.php
   useEffect(() => {
-    if (!user?.orcid) {
-      setLoading(false);
-      return;
-    }
+    if (!user?.orcid) { setLoading(false); return; }
 
     setLoading(true);
     setError(null);
@@ -41,28 +44,22 @@ const MyProfile = () => {
           const p = data.profile;
           setProfile(p);
 
-          // Pre-populate external IDs from ORCID profile
           setExternalIds(prev => prev.map(id => {
-            if (id.key === 'scopusId' && p.scopusId) {
-              return { ...id, value: p.scopusId, status: 'synced', lastSync: 'Via ORCID' };
-            }
-            if (id.key === 'researcherId' && p.researcherId) {
-              return { ...id, value: p.researcherId, status: 'synced', lastSync: 'Via ORCID' };
-            }
+            if (id.key === 'scopusId'     && p.scopusId)     return { ...id, value: p.scopusId,     status: 'synced', lastSync: t('external_ids.via_orcid') };
+            if (id.key === 'researcherId' && p.researcherId) return { ...id, value: p.researcherId, status: 'synced', lastSync: t('external_ids.via_orcid') };
             return id;
           }));
 
-          // Update auth context with enriched name
           if (p.name && (!user.name || user.name !== p.name)) {
             updateUser({ name: p.name, avatar: p.avatar });
           }
         } else {
-          setError(data.message || 'Profil tidak ditemukan');
+          setError(data.message || t('profile_not_found'));
         }
       })
-      .catch(err => setError('Gagal memuat profil: ' + err.message))
+      .catch(err => setError(`${t('load_error_prefix')} ${err.message}`))
       .finally(() => setLoading(false));
-  }, [user?.orcid]);
+  }, [user?.orcid, t, updateUser, user?.name]);
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
@@ -71,19 +68,19 @@ const MyProfile = () => {
 
   const handleSyncId = async (key) => {
     setIsSyncing(prev => ({ ...prev, [key]: true }));
-    // Enqueue to crawl_queue for background processing
     try {
       await fetch('/api/cache_handler.php', {
-        method: 'POST',
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'sync', type: 'orcid', limit: 1 }),
+        body:    JSON.stringify({ action: 'sync', type: 'orcid', limit: 1 }),
       });
       setExternalIds(prev => prev.map(id =>
-        id.key === key ? { ...id, status: 'synced', lastSync: 'Baru saja' } : id
+        id.key === key ? { ...id, status: 'synced', lastSync: t('external_ids.just_now') } : id
       ));
-      showToast(`Data ${externalIds.find(id => id.key === key)?.type} berhasil disinkronisasi`);
+      const platform = externalIds.find(id => id.key === key)?.type ?? '';
+      showToast(t('toasts.sync_success', { platform }));
     } catch {
-      showToast('Gagal sinkronisasi, coba lagi', 'error');
+      showToast(t('toasts.sync_error'), 'error');
     } finally {
       setIsSyncing(prev => ({ ...prev, [key]: false }));
     }
@@ -91,10 +88,10 @@ const MyProfile = () => {
 
   const handleSyncAll = async () => {
     const idsToSync = externalIds.filter(id => id.value && id.status !== 'synced').map(id => id.key);
-    if (idsToSync.length === 0) { showToast('Semua ID sudah tersinkronisasi', 'info'); return; }
+    if (idsToSync.length === 0) { showToast(t('toasts.all_synced'), 'info'); return; }
     idsToSync.forEach(key => setIsSyncing(prev => ({ ...prev, [key]: true })));
     await Promise.all(idsToSync.map(key => handleSyncId(key)));
-    showToast(`${idsToSync.length} ID berhasil disinkronisasi`);
+    showToast(t('toasts.sync_all_done', { count: idsToSync.length }));
   };
 
   const handleAnalyze = async () => {
@@ -105,10 +102,10 @@ const MyProfile = () => {
       const data = await res.json();
       if (data.status === 'success') {
         setProfile(data.profile);
-        showToast('Analisis selesai! Data profil diperbarui dari ORCID.');
+        showToast(t('toasts.analyze_done'));
       }
     } catch {
-      showToast('Gagal menganalisis, coba lagi', 'error');
+      showToast(t('toasts.analyze_error'), 'error');
     } finally {
       setIsAnalyzing(false);
     }
@@ -116,27 +113,24 @@ const MyProfile = () => {
 
   const handleEditId = (idObj) => { setEditingId(idObj.key); setEditValue(idObj.value); };
   const handleSaveId = () => {
-    if (!editValue.trim()) { showToast('Nilai ID tidak boleh kosong', 'error'); return; }
+    if (!editValue.trim()) { showToast(t('toasts.id_empty'), 'error'); return; }
     setExternalIds(prev => prev.map(id =>
-      id.key === editingId ? { ...id, value: editValue.trim(), status: 'pending', lastSync: 'Menunggu sinkronisasi' } : id
+      id.key === editingId
+        ? { ...id, value: editValue.trim(), status: 'pending', lastSync: t('external_ids.waiting') }
+        : id
     ));
     setEditingId(null); setEditValue('');
-    showToast('ID berhasil diperbarui. Klik Sinkronisasi untuk mengambil data.');
+    showToast(t('toasts.id_updated'));
   };
 
   const getStatusBadge = (s) => ({
-    synced: 'bg-green-100 text-green-700 border-green-200',
+    synced:  'bg-green-100 text-green-700 border-green-200',
     pending: 'bg-amber-100 text-amber-700 border-amber-200',
-    error: 'bg-red-100 text-red-700 border-red-200',
+    error:   'bg-red-100 text-red-700 border-red-200',
     not_set: 'bg-gray-100 text-gray-600 border-gray-200',
   }[s] ?? 'bg-gray-100 text-gray-600 border-gray-200');
 
-  const getStatusLabel = (s) => ({
-    synced: 'Tersinkron', pending: 'Menunggu', error: 'Gagal', not_set: 'Belum Diatur',
-  }[s] ?? s);
-
-  // ── No ORCID linked yet ──────────────────────────────────────────────────────
-
+  // ── Guards ─────────────────────────────────────────────────────────────────
   if (!user?.orcid && !loading) {
     return (
       <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
@@ -146,10 +140,10 @@ const MyProfile = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">ORCID Belum Terhubung</h2>
-          <p className="text-gray-600 mb-6">Hubungkan ORCID Anda untuk menampilkan profil riset, publikasi, dan statistik dampak.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('no_orcid.title')}</h2>
+          <p className="text-gray-600 mb-6">{t('no_orcid.subtitle')}</p>
           <Link to="/settings" className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700">
-            Hubungkan ORCID
+            {t('no_orcid.cta')}
           </Link>
         </div>
       </main>
@@ -162,7 +156,7 @@ const MyProfile = () => {
         <div className="flex items-center justify-center min-h-64">
           <div className="text-center">
             <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-gray-600">Memuat profil dari ORCID…</p>
+            <p className="text-gray-600">{t('loading')}</p>
           </div>
         </div>
       </main>
@@ -173,9 +167,9 @@ const MyProfile = () => {
     return (
       <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
         <div className="text-center py-20">
-          <p className="text-red-500 mb-4">{error || 'Profil tidak dapat dimuat'}</p>
+          <p className="text-red-500 mb-4">{error || t('load_error')}</p>
           <button onClick={() => window.location.reload()} className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700">
-            Coba Lagi
+            {t('retry')}
           </button>
         </div>
       </main>
@@ -184,22 +178,29 @@ const MyProfile = () => {
 
   const stats = {
     publications: profile.publications ?? 0,
-    citations: profile.citations ?? 0,
-    hIndex: profile.hIndex ?? 0,
-    views: profile.views ?? 0,
-    downloads: profile.downloads ?? 0,
-    wis: profile.wis ?? ((profile.hIndex ?? 0) * 4.5 + Math.min(30, (profile.citations ?? 0) / 50)).toFixed(1),
+    citations:    profile.citations    ?? 0,
+    hIndex:       profile.hIndex       ?? 0,
+    views:        profile.views        ?? 0,
+    downloads:    profile.downloads    ?? 0,
+    wis:          profile.wis ?? ((profile.hIndex ?? 0) * 4.5 + Math.min(30, (profile.citations ?? 0) / 50)).toFixed(1),
   };
+
+  const statCards = [
+    { key: 'publications', value: stats.publications },
+    { key: 'citations',    value: stats.citations.toLocaleString() },
+    { key: 'hindex',       value: stats.hIndex },
+    { key: 'wis',          value: stats.wis, highlight: true },
+  ];
 
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
-        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
+        <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">›</span>
-        <Link to="/dashboard" className="hover:text-indigo-600 transition-colors">Dashboard</Link>
+        <Link to="/dashboard" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.dashboard')}</Link>
         <span className="text-gray-400">›</span>
-        <span className="text-gray-900 font-medium">Profil Saya</span>
+        <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
       </nav>
 
       {/* Profile Header Card */}
@@ -232,10 +233,10 @@ const MyProfile = () => {
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
-                Lihat Profil Publik
+                {t('header.view_public')}
               </Link>
               <Link to="/settings" className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-200 transition-colors">
-                Edit Profil
+                {t('header.edit')}
               </Link>
             </div>
           </div>
@@ -247,7 +248,7 @@ const MyProfile = () => {
                   <svg className="w-5 h-5 text-gray-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   </svg>
-                  <div><p className="text-xs text-gray-500">Lokasi</p><p className="text-sm text-gray-900">{profile.location}</p></div>
+                  <div><p className="text-xs text-gray-500">{t('header.location')}</p><p className="text-sm text-gray-900">{profile.location}</p></div>
                 </div>
               )}
               {(profile.email ?? user?.email) && (
@@ -255,27 +256,22 @@ const MyProfile = () => {
                   <svg className="w-5 h-5 text-gray-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  <div><p className="text-xs text-gray-500">Email</p><p className="text-sm text-gray-900">{profile.email ?? user.email}</p></div>
+                  <div><p className="text-xs text-gray-500">{t('header.email')}</p><p className="text-sm text-gray-900">{profile.email ?? user.email}</p></div>
                 </div>
               )}
               <div className="flex items-start gap-3">
                 <svg className="w-5 h-5 text-gray-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
-                <div><p className="text-xs text-gray-500">ORCID</p><p className="text-sm text-indigo-600 font-mono">{user.orcid}</p></div>
+                <div><p className="text-xs text-gray-500">{t('header.orcid')}</p><p className="text-sm text-indigo-600 font-mono">{user.orcid}</p></div>
               </div>
             </div>
 
             <div className="sm:col-span-2 lg:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {[
-                { label: 'Publikasi', value: stats.publications },
-                { label: 'Sitasi', value: stats.citations.toLocaleString() },
-                { label: 'h-Index', value: stats.hIndex },
-                { label: 'WIS Skor', value: stats.wis, highlight: true },
-              ].map((stat, idx) => (
-                <div key={idx} className={`p-3 rounded-xl border text-center ${stat.highlight ? 'bg-indigo-50 border-indigo-200' : 'bg-gray-50 border-gray-200'}`}>
+              {statCards.map((stat) => (
+                <div key={stat.key} className={`p-3 rounded-xl border text-center ${stat.highlight ? 'bg-indigo-50 border-indigo-200' : 'bg-gray-50 border-gray-200'}`}>
                   <p className={`text-lg font-bold ${stat.highlight ? 'text-indigo-700' : 'text-gray-900'}`}>{stat.value}</p>
-                  <p className="text-xs text-gray-500">{stat.label}</p>
+                  <p className="text-xs text-gray-500">{t(`stats.${stat.key}`)}</p>
                 </div>
               ))}
             </div>
@@ -287,15 +283,15 @@ const MyProfile = () => {
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mb-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
           <div>
-            <h2 className="text-lg font-bold text-gray-900">Manajemen ID Eksternal</h2>
-            <p className="text-sm text-gray-600">ID yang telah tersinkronisasi dari ORCID atau diatur manual.</p>
+            <h2 className="text-lg font-bold text-gray-900">{t('external_ids.title')}</h2>
+            <p className="text-sm text-gray-600">{t('external_ids.subtitle')}</p>
           </div>
           <button onClick={handleSyncAll}
             className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors flex items-center gap-2">
             <svg className={`w-4 h-4 ${Object.values(isSyncing).some(v => v) ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            Sinkronisasi Semua
+            {t('external_ids.sync_all')}
           </button>
         </div>
 
@@ -303,11 +299,11 @@ const MyProfile = () => {
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-gray-600 border-b border-gray-200">
               <tr>
-                <th className="px-4 py-3 text-left font-medium">Platform</th>
-                <th className="px-4 py-3 text-left font-medium">ID / Nilai</th>
-                <th className="px-4 py-3 text-left font-medium">Status</th>
-                <th className="px-4 py-3 text-left font-medium">Terakhir Sync</th>
-                <th className="px-4 py-3 text-right font-medium">Aksi</th>
+                <th className="px-4 py-3 text-left font-medium">{t('external_ids.platform')}</th>
+                <th className="px-4 py-3 text-left font-medium">{t('external_ids.value')}</th>
+                <th className="px-4 py-3 text-left font-medium">{t('external_ids.status')}</th>
+                <th className="px-4 py-3 text-left font-medium">{t('external_ids.last_sync')}</th>
+                <th className="px-4 py-3 text-right font-medium">{t('external_ids.actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -320,13 +316,13 @@ const MyProfile = () => {
                         className="px-3 py-1.5 border border-indigo-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 w-full max-w-xs" autoFocus />
                     ) : (
                       <span className={id.value ? 'font-mono text-gray-700' : 'text-gray-400 italic'}>
-                        {id.value || 'Belum diatur'}
+                        {id.value || t('external_ids.not_set')}
                       </span>
                     )}
                   </td>
                   <td className="px-4 py-3">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusBadge(id.status)}`}>
-                      {getStatusLabel(id.status)}
+                      {t(`status.${id.status}`)}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-gray-500">{id.lastSync}</td>
@@ -334,20 +330,20 @@ const MyProfile = () => {
                     <div className="flex justify-end gap-2">
                       {editingId === id.key ? (
                         <>
-                          <button onClick={() => setEditingId(null)} className="px-2 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded">Batal</button>
-                          <button onClick={handleSaveId} className="px-2 py-1 text-xs bg-indigo-600 text-white rounded hover:bg-indigo-700">Simpan</button>
+                          <button onClick={() => setEditingId(null)} className="px-2 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded">{t('external_ids.cancel')}</button>
+                          <button onClick={handleSaveId} className="px-2 py-1 text-xs bg-indigo-600 text-white rounded hover:bg-indigo-700">{t('external_ids.save')}</button>
                         </>
                       ) : (
                         <>
                           <button onClick={() => handleEditId(id)}
-                            className="p-1.5 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors" title="Edit">
+                            className="p-1.5 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors" title={t('external_ids.edit')}>
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                           </button>
-                          <button onClick={() => id.value ? handleSyncId(id.key) : showToast('Isi nilai ID terlebih dahulu', 'error')}
+                          <button onClick={() => id.value ? handleSyncId(id.key) : showToast(t('toasts.fill_first'), 'error')}
                             disabled={!id.value || isSyncing[id.key]}
-                            className="p-1.5 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded transition-colors disabled:opacity-40" title="Sinkronisasi">
+                            className="p-1.5 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded transition-colors disabled:opacity-40" title={t('external_ids.sync')}>
                             {isSyncing[id.key]
                               ? <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" /></svg>
                               : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
@@ -368,12 +364,12 @@ const MyProfile = () => {
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
         <div className="border-b border-gray-200 px-6 pt-4 overflow-x-auto">
           <nav className="flex gap-6 min-w-max">
-            {['ringkasan', 'publikasi', 'sdgs', 'kolaborasi'].map(tab => (
+            {TABS.map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`pb-3 text-sm font-medium border-b-2 transition-colors capitalize ${
+                className={`pb-3 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === tab ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700'
                 }`}>
-                {tab}
+                {t(`tabs.${tab}`)}
               </button>
             ))}
           </nav>
@@ -383,9 +379,13 @@ const MyProfile = () => {
           {activeTab === 'ringkasan' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-gray-50 rounded-xl p-5 border border-gray-100">
-                <h3 className="font-semibold text-gray-900 mb-3">Ringkasan Profil</h3>
+                <h3 className="font-semibold text-gray-900 mb-3">{t('content.profile_summary')}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  {profile.bio || `Peneliti di bidang ${profile.department || 'riset'} dari ${profile.univ || 'institusi'}. Aktif sejak ${profile.yearsActive || 'N/A'}.`}
+                  {profile.bio || t('content.default_bio', {
+                    department: profile.department || t('header.orcid'),
+                    univ:       profile.univ       || '-',
+                    yearsActive: profile.yearsActive || 'N/A'
+                  })}
                 </p>
                 {(profile.researchInterests?.length > 0) && (
                   <div className="mt-4 flex flex-wrap gap-2">
@@ -396,7 +396,7 @@ const MyProfile = () => {
                 )}
               </div>
               <div className="bg-gray-50 rounded-xl p-5 border border-gray-100">
-                <h3 className="font-semibold text-gray-900 mb-3">SDG Fokus</h3>
+                <h3 className="font-semibold text-gray-900 mb-3">{t('content.sdg_focus')}</h3>
                 {profile.sdgFocus?.length > 0 ? (
                   <div className="space-y-2">
                     {profile.sdgFocus.slice(0, 5).map(s => (
@@ -410,19 +410,19 @@ const MyProfile = () => {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500">Belum ada data SDG. Analisis diperlukan.</p>
+                  <p className="text-sm text-gray-500">{t('content.sdg_empty')}</p>
                 )}
               </div>
             </div>
           )}
           {activeTab === 'publikasi' && (
             <div className="text-center py-12 text-gray-500">
-              Preview publikasi dimuat dari ORCID. <Link to="/my-articles" className="text-indigo-600 hover:underline">Kelola Artikel →</Link>
+              {t('content.publications_note')} <Link to="/my-articles" className="text-indigo-600 hover:underline">{t('content.manage_articles')}</Link>
             </div>
           )}
           {activeTab === 'sdgs' && (
             <div className="text-center py-12 text-gray-500">
-              Visualisasi SDG berdasarkan hasil analisis ORCID. <Link to="/my-statistics" className="text-indigo-600 hover:underline">Lihat Statistik →</Link>
+              {t('content.sdgs_note')} <Link to="/my-statistics" className="text-indigo-600 hover:underline">{t('content.see_stats')}</Link>
             </div>
           )}
           {activeTab === 'kolaborasi' && (
@@ -439,7 +439,7 @@ const MyProfile = () => {
                         {c.orcid ? (
                           <Link to={`/orcid/${c.orcid}`} className="text-xs text-indigo-600 hover:underline">{c.orcid}</Link>
                         ) : (
-                          <p className="text-xs text-gray-500">{c.collaborations} kolaborasi</p>
+                          <p className="text-xs text-gray-500">{t('content.collab_count', { count: c.collaborations })}</p>
                         )}
                       </div>
                     </div>
@@ -447,7 +447,7 @@ const MyProfile = () => {
                 </div>
               ) : (
                 <div className="text-center py-12 text-gray-500">
-                  Data kolaborator belum tersedia. Jalankan analisis untuk memuat data.
+                  {t('content.collab_empty')}
                 </div>
               )}
             </div>
@@ -456,8 +456,8 @@ const MyProfile = () => {
 
         <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-gray-600">
-            Data dimuat langsung dari ORCID API melalui cache-first system.
-            {profile._source && <span className="ml-2 text-xs text-indigo-500">Sumber: {profile._source}</span>}
+            {t('footer.data_note')}
+            {profile._source && <span className="ml-2 text-xs text-indigo-500">{t('footer.source', { source: profile._source })}</span>}
           </p>
           <button onClick={handleAnalyze} disabled={isAnalyzing}
             className={`px-6 py-3 rounded-xl font-semibold text-white shadow-md flex items-center gap-2 transition-all ${
@@ -469,14 +469,14 @@ const MyProfile = () => {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>
-                Menganalisis dari ORCID...
+                {t('footer.analyzing')}
               </>
             ) : (
               <>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
-                Refresh & Hitung Wizdam Impact Score
+                {t('footer.refresh')}
               </>
             )}
           </button>
