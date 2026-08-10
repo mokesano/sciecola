@@ -1,0 +1,45 @@
+{
+  "breadcrumb": {
+    "home":    "Home",
+    "help":    "Help Center",
+    "current": "ORCID Tutorial"
+  },
+  "title":     "Analyze Your Research Profile with ORCID",
+  "subtitle":  "Learn how to analyze all your research publications using your ORCID ID",
+  "duration":  "3 minutes",
+  "level":     "Beginner",
+  "about_title": "About This Tutorial",
+  "about_body":  "This tutorial guides you step by step through analyzing your entire research profile using your ORCID ID. ORCID (Open Researcher and Contributor ID) is a unique identifier that lets the system automatically pull all your publications from multiple sources.",
+  "steps_title": "Steps",
+  "steps": [
+    { "title": "Get Your ORCID ID",
+      "description": "If you don't have an ORCID ID yet, visit orcid.org and register for free. The signup process takes only a few minutes." },
+    { "title": "Copy Your ORCID ID",
+      "description": "An ORCID ID looks like 0000-0000-0000-0000 (16 digits with hyphens). Make sure you copy the entire ID including the hyphens." },
+    { "title": "Enter the ORCID ID on the Platform",
+      "description": "Return to our platform and enter your ORCID ID in the search field. Click \"Analyze\" to start." },
+    { "title": "Review the Analysis Results",
+      "description": "The platform will pull all publications linked to your ORCID ID and run the SDG classification. You'll see a list of publications with confidence scores and SDG categories." },
+    { "title": "Export and Share the Results",
+      "description": "You can export the analysis in multiple formats (CSV, Excel, PDF) or share it directly from the platform for further collaboration." }
+  ],
+  "tips_title":       "Important Tips",
+  "tips_subtitle":    "Things to Keep in Mind",
+  "tips": [
+    "Make sure your ORCID ID is linked to all your publications in the ORCID database.",
+    "If any publications are missing, add them manually via your ORCID account before running the analysis.",
+    "Use the full ORCID ID format with hyphens (e.g. 0000-0002-1825-0097).",
+    "The analysis may take a few seconds depending on how many publications you have."
+  ],
+  "format_title":     "ORCID ID Format",
+  "format_body":      "An ORCID ID always consists of 16 digits split into 4 groups separated by hyphens.",
+  "format_chips": {
+    "digits":  "16 digits total",
+    "pattern": "Format: XXXX-XXXX-XXXX-XXXX",
+    "alphanum":"Letters and digits"
+  },
+  "cta_title":  "Ready to Analyze Your Profile?",
+  "cta_body":   "Start analyzing your research publications right now using your ORCID ID.",
+  "cta_button": "Start Analysis",
+  "back":       "Back to Help Center"
+}
