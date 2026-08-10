@@ -4,29 +4,33 @@
   "columns": {
     "product":      "Produk",
     "data_sources": "Sumber Data",
-    "information":  "Informasi"
+    "information":  "Informasi",
+    "legal":        "Legal & Tutorial"
   },
   "links": {
-    "trends":         "Analisis Tren",
-    "sdgs_explorer":  "Penjelajah SDGs",
-    "article_impact": "Dampak Artikel",
-    "researchers":    "Peneliti",
-    "journals":       "Jurnal",
-    "api":            "API",
-    "about":          "Tentang Kami",
-    "docs":           "Dokumentasi Fitur",
-    "faq":            "FAQ",
-    "help":           "Bantuan",
-    "privacy":        "Kebijakan Privasi",
-    "terms":          "Syarat & Ketentuan"
+    "trends":           "Analisis Tren",
+    "sdgs_explorer":    "Penjelajah SDGs",
+    "article_impact":   "Dampak Artikel",
+    "researchers":      "Peneliti",
+    "journals":         "Jurnal",
+    "api":              "API",
+    "about":            "Tentang Kami",
+    "docs":             "Dokumentasi Fitur",
+    "faq":              "FAQ",
+    "help":             "Bantuan",
+    "contact":          "Kontak",
+    "privacy":          "Kebijakan Privasi",
+    "terms":            "Syarat & Ketentuan",
+    "tutorial_orcid":   "Tutorial ORCID",
+    "tutorial_doi":     "Tutorial DOI",
+    "tutorial_export":  "Tutorial Ekspor"
   },
-  "newsletter": {
-    "title":       "Berlangganan",
-    "highlight":   "Newsletter",
-    "description": "Dapatkan update terbaru tentang fitur dan analisis riset dari Sciecola.",
-    "placeholder": "Masukkan email Anda",
-    "subscribe":   "Berlangganan",
-    "subscribed":  "Berlangganan!"
+  "cta": {
+    "eyebrow":   "Mulai gratis",
+    "title":     "Cek profil ORCID Anda tanpa login",
+    "subtitle":  "Masukkan ORCID, Scopus, SINTA, atau ResearcherID untuk melihat dampak riset.",
+    "primary":   "Cek Profil",
+    "secondary": "Buat Akun"
   },
   "copyright": {
     "rights":       "Hak cipta dilindungi.",
