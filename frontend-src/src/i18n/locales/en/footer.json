@@ -25,6 +25,15 @@
     "tutorial_doi":     "DOI Tutorial",
     "tutorial_export":  "Export Tutorial"
   },
+  "newsletter": {
+    "title":       "Subscribe to",
+    "highlight":   "Newsletter",
+    "description": "Get the latest updates on features and research analytics from Sciecola.",
+    "placeholder": "Enter your email",
+    "subscribe":   "Subscribe",
+    "subscribed":  "Subscribed!",
+    "dismiss":     "Maybe later"
+  },
   "cta": {
     "eyebrow":   "Start free",
     "title":     "Check your ORCID profile without signing in",

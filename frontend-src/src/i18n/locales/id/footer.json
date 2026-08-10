@@ -25,6 +25,15 @@
     "tutorial_doi":     "Tutorial DOI",
     "tutorial_export":  "Tutorial Ekspor"
   },
+  "newsletter": {
+    "title":       "Berlangganan",
+    "highlight":   "Newsletter",
+    "description": "Dapatkan update terbaru tentang fitur dan analisis riset dari Sciecola.",
+    "placeholder": "Masukkan email Anda",
+    "subscribe":   "Berlangganan",
+    "subscribed":  "Berlangganan!",
+    "dismiss":     "Lain kali saja"
+  },
   "cta": {
     "eyebrow":   "Mulai gratis",
     "title":     "Cek profil ORCID Anda tanpa login",

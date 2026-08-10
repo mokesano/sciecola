@@ -120,6 +120,9 @@ import LogHistory from './pages/LogHistory';
 // Impor Chatbot
 import Chatbot from './components/layout/Chatbot';
 
+// Impor Newsletter Modal (tampil sekali pada kunjungan pertama)
+import NewsletterModal from './components/layout/NewsletterModal';
+
 // Impor Halaman Error
 import NotFound404 from './pages/NotFound404';
 import ServerError500 from './pages/ServerError500';
@@ -205,6 +208,7 @@ const MainLayout = () => (
     <Outlet />
     <Footer />
     <Chatbot />
+    <NewsletterModal />
   </div>
 );
 
