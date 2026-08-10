@@ -63,6 +63,10 @@ import idTeamMember         from './locales/id/team_member.json';
 import enTeamMember         from './locales/en/team_member.json';
 import idAdminTeams         from './locales/id/admin_teams.json';
 import enAdminTeams         from './locales/en/admin_teams.json';
+import idInsightsPage       from './locales/id/insights_page.json';
+import enInsightsPage       from './locales/en/insights_page.json';
+import idChangePassword     from './locales/id/change_password.json';
+import enChangePassword     from './locales/en/change_password.json';
 
 // ─── Deteksi bahasa awal ─────────────────────────────────────────────
 // Prioritas: (1) preferensi tersimpan user → (2) bahasa browser →
@@ -114,6 +118,8 @@ i18n
         teams:                   idTeams,
         team_member:             idTeamMember,
         admin_teams:             idAdminTeams,
+        insights_page:           idInsightsPage,
+        change_password:         idChangePassword,
       },
       en: {
         translation: enCommon,
@@ -145,12 +151,14 @@ i18n
         teams:                   enTeams,
         team_member:             enTeamMember,
         admin_teams:             enAdminTeams,
+        insights_page:           enInsightsPage,
+        change_password:         enChangePassword,
       },
     },
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams', 'insights_page', 'change_password'],
     interpolation: { escapeValue: false },
   });
 

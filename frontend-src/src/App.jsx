@@ -111,6 +111,7 @@ import MyCollections from './pages/MyCollections';
 import CollectionDetail from './pages/CollectionDetail';
 import MyStatistics from './pages/MyStatistics';
 import Settings from './pages/Settings';
+import ChangePassword from './pages/ChangePassword';
 
 // Impor Halaman Log History/Activity
 import MyActivity from './pages/MyActivity';
@@ -303,6 +304,7 @@ function App() {
               <Route path="/collections/:id" element={<CollectionDetail />} />
               <Route path="/my-statistics" element={<MyStatistics />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/settings/change-password" element={<ChangePassword />} />
 
               {/* Rute Log History/Activity */}
               <Route path="/my-activity" element={<MyActivity />} />

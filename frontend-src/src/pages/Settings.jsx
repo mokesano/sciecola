@@ -336,7 +336,7 @@ const Settings = () => {
                     <input type="password" value={account.confirmPassword} onChange={(e) => setAccount({...account, confirmPassword: e.target.value})} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
                   </div>
                 </div>
-                <button className="px-5 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">Update Kata Sandi</button>
+                <Link to="/settings/change-password" className="inline-block px-5 py-2.5 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">Update Kata Sandi</Link>
               </div>
 
               <div className="bg-red-50 rounded-xl border border-red-200 p-6">

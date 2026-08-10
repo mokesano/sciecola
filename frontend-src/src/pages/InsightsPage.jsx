@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import PageHeader from '../components/shared/PageHeader';
 
 // ─── Fallback hardcoded insights (12 items covering all 17 SDGs) ──────────────
@@ -144,6 +145,16 @@ const CATEGORY_STYLES = {
   Kolaborasi:   'bg-orange-500/20 text-orange-300',
 };
 
+// Internal category keys (matches data) → i18n label keys.
+const CATEGORY_KEYS = ['Semua', 'Tren', 'Perbandingan', 'Rekomendasi', 'Peringatan'];
+const CATEGORY_I18N = {
+  Semua:        'filter.all',
+  Tren:         'filter.trend',
+  Perbandingan: 'filter.comparison',
+  Rekomendasi:  'filter.recommendation',
+  Peringatan:   'filter.warning',
+};
+
 // ─── Icon renderer (SVG only) ─────────────────────────────────────────────────
 function InsightIcon({ icon, sdg }) {
   const color = SDG_COLORS[sdg] || '#6366f1';
@@ -217,8 +228,11 @@ function InsightIcon({ icon, sdg }) {
 }
 
 // ─── Single insight card ──────────────────────────────────────────────────────
-function InsightCard({ insight }) {
+function InsightCard({ insight, t }) {
   const badgeClass = CATEGORY_STYLES[insight.category] || 'bg-gray-500/20 text-gray-300';
+  const categoryLabel = CATEGORY_I18N[insight.category]
+    ? t(CATEGORY_I18N[insight.category])
+    : insight.category;
 
   return (
     <Link
@@ -229,7 +243,7 @@ function InsightCard({ insight }) {
       <div className="flex items-start justify-between gap-3">
         <InsightIcon icon={insight.icon} sdg={insight.sdg} />
         <span className={`text-xs font-semibold px-2.5 py-1 rounded-full shrink-0 ${badgeClass}`}>
-          {insight.category}
+          {categoryLabel}
         </span>
       </div>
 
@@ -248,7 +262,7 @@ function InsightCard({ insight }) {
         <div
           className="w-6 h-6 rounded text-[10px] font-bold text-white flex items-center justify-center"
           style={{ backgroundColor: SDG_COLORS[insight.sdg] || '#6366f1' }}
-          title={`SDG ${insight.sdg}`}
+          title={t('sdg_label', { n: insight.sdg })}
         >
           {insight.sdg}
         </div>
@@ -259,12 +273,10 @@ function InsightCard({ insight }) {
 }
 
 // ─── Filter bar ───────────────────────────────────────────────────────────────
-const CATEGORIES = ['Semua', 'Tren', 'Perbandingan', 'Rekomendasi', 'Peringatan'];
-
-function FilterBar({ active, onChange }) {
+function FilterBar({ active, onChange, t }) {
   return (
     <div className="flex flex-wrap gap-2 mb-8">
-      {CATEGORIES.map((cat) => (
+      {CATEGORY_KEYS.map((cat) => (
         <button
           key={cat}
           onClick={() => onChange(cat)}
@@ -274,7 +286,7 @@ function FilterBar({ active, onChange }) {
               : 'bg-white text-gray-600 border-gray-200 hover:border-indigo-300 hover:text-indigo-600'
             }`}
         >
-          {cat}
+          {t(CATEGORY_I18N[cat])}
         </button>
       ))}
     </div>
@@ -283,6 +295,7 @@ function FilterBar({ active, onChange }) {
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 const InsightsPage = () => {
+  const { t } = useTranslation('insights_page');
   const [insights, setInsights] = useState(FALLBACK_INSIGHTS);
   const [activeCategory, setActiveCategory] = useState('Semua');
   const [loading, setLoading] = useState(true);
@@ -292,7 +305,6 @@ const InsightsPage = () => {
       .then((res) => res.json())
       .then((json) => {
         if (json.status === 'ok' && Array.isArray(json.insights) && json.insights.length > 0) {
-          // Map API response, adding link fallback
           const mapped = json.insights.map((item) => ({
             ...item,
             link: item.link || '/sdgs',
@@ -313,25 +325,19 @@ const InsightsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-600 mb-12">
-        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
-        <span className="text-gray-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-        </span>
-        <Link to="/analytics" className="hover:text-indigo-600 transition-colors">Analytics</Link>
-        <span className="text-gray-400">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-        </span>
-        <span className="text-gray-900 font-medium">Article Impact</span>
-      </div>
-      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+          <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
+          <span className="text-gray-400">›</span>
+          <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
+        </nav>
+
         {/* Page header */}
         <PageHeader
-          title="Insights AI"
-          subtitle="Wawasan berbasis kecerdasan buatan dari data riset global"
-          breadcrumbs={[{ label: 'Insights AI' }]}
+          title={t('title')}
+          subtitle={t('subtitle')}
+          breadcrumbs={[{ label: t('breadcrumb.current') }]}
           icon={
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -340,7 +346,7 @@ const InsightsPage = () => {
         />
 
         {/* Filter bar */}
-        <FilterBar active={activeCategory} onChange={setActiveCategory} />
+        <FilterBar active={activeCategory} onChange={setActiveCategory} t={t} />
 
         {/* Loading skeleton */}
         {loading && (
@@ -359,12 +365,12 @@ const InsightsPage = () => {
                 <svg className="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <p className="font-medium">Tidak ada insight untuk kategori ini.</p>
+                <p className="font-medium">{t('empty')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filtered.map((insight) => (
-                  <InsightCard key={insight.id} insight={insight} />
+                  <InsightCard key={insight.id} insight={insight} t={t} />
                 ))}
               </div>
             )}
