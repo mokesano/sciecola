@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import {
   HELP_CATEGORIES,
   FAQ_DATA,
@@ -9,6 +10,7 @@ import {
 } from '../data/mock/helpData';
 
 const Help = () => {
+  const { t } = useTranslation('help');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFaqCategory, setActiveFaqCategory] = useState('general');
   const [openFaqs, setOpenFaqs] = useState({});
@@ -51,9 +53,9 @@ const Help = () => {
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
-        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
+        <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">›</span>
-        <span className="text-gray-900 font-medium">Pusat Bantuan</span>
+        <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
       </nav>
 
       {/* Header */}
@@ -64,11 +66,9 @@ const Help = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Pusat Bantuan</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
         </div>
-        <p className="text-lg text-gray-600 max-w-3xl">
-          Temukan jawaban, dapatkan dukungan, dan pelajari cara memaksimalkan platform kami.
-        </p>
+        <p className="text-lg text-gray-600 max-w-3xl">{t('subtitle')}</p>
       </div>
 
       {/* Search Section */}
@@ -78,7 +78,7 @@ const Help = () => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari artikel bantuan, tutorial, atau FAQ..."
+            placeholder={t('search.placeholder')}
             className="w-full pl-12 pr-12 py-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white transition-all"
           />
           <svg className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,7 +96,7 @@ const Help = () => {
 
         {/* Popular Searches */}
         <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-gray-100">
-          <span className="text-sm text-gray-500">Pencarian populer:</span>
+          <span className="text-sm text-gray-500">{t('search.popular')}</span>
           {popularSearches.map((tag, idx) => (
             <button
               key={idx}
@@ -111,7 +111,7 @@ const Help = () => {
 
       {/* Help Categories */}
       <section className="mb-12">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">Kategori Bantuan</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-6">{t('categories_title')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {helpCategories.map((category) => (
             <button
@@ -133,7 +133,7 @@ const Help = () => {
                   <h3 className="font-bold text-gray-900 mb-1">{category.title}</h3>
                   <p className="text-sm text-gray-600 mb-3">{category.description}</p>
                   <span className="text-xs font-medium text-indigo-600 bg-indigo-50 px-2 py-1 rounded">
-                    {category.articleCount} artikel
+                    {t('articles_label', { count: category.articleCount })}
                   </span>
                 </div>
               </div>
@@ -150,7 +150,7 @@ const Help = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-gray-900">Pertanyaan yang Sering Diajukan</h2>
+          <h2 className="text-xl font-bold text-gray-900">{t('faq.title')}</h2>
         </div>
 
         {/* FAQ Tabs */}
@@ -165,10 +165,7 @@ const Help = () => {
                   : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
               }`}
             >
-              {cat === 'general' && 'Umum'}
-              {cat === 'technical' && 'Teknis'}
-              {cat === 'billing' && 'Billing'}
-              {cat === 'api' && 'API'}
+              {t(`faq.tabs.${cat}`)}
             </button>
           ))}
         </div>
@@ -204,14 +201,14 @@ const Help = () => {
 
         {filteredFaqs.length === 0 && searchQuery && (
           <div className="text-center py-8">
-            <p className="text-gray-500">Tidak ada hasil untuk "{searchQuery}". Coba kata kunci lain.</p>
+            <p className="text-gray-500">{t('faq.empty_prefix')} “{searchQuery}”.</p>
           </div>
         )}
       </section>
 
       {/* Support Section */}
       <section className="mb-12">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">Butuh Bantuan Lebih Lanjut?</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-6">{t('support_title')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {supportOptions.map((option) => (
             <div key={option.id} className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-all text-center">
@@ -247,7 +244,7 @@ const Help = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-gray-900">Tutorial Cepat</h2>
+          <h2 className="text-xl font-bold text-gray-900">{t('tutorials_title')}</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {tutorials.map((tutorial) => (
@@ -300,20 +297,20 @@ const Help = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-gray-900">Status Sistem</h2>
+            <h2 className="text-xl font-bold text-gray-900">{t('status.title')}</h2>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-green-50 rounded-xl">
             <div className="flex items-center gap-3">
               <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="font-medium text-green-800">Semua sistem beroperasi normal</span>
+              <span className="font-medium text-green-800">{t('status.ok')}</span>
             </div>
-            <a 
-              href="https://status.sangia.org" 
-              target="_blank" 
+            <a
+              href="https://status.sangia.org"
+              target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-sm font-medium text-green-700 hover:text-green-900"
             >
-              Lihat Halaman Status
+              {t('status.link')}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
@@ -326,14 +323,14 @@ const Help = () => {
       <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-8 text-white shadow-lg">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
           <div>
-            <h3 className="text-2xl font-bold mb-2">Masih butuh bantuan?</h3>
-            <p className="text-indigo-100">Tim dukungan kami siap membantu Anda 24/7.</p>
+            <h3 className="text-2xl font-bold mb-2">{t('cta.title')}</h3>
+            <p className="text-indigo-100">{t('cta.subtitle')}</p>
           </div>
-          <Link 
+          <Link
             to="/contact"
             className="px-8 py-3 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition-colors whitespace-nowrap flex items-center gap-2"
           >
-            Hubungi Tim Kami
+            {t('cta.button')}
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>

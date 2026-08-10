@@ -1,0 +1,36 @@
+{
+  "breadcrumb": {
+    "home":    "Beranda",
+    "current": "Pusat Bantuan"
+  },
+  "title":    "Pusat Bantuan",
+  "subtitle": "Temukan jawaban, dapatkan dukungan, dan pelajari cara memaksimalkan platform kami.",
+  "search": {
+    "placeholder":  "Cari artikel bantuan, tutorial, atau FAQ…",
+    "popular":      "Pencarian populer:"
+  },
+  "categories_title": "Kategori Bantuan",
+  "articles_label":   "{{count}} artikel",
+  "faq": {
+    "title":  "Pertanyaan yang Sering Diajukan",
+    "tabs": {
+      "general":   "Umum",
+      "technical": "Teknis",
+      "billing":   "Billing",
+      "api":       "API"
+    },
+    "empty_prefix": "Tidak ada hasil untuk"
+  },
+  "support_title":   "Butuh Bantuan Lebih Lanjut?",
+  "tutorials_title": "Tutorial Cepat",
+  "status": {
+    "title": "Status Sistem",
+    "ok":    "Semua sistem beroperasi normal",
+    "link":  "Lihat Halaman Status"
+  },
+  "cta": {
+    "title":    "Masih butuh bantuan?",
+    "subtitle": "Tim dukungan kami siap membantu Anda 24/7.",
+    "button":   "Hubungi Tim Kami"
+  }
+}
