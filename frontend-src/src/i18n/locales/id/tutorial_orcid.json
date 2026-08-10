@@ -1,0 +1,45 @@
+{
+  "breadcrumb": {
+    "home":    "Beranda",
+    "help":    "Pusat Bantuan",
+    "current": "Tutorial ORCID"
+  },
+  "title":     "Analisis Profil Penelitian dengan ORCID",
+  "subtitle":  "Pelajari cara menganalisis semua publikasi penelitian Anda menggunakan ORCID ID",
+  "duration":  "3 menit",
+  "level":     "Pemula",
+  "about_title": "Tentang Tutorial Ini",
+  "about_body":  "Tutorial ini akan memandu Anda langkah demi langkah untuk menganalisis profil penelitian lengkap Anda menggunakan ORCID ID. ORCID (Open Researcher and Contributor ID) adalah identifikasi unik yang memungkinkan sistem untuk mengambil semua publikasi Anda dari berbagai sumber secara otomatis.",
+  "steps_title": "Langkah-langkah",
+  "steps": [
+    { "title": "Dapatkan ORCID ID Anda",
+      "description": "Jika Anda belum memiliki ORCID ID, kunjungi orcid.org dan daftarkan diri Anda secara gratis. Proses pendaftaran hanya membutuhkan waktu beberapa menit." },
+    { "title": "Salin ORCID ID Anda",
+      "description": "ORCID ID memiliki format seperti ini: 0000-0000-0000-0000 (16 digit dengan tanda hubung). Pastikan Anda menyalin seluruh ID termasuk tanda hubungnya." },
+    { "title": "Masukkan ORCID ID di Platform",
+      "description": "Kembali ke platform kami dan masukkan ORCID ID Anda di kolom pencarian yang tersedia. Klik tombol \"Analisis\" untuk memulai." },
+    { "title": "Tinjau Hasil Analisis",
+      "description": "Platform akan mengambil semua publikasi yang terhubung dengan ORCID ID Anda dan melakukan analisis klasifikasi SDG. Anda akan melihat daftar publikasi dengan skor kepercayaan dan kategori SDG." },
+    { "title": "Ekspor dan Bagikan Hasil",
+      "description": "Anda dapat mengekspor hasil analisis dalam berbagai format (CSV, Excel, PDF) atau membagikannya langsung dari platform untuk kolaborasi lebih lanjut." }
+  ],
+  "tips_title":       "Tips Penting",
+  "tips_subtitle":    "Hal yang Perlu Diperhatikan",
+  "tips": [
+    "Pastikan ORCID ID Anda sudah terhubung dengan semua publikasi Anda di database ORCID.",
+    "Jika ada publikasi yang hilang, tambahkan manual melalui akun ORCID Anda sebelum melakukan analisis.",
+    "Gunakan format ORCID ID yang lengkap dengan tanda hubung (contoh: 0000-0002-1825-0097).",
+    "Proses analisis mungkin memakan waktu beberapa detik tergantung jumlah publikasi Anda."
+  ],
+  "format_title":     "Format ORCID ID",
+  "format_body":      "ORCID ID selalu terdiri dari 16 digit yang dibagi menjadi 4 kelompok dengan tanda hubung.",
+  "format_chips": {
+    "digits":  "16 digit total",
+    "pattern": "Format: XXXX-XXXX-XXXX-XXXX",
+    "alphanum":"Huruf dan angka"
+  },
+  "cta_title":  "Siap untuk Menganalisis Profil Anda?",
+  "cta_body":   "Mulailah analisis publikasi penelitian Anda sekarang juga menggunakan ORCID ID.",
+  "cta_button": "Mulai Analisis",
+  "back":       "Kembali ke Pusat Bantuan"
+}

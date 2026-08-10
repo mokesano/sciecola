@@ -95,6 +95,12 @@ import idFaq                from './locales/id/faq.json';
 import enFaq                from './locales/en/faq.json';
 import idHelp               from './locales/id/help.json';
 import enHelp               from './locales/en/help.json';
+import idSitemap            from './locales/id/sitemap.json';
+import enSitemap            from './locales/en/sitemap.json';
+import idSystemStatus       from './locales/id/system_status.json';
+import enSystemStatus       from './locales/en/system_status.json';
+import idTutorialOrcid      from './locales/id/tutorial_orcid.json';
+import enTutorialOrcid      from './locales/en/tutorial_orcid.json';
 
 // ─── Deteksi bahasa awal ─────────────────────────────────────────────
 // Prioritas: (1) preferensi tersimpan user → (2) bahasa browser →
@@ -162,6 +168,9 @@ i18n
         privacy:                 idPrivacy,
         faq:                     idFaq,
         help:                    idHelp,
+        sitemap:                 idSitemap,
+        system_status:           idSystemStatus,
+        tutorial_orcid:          idTutorialOrcid,
       },
       en: {
         translation: enCommon,
@@ -209,12 +218,15 @@ i18n
         privacy:                 enPrivacy,
         faq:                     enFaq,
         help:                    enHelp,
+        sitemap:                 enSitemap,
+        system_status:           enSystemStatus,
+        tutorial_orcid:          enTutorialOrcid,
       },
     },
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams', 'insights_page', 'change_password', 'settings', 'auth', 'my_activity', 'notifications', 'my_statistics', 'messages', 'my_articles', 'dashboard_page', 'my_profile', 'feeds', 'terms', 'privacy', 'faq', 'help'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams', 'insights_page', 'change_password', 'settings', 'auth', 'my_activity', 'notifications', 'my_statistics', 'messages', 'my_articles', 'dashboard_page', 'my_profile', 'feeds', 'terms', 'privacy', 'faq', 'help', 'sitemap', 'system_status', 'tutorial_orcid'],
     interpolation: { escapeValue: false },
   });
 

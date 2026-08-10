@@ -1,22 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
-const FALLBACK_GROUPS = [
+// Fallback group titles are UI copy — translated via i18n; the backend
+// (sitemap.php) returns titles in its own language and those pass through
+// verbatim, so it can localize if desired.
+const buildFallback = (t) => ([
   {
-    title: 'Halaman Utama',
+    title: t('fallback_groups.main'),
     links: [
-      { label: 'Beranda', to: '/' },
-      { label: 'Dashboard', to: '/dashboard' },
-      { label: 'Feeds', to: '/feeds' },
-      { label: 'Statistik Saya', to: '/my-statistics' },
+      { label: t('fallback_links.home'),        to: '/' },
+      { label: t('fallback_links.dashboard'),   to: '/dashboard' },
+      { label: t('fallback_links.feeds'),       to: '/feeds' },
+      { label: t('fallback_links.statistics'),  to: '/my-statistics' },
     ],
   },
-];
+]);
 
 const Sitemap = () => {
-  const [groups, setGroups] = useState(FALLBACK_GROUPS);
+  const { t } = useTranslation('sitemap');
+  const [groups, setGroups]   = useState(() => buildFallback(t));
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError]     = useState('');
 
   useEffect(() => {
     let active = true;
@@ -26,7 +31,6 @@ const Sitemap = () => {
         const response = await fetch('/api/sitemap.php', {
           headers: { Accept: 'application/json' },
         });
-
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const payload = await response.json();
 
@@ -34,12 +38,12 @@ const Sitemap = () => {
           setGroups(payload.data);
           setError('');
         } else if (active) {
-          throw new Error('Format data sitemap tidak valid');
+          throw new Error(t('format_error'));
         }
-      } catch (err) {
+      } catch {
         if (active) {
-          setError('Gagal memuat sitemap dinamis. Menampilkan sitemap default.');
-          setGroups(FALLBACK_GROUPS);
+          setError(t('fallback_note'));
+          setGroups(buildFallback(t));
         }
       } finally {
         if (active) setLoading(false);
@@ -47,26 +51,22 @@ const Sitemap = () => {
     };
 
     fetchSitemap();
-    return () => {
-      active = false;
-    };
-  }, []);
+    return () => { active = false; };
+  }, [t]);
 
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
-        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
+        <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">›</span>
-        <span className="text-gray-900 font-medium">Sitemap</span>
+        <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
       </nav>
 
       <section className="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 shadow-sm mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-3">Sitemap Generator</h1>
-        <p className="text-gray-600 max-w-3xl">
-          Sitemap dihasilkan otomatis dari database agar daftar halaman selalu up to date.
-        </p>
-        {loading && <p className="text-sm text-indigo-700 mt-3">Memuat sitemap dinamis...</p>}
-        {error && <p className="text-sm text-amber-700 mt-3">{error}</p>}
+        <h1 className="text-3xl font-bold text-gray-900 mb-3">{t('title')}</h1>
+        <p className="text-gray-600 max-w-3xl">{t('subtitle')}</p>
+        {loading && <p className="text-sm text-indigo-700 mt-3">{t('loading')}</p>}
+        {error   && <p className="text-sm text-amber-700 mt-3">{error}</p>}
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

@@ -104,7 +104,7 @@ const ServerError500 = () => {
           </Link>
 
           <Link
-            to="/status"
+            to="/system-status"
             className="inline-flex items-center justify-center px-8 py-3 border border-gray-300 text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-lg"
           >
             <svg

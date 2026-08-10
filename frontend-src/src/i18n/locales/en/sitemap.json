@@ -1,0 +1,20 @@
+{
+  "breadcrumb": {
+    "home":    "Home",
+    "current": "Sitemap"
+  },
+  "title":         "Sitemap Generator",
+  "subtitle":      "The sitemap is generated automatically from the database so the page list is always up to date.",
+  "loading":       "Loading dynamic sitemap…",
+  "fallback_note": "Failed to load the dynamic sitemap. Showing the default sitemap instead.",
+  "format_error":  "Sitemap payload format is invalid",
+  "fallback_groups": {
+    "main":  "Main Pages"
+  },
+  "fallback_links": {
+    "home":       "Home",
+    "dashboard":  "Dashboard",
+    "feeds":      "Feeds",
+    "statistics": "My Statistics"
+  }
+}

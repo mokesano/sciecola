@@ -1,0 +1,20 @@
+{
+  "title":    "System Status & Uptime",
+  "subtitle": "Ringkasan ketersediaan layanan, performa komponen utama, dan riwayat insiden terbaru.",
+  "core_up":  "Semua sistem inti aktif",
+  "stats": {
+    "uptime30":     "Uptime 30 Hari",
+    "active":       "Insiden Aktif",
+    "maintenance":  "Maintenance Terjadwal"
+  },
+  "services_title": "Status Layanan",
+  "table": {
+    "service": "Layanan",
+    "uptime":  "Uptime",
+    "latency": "Latency Median",
+    "status":  "Status"
+  },
+  "incidents_title": "Riwayat Insiden Terbaru",
+  "help":        "Pusat Bantuan",
+  "report":      "Laporkan Gangguan"
+}

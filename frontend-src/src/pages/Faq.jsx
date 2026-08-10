@@ -141,7 +141,7 @@ const Faq = () => {
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400"><Chevron /></span>
-        <Link to="/docs" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.docs')}</Link>
+        <Link to="/docs/documentation" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.docs')}</Link>
         <span className="text-gray-400"><Chevron /></span>
         <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
       </nav>
@@ -331,7 +331,7 @@ const Faq = () => {
                 <Link to="/contact" className="px-5 py-2.5 bg-white text-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition-colors text-m whitespace-nowrap">
                   {t('cta.contact')}
                 </Link>
-                <Link to="/docs" className="px-5 py-2.5 bg-indigo-500 text-white rounded-lg font-medium hover:bg-indigo-400 transition-colors text-m whitespace-nowrap">
+                <Link to="/docs/documentation" className="px-5 py-2.5 bg-indigo-500 text-white rounded-lg font-medium hover:bg-indigo-400 transition-colors text-m whitespace-nowrap">
                   {t('cta.docs')}
                 </Link>
               </div>
