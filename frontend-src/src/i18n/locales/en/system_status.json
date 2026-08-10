@@ -1,0 +1,20 @@
+{
+  "title":    "System Status & Uptime",
+  "subtitle": "Overview of service availability, key component performance, and recent incident history.",
+  "core_up":  "All core systems operational",
+  "stats": {
+    "uptime30":     "30-Day Uptime",
+    "active":       "Active Incidents",
+    "maintenance":  "Scheduled Maintenance"
+  },
+  "services_title": "Service Status",
+  "table": {
+    "service": "Service",
+    "uptime":  "Uptime",
+    "latency": "Median Latency",
+    "status":  "Status"
+  },
+  "incidents_title": "Recent Incident History",
+  "help":        "Help Center",
+  "report":      "Report an Issue"
+}

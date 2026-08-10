@@ -1,0 +1,20 @@
+{
+  "breadcrumb": {
+    "home":    "Beranda",
+    "current": "Sitemap"
+  },
+  "title":         "Sitemap Generator",
+  "subtitle":      "Sitemap dihasilkan otomatis dari database agar daftar halaman selalu up to date.",
+  "loading":       "Memuat sitemap dinamis…",
+  "fallback_note": "Gagal memuat sitemap dinamis. Menampilkan sitemap default.",
+  "format_error":  "Format data sitemap tidak valid",
+  "fallback_groups": {
+    "main":  "Halaman Utama"
+  },
+  "fallback_links": {
+    "home":       "Beranda",
+    "dashboard":  "Dashboard",
+    "feeds":      "Feeds",
+    "statistics": "Statistik Saya"
+  }
+}
