@@ -222,7 +222,7 @@ const About = () => {
               <Link to="/contact" className="px-6 py-3 bg-indigo-500 text-white rounded-xl font-semibold hover:bg-indigo-400 transition-colors">
                 {t('cta.contact')}
               </Link>
-              <Link to="/docs" className="px-6 py-3 bg-indigo-500 text-white rounded-xl font-semibold hover:bg-indigo-400 transition-colors">
+              <Link to="/docs/documentation" className="px-6 py-3 bg-indigo-500 text-white rounded-xl font-semibold hover:bg-indigo-400 transition-colors">
                 {t('cta.learn')}
               </Link>
             </div>
