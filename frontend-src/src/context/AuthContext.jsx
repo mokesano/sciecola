@@ -25,7 +25,9 @@ export function AuthProvider({ children }) {
     setLoading(false);
   }, []);
 
-  const login = useCallback((userData) => {
+  const login = useCallback((userData, token) => {
+    // Backend returns { token, user } separately; callers may pass token as
+    // a second arg or fold it into userData. Prefer the explicit second arg.
     const normalized = {
       orcid: userData.orcid ?? null,
       name: userData.name ?? '',
@@ -33,7 +35,7 @@ export function AuthProvider({ children }) {
       avatar: userData.avatar ?? null,
       title: userData.title ?? '',
       affiliation: userData.affiliation ?? '',
-      token: userData.token ?? null,
+      token: token ?? userData.token ?? null,
       loggedInAt: new Date().toISOString(),
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
