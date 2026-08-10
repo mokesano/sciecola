@@ -1,0 +1,35 @@
+{
+  "breadcrumb": {
+    "home":      "Beranda",
+    "dashboard": "Dashboard",
+    "current":   "Pesan"
+  },
+  "title":       "Pesan",
+  "new_message": "+ Pesan Baru",
+  "back":        "← Kembali",
+  "list": {
+    "search_ph": "Cari percakapan…",
+    "empty":     "Tidak ada percakapan ditemukan",
+    "members":   "{{count}} anggota",
+    "direct":    "Pribadi"
+  },
+  "tabs": {
+    "all":      "Semua",
+    "unread":   "Belum Dibaca",
+    "groups":   "Grup",
+    "archived": "Arsip"
+  },
+  "chat": {
+    "online":         "Online",
+    "last_active":    "Terakhir aktif 2 jam lalu",
+    "call_voice":     "Panggilan Suara",
+    "call_video":     "Panggilan Video",
+    "info":           "Info",
+    "today":          "Hari Ini",
+    "type_placeholder":"Ketik pesan…"
+  },
+  "empty_chat": {
+    "title":    "Pilih Percakapan",
+    "subtitle": "Pilih kontak atau grup dari daftar di sebelah kiri untuk memulai percakapan."
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "breadcrumb": {
+    "home":      "Beranda",
+    "dashboard": "Dashboard",
+    "current":   "Statistik"
+  },
+  "title":    "Statistik Performa",
+  "subtitle": "Analisis mendalam mengenai dampak dan jangkauan publikasi Anda.",
+  "range": {
+    "12":  "12 Bulan Terakhir",
+    "6":   "6 Bulan Terakhir",
+    "1":   "30 Hari Terakhir",
+    "all": "Semua Waktu"
+  },
+  "download":     "Unduh Laporan",
+  "loading":      "Memuat statistik…",
+  "error_prefix": "Gagal memuat:",
+  "load_failed":  "Gagal memuat statistik",
+  "no_orcid": {
+    "title": "ORCID Belum Terhubung",
+    "cta":   "Hubungkan ORCID"
+  },
+  "cards": {
+    "views":     "Total Views",
+    "citations": "Total Citations",
+    "hindex":    "h-Index",
+    "impact":    "Avg. Impact Score"
+  },
+  "sections": {
+    "impact_trend":       "Tren Dampak Riset",
+    "sdg_profile":        "Profil SDG",
+    "sdg_footnote":       "Berdasarkan skor klasifikasi artikel",
+    "top_countries":      "Top 5 Negara Pembaca",
+    "citation_sources":   "Sumber Sitasi",
+    "top_articles":       "Artikel Teratas",
+    "see_all_articles":   "Lihat semua artikel →"
+  },
+  "chart": {
+    "views":       "Views",
+    "citations":   "Citations",
+    "contribution":"Kontribusi",
+    "citation":    "Sitasi"
+  },
+  "table": {
+    "title":     "Judul",
+    "views":     "Views",
+    "citations": "Sitasi",
+    "score":     "Skor"
+  }
+}
