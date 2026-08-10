@@ -1,0 +1,119 @@
+{
+  "breadcrumb": {
+    "home":         "Home",
+    "docs":         "Documentation",
+    "current":      "FAQ"
+  },
+  "title":          "Frequently Asked Questions",
+  "subtitle":       "Answers to common questions about Sciecola, the Sangia AI Engine, the API, and deployment. If you can't find an answer, contact our support team.",
+  "stats": {
+    "total":        "Total Questions",
+    "categories":   "Categories",
+    "updated_label":"Updated",
+    "updated_value":"Today"
+  },
+  "search_ph":      "Search questions…",
+  "categories_side":"Categories",
+  "all":            "All",
+  "count_label":    "{{count}} questions",
+  "empty": {
+    "title":        "No results found",
+    "subtitle":     "Try different keywords or a different category.",
+    "cta":          "Reset Search"
+  },
+  "cta": {
+    "title":        "Still need help?",
+    "subtitle":     "Our support team is available 24/7.",
+    "contact":      "Contact Us",
+    "docs":         "Documentation"
+  },
+  "categories": {
+    "umum":         "General",
+    "autentikasi":  "Authentication",
+    "apikey":       "API Key",
+    "scieco":       "Sangia Impact Score",
+    "sdg":          "SDG Classification",
+    "database":     "Database & Migrations",
+    "frontend":     "React Frontend",
+    "crawler":      "SciecolaBot Crawler",
+    "deployment":   "Deployment"
+  },
+  "faqs": {
+    "umum": [
+      { "q": "What is Sciecola?",
+        "a": "An Indonesian research impact analytics platform measuring the contribution of researchers, articles, institutions, and journals using the Sangia Impact Score (Scieco) — a composite of 4 pillars: Academic, Social, Economic, and SDG." },
+      { "q": "What is the Sciecola AI Engine?",
+        "a": "The Sciecola AI Engine is the AI analytics backend (`api.sangia.org`) that runs heavy computations: SDG classification, impact score, trend analysis, and policy recommendations. Sciecola itself doesn't store data — all persistence is handled by Sciecola. The Engine lives in a separate repo, `sciecola-apis`." },
+      { "q": "Why are there two servers (PHP on port 8000 and Node on port 3000)?",
+        "a": "In development, PHP serves Twig pages and REST API while Vite serves the React frontend with Hot Module Replacement (HMR). In production only PHP runs — React is built to static files under `public/app/`." }
+    ],
+    "autentikasi": [
+      { "q": "Why is login only via ORCID?",
+        "a": "ORCID is an internationally verified researcher identifier. Signing in with ORCID ensures only real researchers can claim their profile on the platform." },
+      { "q": "What if I don't have an ORCID yet?",
+        "a": "Register for free at orcid.org. ORCID is the global standard identifier recognized by over 1,000 research organizations." },
+      { "q": "Can admins sign in without ORCID?",
+        "a": "No. Every account uses ORCID. Admin roles are set in the database (`users.role = 'admin'`) after the first sign-in." }
+    ],
+    "apikey": [
+      { "q": "What is the API Key for?",
+        "a": "The API Key is used to call the Sangia API Engine directly from other apps or analytics scripts. Key format: `wz_{user_id}_{timestamp}_{hmac16}`." },
+      { "q": "How long is an API Key valid?",
+        "a": "365 days from creation. After expiry, generate a new key from Dashboard → API Key Management." },
+      { "q": "What if my API Key leaks?",
+        "a": "Click \"Revoke API Key\" in the Dashboard immediately. The key is blacklisted in the Sangia API Engine and nulled in the database." },
+      { "q": "Why must SANGIA_SHARED_SECRET match between Sciecola and the APIs?",
+        "a": "The Sangia API validates HMAC keys locally without a database roundtrip. For validation to succeed on both sides, the secret must be identical." }
+    ],
+    "scieco": [
+      { "q": "Can the Scieco score change?",
+        "a": "Yes. Each computation is inserted (not updated). Score history is kept for trend charts. It can be triggered manually (\"Recalculate\" button) or automatically via job queue." },
+      { "q": "Why is my score lower than expected?",
+        "a": "A few possibilities:\n• Citation data is not yet updated on Scopus/ORCID (wait 24–48 hours)\n• The Social and Economic pillars need manual input that hasn't been filled\n• Works outside ORCID are not counted (add them to your ORCID profile)" },
+      { "q": "Can I change the weights of the 4 pillars?",
+        "a": "Yes — via Admin Panel → Weight Configuration. Changes are saved in `analysis_weight_configs` and applied to subsequent computations." },
+      { "q": "Is Scieco the same as h-index?",
+        "a": "No. h-index only measures academic impact (citations). Scieco measures 4 dimensions: academic, social, economic, and SDG contribution. A researcher can have a low h-index but a high Scieco if their work has significant social-economic impact." }
+    ],
+    "sdg": [
+      { "q": "How does SDG classification work?",
+        "a": "Sangia analyzes titles and abstracts using 4 approaches:\n1. SDG keyword matching (weight 30%)\n2. Semantic similarity with SDG embeddings (30%)\n3. Substantive context analysis (20%)\n4. Causal linkage with SDG targets (20%)" },
+      { "q": "What is the maximum number of SDGs attributable to one article?",
+        "a": "Default is 7 SDGs. This value can be configured by admins via the `sdg_v5.max_sdgs` weight." },
+      { "q": "Is SDG v5 different from earlier versions?",
+        "a": "Yes. Sangia supports multiple SDG model versions (v4, v5). v5 uses newer embeddings with higher accuracy on Indonesian-language text." }
+    ],
+    "database": [
+      { "q": "What's the difference between `database_schema_full.sql` and `database_migration_v2.sql`?",
+        "a": "• `database_schema_full.sql` — full schema from scratch\n• `database_migration_v2.sql` — additional tables for the Sangia API v2 integration (cache, weight configs, API logs). Run it after schema_full." },
+      { "q": "Is it safe to run `database_migration_v2.sql` repeatedly?",
+        "a": "Yes. All statements use `CREATE TABLE IF NOT EXISTS` and `ALTER TABLE ... ADD COLUMN IF NOT EXISTS`, so re-runs are safe." }
+    ],
+    "frontend": [
+      { "q": "Why Vite instead of Create React App (CRA)?",
+        "a": "Vite is much faster: HMR (hot reload) is nearly instant vs 10–30 seconds in CRA. Production builds are also smaller thanks to Rollup with aggressive tree-shaking." },
+      { "q": "What is `window.__SANGIA_INIT__`?",
+        "a": "An object injected by PHP into the page before React loads, containing:\n• apiUrl: \"/api/v1\" — API backend URL\n• currentUser: { id, full_name } — currently signed-in user\n• csrfToken: \"abc123...\" — CSRF token for POST requests\n• appPath: \"/app\" — React Router base path\n\nReact reads this object via `window.__SANGIA_INIT__` at startup." },
+      { "q": "Why does `/app/researchers/123` sometimes 404 on refresh?",
+        "a": "This is a Single Page Application — routing happens client-side. On a hard refresh, the browser requests `/app/researchers/123` from PHP. The route config `/app/{path:.+}` (catch-all with regex `.+`) makes PHP always return the React shell so React Router can handle navigation." },
+      { "q": "How do I change the interface language?",
+        "a": "By default the language is detected from the browser. To force it:\n\n```js\nimport i18n from './i18n';\ni18n.changeLanguage('en'); // or 'id'\n```\n\nThe preference is saved in `localStorage`." }
+    ],
+    "crawler": [
+      { "q": "Is SciecolaBot safe to use?",
+        "a": "Yes, with caveats:\n• Respects `robots.txt` automatically\n• Default rate limit of 2 seconds between requests\n• Stops automatically when CAPTCHA is detected\n• Doesn't store personal data" },
+      { "q": "Why isn't all Google Scholar data available?",
+        "a": "Google Scholar has no official public API and actively blocks scraping. SciecolaBot tries best-effort; when CAPTCHA appears the crawl stops and falls back to official APIs (Crossref, Semantic Scholar)." },
+      { "q": "Which data is prioritized for crawling?",
+        "a": "Priority order: official APIs (Crossref, Semantic Scholar, OpenCitations) → Sangia API cache → web crawl (Scholar, ResearchGate, Scimago). Official APIs are always more reliable and faster." }
+    ],
+    "deployment": [
+      { "q": "How do I deploy to production?",
+        "a": "1. Set `APP_ENV=production` and `APP_DEBUG=false` in `.env`\n2. Run `npm run build` → output to `public/app/`\n3. Set `TWIG_CACHE=true` for performance\n4. Use Nginx/Apache with the config in `docs/INSTALLATION.md`\n5. Set `ORCID_SANDBOX=false` for ORCID production" },
+      { "q": "Is Redis required?",
+        "a": "Not required. Redis is used for background job queues (`QUEUE_DRIVER=redis`). If unavailable, set `QUEUE_DRIVER=database` — jobs are stored in a MySQL table." },
+      { "q": "How do I update the app?",
+        "a": "```bash\ngit pull origin main\ncomposer install --optimize-autoloader\nnpm install && npm run build\n# Run new migrations if any:\nmysql -u root -p sciecola < database_migration_vX.sql\n```" }
+    ]
+  }
+}
