@@ -68,22 +68,30 @@ const ErrorState = ({ orcid, message, onRetry }) => {
 
 // ── Main component ───────────────────────────────────────────────────────────
 
-const ResearcherProfile = () => {
-  const { orcidCode } = useParams();
+const ResearcherProfile = ({ sourceType = 'orcid' }) => {
+  const params = useParams();
+  // Route may expose the id under different names: orcidCode (legacy /orcid/:orcidCode)
+  // or a generic `id` for /scopus/:id, /sinta/:id, /researcherid/:id.
+  const idValue = params.orcidCode ?? params.id ?? '';
   const { t } = useTranslation('researcher');
   const [activeTab, setActiveTab]   = useState('ringkasan');
   const [researcher, setResearcher] = useState(null);
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState(null);
+  const [unsupported, setUnsupported] = useState(null);
 
   const fetchProfile = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setUnsupported(null);
     try {
-      const res  = await fetch(`/api/researcher_profile.php?orcid=${encodeURIComponent(orcidCode)}`);
+      const url = `/api/profile_lookup.php?type=${encodeURIComponent(sourceType)}&id=${encodeURIComponent(idValue)}`;
+      const res  = await fetch(url);
       const json = await res.json();
       if (json.status === 'success' && json.profile) {
         setResearcher(json.profile);
+      } else if (json.status === 'unsupported') {
+        setUnsupported(json);
       } else {
         setError(json.message || 'Profil tidak ditemukan');
       }
@@ -92,12 +100,38 @@ const ResearcherProfile = () => {
     } finally {
       setLoading(false);
     }
-  }, [orcidCode]);
+  }, [sourceType, idValue]);
 
   useEffect(() => { fetchProfile(); }, [fetchProfile]);
 
-  if (loading)              return <LoadingState />;
-  if (error || !researcher) return <ErrorState orcid={orcidCode} message={error} onRetry={fetchProfile} />;
+  if (loading) return <LoadingState />;
+
+  if (unsupported) {
+    return (
+      <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto w-full text-center">
+        <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg className="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01M4.93 19h14.14a2 2 0 001.73-3L13.73 4.5a2 2 0 00-3.46 0L3.2 16a2 2 0 001.73 3z" />
+          </svg>
+        </div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          Lookup {sourceType.toUpperCase()} belum aktif
+        </h2>
+        <p className="text-gray-600 mb-6">{unsupported.message}</p>
+        <p className="text-sm text-gray-500 font-mono mb-6">{sourceType}: {idValue}</p>
+        <div className="flex gap-3 justify-center">
+          <Link to="/researchers" className="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50">
+            {t('error.back')}
+          </Link>
+          <Link to="/" className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700">
+            Coba dengan ORCID
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  if (error || !researcher) return <ErrorState orcid={idValue} message={error} onRetry={fetchProfile} />;
 
   // Safe defaults
   const r = {

@@ -238,7 +238,10 @@ function App() {
 
               {/* Rute Peneliti */}
               <Route path="/researchers" element={<ResearchersList />} />
-              <Route path="/orcid/:orcidCode" element={<ResearcherProfile />} />
+              <Route path="/orcid/:orcidCode" element={<ResearcherProfile sourceType="orcid" />} />
+              <Route path="/scopus/:id"       element={<ResearcherProfile sourceType="scopus" />} />
+              <Route path="/sinta/:id"        element={<ResearcherProfile sourceType="sinta" />} />
+              <Route path="/researcherid/:id" element={<ResearcherProfile sourceType="researcherid" />} />
 
               {/* Rute Artikel (Baru) */}
               <Route path="/articles" element={<ArticleList />} />
