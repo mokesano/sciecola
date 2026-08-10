@@ -1,0 +1,121 @@
+{
+  "toc":         "Daftar Isi",
+  "title":       "Kebijakan Privasi",
+  "updated":     "Terakhir diperbarui: 25 Mei 2024",
+  "read_time":   "Waktu baca: 6 menit",
+  "footer_note": "Kelola data dan privasi Anda kapan saja melalui pengaturan akun.",
+  "cta_settings":"Privacy Settings",
+  "cta_contact": "Contact Support",
+  "section_labels": {
+    "pendahuluan":         "Pendahuluan",
+    "data_dikumpulkan":    "Data Dikumpulkan",
+    "penggunaan_data":     "Penggunaan Data",
+    "berbagi_data":        "Berbagi Data",
+    "keamanan_data":       "Keamanan Data",
+    "hak_pengguna":        "Hak Pengguna",
+    "cookie":              "Cookie",
+    "retensi":             "Retensi",
+    "perubahan_kebijakan": "Perubahan Kebijakan",
+    "kontak":              "Kontak"
+  },
+  "sections": {
+    "pendahuluan": {
+      "title": "Pendahuluan",
+      "paragraphs": [
+        "WIZDAM (“<strong>Kami</strong>”, “<strong>Platform</strong>”) berkomitmen melindungi privasi dan keamanan data pribadi Anda. Kebijakan Privasi ini menjelaskan bagaimana kami mengumpulkan, menggunakan, menyimpan, dan melindungi informasi Anda saat Anda menggunakan layanan analitik riset dan klasifikasi SDGs kami, sesuai dengan <strong>Undang-Undang Perlindungan Data Pribadi (UU PDP) No. 27 Tahun 2022</strong> dan prinsip-prinsip GDPR.",
+        "Dengan mendaftar atau menggunakan WIZDAM, Anda menyetujui praktik pengumpulan dan penggunaan data yang dijelaskan dalam kebijakan ini."
+      ]
+    },
+    "data_dikumpulkan": {
+      "title": "Data yang Kami Kumpulkan",
+      "intro": "Kami mengumpulkan data dalam beberapa kategori:",
+      "list_type": "disc",
+      "items": [
+        "<strong>Data Identitas:</strong> Nama lengkap, alamat email, afiliasi institusi, ORCID ID, Scopus ID, dan foto profil.",
+        "<strong>Data Riset:</strong> Daftar publikasi, metadata artikel, sitasi, kolaborator, dan hasil analisis SDG yang Anda unggah atau kami crawl secara otomatis.",
+        "<strong>Data Penggunaan:</strong> Log aktivitas, halaman yang dikunjungi, fitur yang digunakan, waktu sesi, dan preferensi bahasa.",
+        "<strong>Data Teknis:</strong> Alamat IP, tipe browser, sistem operasi, dan informasi perangkat untuk keamanan dan optimasi performa."
+      ]
+    },
+    "penggunaan_data": {
+      "title": "Cara Kami Menggunakan Data",
+      "intro": "Data Anda digunakan untuk tujuan berikut:",
+      "list_type": "decimal",
+      "items": [
+        "Menyediakan, memelihara, dan meningkatkan layanan WIZDAM (termasuk kalkulasi Wizdam Impact Score).",
+        "Memverifikasi identitas peneliti melalui integrasi ORCID dan database akademik.",
+        "Menghasilkan laporan analitik, tren riset, dan rekomendasi kebijakan berbasis data.",
+        "Mengirim notifikasi terkait sitasi, kolaborasi, dan pembaruan fitur (dapat diatur di Pengaturan).",
+        "Memenuhi kewajiban hukum, mencegah penyalahgunaan, dan menjaga keamanan platform."
+      ]
+    },
+    "berbagi_data": {
+      "title": "Berbagi Data & Pihak Ketiga",
+      "intro": "Kami <strong>tidak menjual</strong> data pribadi Anda. Data hanya dibagikan dalam kondisi berikut:",
+      "list_type": "disc",
+      "items": [
+        "<strong>Penyedia Infrastruktur:</strong> Cloud hosting, database, dan layanan analitik (misal: Cloudflare, Google Analytics) yang terikat perjanjian kerahasiaan.",
+        "<strong>Mitra Riset & Institusi:</strong> Data agregat dan anonim dapat dibagikan untuk laporan tren SDGs global.",
+        "<strong>Kepatuhan Hukum:</strong> Jika diwajibkan oleh hukum, putusan pengadilan, atau permintaan otoritas berwenang."
+      ]
+    },
+    "keamanan_data": {
+      "title": "Keamanan Data",
+      "intro": "Kami menerapkan langkah-langkah keamanan teknis dan organisasi yang ketat, termasuk:",
+      "list_type": "disc",
+      "items": [
+        "Enkripsi data dalam transit (TLS 1.3) dan saat disimpan (AES-256).",
+        "Autentikasi multi-faktor (MFA) dan verifikasi ORCID wajib untuk akses fitur sensitif.",
+        "Audit keamanan berkala dan pemantauan anomali secara real-time.",
+        "Pembatasan akses berbasis peran (RBAC) untuk tim internal WIZDAM."
+      ],
+      "outro": "Catatan: Tidak ada sistem yang 100% aman. Kami terus memperbarui protokol keamanan sesuai standar industri terbaru."
+    },
+    "hak_pengguna": {
+      "title": "Hak Pengguna (Sesuai UU PDP)",
+      "intro": "Anda memiliki hak penuh atas data pribadi Anda, termasuk:",
+      "list_type": "disc",
+      "items": [
+        "<strong>Hak Akses:</strong> Melihat data apa saja yang kami simpan tentang Anda.",
+        "<strong>Hak Koreksi:</strong> Memperbarui informasi profil atau metadata riset yang tidak akurat.",
+        "<strong>Hak Penghapusan:</strong> Meminta penghapusan akun dan data pribadi (kecuali data yang wajib disimpan oleh hukum).",
+        "<strong>Hak Portabilitas:</strong> Mengekspor data Anda dalam format CSV/JSON.",
+        "<strong>Hak Keberatan:</strong> Menolak pemrosesan data untuk keperluan pemasaran atau analitik non-esensial."
+      ],
+      "outro": "Gunakan menu <a href=\"#/settings\" class=\"text-indigo-600 hover:underline font-medium\">Pengaturan Privasi & Keamanan</a> atau hubungi kami untuk menjalankan hak-hak ini."
+    },
+    "cookie": {
+      "title": "Cookie & Teknologi Pelacakan",
+      "intro": "Kami menggunakan cookie dan teknologi serupa untuk:",
+      "list_type": "disc",
+      "items": [
+        "Menjaga sesi login dan preferensi pengguna.",
+        "Menganalisis pola penggunaan untuk meningkatkan UX.",
+        "Menjalankan fitur keamanan (Cloudflare Turnstile, reCAPTCHA)."
+      ],
+      "outro": "Anda dapat mengelola cookie melalui pengaturan browser atau panel preferensi cookie yang muncul saat pertama kali mengunjungi situs."
+    },
+    "retensi": {
+      "title": "Retensi Data",
+      "paragraphs": [
+        "Kami menyimpan data pribadi Anda selama akun Anda aktif atau selama diperlukan untuk menyediakan layanan. Setelah penghapusan akun, data akan dihapus atau dianonimkan dalam waktu <strong>30 hari</strong>, kecuali terdapat kewajiban hukum atau sengketa yang memerlukan penyimpanan lebih lama."
+      ]
+    },
+    "perubahan_kebijakan": {
+      "title": "Perubahan Kebijakan",
+      "paragraphs": [
+        "Kami dapat memperbarui Kebijakan Privasi ini sewaktu-waktu untuk mencerminkan perubahan praktik atau regulasi. Perubahan material akan diberitahukan melalui email atau banner notifikasi di dashboard minimal 14 hari sebelum berlaku. Penggunaan lanjutan setelah perubahan dianggap sebagai persetujuan Anda."
+      ]
+    },
+    "kontak": {
+      "title": "Kontak & Pengaduan",
+      "intro": "Jika Anda memiliki pertanyaan, permintaan terkait data pribadi, atau keluhan privasi, silakan hubungi Tim Perlindungan Data kami:",
+      "contact_box": {
+        "email":   "<strong>Email:</strong> privacy@wizdam.ai",
+        "address": "<strong>Alamat:</strong> Sangia Research Media and Publishing, Jakarta, Indonesia",
+        "phone":   "<strong>Telepon:</strong> +62 21 XXXX XXXX"
+      },
+      "outro": "Anda juga berhak mengajukan pengaduan kepada <strong>Otoritas Perlindungan Data Pribadi</strong> jika merasa hak Anda tidak dipenuhi."
+    }
+  }
+}

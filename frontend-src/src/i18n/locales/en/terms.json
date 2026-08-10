@@ -1,0 +1,109 @@
+{
+  "toc":         "Table of Contents",
+  "title":       "Terms of Service",
+  "updated":     "Last updated: May 25, 2024",
+  "read_time":   "Reading time: 8 minutes",
+  "footer_note": "By using WIZDAM, you agree to the terms above.",
+  "cta_accept":  "I Agree & Sign Up",
+  "cta_login":   "Sign In",
+  "section_labels": {
+    "penerimaan":           "Acceptance",
+    "definisi":             "Definitions",
+    "akun":                 "Account",
+    "lisensi":              "License",
+    "pembatasan":           "Restrictions",
+    "data":                 "Data",
+    "kekayaan_intelektual": "Intellectual Property",
+    "pemutusan":            "Termination",
+    "disclaimer":           "Disclaimer",
+    "batasan_liabilitas":   "Liability Limits",
+    "hukum_berlaku":        "Governing Law"
+  },
+  "sections": {
+    "penerimaan": {
+      "title": "Acceptance of Terms",
+      "paragraphs": [
+        "By accessing and using the <strong>WIZDAM (Wizdam SDGs Classification & Analytics)</strong> platform, you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, you are not permitted to use our services.",
+        "We reserve the right to change these terms at any time. Material changes will be communicated via email or dashboard notification 30 days before taking effect."
+      ]
+    },
+    "definisi": {
+      "title": "Definitions",
+      "list_type": "disc",
+      "items": [
+        "<strong>“Service”</strong> refers to the web platform, API, AI algorithms, and analytics tools provided by WIZDAM.",
+        "<strong>“User”</strong> is any individual or entity registered and using the service, including Researchers, Institutions, and Sponsors.",
+        "<strong>“Content”</strong> covers articles, data, metrics, and analysis results produced or uploaded by users.",
+        "<strong>“Wizdam Impact Score (WIS)”</strong> is a composite metric computed by the system to measure research impact."
+      ]
+    },
+    "akun": {
+      "title": "Account and Security",
+      "paragraphs": [
+        "You are responsible for the confidentiality of your account credentials (ORCID, email, password). You agree to notify us immediately of any unauthorized use of your account.",
+        "WIZDAM integrates with ORCID for identity verification. You warrant that any information you provide (including Scopus ID, SINTA, etc.) is accurate and belongs to you."
+      ]
+    },
+    "lisensi": {
+      "title": "License to Use",
+      "paragraphs": [
+        "WIZDAM grants you a limited, non-exclusive, non-transferable, revocable license to access and use the Service for your internal research and analysis purposes, subject to your chosen subscription tier."
+      ]
+    },
+    "pembatasan": {
+      "title": "Usage Restrictions",
+      "intro": "You are prohibited from:",
+      "list_type": "decimal",
+      "items": [
+        "Using the Service for illegal purposes or in violation of any law.",
+        "<em>Scraping</em>, <em>crawling</em>, or mass-extracting data without our written permission.",
+        "Misusing API keys or sharing account access with unauthorized third parties.",
+        "Attempting to <em>reverse engineer</em> the Sangia AI Engine algorithms.",
+        "Uploading content containing malware, viruses, or malicious code."
+      ]
+    },
+    "data": {
+      "title": "Data and Privacy",
+      "intro": "Use of your personal data is governed by our <a href=\"#/privacy\" class=\"text-indigo-600 hover:underline font-medium\">Privacy Policy</a>. In summary:",
+      "list_type": "disc",
+      "items": [
+        "We collect profile data (ORCID, name, institution) to personalize the experience.",
+        "We use usage data (logs, clicks) to improve the SDG classification algorithms.",
+        "We do not sell your personal data to third parties for marketing purposes.",
+        "Aggregated research data may be used for global trend reports (anonymously)."
+      ]
+    },
+    "kekayaan_intelektual": {
+      "title": "Intellectual Property",
+      "paragraphs": [
+        "All copyrights, trademarks, patents, and other intellectual property rights related to the WIZDAM Platform (including source code, UI design, and AI models) belong to <strong>Sangia Research Media and Publishing</strong> or its licensors.",
+        "You retain copyright on original content you upload, but you grant us a non-exclusive license to store, display, and distribute that content to provide the Service."
+      ]
+    },
+    "pemutusan": {
+      "title": "Account Termination",
+      "paragraphs": [
+        "We reserve the right to suspend or terminate your account immediately, without prior notice, if you violate these Terms. You may also terminate your account at any time via the Settings menu."
+      ]
+    },
+    "disclaimer": {
+      "title": "Warranty Disclaimer",
+      "paragraphs": [
+        "THE SERVICE IS PROVIDED “AS IS” AND “AS AVAILABLE.” WIZDAM DOES NOT WARRANT THAT THE SERVICE WILL BE ERROR-FREE OR UNINTERRUPTED, OR THAT SDG CLASSIFICATION ALGORITHMS WILL ALWAYS BE 100% ACCURATE.",
+        "WIS analysis results and policy recommendations are informational and do not replace professional advice or official institutional decisions."
+      ]
+    },
+    "batasan_liabilitas": {
+      "title": "Limitation of Liability",
+      "paragraphs": [
+        "TO THE EXTENT PERMITTED BY LAW, WIZDAM IS NOT LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOSS OF DATA, REVENUE, OR REPUTATION ARISING FROM USE OF THE SERVICE."
+      ]
+    },
+    "hukum_berlaku": {
+      "title": "Governing Law",
+      "paragraphs": [
+        "These Terms are governed by the laws of the Republic of Indonesia. Disputes will be resolved through amicable discussion, or failing that, through the competent courts in Jakarta, Indonesia."
+      ]
+    }
+  }
+}
