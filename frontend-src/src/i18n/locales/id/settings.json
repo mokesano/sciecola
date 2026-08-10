@@ -1,0 +1,110 @@
+{
+  "title":    "Pengaturan",
+  "subtitle": "Kelola profil, preferensi, dan keamanan akun Anda.",
+  "breadcrumb": {
+    "home":      "Beranda",
+    "dashboard": "Dashboard",
+    "current":   "Pengaturan"
+  },
+  "actions": {
+    "save":    "Simpan Perubahan",
+    "saving":  "Menyimpan…"
+  },
+  "toast": {
+    "saved": "Pengaturan berhasil disimpan"
+  },
+  "tabs": {
+    "profile":       "Profil",
+    "notifications": "Notifikasi",
+    "privacy":       "Privasi & Keamanan",
+    "integrations":  "Integrasi",
+    "account":       "Akun"
+  },
+  "profile": {
+    "title":        "Informasi Profil",
+    "photo_change": "Ubah Foto",
+    "photo_help":   "JPG atau PNG. Maks 2MB.",
+    "name":         "Nama Lengkap",
+    "email":        "Email",
+    "orcid":        "ORCID ID",
+    "affiliation":  "Afiliasi",
+    "bio":          "Bio Singkat",
+    "interests":    "Minat Riset (pisahkan dengan koma)"
+  },
+  "notifications": {
+    "title":    "Preferensi Notifikasi",
+    "subtitle": "Atur bagaimana dan kapan Anda menerima pembaruan dari platform.",
+    "items": {
+      "citation": {
+        "title": "Notifikasi Sitasi Baru",
+        "desc":  "Kirim email saat artikel Anda disitasi"
+      },
+      "collab": {
+        "title": "Permintaan Kolaborasi",
+        "desc":  "Beritahu saat peneliti lain mengundang Anda"
+      },
+      "digest": {
+        "title": "Ringkasan Mingguan",
+        "desc":  "Pantau statistik performa riset setiap Senin"
+      },
+      "marketing": {
+        "title": "Update Fitur & Event",
+        "desc":  "Info webinar, fitur baru, dan kampanye SDGs"
+      },
+      "security": {
+        "title": "Notifikasi Keamanan",
+        "desc":  "Login baru, perubahan password, atau aktivitas mencurigakan"
+      }
+    }
+  },
+  "privacy": {
+    "title":               "Privasi & Keamanan",
+    "visibility":          "Visibilitas Profil",
+    "visibility_public":   "Publik (Semua orang dapat melihat)",
+    "visibility_reg":      "Terdaftar (Hanya user login)",
+    "visibility_private":  "Privat (Hanya Anda)",
+    "downloads":           "Tampilkan Statistik Download",
+    "downloads_desc":      "Izinkan pengunjung melihat jumlah unduhan artikel",
+    "messages":            "Izinkan Pesan Langsung",
+    "messages_desc":       "Peneliti lain dapat mengirim pesan melalui platform",
+    "twofa":               "Autentikasi Dua Faktor (2FA)",
+    "twofa_desc":          "Tambahkan lapisan keamanan ekstra pada akun Anda"
+  },
+  "integrations": {
+    "linked":         "Akun Terhubung",
+    "orcid_status":   "Terverifikasi & Tersinkronisasi",
+    "connected":      "Terhubung",
+    "api_keys":       "Kunci API",
+    "api_new":        "Buat Kunci Baru",
+    "api_name":       "Nama",
+    "api_key":        "Kunci",
+    "api_created":    "Dibuat",
+    "api_status":     "Status",
+    "api_actions":    "Aksi",
+    "api_active":     "Aktif",
+    "api_inactive":   "Nonaktif",
+    "api_revoke":     "Cabut"
+  },
+  "account": {
+    "password_title": "Ubah Kata Sandi",
+    "current":        "Kata Sandi Saat Ini",
+    "new":            "Kata Sandi Baru",
+    "confirm":        "Konfirmasi Kata Sandi",
+    "update":         "Update Kata Sandi",
+    "danger_title":   "Zona Berbahaya",
+    "danger_desc":    "Tindakan di bawah ini tidak dapat dibatalkan. Harap lanjutkan dengan hati-hati.",
+    "deactivate":     "Nonaktifkan Akun Sementara",
+    "delete":         "Hapus Akun Permanen"
+  },
+  "help": {
+    "title":    "Butuh Bantuan?",
+    "subtitle": "Jika Anda mengalami masalah teknis atau memiliki pertanyaan tentang fitur tertentu, tim dukungan kami siap membantu.",
+    "button":   "Hubungi Dukungan"
+  },
+  "tips": {
+    "title": "Tips Keamanan",
+    "item1": "Gunakan kata sandi unik yang tidak dipakai di layanan lain.",
+    "item2": "Aktifkan 2FA untuk perlindungan ekstra.",
+    "item3": "Tinjau kunci API secara berkala dan cabut yang tidak terpakai."
+  }
+}

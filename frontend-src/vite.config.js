@@ -4,6 +4,17 @@ import mdx from '@mdx-js/rollup';
 import remarkGfm from 'remark-gfm';
 import remarkFrontmatter from 'remark-frontmatter';
 
+// Deployment target is controlled by DEPLOY_TARGET at build time.
+// - 'php' (default): built app is served under /app/ alongside the PHP entry
+//   point in public/. Matches the existing on-prem hosting layout.
+// - 'cloudflare': built app is served from the site root. Use this when
+//   uploading the build output to Cloudflare Pages or any static host that
+//   serves the app at /. Set `DEPLOY_TARGET=cloudflare` (or VITE_BASE=/) in
+//   the Cloudflare Pages build env.
+const deployTarget = (process.env.DEPLOY_TARGET || 'php').toLowerCase();
+const explicitBase = process.env.VITE_BASE;
+const buildBase    = explicitBase || (deployTarget === 'cloudflare' ? '/' : '/app/');
+
 export default defineConfig(({ command }) => ({
   test: {
     globals: true,
@@ -18,7 +29,7 @@ export default defineConfig(({ command }) => ({
 
   publicDir: command === 'build' ? false : '../public',
 
-  base: command === 'build' ? '/app/' : '/',
+  base: command === 'build' ? buildBase : '/',
 
   server: {
     proxy: {

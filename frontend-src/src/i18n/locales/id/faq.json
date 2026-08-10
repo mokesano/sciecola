@@ -1,0 +1,119 @@
+{
+  "breadcrumb": {
+    "home":         "Beranda",
+    "docs":         "Documentations",
+    "current":      "FAQ"
+  },
+  "title":          "Pertanyaan yang Sering Diajukan",
+  "subtitle":       "Temukan jawaban untuk pertanyaan umum seputar Sciecola, Sangia AI Engine, API, dan deployment. Jika tidak menemukan jawaban, hubungi tim dukungan kami.",
+  "stats": {
+    "total":        "Total Pertanyaan",
+    "categories":   "Kategori",
+    "updated_label":"Terupdate",
+    "updated_value":"Hari Ini"
+  },
+  "search_ph":      "Cari pertanyaan…",
+  "categories_side":"Kategori",
+  "all":            "Semua",
+  "count_label":    "{{count}} pertanyaan",
+  "empty": {
+    "title":        "Tidak ada hasil ditemukan",
+    "subtitle":     "Coba kata kunci lain atau pilih kategori berbeda.",
+    "cta":          "Reset Pencarian"
+  },
+  "cta": {
+    "title":        "Masih butuh bantuan?",
+    "subtitle":     "Tim dukungan kami siap membantu Anda 24/7.",
+    "contact":      "Hubungi Kami",
+    "docs":         "Dokumentasi"
+  },
+  "categories": {
+    "umum":         "Umum",
+    "autentikasi":  "Autentikasi",
+    "apikey":       "API Key",
+    "scieco":       "Sangia Impact Score",
+    "sdg":          "SDG Classification",
+    "database":     "Database & Migrasi",
+    "frontend":     "Frontend React",
+    "crawler":      "SciecolaBot Crawler",
+    "deployment":   "Deployment"
+  },
+  "faqs": {
+    "umum": [
+      { "q": "Apa itu Sciecola?",
+        "a": "Platform analisis dampak penelitian Indonesia yang mengukur kontribusi peneliti, artikel, institusi, dan jurnal menggunakan Sangia Impact Score (Scieco) — skor komposit dari 4 pilar: Akademik, Sosial, Ekonomi, dan SDG." },
+      { "q": "Apa itu Sciecola AI Engine?",
+        "a": "Sciecola AI Engine adalah backend analitik AI (`api.sangia.org`) yang melakukan kalkulasi berat: SDG classification, impact score, trend analysis, dan policy recommendation. Sciecola tidak menyimpan data — semua persistensi dilakukan oleh Sciecola. Sciecola Engine dikelola terpisah di repository `sciecola-apis`." },
+      { "q": "Mengapa ada dua server (PHP port 8000 dan Node port 3000)?",
+        "a": "Saat development, PHP melayani halaman Twig dan REST API, sementara Vite dev server melayani React frontend dengan Hot Module Replacement (HMR). Di production, hanya PHP yang berjalan — React di-build menjadi file statis di `public/app/`." }
+    ],
+    "autentikasi": [
+      { "q": "Mengapa login hanya via ORCID?",
+        "a": "ORCID adalah identitas peneliti terverifikasi internasional. Login via ORCID memastikan hanya peneliti nyata yang bisa mengklaim profil mereka di platform." },
+      { "q": "Bagaimana jika saya belum punya ORCID?",
+        "a": "Daftar gratis di orcid.org. ORCID ID adalah standar identifikasi peneliti global yang diakui lebih dari 1.000 lembaga riset." },
+      { "q": "Apakah admin bisa login tanpa ORCID?",
+        "a": "Tidak. Semua akun menggunakan ORCID. Role admin ditetapkan di database (`users.role = 'admin'`) setelah akun dibuat pertama kali." }
+    ],
+    "apikey": [
+      { "q": "Untuk apa API Key?",
+        "a": "API Key digunakan untuk memanggil Sangia API Engine secara langsung dari aplikasi lain atau skrip analitik. Format key: `wz_{user_id}_{timestamp}_{hmac16}`." },
+      { "q": "Berapa lama API Key berlaku?",
+        "a": "365 hari sejak dibuat. Setelah expired, generate key baru melalui Dashboard → Manajemen API Key." },
+      { "q": "Bagaimana jika API Key saya bocor?",
+        "a": "Segera klik \"Cabut API Key\" di Dashboard. Key akan langsung di-blacklist di Sangia API Engine dan di-null-kan di database." },
+      { "q": "Kenapa SANGIA_SHARED_SECRET harus sama antara Sciecola dan APIs?",
+        "a": "Sangia API memvalidasi HMAC key secara lokal tanpa roundtrip ke database. Agar validasi berhasil di kedua sisi, secret harus identik." }
+    ],
+    "scieco": [
+      { "q": "Apakah skor Scieco bisa berubah?",
+        "a": "Ya. Skor direkam setiap kalkulasi (tidak di-update, melainkan di-insert baru). History skor tersimpan untuk grafik tren. Pemicunya bisa manual (tombol \"Hitung Ulang\") atau otomatis via job queue." },
+      { "q": "Mengapa skor saya lebih rendah dari yang diharapkan?",
+        "a": "Beberapa kemungkinan:\n• Data sitasi belum ter-update di Scopus/ORCID (tunggu 24–48 jam)\n• Pilar Social dan Economic membutuhkan input manual yang belum diisi\n• Karya di luar ORCID tidak terhitung (tambahkan karya di profil ORCID Anda)" },
+      { "q": "Bisakah saya mengubah bobot 4 pilar?",
+        "a": "Ya, melalui Admin Panel → Konfigurasi Bobot. Perubahan tersimpan di `analysis_weight_configs` dan langsung diterapkan pada kalkulasi berikutnya." },
+      { "q": "Apakah Scieco sama dengan h-index?",
+        "a": "Tidak. h-index hanya mengukur dampak akademik (sitasi). Scieco mengukur 4 dimensi: akademik, sosial, ekonomi, dan kontribusi terhadap SDG. Seorang peneliti bisa punya h-index rendah tapi Scieco tinggi jika risetnya berdampak sosial-ekonomi besar." }
+    ],
+    "sdg": [
+      { "q": "Bagaimana cara kerja klasifikasi SDG?",
+        "a": "Sangia menganalisis judul dan abstrak artikel menggunakan 4 pendekatan:\n1. Pencocokan kata kunci SDG (bobot 30%)\n2. Kesamaan semantik dengan embedding SDG (30%)\n3. Analisis substantif konteks (20%)\n4. Hubungan kausal dengan target SDG (20%)" },
+      { "q": "Berapa maksimum SDG yang bisa diatribusikan ke satu artikel?",
+        "a": "Default 7 SDG. Nilai ini dapat dikonfigurasi oleh admin melalui bobot `sdg_v5.max_sdgs`." },
+      { "q": "Apakah SDG v5 berbeda dengan versi sebelumnya?",
+        "a": "Ya. Sangia mendukung beberapa versi model SDG (v4, v5). v5 menggunakan model embedding yang lebih baru dengan akurasi lebih tinggi pada teks berbahasa Indonesia." }
+    ],
+    "database": [
+      { "q": "Apa perbedaan `database_schema_full.sql` dan `database_migration_v2.sql`?",
+        "a": "• `database_schema_full.sql` — skema lengkap dari awal (buat dari nol)\n• `database_migration_v2.sql` — tambahan tabel untuk integrasi Sangia API v2 (cache, weight configs, API logs). Jalankan setelah schema_full." },
+      { "q": "Apakah aman menjalankan `database_migration_v2.sql` berulang kali?",
+        "a": "Ya. Semua pernyataan menggunakan `CREATE TABLE IF NOT EXISTS` dan `ALTER TABLE ... ADD COLUMN IF NOT EXISTS`, jadi aman dijalankan ulang." }
+    ],
+    "frontend": [
+      { "q": "Mengapa menggunakan Vite bukan Create React App (CRA)?",
+        "a": "Vite jauh lebih cepat: HMR (hot reload) hampir instan vs 10–30 detik di CRA. Build produksi juga lebih kecil karena menggunakan Rollup dengan tree-shaking agresif." },
+      { "q": "Apa itu `window.__SANGIA_INIT__`?",
+        "a": "Objek yang diinjeksi oleh PHP ke halaman sebelum React dimuat, berisi:\n• apiUrl: \"/api/v1\" — URL API backend\n• currentUser: { id, full_name } — Data user yang sedang login\n• csrfToken: \"abc123...\" — Token CSRF untuk request POST\n• appPath: \"/app\" — Base path React Router\n\nReact membaca objek ini via `window.__SANGIA_INIT__` saat startup." },
+      { "q": "Kenapa `/app/researchers/123` kadang 404 saat refresh?",
+        "a": "Ini adalah SPA (Single Page Application) — routing dilakukan di sisi client. Saat hard refresh, browser meminta `/app/researchers/123` ke PHP. Konfigurasi route `/app/{path:.+}` (catch-all dengan regex `.+`) memastikan PHP selalu mengembalikan React shell, lalu React Router menangani navigasi." },
+      { "q": "Bagaimana cara ganti bahasa antarmuka?",
+        "a": "Secara default, bahasa terdeteksi dari browser. Untuk ganti secara paksa:\n\n```js\nimport i18n from './i18n';\ni18n.changeLanguage('en'); // atau 'id'\n```\n\nPreferensi disimpan di `localStorage`." }
+    ],
+    "crawler": [
+      { "q": "Apakah SciecolaBot aman digunakan?",
+        "a": "Ya, dengan catatan:\n• Mematuhi `robots.txt` secara otomatis\n• Rate limiting default 2 detik antar request\n• Berhenti otomatis jika CAPTCHA terdeteksi\n• Tidak menyimpan data pribadi" },
+      { "q": "Mengapa tidak semua data dari Google Scholar tersedia?",
+        "a": "Google Scholar tidak memiliki API publik resmi dan aktif memblokir scraping. SciecolaBot mencoba best-effort; jika CAPTCHA terdeteksi, proses dihentikan dan fallback ke data dari API resmi (Crossref, Semantic Scholar)." },
+      { "q": "Data apa yang diprioritaskan untuk di-crawl?",
+        "a": "Urutan prioritas: API resmi (Crossref, Semantic Scholar, OpenCitations) → Sangia API cache → Crawl web (Scholar, ResearchGate, Scimago). API resmi selalu lebih andal dan lebih cepat." }
+    ],
+    "deployment": [
+      { "q": "Bagaimana cara deploy ke production?",
+        "a": "1. Set `APP_ENV=production` dan `APP_DEBUG=false` di `.env`\n2. Jalankan `npm run build` → output ke `public/app/`\n3. Set `TWIG_CACHE=true` untuk performa\n4. Gunakan Nginx/Apache dengan konfigurasi di `docs/INSTALLATION.md`\n5. Set `ORCID_SANDBOX=false` untuk ORCID production" },
+      { "q": "Apakah Redis wajib?",
+        "a": "Tidak wajib. Redis digunakan untuk queue job background (`QUEUE_DRIVER=redis`). Jika tidak tersedia, set `QUEUE_DRIVER=database` — job disimpan di tabel MySQL." },
+      { "q": "Bagaimana cara update aplikasi?",
+        "a": "```bash\ngit pull origin main\ncomposer install --optimize-autoloader\nnpm install && npm run build\n# Jalankan migration baru jika ada:\nmysql -u root -p sciecola < database_migration_vX.sql\n```" }
+    ]
+  }
+}

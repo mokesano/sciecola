@@ -1,0 +1,109 @@
+{
+  "toc":         "Daftar Isi",
+  "title":       "Syarat dan Ketentuan Layanan",
+  "updated":     "Terakhir diperbarui: 25 Mei 2024",
+  "read_time":   "Waktu baca: 8 menit",
+  "footer_note": "Dengan menggunakan WIZDAM, Anda menyetujui syarat di atas.",
+  "cta_accept":  "Saya Setuju & Daftar",
+  "cta_login":   "Masuk",
+  "section_labels": {
+    "penerimaan":           "Penerimaan",
+    "definisi":             "Definisi",
+    "akun":                 "Akun",
+    "lisensi":              "Lisensi",
+    "pembatasan":           "Pembatasan",
+    "data":                 "Data",
+    "kekayaan_intelektual": "Kekayaan Intelektual",
+    "pemutusan":            "Pemutusan",
+    "disclaimer":           "Disclaimer",
+    "batasan_liabilitas":   "Batasan Liabilitas",
+    "hukum_berlaku":        "Hukum Berlaku"
+  },
+  "sections": {
+    "penerimaan": {
+      "title": "Penerimaan Syarat",
+      "paragraphs": [
+        "Dengan mengakses dan menggunakan platform <strong>WIZDAM (Wizdam SDGs Classification & Analytics)</strong>, Anda setuju untuk terikat oleh Syarat dan Ketentuan ini. Jika Anda tidak setuju dengan bagian mana pun dari syarat ini, Anda tidak diizinkan untuk menggunakan layanan kami.",
+        "Kami berhak mengubah syarat ini sewaktu-waktu. Perubahan yang material akan diberitahukan melalui email atau notifikasi di dashboard Anda 30 hari sebelum berlaku."
+      ]
+    },
+    "definisi": {
+      "title": "Definisi",
+      "list_type": "disc",
+      "items": [
+        "<strong>“Layanan”</strong> merujuk pada platform web, API, algoritma AI, dan alat analitik yang disediakan oleh WIZDAM.",
+        "<strong>“Pengguna”</strong> adalah individu atau entitas yang terdaftar dan menggunakan layanan, termasuk Peneliti, Institusi, dan Sponsor.",
+        "<strong>“Konten”</strong> mencakup artikel, data, metrik, dan hasil analisis yang dihasilkan atau diunggah oleh pengguna.",
+        "<strong>“Wizdam Impact Score (WIS)”</strong> adalah metrik komposit yang dihitung oleh sistem untuk mengukur dampak riset."
+      ]
+    },
+    "akun": {
+      "title": "Akun dan Keamanan",
+      "paragraphs": [
+        "Anda bertanggung jawab atas kerahasiaan kredensial akun Anda (ORCID, email, password). Anda setuju untuk memberitahu kami segera jika terjadi penggunaan akun Anda tanpa izin.",
+        "WIZDAM terintegrasi dengan ORCID untuk verifikasi identitas. Anda menjamin bahwa informasi yang Anda berikan kepada kami (termasuk ID Scopus, SINTA, dll) adalah akurat dan milik Anda."
+      ]
+    },
+    "lisensi": {
+      "title": "Lisensi Penggunaan",
+      "paragraphs": [
+        "WIZDAM memberikan Anda lisensi terbatas, tidak eksklusif, tidak dapat dialihkan, dan dapat dibatalkan untuk mengakses dan menggunakan Layanan untuk keperluan riset dan analisis internal Anda, sesuai dengan paket berlangganan yang Anda pilih."
+      ]
+    },
+    "pembatasan": {
+      "title": "Pembatasan Penggunaan",
+      "intro": "Anda dilarang untuk:",
+      "list_type": "decimal",
+      "items": [
+        "Menggunakan Layanan untuk tujuan ilegal atau melanggar hukum.",
+        "Melakukan <em>scraping</em>, <em>crawling</em>, atau mengekstraksi data secara masif tanpa izin tertulis dari kami.",
+        "Menyalahgunakan API Key atau berbagi akses akun dengan pihak ketiga yang tidak berwenang.",
+        "Mencoba membalikkan (<em>reverse engineer</em>) algoritma Sangia AI Engine.",
+        "Mengunggah konten yang mengandung malware, virus, atau kode berbahaya."
+      ]
+    },
+    "data": {
+      "title": "Data dan Privasi",
+      "intro": "Penggunaan data pribadi Anda diatur oleh <a href=\"#/privacy\" class=\"text-indigo-600 hover:underline font-medium\">Kebijakan Privasi</a> kami. Secara ringkas:",
+      "list_type": "disc",
+      "items": [
+        "Kami mengumpulkan data profil (ORCID, Nama, Institusi) untuk mempersonalisasi pengalaman.",
+        "Kami menggunakan data penggunaan (logs, klik) untuk meningkatkan algoritma klasifikasi SDG.",
+        "Kami tidak menjual data pribadi Anda kepada pihak ketiga untuk tujuan pemasaran.",
+        "Data riset agregat dapat digunakan untuk laporan tren global (anonim)."
+      ]
+    },
+    "kekayaan_intelektual": {
+      "title": "Kekayaan Intelektual",
+      "paragraphs": [
+        "Semua hak cipta, merek dagang, paten, dan hak kekayaan intelektual lainnya terkait dengan Platform WIZDAM (termasuk kode sumber, desain UI, dan model AI) adalah milik <strong>Sangia Research Media and Publishing</strong> atau pemberi lisensinya.",
+        "Anda tetap memegang hak cipta atas konten asli yang Anda unggah, namun Anda memberikan kami lisensi non-eksklusif untuk menyimpan, menampilkan, dan mendistribusikan konten tersebut dalam rangka penyediaan Layanan."
+      ]
+    },
+    "pemutusan": {
+      "title": "Pemutusan Akun",
+      "paragraphs": [
+        "Kami berhak menangguhkan atau mengakhiri akun Anda segera, tanpa pemberitahuan sebelumnya, jika Anda melanggar Syarat dan Ketentuan ini. Anda juga dapat mengakhiri akun Anda kapan saja melalui menu Pengaturan."
+      ]
+    },
+    "disclaimer": {
+      "title": "Penafian Garansi (Disclaimer)",
+      "paragraphs": [
+        "LAYANAN DISEDIAKAN “APA ADANYA” (AS IS) DAN “SEBAGAIMANA TERSEDIA” (AS AVAILABLE). WIZDAM TIDAK MEMBERIKAN JAMINAN BAHWA LAYANAN AKAN BEBAS DARI KESALAHAN, TIDAK TERGANGGU, ATAU BAHWA ALGORITMA KLASIFIKASI SDG AKAN SELALU AKURAT 100%.",
+        "Hasil analisis WIS dan rekomendasi kebijakan bersifat informatif dan tidak menggantikan saran profesional atau keputusan institusional resmi."
+      ]
+    },
+    "batasan_liabilitas": {
+      "title": "Batasan Tanggung Jawab",
+      "paragraphs": [
+        "SEPANJANG DIIZINKAN OLEH HUKUM, WIZDAM TIDAK BERTANGGUNG JAWAB ATAS KERUSAKAN TIDAK LANGSUNG, INSIDENTAL, KHUSUS, ATAS KONSEKUENSIAL, TERMASUK KEHILANGAN DATA, PENDAPATAN, ATAU REPUTASI, YANG MUNCUL DARI PENGGUNAAN LAYANAN."
+      ]
+    },
+    "hukum_berlaku": {
+      "title": "Hukum yang Berlaku",
+      "paragraphs": [
+        "Syarat ini diatur oleh hukum Negara Kesatuan Republik Indonesia. Segala perselisihan yang timbul akan diselesaikan melalui musyawarah mufakat, atau jika gagal, melalui pengadilan yang berwenang di Jakarta, Indonesia."
+      ]
+    }
+  }
+}

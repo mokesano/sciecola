@@ -1,0 +1,36 @@
+{
+  "breadcrumb": {
+    "home":      "Home",
+    "dashboard": "Dashboard",
+    "current":   "Notifications"
+  },
+  "title": "Notifications",
+  "subtitle": {
+    "unread":  "You have {{count}} unread notifications",
+    "all_read": "All notifications have been read"
+  },
+  "actions": {
+    "mark_all":  "Mark All As Read",
+    "clear_all": "Clear All",
+    "mark":      "Mark As Read",
+    "dismiss":   "Dismiss",
+    "load_more": "Load Older Notifications"
+  },
+  "filter": {
+    "all":      "All",
+    "unread":   "Unread",
+    "mentions": "Mentions",
+    "system":   "System"
+  },
+  "empty": {
+    "unread_title":   "No unread notifications",
+    "all_title":      "No notifications yet",
+    "unread_desc":    "You've reviewed everything recent. Stay tuned for updates!",
+    "all_desc":       "We'll let you know about citations, collaborations, and system updates here.",
+    "cta":            "View All Notifications"
+  },
+  "toast": {
+    "marked_all": "All notifications marked as read",
+    "cleared":    "Notification history cleared"
+  }
+}

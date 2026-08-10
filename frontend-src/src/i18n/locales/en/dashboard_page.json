@@ -1,0 +1,74 @@
+{
+  "breadcrumb": {
+    "home":    "Home",
+    "current": "Dashboard"
+  },
+  "title": "Dashboard",
+  "sidebar": {
+    "profile":       "Profile",
+    "profile_role":  "Researcher",
+    "feeds":         "Feeds",
+    "admin":         "Admin Dashboard",
+    "admin_badge":   "ADMIN",
+    "dashboard":     "Dashboard",
+    "my_profile":    "My Profile",
+    "my_articles":   "My Articles",
+    "collections":   "Collections",
+    "statistics":    "Statistics",
+    "my_activity":   "My Activity",
+    "log_history":   "Log History",
+    "inbox":         "Inbox",
+    "notifications": "Notifications",
+    "settings":      "Settings"
+  },
+  "range": {
+    "current": "01 Jan 2024 - 31 Dec 2024",
+    "prev":    "01 Jan 2023 - 31 Dec 2023"
+  },
+  "stats": {
+    "articles":  "My Articles",
+    "citations": "Total Citations",
+    "reads":     "Reads",
+    "downloads": "Downloads",
+    "growth":    "↑ {{pct}}% vs last year"
+  },
+  "sections": {
+    "pub_per_month": "Publications per Month",
+    "sdg_contrib":   "SDG Contribution",
+    "articles":      "Articles",
+    "top_articles":  "Top Articles",
+    "recent":        "Recent Activity",
+    "author_map":    "Author Contribution Map",
+    "map_placeholder": "World Map Visualization",
+    "map_high":      "High Contribution",
+    "map_low":       "Low Contribution",
+    "sdg_dist":      "Article Distribution by SDG",
+    "citation_trend":"Citation Trend",
+    "journal_perf":  "Journal Performance",
+    "see_all":       "See all",
+    "see_all_activity":"See all activity",
+    "see_all_sdgs":  "See all SDGs"
+  },
+  "trend_range": {
+    "all":  "All Years",
+    "5y":   "Last 5 Years"
+  },
+  "article_meta": {
+    "citations": "Citations",
+    "downloads": "Downloads"
+  },
+  "journal": {
+    "acceptance":       "Acceptance Rate",
+    "review_time":      "Avg. Review Time",
+    "publish_time":     "Avg. Publish Time",
+    "citations_per":    "Citations per Article",
+    "hindex":           "H-Index",
+    "days":             "days"
+  },
+  "cta": {
+    "title":        "Want a deeper analysis of your articles?",
+    "subtitle":     "Enter a DOI or ORCID to get instant SDG classification and analysis.",
+    "input_ph":     "Enter DOI or ORCID",
+    "button":       "Analyze Now"
+  }
+}

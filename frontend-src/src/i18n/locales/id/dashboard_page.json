@@ -1,0 +1,74 @@
+{
+  "breadcrumb": {
+    "home":    "Beranda",
+    "current": "Dashboard"
+  },
+  "title": "Dashboard",
+  "sidebar": {
+    "profile":       "Profil",
+    "profile_role":  "Peneliti",
+    "feeds":         "Feeds",
+    "admin":         "Admin Dashboard",
+    "admin_badge":   "ADMIN",
+    "dashboard":     "Dashboard",
+    "my_profile":    "Profil Saya",
+    "my_articles":   "Artikel Saya",
+    "collections":   "Koleksi",
+    "statistics":    "Statistik",
+    "my_activity":   "Aktivitas Saya",
+    "log_history":   "Log History",
+    "inbox":         "Inbox",
+    "notifications": "Notifications",
+    "settings":      "Pengaturan"
+  },
+  "range": {
+    "current": "01 Jan 2024 - 31 Des 2024",
+    "prev":    "01 Jan 2023 - 31 Des 2023"
+  },
+  "stats": {
+    "articles":  "Artikel Saya",
+    "citations": "Total Sitasi",
+    "reads":     "Dibaca",
+    "downloads": "Diunduh",
+    "growth":    "↑ {{pct}}% dari tahun lalu"
+  },
+  "sections": {
+    "pub_per_month": "Publikasi per Bulan",
+    "sdg_contrib":   "SDGs Kontribusi",
+    "articles":      "Artikel",
+    "top_articles":  "Artikel Terpopuler",
+    "recent":        "Aktivitas Terbaru",
+    "author_map":    "Peta Kontribusi Penulis",
+    "map_placeholder": "World Map Visualization",
+    "map_high":      "Kontribusi Tinggi",
+    "map_low":       "Kontribusi Rendah",
+    "sdg_dist":      "Distribusi Artikel per SDGs",
+    "citation_trend":"Tren Sitasi",
+    "journal_perf":  "Performa Jurnal",
+    "see_all":       "Lihat semua",
+    "see_all_activity":"Lihat semua aktivitas",
+    "see_all_sdgs":  "Lihat semua SDGs"
+  },
+  "trend_range": {
+    "all":  "Semua Tahun",
+    "5y":   "5 Tahun Terakhir"
+  },
+  "article_meta": {
+    "citations": "Sitasi",
+    "downloads": "Diunduh"
+  },
+  "journal": {
+    "acceptance":       "Acceptance Rate",
+    "review_time":      "Waktu Review Rata-rata",
+    "publish_time":     "Waktu Terbit Rata-rata",
+    "citations_per":    "Tingkat Sitasi per Artikel",
+    "hindex":           "H-Index",
+    "days":             "Hari"
+  },
+  "cta": {
+    "title":        "Ingin menganalisis artikel Anda lebih dalam?",
+    "subtitle":     "Masukkan DOI atau ORCID untuk mendapatkan analisis dan klasifikasi SDGs secara instan.",
+    "input_ph":     "Masukkan DOI atau ORCID",
+    "button":       "Analisis Sekarang"
+  }
+}

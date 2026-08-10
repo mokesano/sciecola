@@ -28,6 +28,9 @@ build/
 .vite/
 *.map
 
+# Frontend build output (Vite writes here; regenerated on every build)
+/public/app/
+
 # Environment
 .env.local
 .env*.local

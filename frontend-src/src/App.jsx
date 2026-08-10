@@ -111,6 +111,7 @@ import MyCollections from './pages/MyCollections';
 import CollectionDetail from './pages/CollectionDetail';
 import MyStatistics from './pages/MyStatistics';
 import Settings from './pages/Settings';
+import ChangePassword from './pages/ChangePassword';
 
 // Impor Halaman Log History/Activity
 import MyActivity from './pages/MyActivity';
@@ -118,6 +119,9 @@ import LogHistory from './pages/LogHistory';
 
 // Impor Chatbot
 import Chatbot from './components/layout/Chatbot';
+
+// Impor Newsletter Modal (tampil sekali pada kunjungan pertama)
+import NewsletterModal from './components/layout/NewsletterModal';
 
 // Impor Halaman Error
 import NotFound404 from './pages/NotFound404';
@@ -204,6 +208,7 @@ const MainLayout = () => (
     <Outlet />
     <Footer />
     <Chatbot />
+    <NewsletterModal />
   </div>
 );
 
@@ -237,7 +242,10 @@ function App() {
 
               {/* Rute Peneliti */}
               <Route path="/researchers" element={<ResearchersList />} />
-              <Route path="/orcid/:orcidCode" element={<ResearcherProfile />} />
+              <Route path="/orcid/:orcidCode" element={<ResearcherProfile sourceType="orcid" />} />
+              <Route path="/scopus/:id"       element={<ResearcherProfile sourceType="scopus" />} />
+              <Route path="/sinta/:id"        element={<ResearcherProfile sourceType="sinta" />} />
+              <Route path="/researcherid/:id" element={<ResearcherProfile sourceType="researcherid" />} />
 
               {/* Rute Artikel (Baru) */}
               <Route path="/articles" element={<ArticleList />} />
@@ -303,6 +311,7 @@ function App() {
               <Route path="/collections/:id" element={<CollectionDetail />} />
               <Route path="/my-statistics" element={<MyStatistics />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/settings/change-password" element={<ChangePassword />} />
 
               {/* Rute Log History/Activity */}
               <Route path="/my-activity" element={<MyActivity />} />

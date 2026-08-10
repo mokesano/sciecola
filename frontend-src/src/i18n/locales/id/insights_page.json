@@ -1,0 +1,17 @@
+{
+  "title":    "Insights AI",
+  "subtitle": "Wawasan berbasis kecerdasan buatan dari data riset global",
+  "breadcrumb": {
+    "home":    "Beranda",
+    "current": "Insights AI"
+  },
+  "filter": {
+    "all":            "Semua",
+    "trend":          "Tren",
+    "comparison":     "Perbandingan",
+    "recommendation": "Rekomendasi",
+    "warning":        "Peringatan"
+  },
+  "empty":     "Tidak ada insight untuk kategori ini.",
+  "sdg_label": "SDG {{n}}"
+}

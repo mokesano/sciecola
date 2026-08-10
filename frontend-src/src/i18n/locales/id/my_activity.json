@@ -1,0 +1,40 @@
+{
+  "breadcrumb": {
+    "home":      "Beranda",
+    "dashboard": "Dashboard",
+    "current":   "Aktivitas Saya"
+  },
+  "title":    "Aktivitas Saya",
+  "subtitle": "Riwayat interaksi dengan artikel, koleksi, dan analisis riset.",
+  "summary": {
+    "viewed":     "Dilihat",
+    "saved":      "Disimpan",
+    "analyzed":   "Dianalisis",
+    "shared":     "Dibagikan",
+    "downloaded": "Diunduh"
+  },
+  "filter": {
+    "date": {
+      "today":  "Hari Ini",
+      "7days":  "7 Hari",
+      "30days": "30 Hari",
+      "all":    "Semua"
+    },
+    "type": {
+      "all":      "Semua Tipe",
+      "viewed":   "Dilihat",
+      "saved":    "Disimpan",
+      "shared":   "Dibagikan",
+      "analysis": "Analisis"
+    }
+  },
+  "loading":         "Memuat aktivitas…",
+  "error_prefix":    "Gagal memuat:",
+  "load_failed":     "Gagal memuat aktivitas",
+  "empty":           "Tidak ada aktivitas untuk periode ini.",
+  "no_orcid": {
+    "title":    "ORCID Belum Terhubung",
+    "subtitle": "Hubungkan ORCID Anda untuk melihat riwayat aktivitas.",
+    "cta":      "Hubungkan ORCID"
+  }
+}

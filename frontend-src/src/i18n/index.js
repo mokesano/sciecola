@@ -63,6 +63,38 @@ import idTeamMember         from './locales/id/team_member.json';
 import enTeamMember         from './locales/en/team_member.json';
 import idAdminTeams         from './locales/id/admin_teams.json';
 import enAdminTeams         from './locales/en/admin_teams.json';
+import idInsightsPage       from './locales/id/insights_page.json';
+import enInsightsPage       from './locales/en/insights_page.json';
+import idChangePassword     from './locales/id/change_password.json';
+import enChangePassword     from './locales/en/change_password.json';
+import idSettings           from './locales/id/settings.json';
+import enSettings           from './locales/en/settings.json';
+import idAuth               from './locales/id/auth.json';
+import enAuth               from './locales/en/auth.json';
+import idMyActivity         from './locales/id/my_activity.json';
+import enMyActivity         from './locales/en/my_activity.json';
+import idNotifications      from './locales/id/notifications.json';
+import enNotifications      from './locales/en/notifications.json';
+import idMyStatistics       from './locales/id/my_statistics.json';
+import enMyStatistics       from './locales/en/my_statistics.json';
+import idMessages           from './locales/id/messages.json';
+import enMessages           from './locales/en/messages.json';
+import idMyArticles         from './locales/id/my_articles.json';
+import enMyArticles         from './locales/en/my_articles.json';
+import idDashboardPage      from './locales/id/dashboard_page.json';
+import enDashboardPage      from './locales/en/dashboard_page.json';
+import idMyProfile          from './locales/id/my_profile.json';
+import enMyProfile          from './locales/en/my_profile.json';
+import idFeeds              from './locales/id/feeds.json';
+import enFeeds              from './locales/en/feeds.json';
+import idTerms              from './locales/id/terms.json';
+import enTerms              from './locales/en/terms.json';
+import idPrivacy            from './locales/id/privacy.json';
+import enPrivacy            from './locales/en/privacy.json';
+import idFaq                from './locales/id/faq.json';
+import enFaq                from './locales/en/faq.json';
+import idHelp               from './locales/id/help.json';
+import enHelp               from './locales/en/help.json';
 
 // ─── Deteksi bahasa awal ─────────────────────────────────────────────
 // Prioritas: (1) preferensi tersimpan user → (2) bahasa browser →
@@ -114,6 +146,22 @@ i18n
         teams:                   idTeams,
         team_member:             idTeamMember,
         admin_teams:             idAdminTeams,
+        insights_page:           idInsightsPage,
+        change_password:         idChangePassword,
+        settings:                idSettings,
+        auth:                    idAuth,
+        my_activity:             idMyActivity,
+        notifications:           idNotifications,
+        my_statistics:           idMyStatistics,
+        messages:                idMessages,
+        my_articles:             idMyArticles,
+        dashboard_page:          idDashboardPage,
+        my_profile:              idMyProfile,
+        feeds:                   idFeeds,
+        terms:                   idTerms,
+        privacy:                 idPrivacy,
+        faq:                     idFaq,
+        help:                    idHelp,
       },
       en: {
         translation: enCommon,
@@ -145,12 +193,28 @@ i18n
         teams:                   enTeams,
         team_member:             enTeamMember,
         admin_teams:             enAdminTeams,
+        insights_page:           enInsightsPage,
+        change_password:         enChangePassword,
+        settings:                enSettings,
+        auth:                    enAuth,
+        my_activity:             enMyActivity,
+        notifications:           enNotifications,
+        my_statistics:           enMyStatistics,
+        messages:                enMessages,
+        my_articles:             enMyArticles,
+        dashboard_page:          enDashboardPage,
+        my_profile:              enMyProfile,
+        feeds:                   enFeeds,
+        terms:                   enTerms,
+        privacy:                 enPrivacy,
+        faq:                     enFaq,
+        help:                    enHelp,
       },
     },
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams', 'insights_page', 'change_password', 'settings', 'auth', 'my_activity', 'notifications', 'my_statistics', 'messages', 'my_articles', 'dashboard_page', 'my_profile', 'feeds', 'terms', 'privacy', 'faq', 'help'],
     interpolation: { escapeValue: false },
   });
 

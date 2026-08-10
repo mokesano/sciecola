@@ -1,0 +1,89 @@
+{
+  "breadcrumb": {
+    "home":      "Beranda",
+    "dashboard": "Dashboard",
+    "current":   "Profil Saya"
+  },
+  "loading":       "Memuat profil dari ORCID…",
+  "load_error":    "Profil tidak dapat dimuat",
+  "load_error_prefix": "Gagal memuat profil:",
+  "profile_not_found": "Profil tidak ditemukan",
+  "retry":         "Coba Lagi",
+  "no_orcid": {
+    "title":    "ORCID Belum Terhubung",
+    "subtitle": "Hubungkan ORCID Anda untuk menampilkan profil riset, publikasi, dan statistik dampak.",
+    "cta":      "Hubungkan ORCID"
+  },
+  "header": {
+    "view_public": "Lihat Profil Publik",
+    "edit":        "Edit Profil",
+    "location":    "Lokasi",
+    "email":       "Email",
+    "orcid":       "ORCID"
+  },
+  "stats": {
+    "publications": "Publikasi",
+    "citations":    "Sitasi",
+    "hindex":       "h-Index",
+    "wis":          "WIS Skor"
+  },
+  "external_ids": {
+    "title":       "Manajemen ID Eksternal",
+    "subtitle":    "ID yang telah tersinkronisasi dari ORCID atau diatur manual.",
+    "sync_all":    "Sinkronisasi Semua",
+    "platform":    "Platform",
+    "value":       "ID / Nilai",
+    "status":      "Status",
+    "last_sync":   "Terakhir Sync",
+    "actions":     "Aksi",
+    "not_set":     "Belum diatur",
+    "cancel":      "Batal",
+    "save":        "Simpan",
+    "edit":        "Edit",
+    "sync":        "Sinkronisasi",
+    "via_orcid":   "Via ORCID",
+    "just_now":    "Baru saja",
+    "waiting":     "Menunggu sinkronisasi"
+  },
+  "status": {
+    "synced":  "Tersinkron",
+    "pending": "Menunggu",
+    "error":   "Gagal",
+    "not_set": "Belum Diatur"
+  },
+  "toasts": {
+    "sync_success": "Data {{platform}} berhasil disinkronisasi",
+    "sync_error":   "Gagal sinkronisasi, coba lagi",
+    "sync_all_done":"{{count}} ID berhasil disinkronisasi",
+    "all_synced":   "Semua ID sudah tersinkronisasi",
+    "analyze_done": "Analisis selesai! Data profil diperbarui dari ORCID.",
+    "analyze_error":"Gagal menganalisis, coba lagi",
+    "id_empty":     "Nilai ID tidak boleh kosong",
+    "id_updated":   "ID berhasil diperbarui. Klik Sinkronisasi untuk mengambil data.",
+    "fill_first":   "Isi nilai ID terlebih dahulu"
+  },
+  "tabs": {
+    "ringkasan":   "Ringkasan",
+    "publikasi":   "Publikasi",
+    "sdgs":        "SDGs",
+    "kolaborasi":  "Kolaborasi"
+  },
+  "content": {
+    "profile_summary":   "Ringkasan Profil",
+    "default_bio":       "Peneliti di bidang {{department}} dari {{univ}}. Aktif sejak {{yearsActive}}.",
+    "sdg_focus":         "SDG Fokus",
+    "sdg_empty":         "Belum ada data SDG. Analisis diperlukan.",
+    "publications_note": "Preview publikasi dimuat dari ORCID.",
+    "manage_articles":   "Kelola Artikel →",
+    "sdgs_note":         "Visualisasi SDG berdasarkan hasil analisis ORCID.",
+    "see_stats":         "Lihat Statistik →",
+    "collab_count":      "{{count}} kolaborasi",
+    "collab_empty":      "Data kolaborator belum tersedia. Jalankan analisis untuk memuat data."
+  },
+  "footer": {
+    "data_note":     "Data dimuat langsung dari ORCID API melalui cache-first system.",
+    "source":        "Sumber: {{source}}",
+    "analyzing":     "Menganalisis dari ORCID…",
+    "refresh":       "Refresh & Hitung Wizdam Impact Score"
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "toc":         "Table of Contents",
+  "title":       "Privacy Policy",
+  "updated":     "Last updated: May 25, 2024",
+  "read_time":   "Reading time: 6 minutes",
+  "footer_note": "Manage your data and privacy at any time through your account settings.",
+  "cta_settings":"Privacy Settings",
+  "cta_contact": "Contact Support",
+  "section_labels": {
+    "pendahuluan":         "Introduction",
+    "data_dikumpulkan":    "Data Collected",
+    "penggunaan_data":     "Data Usage",
+    "berbagi_data":        "Data Sharing",
+    "keamanan_data":       "Data Security",
+    "hak_pengguna":        "Your Rights",
+    "cookie":              "Cookies",
+    "retensi":             "Retention",
+    "perubahan_kebijakan": "Policy Changes",
+    "kontak":              "Contact"
+  },
+  "sections": {
+    "pendahuluan": {
+      "title": "Introduction",
+      "paragraphs": [
+        "WIZDAM (“<strong>We</strong>”, “<strong>Platform</strong>”) is committed to protecting your privacy and the security of your personal data. This Privacy Policy explains how we collect, use, store, and protect your information when you use our research analytics and SDG classification services, in accordance with <strong>Indonesia's Personal Data Protection Law (UU PDP) No. 27 of 2022</strong> and GDPR principles.",
+        "By registering or using WIZDAM, you consent to the data collection and use practices described in this policy."
+      ]
+    },
+    "data_dikumpulkan": {
+      "title": "Data We Collect",
+      "intro": "We collect data in several categories:",
+      "list_type": "disc",
+      "items": [
+        "<strong>Identity data:</strong> Full name, email address, institutional affiliation, ORCID ID, Scopus ID, and profile photo.",
+        "<strong>Research data:</strong> Publication lists, article metadata, citations, collaborators, and SDG analysis results you upload or that we crawl automatically.",
+        "<strong>Usage data:</strong> Activity logs, pages visited, features used, session duration, and language preference.",
+        "<strong>Technical data:</strong> IP address, browser type, operating system, and device information for security and performance optimization."
+      ]
+    },
+    "penggunaan_data": {
+      "title": "How We Use Data",
+      "intro": "Your data is used for the following purposes:",
+      "list_type": "decimal",
+      "items": [
+        "Providing, maintaining, and improving WIZDAM services (including Wizdam Impact Score calculation).",
+        "Verifying researcher identity through ORCID integration and academic databases.",
+        "Generating analytics reports, research trends, and data-driven policy recommendations.",
+        "Sending notifications for citations, collaborations, and feature updates (configurable in Settings).",
+        "Meeting legal obligations, preventing abuse, and safeguarding platform security."
+      ]
+    },
+    "berbagi_data": {
+      "title": "Data Sharing & Third Parties",
+      "intro": "We <strong>do not sell</strong> your personal data. Data is only shared in the following circumstances:",
+      "list_type": "disc",
+      "items": [
+        "<strong>Infrastructure providers:</strong> Cloud hosting, databases, and analytics services (e.g. Cloudflare, Google Analytics) bound by confidentiality agreements.",
+        "<strong>Research partners & institutions:</strong> Aggregated, anonymized data may be shared for global SDG trend reports.",
+        "<strong>Legal compliance:</strong> Where required by law, court order, or a competent authority."
+      ]
+    },
+    "keamanan_data": {
+      "title": "Data Security",
+      "intro": "We apply strict technical and organizational security measures, including:",
+      "list_type": "disc",
+      "items": [
+        "Encryption in transit (TLS 1.3) and at rest (AES-256).",
+        "Multi-factor authentication (MFA) and required ORCID verification for sensitive features.",
+        "Regular security audits and real-time anomaly monitoring.",
+        "Role-based access control (RBAC) for WIZDAM's internal team."
+      ],
+      "outro": "Note: No system is 100% secure. We continually update security protocols to match the latest industry standards."
+    },
+    "hak_pengguna": {
+      "title": "User Rights (per UU PDP)",
+      "intro": "You have full rights over your personal data, including:",
+      "list_type": "disc",
+      "items": [
+        "<strong>Right of access:</strong> View what data we hold about you.",
+        "<strong>Right to correction:</strong> Update profile information or inaccurate research metadata.",
+        "<strong>Right to erasure:</strong> Request deletion of your account and personal data (except data legally required to be retained).",
+        "<strong>Right to portability:</strong> Export your data in CSV/JSON format.",
+        "<strong>Right to object:</strong> Refuse data processing for marketing or non-essential analytics."
+      ],
+      "outro": "Use the <a href=\"#/settings\" class=\"text-indigo-600 hover:underline font-medium\">Privacy & Security Settings</a> menu, or contact us to exercise these rights."
+    },
+    "cookie": {
+      "title": "Cookies & Tracking",
+      "intro": "We use cookies and similar technologies to:",
+      "list_type": "disc",
+      "items": [
+        "Maintain login sessions and user preferences.",
+        "Analyze usage patterns to improve UX.",
+        "Run security features (Cloudflare Turnstile, reCAPTCHA)."
+      ],
+      "outro": "You can manage cookies via your browser settings or the cookie preference panel shown on first visit."
+    },
+    "retensi": {
+      "title": "Data Retention",
+      "paragraphs": [
+        "We retain your personal data while your account is active or as needed to provide the service. After account deletion, data will be erased or anonymized within <strong>30 days</strong>, unless a legal obligation or dispute requires longer retention."
+      ]
+    },
+    "perubahan_kebijakan": {
+      "title": "Policy Changes",
+      "paragraphs": [
+        "We may update this Privacy Policy from time to time to reflect changes in practice or regulation. Material changes will be communicated via email or a dashboard banner at least 14 days before taking effect. Continued use after changes is considered acceptance."
+      ]
+    },
+    "kontak": {
+      "title": "Contact & Complaints",
+      "intro": "If you have questions, personal data requests, or privacy complaints, please contact our Data Protection Team:",
+      "contact_box": {
+        "email":   "<strong>Email:</strong> privacy@wizdam.ai",
+        "address": "<strong>Address:</strong> Sangia Research Media and Publishing, Jakarta, Indonesia",
+        "phone":   "<strong>Phone:</strong> +62 21 XXXX XXXX"
+      },
+      "outro": "You also have the right to file a complaint with the <strong>Personal Data Protection Authority</strong> if you believe your rights have not been respected."
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "breadcrumb": {
+    "home":      "Beranda",
+    "dashboard": "Dashboard",
+    "current":   "Notifikasi"
+  },
+  "title": "Notifikasi",
+  "subtitle": {
+    "unread":  "Anda memiliki {{count}} notifikasi belum dibaca",
+    "all_read": "Semua notifikasi telah dibaca"
+  },
+  "actions": {
+    "mark_all":  "Tandai Semua Dibaca",
+    "clear_all": "Bersihkan Semua",
+    "mark":      "Tandai Dibaca",
+    "dismiss":   "Hapus",
+    "load_more": "Muat Notifikasi Sebelumnya"
+  },
+  "filter": {
+    "all":      "Semua",
+    "unread":   "Belum Dibaca",
+    "mentions": "Sebutan",
+    "system":   "Sistem"
+  },
+  "empty": {
+    "unread_title":   "Tidak ada notifikasi belum dibaca",
+    "all_title":      "Belum ada notifikasi",
+    "unread_desc":    "Semua aktivitas terbaru telah Anda tinjau. Nantikan pembaruan selanjutnya!",
+    "all_desc":       "Kami akan memberi tahu Anda tentang sitasi, kolaborasi, dan pembaruan sistem di sini.",
+    "cta":            "Lihat Semua Notifikasi"
+  },
+  "toast": {
+    "marked_all": "Semua notifikasi telah ditandai dibaca",
+    "cleared":    "Riwayat notifikasi telah dibersihkan"
+  }
+}

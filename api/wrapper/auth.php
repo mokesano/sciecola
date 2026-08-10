@@ -16,6 +16,7 @@ declare(strict_types=1);
  * GET  /api/auth.php?action=me            (with X-Auth-Token header)
  * POST /api/auth.php { action:"logout" }
  * POST /api/auth.php { action:"link_orcid", orcid, token }
+ * POST /api/auth.php { action:"change_password", current_password, new_password }  (with X-Auth-Token header)
  *
  * Session storage: /cache/sessions/{token}.json  (file-based, no DB required)
  */
@@ -153,6 +154,58 @@ switch ($action) {
         saveSession($sessionsDir, $token, $session);
 
         echo json_encode(['status' => 'success', 'orcid' => $orcid]);
+        break;
+
+    case 'change_password':
+        $token = getToken();
+        if (!$token) {
+            http_response_code(401);
+            echo json_encode(['status' => 'error', 'message' => 'Unauthenticated']);
+            exit;
+        }
+        $session = loadSession($sessionsDir, $token);
+        if (!$session) {
+            http_response_code(401);
+            echo json_encode(['status' => 'error', 'message' => 'Token tidak valid atau kadaluarsa']);
+            exit;
+        }
+
+        $current = (string)($body['current_password'] ?? '');
+        $new     = (string)($body['new_password'] ?? '');
+
+        if ($current === '') {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'field' => 'current', 'message' => 'Kata sandi saat ini wajib diisi']);
+            exit;
+        }
+        if (strlen($new) < 8) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'field' => 'next', 'message' => 'Kata sandi baru minimal 8 karakter']);
+            exit;
+        }
+        if ($current === $new) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'field' => 'next', 'message' => 'Kata sandi baru tidak boleh sama dengan kata sandi saat ini']);
+            exit;
+        }
+
+        // Verifikasi kata sandi saat ini bila hash sudah pernah disimpan.
+        // Jika belum ada hash (akun lama / login stub), lewati verifikasi dan
+        // langsung set hash baru — konsisten dengan alur login yang saat ini
+        // menerima kredensial apa pun.
+        if (!empty($session['password_hash'])) {
+            if (!password_verify($current, $session['password_hash'])) {
+                http_response_code(400);
+                echo json_encode(['status' => 'error', 'field' => 'current', 'message' => 'Kata sandi saat ini salah']);
+                exit;
+            }
+        }
+
+        $session['password_hash']       = password_hash($new, PASSWORD_DEFAULT);
+        $session['password_changed_at'] = date('c');
+        saveSession($sessionsDir, $token, $session);
+
+        echo json_encode(['status' => 'success']);
         break;
 
     case 'logout':

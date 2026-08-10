@@ -1,0 +1,50 @@
+{
+  "breadcrumb": {
+    "home":      "Home",
+    "dashboard": "Dashboard",
+    "current":   "Statistics"
+  },
+  "title":    "Performance Statistics",
+  "subtitle": "In-depth analysis of the reach and impact of your publications.",
+  "range": {
+    "12":  "Last 12 Months",
+    "6":   "Last 6 Months",
+    "1":   "Last 30 Days",
+    "all": "All Time"
+  },
+  "download":     "Download Report",
+  "loading":      "Loading statistics…",
+  "error_prefix": "Failed to load:",
+  "load_failed":  "Failed to load statistics",
+  "no_orcid": {
+    "title": "ORCID Not Linked",
+    "cta":   "Link ORCID"
+  },
+  "cards": {
+    "views":     "Total Views",
+    "citations": "Total Citations",
+    "hindex":    "h-Index",
+    "impact":    "Avg. Impact Score"
+  },
+  "sections": {
+    "impact_trend":       "Research Impact Trend",
+    "sdg_profile":        "SDG Profile",
+    "sdg_footnote":       "Based on article classification scores",
+    "top_countries":      "Top 5 Reader Countries",
+    "citation_sources":   "Citation Sources",
+    "top_articles":       "Top Articles",
+    "see_all_articles":   "See all articles →"
+  },
+  "chart": {
+    "views":       "Views",
+    "citations":   "Citations",
+    "contribution":"Contribution",
+    "citation":    "Citations"
+  },
+  "table": {
+    "title":     "Title",
+    "views":     "Views",
+    "citations": "Citations",
+    "score":     "Score"
+  }
+}

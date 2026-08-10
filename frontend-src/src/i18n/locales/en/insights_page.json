@@ -1,0 +1,17 @@
+{
+  "title":    "AI Insights",
+  "subtitle": "Artificial intelligence-driven insights from global research data",
+  "breadcrumb": {
+    "home":    "Home",
+    "current": "AI Insights"
+  },
+  "filter": {
+    "all":            "All",
+    "trend":          "Trend",
+    "comparison":     "Comparison",
+    "recommendation": "Recommendation",
+    "warning":        "Warning"
+  },
+  "empty":     "No insights available for this category.",
+  "sdg_label": "SDG {{n}}"
+}

@@ -4,21 +4,26 @@
   "columns": {
     "product":      "Product",
     "data_sources": "Data Sources",
-    "information":  "Information"
+    "information":  "Information",
+    "legal":        "Legal & Tutorials"
   },
   "links": {
-    "trends":         "Trends Analysis",
-    "sdgs_explorer":  "SDGs Explorer",
-    "article_impact": "Article Impact",
-    "researchers":    "Researchers",
-    "journals":       "Journals",
-    "api":            "API",
-    "about":          "About Us",
-    "docs":           "Feature Documentation",
-    "faq":            "FAQ",
-    "help":           "Help",
-    "privacy":        "Privacy Policy",
-    "terms":          "Terms & Conditions"
+    "trends":           "Trends Analysis",
+    "sdgs_explorer":    "SDGs Explorer",
+    "article_impact":   "Article Impact",
+    "researchers":      "Researchers",
+    "journals":         "Journals",
+    "api":              "API",
+    "about":            "About Us",
+    "docs":             "Feature Documentation",
+    "faq":              "FAQ",
+    "help":             "Help",
+    "contact":          "Contact",
+    "privacy":          "Privacy Policy",
+    "terms":            "Terms & Conditions",
+    "tutorial_orcid":   "ORCID Tutorial",
+    "tutorial_doi":     "DOI Tutorial",
+    "tutorial_export":  "Export Tutorial"
   },
   "newsletter": {
     "title":       "Subscribe to",
@@ -26,7 +31,15 @@
     "description": "Get the latest updates on features and research analytics from Sciecola.",
     "placeholder": "Enter your email",
     "subscribe":   "Subscribe",
-    "subscribed":  "Subscribed!"
+    "subscribed":  "Subscribed!",
+    "dismiss":     "Maybe later"
+  },
+  "cta": {
+    "eyebrow":   "Start free",
+    "title":     "Check your ORCID profile without signing in",
+    "subtitle":  "Enter an ORCID, Scopus, SINTA, or ResearcherID to see your research impact.",
+    "primary":   "Check Profile",
+    "secondary": "Create Account"
   },
   "copyright": {
     "rights":       "All rights reserved.",

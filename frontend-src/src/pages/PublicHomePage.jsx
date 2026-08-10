@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
   Search, BarChart2, Users, Globe,
@@ -36,6 +36,76 @@ const STAT_ICON_MAP = [
   { icon: Building2, color: 'text-emerald-600', bg: 'bg-emerald-50' },
   { icon: Target,    color: 'text-orange-600',  bg: 'bg-orange-50' },
 ];
+
+// Compact public search widget: same detection contract as HeroSearch, but
+// styled for the dark public hero and doesn't force a login step. Anyone can
+// look up any of the four supported researcher IDs (or a DOI) directly.
+const PATTERNS = {
+  orcid:        /^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/i,
+  researcherid: /^[A-Z]{1,3}-\d{4}-\d{4}$/i,
+  doi:          /^10\.\d{4,9}\/[-._;()/:A-Z0-9]+$/i,
+  numeric:      /^\d{4,12}$/,
+};
+
+const PublicSearch = () => {
+  const [q, setQ] = useState('');
+  const [ambiguousId, setAmbiguousId] = useState(null);
+  const [err, setErr] = useState('');
+  const navigate = useNavigate();
+
+  const go = (path) => { setErr(''); setAmbiguousId(null); navigate(path); };
+
+  const submit = (e) => {
+    e.preventDefault();
+    const v = q.trim();
+    if (!v) return;
+    setErr('');
+    setAmbiguousId(null);
+    if (PATTERNS.orcid.test(v))         return go(`/orcid/${v}`);
+    if (PATTERNS.researcherid.test(v))  return go(`/researcherid/${v.toUpperCase()}`);
+    if (PATTERNS.doi.test(v))           return go(`/doi/${encodeURIComponent(v)}`);
+    if (PATTERNS.numeric.test(v))       return setAmbiguousId(v);
+    setErr('Format tidak dikenali. Coba ORCID, Scopus ID, SINTA ID, ResearcherID, atau DOI.');
+  };
+
+  return (
+    <div className="mx-auto mt-8 max-w-2xl">
+      <form onSubmit={submit} className="flex flex-col sm:flex-row gap-3 rounded-2xl border border-white/20 bg-white/10 p-2 backdrop-blur-md">
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="ORCID · Scopus · SINTA · ResearcherID · DOI"
+          className="flex-1 bg-transparent px-4 py-3 text-white placeholder-slate-300 focus:outline-none"
+        />
+        <button
+          type="submit"
+          className="rounded-xl bg-white text-slate-900 px-5 py-3 text-sm font-semibold hover:bg-slate-100 transition-colors whitespace-nowrap"
+        >
+          Cek Profil
+        </button>
+      </form>
+      {err && <p className="mt-3 text-xs text-amber-300">{err}</p>}
+      {ambiguousId && (
+        <div className="mt-3 rounded-xl bg-amber-500/15 border border-amber-400/40 p-4 text-left backdrop-blur-md">
+          <p className="text-xs text-amber-100 mb-2">
+            ID <span className="font-mono">{ambiguousId}</span> numerik — pilih sumber:
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={() => go(`/scopus/${ambiguousId}`)}
+              className="px-3 py-1.5 rounded-lg bg-white/90 text-slate-900 text-xs font-semibold hover:bg-white">Scopus</button>
+            <button type="button" onClick={() => go(`/sinta/${ambiguousId}`)}
+              className="px-3 py-1.5 rounded-lg bg-white/90 text-slate-900 text-xs font-semibold hover:bg-white">SINTA</button>
+            <button type="button" onClick={() => setAmbiguousId(null)}
+              className="px-3 py-1.5 rounded-lg text-amber-100 text-xs font-medium hover:bg-white/10">Batal</button>
+          </div>
+        </div>
+      )}
+      <p className="mt-3 text-xs text-slate-400">
+        Tidak perlu login. Login hanya dibutuhkan bila Anda ingin mengelola akun ORCID Anda sendiri.
+      </p>
+    </div>
+  );
+};
 
 // Helper: pilih nilai dari override DB jika ada, kalau tidak pakai
 // fallback dari locale (t function). Memastikan tidak ada teks
@@ -202,9 +272,11 @@ const PublicHomePage = () => {
             </Link>
           </div>
 
+          <PublicSearch />
+
           <p className="mt-6 text-sm text-slate-400">
             {text(pick('hero.orcid_hint_prefix'), t, 'hero.orcid_hint_prefix')}&nbsp;
-            <Link to="/login" className="font-medium text-blue-400 hover:text-blue-300 underline underline-offset-2">
+            <Link to="/tutorial-orcid" className="font-medium text-blue-400 hover:text-blue-300 underline underline-offset-2">
               {text(pick('hero.orcid_hint_link'), t, 'hero.orcid_hint_link')}
             </Link>
           </p>

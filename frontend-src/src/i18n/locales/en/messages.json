@@ -1,0 +1,35 @@
+{
+  "breadcrumb": {
+    "home":      "Home",
+    "dashboard": "Dashboard",
+    "current":   "Messages"
+  },
+  "title":       "Messages",
+  "new_message": "+ New Message",
+  "back":        "← Back",
+  "list": {
+    "search_ph": "Search conversations…",
+    "empty":     "No conversations found",
+    "members":   "{{count}} members",
+    "direct":    "Direct"
+  },
+  "tabs": {
+    "all":      "All",
+    "unread":   "Unread",
+    "groups":   "Groups",
+    "archived": "Archived"
+  },
+  "chat": {
+    "online":         "Online",
+    "last_active":    "Last active 2 hours ago",
+    "call_voice":     "Voice call",
+    "call_video":     "Video call",
+    "info":           "Info",
+    "today":          "Today",
+    "type_placeholder":"Type a message…"
+  },
+  "empty_chat": {
+    "title":    "Select a Conversation",
+    "subtitle": "Pick a contact or group from the list on the left to start chatting."
+  }
+}
