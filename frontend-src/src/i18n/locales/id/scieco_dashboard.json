@@ -1,0 +1,48 @@
+{
+  "tabs": {
+    "dashboard":        "Dashboard",
+    "articleImpact":    "Dampak Artikel",
+    "researcherImpact": "Peneliti Terkemuka",
+    "researcherMap":    "Peta Distribusi",
+    "trends":           "Tren & Analisis"
+  },
+  "summary_title": "Ringkasan Penelitian Indonesia",
+  "summary_yoy":   "{{pct}} dari tahun lalu",
+  "summary": {
+    "researchers": "Total Peneliti",
+    "publications":"Total Publikasi",
+    "citations":   "Total Sitasi",
+    "avg_impact":  "Dampak Rata-rata",
+    "global_collab":"Kolaborasi Global"
+  },
+  "impact_by_field_title": "Dampak Penelitian Berdasarkan Bidang",
+  "time_range": {
+    "all":    "Semua Waktu",
+    "year":   "1 Tahun Terakhir",
+    "3years": "3 Tahun Terakhir",
+    "5years": "5 Tahun Terakhir"
+  },
+  "chart": {
+    "researcher_count": "Jumlah Peneliti",
+    "avg_impact":       "Dampak Rata-rata"
+  },
+  "distribution_title": "Distribusi Peneliti di Indonesia",
+  "view_full_map":      "Lihat Peta Lengkap",
+  "top_researchers_title": "Peneliti Terkemuka di Indonesia",
+  "view_all":           "Lihat Semua",
+  "table": {
+    "researcher":  "Peneliti",
+    "affiliation": "Afiliasi",
+    "hindex":      "H-Index",
+    "citations":   "Sitasi",
+    "impact":      "Skor Dampak"
+  },
+  "top_articles_title": "Artikel Dampak Tertinggi",
+  "trends_title": "Tren Dampak Penelitian (2019–2024)",
+  "trend_series": {
+    "academic":     "Dampak Akademik",
+    "social_media": "Dampak Media Sosial",
+    "practical":    "Dampak Penggunaan Praktis",
+    "total":        "Skor Dampak Total"
+  }
+}

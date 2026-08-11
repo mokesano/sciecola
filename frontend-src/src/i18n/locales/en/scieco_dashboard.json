@@ -1,0 +1,48 @@
+{
+  "tabs": {
+    "dashboard":        "Dashboard",
+    "articleImpact":    "Article Impact",
+    "researcherImpact": "Top Researchers",
+    "researcherMap":    "Distribution Map",
+    "trends":           "Trends & Analysis"
+  },
+  "summary_title": "Indonesian Research Summary",
+  "summary_yoy":   "{{pct}} vs last year",
+  "summary": {
+    "researchers": "Total Researchers",
+    "publications":"Total Publications",
+    "citations":   "Total Citations",
+    "avg_impact":  "Average Impact",
+    "global_collab":"Global Collaboration"
+  },
+  "impact_by_field_title": "Research Impact by Field",
+  "time_range": {
+    "all":    "All Time",
+    "year":   "Last 1 Year",
+    "3years": "Last 3 Years",
+    "5years": "Last 5 Years"
+  },
+  "chart": {
+    "researcher_count": "Researcher Count",
+    "avg_impact":       "Average Impact"
+  },
+  "distribution_title": "Researcher Distribution in Indonesia",
+  "view_full_map":      "View Full Map",
+  "top_researchers_title": "Top Researchers in Indonesia",
+  "view_all":           "View All",
+  "table": {
+    "researcher":  "Researcher",
+    "affiliation": "Affiliation",
+    "hindex":      "H-Index",
+    "citations":   "Citations",
+    "impact":      "Impact Score"
+  },
+  "top_articles_title": "Highest-Impact Articles",
+  "trends_title": "Research Impact Trend (2019–2024)",
+  "trend_series": {
+    "academic":     "Academic Impact",
+    "social_media": "Social Media Impact",
+    "practical":    "Practical Use Impact",
+    "total":        "Total Impact Score"
+  }
+}
