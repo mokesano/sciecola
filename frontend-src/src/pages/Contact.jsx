@@ -1,8 +1,42 @@
 import toast from 'react-hot-toast';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
+
+// Icon paths / URLs are chrome — copy lives in the `contact` i18n bundle.
+const CONTACT_METHOD_META = [
+  { key: 'email',   icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', value: 'contact@sangia.org', action: 'mailto:contact@sangia.org' },
+  { key: 'phone',   icon: 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z', value: '+1 (234) 567-890', action: 'tel:+1234567890' },
+  { key: 'address', icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z', value: '123 Innovation Drive\nTech Valley, CA 94000\nUnited States', action: null },
+  { key: 'chat',    icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z', value: null, action: 'chat' },
+];
+
+const QUICK_LINK_META = [
+  { key: 'help',      icon: 'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z', link: '/help' },
+  { key: 'docs',      icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', link: '/docs/documentation' },
+  { key: 'api',       icon: 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4', link: '/docs/api-reference' },
+  { key: 'community', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z', link: '/collaboration' },
+];
+
+const OFFICE_HOUR_META = [
+  { key: 'weekdays', time: '9:00 AM - 6:00 PM PST' },
+  { key: 'saturday', time: '10:00 AM - 4:00 PM PST' },
+  { key: 'sunday',   time: null },
+];
+
+const INQUIRY_TYPE_KEYS = ['', 'general', 'technical', 'partnership', 'api', 'enterprise', 'research', 'media', 'other'];
+
+const SOCIAL_LINKS = [
+  { name: 'Twitter',  icon: 'M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z', url: 'https://twitter.com/sciecola' },
+  { name: 'LinkedIn', icon: 'M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z M4 2a2 2 0 11-4 0 2 2 0 014 0z', url: 'https://linkedin.com/company/sciecola' },
+  { name: 'GitHub',   icon: 'M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22', url: 'https://github.com/sciecola' },
+  { name: 'YouTube',  icon: 'M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.33zM9.75 15.02V8.48l5.75 3.27-5.75 3.27z', url: 'https://youtube.com/@sciecola' },
+];
+
+const MAX_MESSAGE_LENGTH = 1000;
 
 const Contact = () => {
+  const { t } = useTranslation('contact');
   // Form state
   const [formData, setFormData] = useState({
     name: '',
@@ -22,105 +56,33 @@ const Contact = () => {
   const [charCount, setCharCount] = useState(0);
   const [openFaqs, setOpenFaqs] = useState({});
 
-  // Contact info data
-  const contactMethods = [
-    {
-      id: 1,
-      icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
-      title: 'Email',
-      value: 'contact@sangia.org',
-      note: 'General inquiries and support',
-      action: 'mailto:contact@sangia.org'
-    },
-    {
-      id: 2,
-      icon: 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z',
-      title: 'Phone',
-      value: '+1 (234) 567-890',
-      note: 'Monday - Friday, 9:00 AM - 6:00 PM PST',
-      action: 'tel:+1234567890'
-    },
-    {
-      id: 3,
-      icon: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z',
-      title: 'Address',
-      value: '123 Innovation Drive\nTech Valley, CA 94000\nUnited States',
-      note: null,
-      action: null
-    },
-    {
-      id: 4,
-      icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z',
-      title: 'Live Chat',
-      value: 'Available 24/7',
-      note: null,
-      action: 'chat',
-      buttonText: 'Start Chat'
-    }
-  ];
+  // Built from the i18n bundle + the module-level metadata tables.
+  const contactMethods = CONTACT_METHOD_META.map(m => ({
+    ...m,
+    title: t(`contact_methods.${m.key}.title`),
+    // The chat card has its own translated value + button label.
+    value: m.value ?? t(`contact_methods.${m.key}.value`, { defaultValue: '' }),
+    note:  t(`contact_methods.${m.key}.note`, { defaultValue: '' }) || null,
+    buttonText: m.key === 'chat' ? t('contact_methods.chat.button') : undefined,
+  }));
 
-  // Quick links data
-  const quickLinks = [
-    { title: 'Help Center', icon: 'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z', link: '/help' },
-    { title: 'Documentation', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', link: '/docs' },
-    { title: 'API Reference', icon: 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4', link: '/api' },
-    { title: 'Community Forum', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z', link: '/community' }
-  ];
+  const quickLinks = QUICK_LINK_META.map(l => ({ ...l, title: t(`quick_links.${l.key}`) }));
 
-  // Office hours data
-  const officeHours = [
-    { day: 'Monday - Friday', time: '9:00 AM - 6:00 PM PST' },
-    { day: 'Saturday', time: '10:00 AM - 4:00 PM PST' },
-    { day: 'Sunday', time: 'Closed' }
-  ];
+  const officeHours = OFFICE_HOUR_META.map(h => ({
+    day:  t(`office_hours.${h.key}`),
+    time: h.time ?? t('office_hours.closed'),
+  }));
 
-  // Social media data
-  const socialLinks = [
-    { name: 'Twitter', icon: 'M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z', url: 'https://twitter.com/sciecola' },
-    { name: 'LinkedIn', icon: 'M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z M4 2a2 2 0 11-4 0 2 2 0 014 0z', url: 'https://linkedin.com/company/sciecola' },
-    { name: 'GitHub', icon: 'M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22', url: 'https://github.com/sciecola' },
-    { name: 'YouTube', icon: 'M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.33zM9.75 15.02V8.48l5.75 3.27-5.75 3.27z', url: 'https://youtube.com/@sciecola' }
-  ];
+  const socialLinks = SOCIAL_LINKS;
 
-  // FAQ data
-  const faqs = [
-    {
-      id: 'faq-1',
-      question: 'How quickly do you respond to inquiries?',
-      answer: 'We typically respond to all inquiries within 24 hours during business days. For urgent technical issues, our support team aims to respond within 4 hours.'
-    },
-    {
-      id: 'faq-2',
-      question: 'Do you offer enterprise support?',
-      answer: 'Yes! We offer dedicated enterprise support with priority response times, custom integration assistance, and dedicated account management. Contact us to learn more about our enterprise plans.'
-    },
-    {
-      id: 'faq-3',
-      question: 'Can I schedule a demo or consultation?',
-      answer: 'Absolutely! We\'d be happy to provide a personalized demo of our platform. Please mention "Demo Request" in your inquiry type and preferred time slots in your message.'
-    },
-    {
-      id: 'faq-4',
-      question: 'Do you provide API documentation and support?',
-      answer: 'Yes, we have comprehensive API documentation and provide full technical support for API integration. Visit our API Reference page or contact our technical team for assistance.'
-    }
-  ];
+  const faqs = (t('faqs', { returnObjects: true }) || []).map((f, idx) => ({
+    id: `faq-${idx + 1}`, question: f.q, answer: f.a,
+  }));
 
-  // Inquiry type options
-  const inquiryTypes = [
-    { value: '', label: 'Select inquiry type' },
-    { value: 'general', label: 'General Question' },
-    { value: 'technical', label: 'Technical Support' },
-    { value: 'partnership', label: 'Partnership' },
-    { value: 'api', label: 'API Access' },
-    { value: 'enterprise', label: 'Enterprise Solutions' },
-    { value: 'research', label: 'Research Collaboration' },
-    { value: 'media', label: 'Media Inquiry' },
-    { value: 'other', label: 'Other' }
-  ];
+  const inquiryTypes = INQUIRY_TYPE_KEYS.map(value => ({
+    value, label: t(`inquiry_types.${value}`),
+  }));
 
-  // Character limit for message
-  const MAX_MESSAGE_LENGTH = 1000;
 
   // Handlers
   const handleChange = (e) => {
@@ -145,27 +107,27 @@ const Contact = () => {
     const newErrors = {};
     
     if (!formData.name.trim()) {
-      newErrors.name = 'Full name is required';
+      newErrors.name = t('errors.name_required');
     }
     
     if (!formData.email.trim()) {
-      newErrors.email = 'Email address is required';
+      newErrors.email = t('errors.email_required');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = t('errors.email_invalid');
     }
     
     if (!formData.subject.trim()) {
-      newErrors.subject = 'Subject is required';
+      newErrors.subject = t('errors.subject_required');
     }
     
     if (!formData.message.trim()) {
-      newErrors.message = 'Message is required';
+      newErrors.message = t('errors.message_required');
     } else if (formData.message.trim().length < 10) {
-      newErrors.message = 'Message must be at least 10 characters long';
+      newErrors.message = t('errors.message_too_short');
     }
     
     if (!formData.privacy) {
-      newErrors.privacy = 'You must agree to the Privacy Policy';
+      newErrors.privacy = t('errors.privacy_required');
     }
     
     return newErrors;
@@ -191,7 +153,7 @@ const Contact = () => {
       // await fetch('/api/contact', { method: 'POST', body: JSON.stringify(formData), ... })
       
       setSubmitStatus('success');
-      toast.success('Pesan Anda berhasil dikirim!');
+      toast.success(t('toast.success'));
       setFormData({
         name: '',
         email: '',
@@ -207,7 +169,7 @@ const Contact = () => {
 
     } catch (error) {
       console.error('Form submission error:', error);
-      toast.error('Gagal mengirim pesan. Silakan coba lagi.');
+      toast.error(t('toast.error'));
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -238,9 +200,9 @@ const Contact = () => {
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
-        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
+        <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">›</span>
-        <span className="text-gray-900 font-medium">Hubungi Kami</span>
+        <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
       </nav>
 
       {/* Header */}
@@ -251,10 +213,10 @@ const Contact = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Hubungi Kami</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
         </div>
         <p className="text-lg text-gray-600 max-w-3xl">
-          Hubungi tim kami - kami siap membantu kebutuhan analisis SDG, dukungan teknis, dan kemitraan.
+          {t('subtitle')}
         </p>
       </div>
 
@@ -265,8 +227,8 @@ const Contact = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <div>
-            <p className="font-semibold text-green-800">Terima kasih!</p>
-            <p className="text-sm text-green-700">Pesan Anda telah terkirim. Kami akan membalas dalam 24 jam.</p>
+            <p className="font-semibold text-green-800">{t('status.success_title')}</p>
+            <p className="text-sm text-green-700">{t('status.success_body')}</p>
           </div>
         </div>
       )}
@@ -277,8 +239,8 @@ const Contact = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <div>
-            <p className="font-semibold text-red-800">Terjadi kesalahan</p>
-            <p className="text-sm text-red-700">Gagal mengirim pesan. Silakan coba lagi atau hubungi kami via email.</p>
+            <p className="font-semibold text-red-800">{t('status.error_title')}</p>
+            <p className="text-sm text-red-700">{t('status.error_body')}</p>
           </div>
         </div>
       )}
@@ -294,7 +256,7 @@ const Contact = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
               </div>
-              <h2 className="text-xl font-bold text-gray-900">Kirim Pesan</h2>
+              <h2 className="text-xl font-bold text-gray-900">{t('form.title')}</h2>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -306,7 +268,7 @@ const Contact = () => {
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
-                      Nama Lengkap *
+                      {t('form.name')}
                     </span>
                   </label>
                   <input
@@ -318,7 +280,7 @@ const Contact = () => {
                     className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white transition-all ${
                       errors.name ? 'border-red-300 focus:ring-red-500' : 'border-gray-200'
                     }`}
-                    placeholder="Nama Anda"
+                    placeholder={t('form.name_ph')}
                     required
                   />
                   {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name}</p>}
@@ -330,7 +292,7 @@ const Contact = () => {
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
-                      Alamat Email *
+                      {t('form.email')}
                     </span>
                   </label>
                   <input
@@ -342,7 +304,7 @@ const Contact = () => {
                     className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white transition-all ${
                       errors.email ? 'border-red-300 focus:ring-red-500' : 'border-gray-200'
                     }`}
-                    placeholder="email@contoh.com"
+                    placeholder={t('form.email_ph')}
                     required
                   />
                   {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email}</p>}
@@ -357,7 +319,7 @@ const Contact = () => {
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                       </svg>
-                      Organisasi
+                      {t('form.organization')}
                     </span>
                   </label>
                   <input
@@ -367,7 +329,7 @@ const Contact = () => {
                     value={formData.organization}
                     onChange={handleChange}
                     className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white transition-all"
-                    placeholder="Universitas, Perusahaan, Lembaga Riset, dll."
+                    placeholder={t('form.organization_ph')}
                   />
                 </div>
 
@@ -377,7 +339,7 @@ const Contact = () => {
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                       </svg>
-                      Jenis Pertanyaan
+                      {t('form.inquiry_type')}
                     </span>
                   </label>
                   <select
@@ -403,7 +365,7 @@ const Contact = () => {
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                     </svg>
-                    Subjek *
+                    {t('form.subject')}
                   </span>
                 </label>
                 <input
@@ -415,7 +377,7 @@ const Contact = () => {
                   className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white transition-all ${
                     errors.subject ? 'border-red-300 focus:ring-red-500' : 'border-gray-200'
                   }`}
-                  placeholder="Deskripsi singkat pertanyaan Anda"
+                  placeholder={t('form.subject_ph')}
                   required
                 />
                 {errors.subject && <p className="mt-1 text-xs text-red-600">{errors.subject}</p>}
@@ -428,7 +390,7 @@ const Contact = () => {
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
-                    Pesan *
+                    {t('form.message')}
                   </span>
                 </label>
                 <textarea
@@ -440,13 +402,13 @@ const Contact = () => {
                   className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:bg-white transition-all resize-none ${
                     errors.message ? 'border-red-300 focus:ring-red-500' : 'border-gray-200'
                   }`}
-                  placeholder="Silakan jelaskan detail pertanyaan Anda..."
+                  placeholder={t('form.message_ph')}
                   required
                 />
                 <div className="flex justify-between items-center mt-1.5">
                   {errors.message && <p className="text-xs text-red-600">{errors.message}</p>}
                   <p className={`text-xs ml-auto ${charCount > MAX_MESSAGE_LENGTH * 0.9 ? 'text-orange-600' : 'text-gray-500'}`}>
-                    <span id="charCount">{charCount}</span> / {MAX_MESSAGE_LENGTH} karakter
+                    <span id="charCount">{charCount}</span> / {MAX_MESSAGE_LENGTH} {t('form.char_suffix')}
                   </p>
                 </div>
               </div>
@@ -462,7 +424,7 @@ const Contact = () => {
                     className="w-4 h-4 mt-0.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                   />
                   <span className="text-sm text-gray-700">
-                    Berlangganan newsletter kami untuk mendapatkan update dan wawasan terbaru
+                    {t('form.newsletter')}
                   </span>
                 </label>
 
@@ -478,8 +440,8 @@ const Contact = () => {
                     required
                   />
                   <span className="text-sm text-gray-700">
-                    Saya setuju dengan{' '}
-                    <Link to="/privacy" className="text-indigo-600 hover:underline">Kebijakan Privasi</Link>{' '}
+                    {t('form.privacy_prefix')}{' '}
+                    <Link to="/privacy" className="text-indigo-600 hover:underline">{t('form.privacy_link')}</Link>{' '}
                     *
                   </span>
                 </label>
@@ -500,14 +462,14 @@ const Contact = () => {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>
-                    Mengirim...
+                    {t('form.submitting')}
                   </>
                 ) : (
                   <>
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                     </svg>
-                    Kirim Pesan
+                    {t('form.submit')}
                   </>
                 )}
               </button>
@@ -524,7 +486,7 @@ const Contact = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              Hubungi Kami
+              {t('sidebar.contact_title')}
             </h3>
 
             <div className="space-y-4">
@@ -572,7 +534,7 @@ const Contact = () => {
               <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
-              Tautan Cepat
+              {t('sidebar.quick_links')}
             </h3>
             <div className="space-y-2">
               {quickLinks.map((link, idx) => (
@@ -598,7 +560,7 @@ const Contact = () => {
               <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              Jam Operasional
+              {t('sidebar.office_hours')}
             </h3>
             <div className="space-y-3">
               {officeHours.map((item, idx) => (
@@ -622,9 +584,9 @@ const Contact = () => {
               <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
               </svg>
-              Ikuti Kami
+              {t('sidebar.follow_us')}
             </h3>
-            <p className="text-sm text-gray-600 mb-4">Dapatkan update terbaru dari kami</p>
+            <p className="text-sm text-gray-600 mb-4">{t('sidebar.follow_note')}</p>
             <div className="flex flex-wrap gap-2">
               {socialLinks.map((social, idx) => (
                 <a
@@ -653,7 +615,7 @@ const Contact = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-gray-900">Pertanyaan yang Sering Diajukan</h2>
+          <h2 className="text-xl font-bold text-gray-900">{t('faq_title')}</h2>
         </div>
 
         <div className="space-y-3 max-w-3xl">
@@ -689,8 +651,8 @@ const Contact = () => {
       <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-8 text-white shadow-lg">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
           <div>
-            <h3 className="text-2xl font-bold mb-2">Butuh respons lebih cepat?</h3>
-            <p className="text-indigo-100">Gunakan live chat kami untuk bantuan instan 24/7.</p>
+            <h3 className="text-2xl font-bold mb-2">{t('cta.title')}</h3>
+            <p className="text-indigo-100">{t('cta.body')}</p>
           </div>
           <button 
             onClick={() => handleContactAction('chat')}
