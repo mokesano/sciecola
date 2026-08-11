@@ -1,5 +1,5 @@
 {
-  "brand_tagline": "Klasifikasi & Analitik SDGs",
+  "brand_tagline": "Klasifikasi & Analitik Dampak",
   "description": "Platform AI canggih untuk menganalisis kontribusi riset terhadap Tujuan Pembangunan Berkelanjutan. Memberdayakan peneliti dan institusi dengan klasifikasi dan wawasan cerdas.",
   "columns": {
     "product":      "Produk",
@@ -36,7 +36,7 @@
   },
   "cta": {
     "eyebrow":   "Mulai gratis",
-    "title":     "Cek profil ORCID Anda tanpa login",
+    "title":     "Cek profil ORCID Anda",
     "subtitle":  "Masukkan ORCID, Scopus, SINTA, atau ResearcherID untuk melihat dampak riset.",
     "primary":   "Cek Profil",
     "secondary": "Buat Akun"

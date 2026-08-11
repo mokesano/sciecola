@@ -1,5 +1,5 @@
 {
-  "brand_tagline": "SDGs Classification & Analytics",
+  "brand_tagline": "Impact Classification & Analytics",
   "description": "Advanced AI-powered platform for analyzing research contributions to Sustainable Development Goals. Empowering researchers and institutions with intelligent classification and insights.",
   "columns": {
     "product":      "Product",
@@ -36,7 +36,7 @@
   },
   "cta": {
     "eyebrow":   "Start free",
-    "title":     "Check your ORCID profile without signing in",
+    "title":     "Check your ORCID profile",
     "subtitle":  "Enter an ORCID, Scopus, SINTA, or ResearcherID to see your research impact.",
     "primary":   "Check Profile",
     "secondary": "Create Account"
