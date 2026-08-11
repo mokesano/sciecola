@@ -1,0 +1,148 @@
+{
+  "breadcrumb": { "home": "Beranda", "current": "Dokumentasi" },
+  "title":     "Formula, Bobot, dan Metodologi",
+  "subtitle":  "Dokumentasi teknis lengkap mengenai perhitungan Wizdam Impact Score (WIS), klasifikasi SDG, integrasi API, dan pola arsitektur sistem Sangia Scieco.",
+  "search_ph": "Cari dalam dokumentasi…",
+  "toc":       "Daftar Isi",
+
+  "nav": {
+    "wis":      { "title": "Wizdam Impact Score", "sub": { "wis-overview": "Overview & Formula", "wis-pillars": "4 Pilar Komponen" } },
+    "academic": { "title": "Pilar Academic",      "sub": { "academic-metrics": "Metrik Academic", "academic-formula": "Formula Internal" } },
+    "social":   { "title": "Pilar Social",        "sub": { "social-fields": "Field & Rentang", "social-formula": "Formula Perhitungan" } },
+    "economic": { "title": "Pilar Economic",      "sub": { "economic-fields": "Field Economic" } },
+    "sdg":      { "title": "Pilar SDG",           "sub": { "sdg-score": "SDG Score Calculation", "sdg-config": "Konfigurasi Bobot SDG", "sdg-list": "17 Tujuan SDG" } },
+    "api":      { "title": "API Key & HMAC",      "sub": { "api-format": "Format API Key", "api-validation": "Validasi & TTL", "api-example": "Contoh Penggunaan" } },
+    "data":     { "title": "Supplied Data Pattern", "sub": { "data-flow": "Alur Data Supplied", "data-caching": "Caching Strategy" } },
+    "batch":    { "title": "Batch Anti-Timeout",  "sub": { "batch-pattern": "Pola Batch Processing", "batch-retry": "Retry Logic" } },
+    "crawler":  { "title": "WizdamCrawler",       "sub": { "crawler-sources": "Sumber Data & Prioritas", "crawler-limits": "Rate Limiting" } }
+  },
+
+  "wis": {
+    "intro":         "Wizdam Impact Score adalah skor komposit 0–100 yang mengukur dampak nyata seorang peneliti atau karya riset di empat dimensi:",
+    "pillars_title": "Komponen 4 Pilar",
+    "th_pillar":     "Pilar",
+    "th_weight":     "Bobot Default",
+    "th_source":     "Sumber Data",
+    "src_academic":  "Sitasi, h-index, i10-index (ORCID + Scopus)",
+    "src_social":    "Media mentions, policy citations, public engagement",
+    "src_economic":  "Adopsi industri, paten, kolaborasi industry",
+    "src_sdg":       "Keterkaitan dengan 17 SDG PBB (oleh Sangia AI)",
+    "note_label":    "Catatan:"
+  },
+
+  "academic": {
+    "intro":        "Dihitung oleh Sangia API Engine berdasarkan:",
+    "metrics_title":"Metrik Academic",
+    "th_metric":    "Metrik",
+    "th_desc":      "Deskripsi",
+    "d_hindex":     "Jumlah h karya dengan minimal h sitasi",
+    "d_i10":        "Jumlah karya dengan minimal 10 sitasi",
+    "d_citations":  "Total sitasi dari semua karya",
+    "d_velocity":   "Kecepatan pertumbuhan sitasi (sitasi/tahun)",
+    "d_recency":    "Bobot lebih tinggi untuk sitasi 5 tahun terakhir",
+    "d_network":    "Luas jaringan kolaborasi internasional",
+    "formula_title":"Formula Internal (Sangia)"
+  },
+
+  "social": {
+    "intro":       "Dimasukkan secara manual atau via crawler untuk masing-masing peneliti:",
+    "fields_title":"Field & Rentang",
+    "th_field":    "Field",
+    "th_range":    "Rentang",
+    "th_desc":     "Deskripsi",
+    "d_media":     "Penyebutan di media berita/blog",
+    "d_policy":    "Dikutip dalam dokumen kebijakan pemerintah",
+    "d_public":    "Keterlibatan publik (seminar, podcast, dll.)",
+    "d_altmetric": "Dampak di media sosial akademik (ResearchGate, Academia)",
+    "formula":     "Formula"
+  },
+
+  "economic": {
+    "fields_title": "Field Economic",
+    "th_field":     "Field",
+    "th_range":     "Rentang",
+    "th_desc":      "Deskripsi",
+    "d_adoption":   "Adopsi hasil riset oleh industri",
+    "d_patents":    "Paten yang mengutip atau berbasis karya peneliti",
+    "d_startups":   "Startup yang lahir dari riset",
+    "d_transfer":   "Transfer teknologi ke mitra industri"
+  },
+
+  "sdg": {
+    "intro":        "SDG score dihitung dari derajat keterkaitan seluruh karya peneliti dengan 17 Tujuan Pembangunan Berkelanjutan PBB.",
+    "score_title":  "SDG Score Calculation",
+    "config_title": "Konfigurasi Bobot SDG Scoring (key: ",
+    "th_param":     "Parameter",
+    "th_default":   "Default",
+    "th_note":      "Keterangan",
+    "d_keyword":    "Bobot pencocokan kata kunci SDG",
+    "d_semantic":   "Bobot kesamaan semantik (embedding)",
+    "d_context":    "Bobot analisis substantif konteks",
+    "d_causal":     "Bobot hubungan kausal dengan SDG",
+    "d_max":        "Maksimum jumlah SDG yang diatribusikan",
+    "d_min_rel":    "Skor minimum untuk dikategorikan relevan",
+    "d_min_show":   "Skor minimum untuk ditampilkan",
+    "d_high_rel":   "Skor untuk label “Sangat Relevan”",
+    "list": {
+      "1":  "Tanpa Kemiskinan",
+      "2":  "Tanpa Kelaparan",
+      "3":  "Kehidupan Sehat dan Sejahtera",
+      "4":  "Pendidikan Berkualitas",
+      "5":  "Kesetaraan Gender",
+      "6":  "Air Bersih dan Sanitasi",
+      "7":  "Energi Bersih dan Terjangkau",
+      "8":  "Pekerjaan Layak dan Pertumbuhan Ekonomi",
+      "9":  "Industri, Inovasi, dan Infrastruktur",
+      "10": "Berkurangnya Kesenjangan",
+      "11": "Kota dan Komunitas Berkelanjutan",
+      "12": "Konsumsi dan Produksi yang Bertanggung Jawab",
+      "13": "Penanganan Perubahan Iklim",
+      "14": "Ekosistem Lautan",
+      "15": "Ekosistem Daratan",
+      "16": "Perdamaian, Keadilan, dan Kelembagaan yang Tangguh",
+      "17": "Kemitraan untuk Mencapai Tujuan"
+    }
+  },
+
+  "api": {
+    "intro":          "API Key yang digenerate untuk pengguna mengikuti format:",
+    "format_title":   "Format API Key",
+    "validation":     "Validasi",
+    "example":        "Contoh"
+  },
+
+  "data": {
+    "intro":      "Untuk menghemat kuota API dan mengurangi latensi, Wizdam Scola mengirimkan data yang sudah ada di database ke Sangia API (supplied_data), sehingga Sangia tidak perlu fetch ulang dari ORCID/Scopus.",
+    "flow_title": "Alur Data Supplied"
+  },
+
+  "batch": {
+    "intro":         "Untuk perhitungan yang panjang (banyak karya), Sangia API menggunakan pola batch:",
+    "pattern_title": "Pola Batch Processing",
+    "retry_title":   "Retry Logic",
+    "retry_note":    "Retry maksimal 3x jika HTTP 410 (session expired)",
+    "reset_label":   "Reset ",
+    "sleep_note":    "Sleep 300ms antar request untuk menghindari rate limiting"
+  },
+
+  "crawler": {
+    "sources_title": "Sumber Data & Prioritas",
+    "th_source":     "Sumber",
+    "th_rate":       "Rate Limit",
+    "th_delay":      "Delay",
+    "th_note":       "Catatan",
+    "n_scholar":     "CAPTCHA kemungkinan muncul",
+    "n_rg":          "JavaScript-heavy",
+    "n_semantic":    "Gunakan API key untuk lebih banyak",
+    "n_opencit":     "Gratis dan publik",
+    "n_scimago":     "Data terbuka",
+    "n_sinta":       "Gunakan via Sangia API",
+    "no_api":        "Tidak ada API resmi",
+    "unlimited":     "Tidak dibatasi"
+  },
+
+  "cta": {
+    "title": "Butuh klarifikasi lebih lanjut?",
+    "body":  "Hubungi tim engineering kami untuk diskusi teknis mendalam."
+  }
+}

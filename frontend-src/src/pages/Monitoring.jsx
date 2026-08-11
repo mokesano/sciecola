@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MapContainer, Marker, Tooltip, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 const Monitoring = () => {
+  const { t } = useTranslation('monitoring');
   const [selectedTimeRange, setSelectedTimeRange] = useState('24h');
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(false);
@@ -284,7 +286,7 @@ const Monitoring = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Activity Monitoring</h1>
+              <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
               <p className="text-sm text-gray-600 mt-1">Real-time monitoring aktivitas dan trafik aplikasi</p>
             </div>
             <div className="flex items-center gap-3">
@@ -293,10 +295,10 @@ const Monitoring = () => {
                 onChange={(e) => setSelectedTimeRange(e.target.value)}
                 className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
-                <option value="1h">1 Jam Terakhir</option>
-                <option value="24h">24 Jam Terakhir</option>
-                <option value="7d">7 Hari Terakhir</option>
-                <option value="30d">30 Hari Terakhir</option>
+                <option value="1h">{t('range.1h')}</option>
+                <option value="24h">{t('range.24h')}</option>
+                <option value="7d">{t('range.7d')}</option>
+                <option value="30d">{t('range.30d')}</option>
               </select>
               <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors flex items-center gap-2">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -315,21 +317,21 @@ const Monitoring = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg p-8 flex flex-col items-center">
               <div className="animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent mb-4"></div>
-              <p className="text-gray-700 font-medium">Loading monitoring data...</p>
+              <p className="text-gray-700 font-medium">{t('loading')}</p>
             </div>
           </div>
         )}
 
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-red-700">Error loading data: {error}. Using cached data.</p>
+            <p className="text-red-700">{t('error_prefix')} {error}. {t('error_suffix')}</p>
           </div>
         )}
 
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           <div className="p-5 border-b border-gray-100">
-            <h2 className="text-lg font-bold text-gray-900">Geographic Distribution</h2>
-            <p className="text-sm text-gray-600 mt-1">Distribusi pengunjung berdasarkan lokasi geografis</p>
+            <h2 className="text-lg font-bold text-gray-900">{t('geo.title')}</h2>
+            <p className="text-sm text-gray-600 mt-1">{t('geo.subtitle')}</p>
           </div>
           <div className="h-[580px] w-full z-0 relative">
             <MapContainer
@@ -370,28 +372,28 @@ const Monitoring = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
-            title="Total Page Views"
+            title={t('stats.page_views')}
             value={monitoringData?.summary?.totalPageViews?.toLocaleString() || '12,847'}
             change={12.5}
             icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>}
             color="bg-indigo-500"
           />
           <StatCard
-            title="Unique Visitors"
+            title={t('stats.visitors')}
             value={monitoringData?.summary?.uniqueVisitors?.toLocaleString() || '3,456'}
             change={8.3}
             icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>}
             color="bg-purple-500"
           />
           <StatCard
-            title="Avg. Session"
+            title={t('stats.session')}
             value={formatSeconds(monitoringData?.summary?.avgSessionDuration) || '4m 32s'}
             change={-2.1}
             icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
             color="bg-green-500"
           />
           <StatCard
-            title="Bounce Rate"
+            title={t('stats.bounce')}
             value={(monitoringData?.summary?.bounceRate || 32.4).toFixed(1) + '%'}
             change={-5.7}
             icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>}
@@ -404,7 +406,7 @@ const Monitoring = () => {
             <h3 className="font-bold text-gray-900 mb-4">By Traffic Source</h3>
             <div className="space-y-4">
               <div>
-                <h4 className="text-sm font-semibold text-gray-700 mb-2">Sources</h4>
+                <h4 className="text-sm font-semibold text-gray-700 mb-2">{t('sections.sources')}</h4>
                 <div className="space-y-2">
                   {trafficSources.sources.map((source, idx) => (
                     <div key={idx} className="flex items-center gap-3">
@@ -439,7 +441,7 @@ const Monitoring = () => {
             <h3 className="font-bold text-gray-900 mb-4">By Pages</h3>
             <div className="space-y-4">
               <div>
-                <h4 className="text-sm font-semibold text-gray-700 mb-2">Top Pages</h4>
+                <h4 className="text-sm font-semibold text-gray-700 mb-2">{t('sections.top_pages')}</h4>
                 <div className="space-y-2">
                   {pagesData.topPages.slice(0, 4).map((page, idx) => (
                     <div key={idx} className="flex justify-between items-center text-sm p-2 bg-gray-50 rounded">
@@ -452,7 +454,7 @@ const Monitoring = () => {
               </div>
 
               <div className="pt-4 border-t border-gray-100">
-                <h4 className="text-sm font-semibold text-gray-700 mb-2">Entry Pages</h4>
+                <h4 className="text-sm font-semibold text-gray-700 mb-2">{t('sections.entry_pages')}</h4>
                 <div className="space-y-2">
                   {pagesData.entryPages.slice(0, 3).map((page, idx) => (
                     <div key={idx} className="flex justify-between items-center text-sm">
@@ -471,7 +473,7 @@ const Monitoring = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-            <h3 className="font-bold text-gray-900 mb-4">Browsers</h3>
+            <h3 className="font-bold text-gray-900 mb-4">{t('sections.browsers')}</h3>
             <div className="space-y-3">
               {systemData.browsers.map((browser, idx) => (
                 <div key={idx} className="flex items-center justify-between">
@@ -485,7 +487,7 @@ const Monitoring = () => {
           </div>
 
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-            <h3 className="font-bold text-gray-900 mb-4">Platforms</h3>
+            <h3 className="font-bold text-gray-900 mb-4">{t('sections.platforms')}</h3>
             <div className="space-y-3">
               {systemData.platforms.map((platform, idx) => (
                 <div key={idx} className="flex items-center justify-between">
@@ -499,7 +501,7 @@ const Monitoring = () => {
           </div>
 
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-            <h3 className="font-bold text-gray-900 mb-4">Operating Systems</h3>
+            <h3 className="font-bold text-gray-900 mb-4">{t('sections.os')}</h3>
             <div className="space-y-3">
               {systemData.os.map((os, idx) => (
                 <div key={idx} className="flex items-center justify-between">
@@ -516,8 +518,8 @@ const Monitoring = () => {
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           <div className="p-5 border-b border-gray-100 flex justify-between items-center">
             <div>
-              <h2 className="text-lg font-bold text-gray-900">Page View Activity</h2>
-              <p className="text-sm text-gray-600 mt-1">Detail aktivitas pengunjung secara real-time</p>
+              <h2 className="text-lg font-bold text-gray-900">{t('activity.title')}</h2>
+              <p className="text-sm text-gray-600 mt-1">{t('activity.subtitle')}</p>
             </div>
             <div className="flex gap-2">
               <button className="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
@@ -533,12 +535,12 @@ const Monitoring = () => {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 text-gray-600">
                 <tr>
-                  <th className="px-4 py-3 text-left font-medium">Timestamp</th>
-                  <th className="px-4 py-3 text-left font-medium">Page</th>
-                  <th className="px-4 py-3 text-left font-medium">Source</th>
-                  <th className="px-4 py-3 text-left font-medium">Location</th>
-                  <th className="px-4 py-3 text-left font-medium">Device</th>
-                  <th className="px-4 py-3 text-left font-medium">Duration</th>
+                  <th className="px-4 py-3 text-left font-medium">{t('table.timestamp')}</th>
+                  <th className="px-4 py-3 text-left font-medium">{t('table.page')}</th>
+                  <th className="px-4 py-3 text-left font-medium">{t('table.source')}</th>
+                  <th className="px-4 py-3 text-left font-medium">{t('table.location')}</th>
+                  <th className="px-4 py-3 text-left font-medium">{t('table.device')}</th>
+                  <th className="px-4 py-3 text-left font-medium">{t('table.duration')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">

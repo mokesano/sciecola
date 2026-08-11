@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 const Admin = () => {
+  const { t } = useTranslation('admin');
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('dashboard');
   const [loading, setLoading] = useState(false);
@@ -125,16 +127,16 @@ const Admin = () => {
 
   // Navigation Items
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z' },
-    { id: 'impact-config', label: 'Konfigurasi WIS', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
-    { id: 'api-security', label: 'API & Keamanan', icon: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z' },
-    { id: 'user-management', label: 'Pengguna', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' },
-    { id: 'content-moderation', label: 'Konten', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
-    { id: 'ui-customization', label: 'Tampilan', icon: 'M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7.343 11L5.686 9.343a2 2 0 010-2.828l2.829-2.829a2 2 0 012.828 0l8.486 8.485' },
-    { id: 'system', label: 'Sistem', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z' },
-    { id: 'crawl-queue', label: 'Crawl Queue', icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15' },
-    { id: 'cache-migration', label: 'Cache & DB', icon: 'M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4' },
-    { id: 'audit', label: 'Audit Log', icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2' }
+    { id: 'dashboard', label: t('tabs.dashboard'), icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z' },
+    { id: 'impact-config', label: t('tabs.impact-config'), icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+    { id: 'api-security', label: t('tabs.api-security'), icon: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z' },
+    { id: 'user-management', label: t('tabs.user-management'), icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' },
+    { id: 'content-moderation', label: t('tabs.content-moderation'), icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
+    { id: 'ui-customization', label: t('tabs.ui-customization'), icon: 'M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7.343 11L5.686 9.343a2 2 0 010-2.828l2.829-2.829a2 2 0 012.828 0l8.486 8.485' },
+    { id: 'system', label: t('tabs.system'), icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z' },
+    { id: 'crawl-queue', label: t('tabs.crawl-queue'), icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15' },
+    { id: 'cache-migration', label: t('tabs.cache-migration'), icon: 'M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4' },
+    { id: 'audit', label: t('tabs.audit'), icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2' }
   ];
 
   // Helper Components
@@ -161,13 +163,13 @@ const Admin = () => {
       case 'dashboard':
         return (
           <div className="space-y-6">
-            <SectionHeader title="Dashboard Admin" description="Ringkasan aktivitas dan metrik sistem WIZDAM" />
+            <SectionHeader title={t('dashboard.title')} description={t('dashboard.description')} />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { label: 'Total Pengguna', value: users.length, icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z', color: 'bg-indigo-50 text-indigo-600' },
-                { label: 'API Key Aktif', value: userApiKeys.filter(k => k.status === 'active').length, icon: 'M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z', color: 'bg-purple-50 text-purple-600' },
-                { label: 'Permintaan/Hari', value: '2,847', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6', color: 'bg-green-50 text-green-600' },
-                { label: 'Uptime', value: '99.98%', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', color: 'bg-amber-50 text-amber-600' }
+                { label: t('dashboard.stats.users'), value: users.length, icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z', color: 'bg-indigo-50 text-indigo-600' },
+                { label: t('dashboard.stats.api_keys'), value: userApiKeys.filter(k => k.status === 'active').length, icon: 'M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z', color: 'bg-purple-50 text-purple-600' },
+                { label: t('dashboard.stats.requests'), value: '2,847', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6', color: 'bg-green-50 text-green-600' },
+                { label: t('dashboard.stats.uptime'), value: '99.98%', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', color: 'bg-amber-50 text-amber-600' }
               ].map((stat, idx) => (
                 <div key={idx} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex items-center gap-4">
                   <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}>
@@ -178,7 +180,7 @@ const Admin = () => {
               ))}
             </div>
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <h3 className="font-bold text-gray-900 mb-4">Aktivitas Terbaru</h3>
+              <h3 className="font-bold text-gray-900 mb-4">{t('dashboard.recent_activity')}</h3>
               <div className="space-y-4">
                 {[
                   { user: 'Dr. Andi Rahman', action: 'Memperbarui profil riset', time: '5 menit lalu', type: 'update' },
@@ -214,7 +216,7 @@ const Admin = () => {
               </div>
               <div className="mt-6 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
                 <p className="text-sm text-indigo-800"><strong>Formula:</strong> WIS = (Academic × {Math.round(wisWeights.academic * 100)}%) + (Social × {Math.round(wisWeights.social * 100)}%) + (Economic × {Math.round(wisWeights.economic * 100)}%) + (SDG × {Math.round(wisWeights.sdg * 100)}%)</p>
-                <p className="text-xs text-indigo-600 mt-1">Total: {(Object.values(wisWeights).reduce((a, b) => a + b, 0) * 100).toFixed(1)}%{Math.abs(Object.values(wisWeights).reduce((a, b) => a + b, 0) - 1.0) > 0.01 && <span className="text-red-600 ml-2">Harus 100%</span>}</p>
+                <p className="text-xs text-indigo-600 mt-1">{t('wis.total_prefix')} {(Object.values(wisWeights).reduce((a, b) => a + b, 0) * 100).toFixed(1)}%{Math.abs(Object.values(wisWeights).reduce((a, b) => a + b, 0) - 1.0) > 0.01 && <span className="text-red-600 ml-2">{t('wis.must_be_100')}</span>}</p>
               </div>
             </div>
           </div>
@@ -223,14 +225,14 @@ const Admin = () => {
       case 'api-security':
         return (
           <div className="space-y-6">
-            <SectionHeader title="API & Keamanan" description="Konfigurasi kunci API eksternal dan kebijakan keamanan platform." />
+            <SectionHeader title={t('api_security.title')} description={t('api_security.description')} />
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <h3 className="font-bold text-gray-900 mb-4">Kunci API Eksternal</h3>
+              <h3 className="font-bold text-gray-900 mb-4">{t('api_security.external_keys')}</h3>
               <div className="space-y-4">
                 {[
-                  { key: 'cloudflareTurnstile', label: 'Cloudflare Turnstile Site Key', placeholder: '0x4AAAAAA...', helper: 'Digunakan untuk proteksi bot pada form registrasi & login' },
-                  { key: 'recaptchaV3', label: 'Google reCAPTCHA v3 Site Key', placeholder: '6Lc...', helper: 'Verifikasi manusia invisible untuk aksi sensitif' },
-                  { key: 'sangiaApi', label: 'Sangia API Secret Key', placeholder: 'sk_live_...', helper: 'Kunci rahasia untuk komunikasi backend Sangia Engine' },
+                  { key: 'cloudflareTurnstile', label: 'Cloudflare Turnstile Site Key', placeholder: '0x4AAAAAA...', helper: t('api_security.helpers.cloudflareTurnstile') },
+                  { key: 'recaptchaV3', label: 'Google reCAPTCHA v3 Site Key', placeholder: '6Lc...', helper: t('api_security.helpers.recaptchaV3') },
+                  { key: 'sangiaApi', label: 'Sangia API Secret Key', placeholder: 'sk_live_...', helper: t('api_security.helpers.sangiaApi') },
                 ].map((field) => (
                   <div key={field.key}>
                     <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
@@ -242,11 +244,11 @@ const Admin = () => {
               <button onClick={saveApiKeys} disabled={loading} className="mt-6 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? 'Menyimpan...' : 'Simpan Kunci API'}</button>
             </div>
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <h3 className="font-bold text-gray-900 mb-4">Manajemen API Key Pengguna</h3>
+              <h3 className="font-bold text-gray-900 mb-4">{t('api_security.user_keys')}</h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50 text-gray-600">
-                    <tr><th className="px-4 py-3 text-left font-medium">Pengguna</th><th className="px-4 py-3 text-left font-medium">API Key</th><th className="px-4 py-3 text-left font-medium">Dibuat</th><th className="px-4 py-3 text-left font-medium">Status</th><th className="px-4 py-3 text-right font-medium">Aksi</th></tr>
+                    <tr><th className="px-4 py-3 text-left font-medium">{t('api_security.table.user')}</th><th className="px-4 py-3 text-left font-medium">{t('api_security.table.api_key')}</th><th className="px-4 py-3 text-left font-medium">{t('api_security.table.created')}</th><th className="px-4 py-3 text-left font-medium">{t('api_security.table.status')}</th><th className="px-4 py-3 text-right font-medium">{t('api_security.table.actions')}</th></tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {userApiKeys.map((key) => { const user = users.find(u => u.id === key.userId); return (
@@ -255,7 +257,7 @@ const Admin = () => {
                         <td className="px-4 py-3 font-mono text-xs text-gray-600">{key.key}</td>
                         <td className="px-4 py-3 text-gray-500">{key.created}</td>
                         <td className="px-4 py-3"><StatusBadge status={key.status} /></td>
-                        <td className="px-4 py-3 text-right">{key.status === 'active' && <button onClick={() => confirmAction('revokeApiKey', key.id)} className="text-red-600 hover:text-red-800 text-xs font-medium hover:underline">Cabut</button>}</td>
+                        <td className="px-4 py-3 text-right">{key.status === 'active' && <button onClick={() => confirmAction('revokeApiKey', key.id)} className="text-red-600 hover:text-red-800 text-xs font-medium hover:underline">{t('api_security.revoke')}</button>}</td>
                       </tr>
                     );})}
                   </tbody>
@@ -268,12 +270,12 @@ const Admin = () => {
       case 'user-management':
         return (
           <div className="space-y-6">
-            <SectionHeader title="Manajemen Pengguna" description="Kelola akun peneliti, peran, dan status akses." />
+            <SectionHeader title={t('users.title')} description={t('users.description')} />
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50 text-gray-600">
-                    <tr><th className="px-4 py-3 text-left font-medium">Nama & Email</th><th className="px-4 py-3 text-left font-medium">Peran</th><th className="px-4 py-3 text-left font-medium">Status</th><th className="px-4 py-3 text-left font-medium">Bergabung</th><th className="px-4 py-3 text-right font-medium">Aksi</th></tr>
+                    <tr><th className="px-4 py-3 text-left font-medium">{t('users.table.name_email')}</th><th className="px-4 py-3 text-left font-medium">{t('users.table.role')}</th><th className="px-4 py-3 text-left font-medium">{t('users.table.status')}</th><th className="px-4 py-3 text-left font-medium">{t('users.table.joined')}</th><th className="px-4 py-3 text-right font-medium">{t('users.table.actions')}</th></tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {users.map((user) => (
@@ -284,10 +286,10 @@ const Admin = () => {
                         <td className="px-4 py-3 text-gray-500">{user.joined}</td>
                         <td className="px-4 py-3 text-right">
                           <div className="flex justify-end gap-2">
-                            {user.role === 'researcher' && <button onClick={() => confirmAction('promoteToCoAdmin', user.id)} className="text-indigo-600 hover:text-indigo-800 text-xs font-medium hover:underline">Jadikan Co-Admin</button>}
-                            {user.status === 'active' && <><button onClick={() => confirmAction('suspendUser', user.id)} className="text-amber-600 hover:text-amber-800 text-xs font-medium hover:underline">Tangguhkan</button><button onClick={() => confirmAction('disableUser', user.id)} className="text-red-600 hover:text-red-800 text-xs font-medium hover:underline">Nonaktifkan</button></>}
-                            {(user.status === 'suspended' || user.status === 'disabled') && <button onClick={() => setUsers(prev => prev.map(u => u.id === user.id ? { ...u, status: 'active' } : u))} className="text-green-600 hover:text-green-800 text-xs font-medium hover:underline">Aktifkan</button>}
-                            <button onClick={() => confirmAction('deleteUser', user.id)} className="text-red-700 hover:text-red-900 text-xs font-medium hover:underline">Hapus</button>
+                            {user.role === 'researcher' && <button onClick={() => confirmAction('promoteToCoAdmin', user.id)} className="text-indigo-600 hover:text-indigo-800 text-xs font-medium hover:underline">{t('users.actions.promote')}</button>}
+                            {user.status === 'active' && <><button onClick={() => confirmAction('suspendUser', user.id)} className="text-amber-600 hover:text-amber-800 text-xs font-medium hover:underline">{t('users.actions.suspend')}</button><button onClick={() => confirmAction('disableUser', user.id)} className="text-red-600 hover:text-red-800 text-xs font-medium hover:underline">{t('users.actions.disable')}</button></>}
+                            {(user.status === 'suspended' || user.status === 'disabled') && <button onClick={() => setUsers(prev => prev.map(u => u.id === user.id ? { ...u, status: 'active' } : u))} className="text-green-600 hover:text-green-800 text-xs font-medium hover:underline">{t('users.actions.activate')}</button>}
+                            <button onClick={() => confirmAction('deleteUser', user.id)} className="text-red-700 hover:text-red-900 text-xs font-medium hover:underline">{t('users.actions.delete')}</button>
                           </div>
                         </td>
                       </tr>
@@ -302,12 +304,12 @@ const Admin = () => {
       case 'content-moderation':
         return (
           <div className="space-y-6">
-            <SectionHeader title="Moderasi Konten" description="Kontrol visibilitas halaman utama untuk setiap modul konten." action={<button onClick={saveContentSettings} disabled={loading} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? 'Menyimpan...' : 'Simpan Pengaturan'}</button>} />
+            <SectionHeader title={t('content.title')} description={t('content.description')} action={<button onClick={saveContentSettings} disabled={loading} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? t('content.saving') : t('content.save')}</button>} />
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
               {[
-                { key: 'showJournalsMain', label: 'Tampilkan Halaman Utama Journals', desc: 'Jika dinonaktifkan, halaman /journals akan redirect ke dashboard' },
-                { key: 'showInstitutionsMain', label: 'Tampilkan Halaman Utama Institutions', desc: 'Mengontrol akses publik ke daftar institusi mitra' },
-                { key: 'showResearchersMain', label: 'Tampilkan Halaman Utama Researchers', desc: 'Menyembunyikan direktori peneliti dari publik' }
+                { key: 'showJournalsMain', label: t('content.toggles.showJournalsMain.label'), desc: t('content.toggles.showJournalsMain.desc') },
+                { key: 'showInstitutionsMain', label: t('content.toggles.showInstitutionsMain.label'), desc: t('content.toggles.showInstitutionsMain.desc') },
+                { key: 'showResearchersMain', label: t('content.toggles.showResearchersMain.label'), desc: t('content.toggles.showResearchersMain.desc') }
               ].map((setting) => (
                 <div key={setting.key} className="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
                   <div><p className="font-medium text-gray-900 text-sm">{setting.label}</p><p className="text-xs text-gray-500 mt-1">{setting.desc}</p></div>
@@ -323,20 +325,20 @@ const Admin = () => {
       case 'ui-customization':
         return (
           <div className="space-y-6">
-            <SectionHeader title="Kustomisasi Tampilan" description="Sesuaikan tema, tipografi, dan visualisasi aplikasi." action={<button onClick={saveUiSettings} disabled={loading} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? 'Menerapkan...' : 'Terapkan Perubahan'}</button>} />
+            <SectionHeader title={t('ui.title')} description={t('ui.description')} action={<button onClick={saveUiSettings} disabled={loading} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? t('ui.applying') : t('ui.apply')}</button>} />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h3 className="font-bold text-gray-900 mb-4">Tema Warna</h3>
+                <h3 className="font-bold text-gray-900 mb-4">{t('ui.color_theme')}</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Warna Primer</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('ui.primary')}</label>
                     <div className="flex items-center gap-3">
                       <input type="color" value={uiSettings.primaryColor} onChange={(e) => setUiSettings(prev => ({ ...prev, primaryColor: e.target.value }))} className="w-12 h-10 rounded cursor-pointer border border-gray-200" />
                       <input type="text" value={uiSettings.primaryColor} onChange={(e) => setUiSettings(prev => ({ ...prev, primaryColor: e.target.value }))} className="flex-grow px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-mono" />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Warna Sekunder</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('ui.secondary')}</label>
                     <div className="flex items-center gap-3">
                       <input type="color" value={uiSettings.secondaryColor} onChange={(e) => setUiSettings(prev => ({ ...prev, secondaryColor: e.target.value }))} className="w-12 h-10 rounded cursor-pointer border border-gray-200" />
                       <input type="text" value={uiSettings.secondaryColor} onChange={(e) => setUiSettings(prev => ({ ...prev, secondaryColor: e.target.value }))} className="flex-grow px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-mono" />
@@ -346,13 +348,13 @@ const Admin = () => {
               </div>
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Font Utama</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('ui.font')}</label>
                   <select value={uiSettings.fontFamily} onChange={(e) => setUiSettings(prev => ({ ...prev, fontFamily: e.target.value }))} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500">
                     <option value="Inter">Inter (Default)</option><option value="Roboto">Roboto</option><option value="Open Sans">Open Sans</option><option value="Nunito">Nunito</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Jenis Grafik Default</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('ui.chart_type')}</label>
                   <select value={uiSettings.chartType} onChange={(e) => setUiSettings(prev => ({ ...prev, chartType: e.target.value }))} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500">
                     <option value="area">Area Chart</option><option value="line">Line Chart</option><option value="bar">Bar Chart</option><option value="radar">Radar Chart</option>
                   </select>
@@ -365,23 +367,23 @@ const Admin = () => {
       case 'system':
         return (
           <div className="space-y-6">
-            <SectionHeader title="Pengaturan Sistem" description="Konfigurasi global untuk perilaku dan kebijakan platform." action={<button onClick={saveSystemSettings} disabled={loading} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? 'Menyimpan...' : 'Simpan Pengaturan'}</button>} />
+            <SectionHeader title={t('system.title')} description={t('system.description')} action={<button onClick={saveSystemSettings} disabled={loading} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? t('content.saving') : t('content.save')}</button>} />
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-6">
               <div className="flex items-start justify-between p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                <div><p className="font-medium text-amber-900 text-sm">Mode Pemeliharaan</p><p className="text-xs text-amber-700 mt-1">Aktifkan untuk menampilkan halaman maintenance ke semua pengguna non-admin</p></div>
+                <div><p className="font-medium text-amber-900 text-sm">{t('system.maintenance')}</p><p className="text-xs text-amber-700 mt-1">{t('system.maintenance_desc')}</p></div>
                 <button onClick={() => setSystemSettings(prev => ({ ...prev, maintenanceMode: !prev.maintenanceMode }))} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${systemSettings.maintenanceMode ? 'bg-amber-600' : 'bg-gray-300'}`}>
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${systemSettings.maintenanceMode ? 'translate-x-6' : 'translate-x-1'}`} />
                 </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div><p className="text-sm font-medium text-gray-900">Izinkan Pendaftaran Baru</p><p className="text-xs text-gray-500">Nonaktifkan untuk mode invite-only</p></div>
+                  <div><p className="text-sm font-medium text-gray-900">{t('system.registration')}</p><p className="text-xs text-gray-500">{t('system.registration_desc')}</p></div>
                   <button onClick={() => setSystemSettings(prev => ({ ...prev, allowNewRegistrations: !prev.allowNewRegistrations }))} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${systemSettings.allowNewRegistrations ? 'bg-indigo-600' : 'bg-gray-300'}`}>
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${systemSettings.allowNewRegistrations ? 'translate-x-6' : 'translate-x-1'}`} />
                   </button>
                 </div>
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div><p className="text-sm font-medium text-gray-900">Verifikasi Email Wajib</p><p className="text-xs text-gray-500">Pengguna harus verifikasi email sebelum akses penuh</p></div>
+                  <div><p className="text-sm font-medium text-gray-900">{t('system.email_verify')}</p><p className="text-xs text-gray-500">{t('system.email_verify_desc')}</p></div>
                   <button onClick={() => setSystemSettings(prev => ({ ...prev, requireEmailVerification: !prev.requireEmailVerification }))} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${systemSettings.requireEmailVerification ? 'bg-indigo-600' : 'bg-gray-300'}`}>
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${systemSettings.requireEmailVerification ? 'translate-x-6' : 'translate-x-1'}`} />
                   </button>
@@ -394,12 +396,12 @@ const Admin = () => {
       case 'audit':
         return (
           <div className="space-y-6">
-            <SectionHeader title="Audit Log" description="Riwayat lengkap aksi administratif dan perubahan sistem." />
+            <SectionHeader title={t('audit.title')} description={t('audit.description')} />
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50 text-gray-600">
-                    <tr><th className="px-4 py-3 text-left font-medium">Waktu</th><th className="px-4 py-3 text-left font-medium">Admin</th><th className="px-4 py-3 text-left font-medium">Aksi</th><th className="px-4 py-3 text-left font-medium">Target</th><th className="px-4 py-3 text-left font-medium">Status</th></tr>
+                    <tr><th className="px-4 py-3 text-left font-medium">{t('audit.table.time')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.admin')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.action')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.target')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.status')}</th></tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {[

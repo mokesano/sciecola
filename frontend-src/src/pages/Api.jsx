@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 const Api = () => {
+  const { t } = useTranslation('api');
   const [activeSection, setActiveSection] = useState('overview');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -12,53 +14,53 @@ const Api = () => {
   const sections = [
     {
       id: 'overview',
-      title: 'Overview',
+      title: t('nav.overview.title'),
       icon: 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
       subsections: [
-        { id: 'base-url', title: 'Base URL & Version' },
-        { id: 'endpoints-list', title: 'Daftar Endpoint' }
+        { id: 'base-url', title: t('nav.overview.sub.base-url') },
+        { id: 'endpoints-list', title: t('nav.overview.sub.endpoints-list') }
       ]
     },
     {
       id: 'auth',
-      title: 'Autentikasi',
+      title: t('nav.auth.title'),
       icon: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z',
       subsections: [
-        { id: 'auth-methods', title: 'Cara Mengirim API Key' },
-        { id: 'key-format', title: 'Format & Validasi Key' },
-        { id: 'rate-limit', title: 'Rate Limiting' }
+        { id: 'auth-methods', title: t('nav.auth.sub.auth-methods') },
+        { id: 'key-format', title: t('nav.auth.sub.key-format') },
+        { id: 'rate-limit', title: t('nav.auth.sub.rate-limit') }
       ]
     },
     {
       id: 'architecture',
-      title: 'Arsitektur Data',
+      title: t('nav.architecture.title'),
       icon: 'M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4',
       subsections: [
-        { id: 'supplied-data', title: 'Pola supplied_data' },
-        { id: 'raw-data', title: 'Pola raw_data' }
+        { id: 'supplied-data', title: t('nav.architecture.sub.supplied-data') },
+        { id: 'raw-data', title: t('nav.architecture.sub.raw-data') }
       ]
     },
     {
       id: 'weights',
-      title: 'Override Bobot',
+      title: t('nav.weights.title'),
       icon: 'M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3',
       subsections: [
-        { id: 'sdg-weights', title: 'SDG Classify Weights' },
-        { id: 'impact-weights', title: 'Impact Calculate Weights' }
+        { id: 'sdg-weights', title: t('nav.weights.sub.sdg-weights') },
+        { id: 'impact-weights', title: t('nav.weights.sub.impact-weights') }
       ]
     },
     {
       id: 'batch',
-      title: 'Batch Pattern',
+      title: t('nav.batch.title'),
       icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15',
       subsections: [
-        { id: 'batch-flow', title: 'Alur Batch Processing' },
-        { id: 'batch-code', title: 'Contoh Implementasi' }
+        { id: 'batch-flow', title: t('nav.batch.sub.batch-flow') },
+        { id: 'batch-code', title: t('nav.batch.sub.batch-code') }
       ]
     },
     {
       id: 'endpoints',
-      title: 'Endpoint Detail',
+      title: t('nav.endpoints.title'),
       icon: 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4',
       subsections: [
         { id: 'ep-health', title: 'GET /health' },
@@ -77,11 +79,11 @@ const Api = () => {
     },
     {
       id: 'errors',
-      title: 'Error Responses',
+      title: t('nav.errors.title'),
       icon: 'M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
       subsections: [
-        { id: 'error-codes', title: 'HTTP Status Codes' },
-        { id: 'error-format', title: 'Format Response Error' }
+        { id: 'error-codes', title: t('nav.errors.sub.error-codes') },
+        { id: 'error-format', title: t('nav.errors.sub.error-format') }
       ]
     }
   ];
@@ -549,15 +551,15 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-xm text-gray-600 mb-16">
-        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
+        <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
-        <Link to="/docs/documentation" className="hover:text-indigo-600 transition-colors">Dokumentasi</Link>
+        <Link to="/docs/documentation" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.docs')}</Link>
         <span className="text-gray-400">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
-        <span className="text-gray-900 font-medium">API Reference</span>
+        <span className="text-gray-900 font-medium">{t('title')}</span>
       </nav>
 
       {/* Header */}
@@ -572,16 +574,16 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
       {/* API Info Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-          <p className="text-xm text-gray-500 mb-1">Base URL</p>
+          <p className="text-xm text-gray-500 mb-1">{t('overview.base_url_label')}</p>
           <p className="font-mono text-xm font-semibold text-gray-900 break-all">{codeSnippets.baseUrl}</p>
         </div>
         <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-          <p className="text-xm text-gray-500 mb-1">Versi API</p>
+          <p className="text-xm text-gray-500 mb-1">{t('overview.version_label')}</p>
           <p className="font-semibold text-gray-900">v1</p>
         </div>
         <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-          <p className="text-xm text-gray-500 mb-1">Autentikasi</p>
-          <p className="font-semibold text-gray-900">X-API-Key (HMAC-SHA256)</p>
+          <p className="text-xm text-gray-500 mb-1">{t('nav.auth.title')}</p>
+          <p className="font-semibold text-gray-900">{t('auth.hmac_label')}</p>
         </div>
       </div>
 
@@ -590,7 +592,7 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
         <div className="relative flex-grow">
           <input
             type="text"
-            placeholder="Cari endpoint atau parameter..."
+            placeholder={t('search_ph')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
@@ -615,7 +617,7 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
         {/* Sidebar Navigation */}
         <aside className={`lg:col-span-1 ${isSidebarOpen ? 'block' : 'hidden lg:block'}`}>
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto">
-            <h3 className="font-semibold text-gray-900 mb-4 px-2">Daftar Endpoint</h3>
+            <h3 className="font-semibold text-gray-900 mb-4 px-2">{t('overview.endpoints_list')}</h3>
             <nav className="space-y-1">
               {filteredSections.map((section) => (
                 <div key={section.id}>
@@ -667,7 +669,7 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
               </h2>
               
               <div id="base-url" className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Base URL & Versi</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('overview.base_url')}</h3>
                 <CodeBlock code={codeSnippets.baseUrl} id="base-url-code" language="url" />
                 <p className="text-m text-gray-600 mt-2">
                   Semua endpoint API diawali dengan <code className="bg-gray-100 px-1.5 py-0.5 rounded">/api/v1</code> kecuali endpoint publik seperti <code className="bg-gray-100 px-1.5 py-0.5 rounded">/health</code>.
@@ -675,15 +677,15 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
               </div>
 
               <div id="endpoints-list">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Daftar Endpoint</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('overview.endpoints_list')}</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-900">Method</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-900">Endpoint</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-900">Auth</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-900">Keterangan</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-900">{t('overview.th_method')}</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-900">{t('overview.th_endpoint')}</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-900">{t('overview.th_auth')}</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-900">{t('errors.th_note')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
@@ -691,85 +693,85 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
                         <td className="px-4 py-3"><MethodBadge method="GET" /></td>
                         <td className="px-4 py-3 font-mono text-xm">/health</td>
                         <td className="px-4 py-3"><AuthBadge auth="Publik" /></td>
-                        <td className="px-4 py-3 text-gray-600">Status layanan</td>
+                        <td className="px-4 py-3 text-gray-600">{t('overview.e_health')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3"><MethodBadge method="GET" /></td>
                         <td className="px-4 py-3 font-mono text-xm">/api/v1</td>
                         <td className="px-4 py-3"><AuthBadge auth="Publik" /></td>
-                        <td className="px-4 py-3 text-gray-600">Katalog endpoint</td>
+                        <td className="px-4 py-3 text-gray-600">{t('overview.catalog')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3"><MethodBadge method="GET" /></td>
                         <td className="px-4 py-3 font-mono text-xm">/api/v1/sdg/versions</td>
                         <td className="px-4 py-3"><AuthBadge auth="Publik" /></td>
-                        <td className="px-4 py-3 text-gray-600">Daftar versi SDG + bobot default</td>
+                        <td className="px-4 py-3 text-gray-600">{t('overview.e_versions')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3"><MethodBadge method="POST" /></td>
                         <td className="px-4 py-3 font-mono text-xm">/api/v1/sdg/{'{version}'}/classify</td>
                         <td className="px-4 py-3"><AuthBadge auth="API Key" /></td>
-                        <td className="px-4 py-3 text-gray-600">Klasifikasi SDG</td>
+                        <td className="px-4 py-3 text-gray-600">{t('overview.e_classify')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3"><MethodBadge method="POST" /></td>
                         <td className="px-4 py-3 font-mono text-xm">/api/v1/sdg/classify</td>
                         <td className="px-4 py-3"><AuthBadge auth="API Key" /></td>
-                        <td className="px-4 py-3 text-gray-600">Alias v5</td>
+                        <td className="px-4 py-3 text-gray-600">{t('endpoints.alias_v5')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3"><MethodBadge method="GET" /></td>
                         <td className="px-4 py-3 font-mono text-xm">/api/v1/scopus/author</td>
                         <td className="px-4 py-3"><AuthBadge auth="API Key" /></td>
-                        <td className="px-4 py-3 text-gray-600">Profil author Scopus</td>
+                        <td className="px-4 py-3 text-gray-600">{t('overview.e_scopus')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3"><MethodBadge method="GET" /></td>
                         <td className="px-4 py-3 font-mono text-xm">/api/v1/orcid/profile</td>
                         <td className="px-4 py-3"><AuthBadge auth="API Key" /></td>
-                        <td className="px-4 py-3 text-gray-600">Profil peneliti ORCID</td>
+                        <td className="px-4 py-3 text-gray-600">{t('overview.e_orcid')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3"><MethodBadge method="GET" /></td>
                         <td className="px-4 py-3 font-mono text-xm">/api/v1/citation/doi</td>
                         <td className="px-4 py-3"><AuthBadge auth="API Key" /></td>
-                        <td className="px-4 py-3 text-gray-600">Sitasi multi-sumber</td>
+                        <td className="px-4 py-3 text-gray-600">{t('overview.e_citation')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3"><MethodBadge method="GET" /></td>
                         <td className="px-4 py-3 font-mono text-xm">/api/v1/journal/metrics</td>
                         <td className="px-4 py-3"><AuthBadge auth="API Key" /></td>
-                        <td className="px-4 py-3 text-gray-600">Metrik jurnal Scopus</td>
+                        <td className="px-4 py-3 text-gray-600">{t('overview.e_journal')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3"><MethodBadge method="GET" /></td>
                         <td className="px-4 py-3 font-mono text-xm">/api/v1/sinta/score</td>
                         <td className="px-4 py-3"><AuthBadge auth="API Key" /></td>
-                        <td className="px-4 py-3 text-gray-600">Skor jurnal SINTA</td>
+                        <td className="px-4 py-3 text-gray-600">{t('overview.e_sinta')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3"><MethodBadge method="POST" /></td>
                         <td className="px-4 py-3 font-mono text-xm">/api/v1/impact/calculate</td>
                         <td className="px-4 py-3"><AuthBadge auth="API Key" /></td>
-                        <td className="px-4 py-3 text-gray-600">Wizdam Impact Score</td>
+                        <td className="px-4 py-3 text-gray-600">{t('overview.e_impact')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3"><MethodBadge method="POST" /></td>
                         <td className="px-4 py-3 font-mono text-xm">/api/v1/trend/analyze</td>
                         <td className="px-4 py-3"><AuthBadge auth="API Key" /></td>
-                        <td className="px-4 py-3 text-gray-600">Trend Analysis</td>
+                        <td className="px-4 py-3 text-gray-600">{t('overview.e_trend')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3"><MethodBadge method="POST" /></td>
                         <td className="px-4 py-3 font-mono text-xm">/api/v1/recommendation/policy</td>
                         <td className="px-4 py-3"><AuthBadge auth="API Key" /></td>
-                        <td className="px-4 py-3 text-gray-600">Policy Recommendations</td>
+                        <td className="px-4 py-3 text-gray-600">{t('overview.e_policy')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3"><MethodBadge method="POST" /></td>
                         <td className="px-4 py-3 font-mono text-xm">/api/v1/admin/keys/revoke</td>
                         <td className="px-4 py-3"><AuthBadge auth="API Key" /></td>
-                        <td className="px-4 py-3 text-gray-600">Cabut API key</td>
+                        <td className="px-4 py-3 text-gray-600">{t('overview.e_revoke')}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -789,13 +791,12 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
               </h2>
               
               <p className="text-gray-700 mb-4">
-                API key dihasilkan oleh <strong>Wizdam Scola</strong> dan divalidasi secara stateless menggunakan HMAC-SHA256. 
-                Semua endpoint wajib menyertakan API key kecuali yang ditandai <em>(publik)</em>.
+                {t('auth.intro')}
               </p>
               
               <div id="auth-methods" className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Cara Mengirim API Key</h3>
-                <p className="text-m text-gray-600 mb-3">Kirim API key melalui salah satu cara:</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('auth.methods')}</h3>
+                <p className="text-m text-gray-600 mb-3">{t('auth.send_via')}</p>
                 <div className="space-y-2">
                   <CodeBlock code={codeSnippets.apiKeyHeader} id="auth-header" language="http" />
                   <CodeBlock code={codeSnippets.apiKeyBearer} id="auth-bearer" language="http" />
@@ -804,24 +805,24 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
               </div>
 
               <div id="key-format" className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Format & Validasi Key</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('auth.key_format')}</h3>
                 <CodeBlock code={codeSnippets.apiKeyFormat} id="key-format-code" language="plaintext" />
                 <p className="text-xm text-gray-600 mt-2 mb-3">
                   <code className="bg-gray-100 px-1.5 py-0.5 rounded">hmac16</code> = 16 karakter pertama dari:
                 </p>
                 <CodeBlock code={codeSnippets.apiKeyValidation} id="key-validation" language="plaintext" />
                 <p className="text-xm text-gray-600 mt-3">
-                  <strong>TTL:</strong> 1 tahun sejak <code className="bg-gray-100 px-1.5 py-0.5 rounded">timestamp</code>
+                  <strong>{t('auth.ttl_label')}</strong> 1 tahun sejak <code className="bg-gray-100 px-1.5 py-0.5 rounded">timestamp</code>
                 </p>
               </div>
 
               <div id="rate-limit">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Rate Limiting & Error Response</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('auth.rate_title')}</h3>
                 <p className="text-xm text-gray-600 mb-3">
-                  <strong>Rate Limit:</strong> 60 request/60 detik per API key (default). Dapat dikonfigurasi via env.<br/>
-                  Header response: <code className="bg-gray-100 px-1.5 py-0.5 rounded">X-RateLimit-Limit</code>, <code className="bg-gray-100 px-1.5 py-0.5 rounded">X-RateLimit-Remaining</code>
+                  <strong>{t('auth.rate_label')}</strong> 60 request/60 detik per API key (default). Dapat dikonfigurasi via env.<br/>
+                  Header response: <code className="bg-gray-100 px-1.5 py-0.5 rounded">{t('auth.limit_hdr')}</code>, <code className="bg-gray-100 px-1.5 py-0.5 rounded">{t('auth.remain_hdr')}</code>
                 </p>
-                <p className="text-xm text-gray-600 mb-3"><strong>Response 401 jika key tidak valid:</strong></p>
+                <p className="text-xm text-gray-600 mb-3"><strong>{t('auth.err_401')}</strong></p>
                 <CodeBlock code={codeSnippets.error401} id="error-401" language="json" />
               </div>
             </section>
@@ -839,13 +840,13 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
               
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
                 <p className="text-lg text-amber-800">
-                  <strong>Perhatian:</strong> sangia-apis adalah <strong>pure analysis engine</strong> — tidak menyimpan hasil apapun secara permanen. 
+                  <strong>{t('endpoints.caution')}</strong> sangia-apis adalah <strong>pure analysis engine</strong> — tidak menyimpan hasil apapun secara permanen. 
                   Semua persistensi data adalah tanggung jawab <strong>Sangia Scieco</strong>.
                 </p>
               </div>
 
               <div id="supplied-data" className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Pola <code>supplied_data</code></h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('endpoints.pattern_label')}<code>supplied_data</code></h3>
                 <p className="text-xm text-gray-600 mb-3">
                   Jika Sangia Scieco sudah memiliki data di DB, kirimkan dalam request body. 
                   sangia-apis akan menggunakan data tersebut <strong>tanpa melakukan cURL ke API eksternal</strong>.
@@ -857,7 +858,7 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
               </div>
 
               <div id="raw-data">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Pola <code>raw_data</code></h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('endpoints.pattern_label')}<code>raw_data</code></h3>
                 <p className="text-xm text-gray-600 mb-3">
                   Ketika sangia-apis mengambil data dari API eksternal (ORCID/Scopus/dll), response menyertakan field <code className="bg-gray-100 px-1.5 py-0.5 rounded">raw_data</code> berisi data mentah beserta <code className="bg-gray-100 px-1.5 py-0.5 rounded">fetched_at</code>. 
                   Sangia Scieco harus menyimpan ini ke tabelnya (citations_cache, author_profiles_cache, dll).
@@ -881,17 +882,16 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
               </h2>
               
               <p className="text-gray-700 mb-4">
-                Semua endpoint SDG classify dan impact calculate menerima objek <code className="bg-gray-100 px-1.5 py-0.5 rounded">weights</code> dalam request body. 
-                Bobot dari Sangia Scieco admin panel <strong>selalu prioritas</strong>; nilai default dalam kode hanya fallback.
+                {t('weights.intro')}
               </p>
 
               <div id="sdg-weights" className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">SDG Classify — override bobot + threshold</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('weights.sdg')}</h3>
                 <CodeBlock code={codeSnippets.sdgWeights} id="sdg-weights-code" language="json" />
               </div>
 
               <div id="impact-weights">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Impact Calculate — override bobot komposit</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('weights.impact')}</h3>
                 <CodeBlock code={codeSnippets.impactWeights} id="impact-weights-code" language="json" />
               </div>
             </section>
@@ -908,12 +908,11 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
               </h2>
               
               <p className="text-gray-700 mb-4">
-                Endpoint yang memproses profil ORCID (banyak karya) menggunakan pola batch untuk menghindari PHP timeout. 
-                Client memanggil endpoint berulang kali dengan <code className="bg-gray-100 px-1.5 py-0.5 rounded">next_offset</code> sampai mendapat <code className="bg-gray-100 px-1.5 py-0.5 rounded">status: "success"</code>.
+                {t('batch.intro')}
               </p>
 
               <div id="batch-flow" className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Parameter</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('endpoints.param')}</h3>
                 <ul className="list-disc list-inside text-xm text-gray-700 space-y-1 mb-4">
                   <li><code className="bg-gray-100 px-1.5 py-0.5 rounded">offset</code> (int, default <code>0</code>) — posisi mulai batch</li>
                   <li><code className="bg-gray-100 px-1.5 py-0.5 rounded">batch_size</code> (int, default <code>20</code>, max <code>50</code>) — jumlah karya per request</li>
@@ -921,12 +920,12 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
               </div>
 
               <div id="batch-code" className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Contoh Alur (JavaScript/Sangia Scieco)</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('batch.example')}</h3>
                 <CodeBlock code={codeSnippets.batchCode} id="batch-code-js" language="javascript" />
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Response saat processing</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('batch.processing')}</h3>
                 <CodeBlock code={codeSnippets.batchResponse} id="batch-response" language="json" />
               </div>
             </section>
@@ -948,8 +947,8 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
                   <MethodBadge method="GET" />
                   <code className="font-mono text-xm font-semibold text-gray-900">/health</code>
                 </div>
-                <p className="text-xm text-gray-600 mb-3">Status layanan. Tidak memerlukan API key.</p>
-                <h4 className="text-xm font-semibold text-gray-900 mb-2">Response:</h4>
+                <p className="text-xm text-gray-600 mb-3">{t('endpoints.health_desc')}</p>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2">{t('endpoints.response')}</h4>
                 <CodeBlock code={codeSnippets.healthResponse} id="health-res" language="json" />
               </div>
 
@@ -959,8 +958,8 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
                   <MethodBadge method="GET" />
                   <code className="font-mono text-xm font-semibold text-gray-900">/api/v1/sdg/versions</code>
                 </div>
-                <p className="text-xm text-gray-600 mb-3">Daftar versi SDG analyzer + bobot dan threshold default.</p>
-                <h4 className="text-xm font-semibold text-gray-900 mb-2">Response:</h4>
+                <p className="text-xm text-gray-600 mb-3">{t('endpoints.versions_desc')}</p>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2">{t('endpoints.response')}</h4>
                 <CodeBlock code={codeSnippets.sdgVersionsResponse} id="sdg-versions-res" language="json" />
               </div>
 
@@ -974,14 +973,14 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
                   Klasifikasi SDG dari teks, DOI, atau ORCID.<br/>
                   <code className="bg-gray-100 px-1.5 py-0.5 rounded">{'{version}'}</code> = <code>v0</code> | <code>v1</code> | <code>v2</code> | <code>v3</code> | <code>v4</code> | <code>v5</code> | <code>v5e</code>
                 </p>
-                <h4 className="text-xm font-semibold text-gray-900 mb-2">Request body:</h4>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2">{t('endpoints.request_body')}</h4>
                 <CodeBlock code={codeSnippets.sdgClassifyRequest} id="sdg-classify-req" language="json" />
                 <p className="text-xm text-gray-500 mb-3">
                   Gunakan <strong>salah satu</strong>: <code>title+abstract</code>, <code>doi</code>, atau <code>orcid</code>. 
                   Jika <code>orcid</code>, gunakan pola batch.<br/>
                   <code>supplied_works</code> — opsional, kirim data karya dari DB Wizdam Scola untuk skip fetch ORCID.
                 </p>
-                <h4 className="text-xm font-semibold text-gray-900 mb-2">Response (title+abstract):</h4>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2">{t('endpoints.response_title_abstract')}</h4>
                 <CodeBlock code={codeSnippets.sdgClassifyResponse} id="sdg-classify-res" language="json" />
               </div>
 
@@ -993,11 +992,11 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
                 </div>
                 <p className="text-xm text-gray-600 mb-3">
                   Profil author dan daftar publikasi dari Scopus API.<br/>
-                  <strong>Query params:</strong> <code className="bg-gray-100 px-1.5 py-0.5 rounded">authorid</code> (required), <code>count</code> (1–25, default 10), <code>refresh</code> (bool)
+                  <strong>{t('endpoints.query_params')}</strong> <code className="bg-gray-100 px-1.5 py-0.5 rounded">authorid</code> (required), <code>count</code> (1–25, default 10), <code>refresh</code> (bool)
                 </p>
-                <h4 className="text-xm font-semibold text-gray-900 mb-2">Request body (opsional — supplied data):</h4>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2">{t('endpoints.request_body_optional')}</h4>
                 <CodeBlock code={codeSnippets.scopusRequest} id="scopus-req" language="json" />
-                <h4 className="text-xm font-semibold text-gray-900 mb-2 mt-4">Response:</h4>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2 mt-4">{t('endpoints.response')}</h4>
                 <CodeBlock code={codeSnippets.scopusResponse} id="scopus-res" language="json" />
               </div>
 
@@ -1009,11 +1008,11 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
                 </div>
                 <p className="text-xm text-gray-600 mb-3">
                   Profil peneliti lengkap dari ORCID public API.<br/>
-                  <strong>Query params:</strong> <code className="bg-gray-100 px-1.5 py-0.5 rounded">orcid</code> (required, format <code>0000-0000-0000-0000</code>), <code>refresh</code> (bool), <code>limit</code> (default 50)
+                  <strong>{t('endpoints.query_params')}</strong> <code className="bg-gray-100 px-1.5 py-0.5 rounded">orcid</code> (required, format <code>0000-0000-0000-0000</code>), <code>refresh</code> (bool), <code>limit</code> (default 50)
                 </p>
-                <h4 className="text-xm font-semibold text-gray-900 mb-2">Request body (opsional — supplied data):</h4>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2">{t('endpoints.request_body_optional')}</h4>
                 <CodeBlock code={codeSnippets.orcidRequest} id="orcid-req" language="json" />
-                <h4 className="text-xm font-semibold text-gray-900 mb-2 mt-4">Response:</h4>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2 mt-4">{t('endpoints.response')}</h4>
                 <CodeBlock code={codeSnippets.orcidResponse} id="orcid-res" language="json" />
               </div>
 
@@ -1025,10 +1024,10 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
                 </div>
                 <p className="text-xm text-gray-600 mb-3">
                   Data sitasi multi-sumber untuk sebuah DOI.<br/>
-                  <strong>Query params:</strong> <code className="bg-gray-100 px-1.5 py-0.5 rounded">doi</code> (required), <code>limit</code> (1–50, default 15), <code>refresh</code> (bool)<br/>
-                  <strong>Sumber:</strong> OpenCitations → Crossref → OpenAlex → Semantic Scholar
+                  <strong>{t('endpoints.query_params')}</strong> <code className="bg-gray-100 px-1.5 py-0.5 rounded">doi</code> (required), <code>limit</code> (1–50, default 15), <code>refresh</code> (bool)<br/>
+                  <strong>{t('endpoints.source_label')}</strong> OpenCitations → Crossref → OpenAlex → Semantic Scholar
                 </p>
-                <h4 className="text-xm font-semibold text-gray-900 mb-2">Response:</h4>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2">{t('endpoints.response')}</h4>
                 <CodeBlock code={codeSnippets.citationResponse} id="citation-res" language="json" />
               </div>
 
@@ -1040,9 +1039,9 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
                 </div>
                 <p className="text-xm text-gray-600 mb-3">
                   Metrik jurnal dari Scopus Serial Title API.<br/>
-                  <strong>Query params:</strong> <code className="bg-gray-100 px-1.5 py-0.5 rounded">issn</code> (required, format <code>XXXX-XXXX</code>), <code>refresh</code> (bool)
+                  <strong>{t('endpoints.query_params')}</strong> <code className="bg-gray-100 px-1.5 py-0.5 rounded">issn</code> (required, format <code>XXXX-XXXX</code>), <code>refresh</code> (bool)
                 </p>
-                <h4 className="text-xm font-semibold text-gray-900 mb-2">Response:</h4>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2">{t('endpoints.response')}</h4>
                 <CodeBlock code={codeSnippets.journalResponse} id="journal-res" language="json" />
               </div>
 
@@ -1054,9 +1053,9 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
                 </div>
                 <p className="text-xm text-gray-600 mb-3">
                   Skor dan grade jurnal dari SINTA (Kemenristekdikti).<br/>
-                  <strong>Query params:</strong> <code className="bg-gray-100 px-1.5 py-0.5 rounded">issn</code> (required), <code>refresh</code> (bool)
+                  <strong>{t('endpoints.query_params')}</strong> <code className="bg-gray-100 px-1.5 py-0.5 rounded">issn</code> (required), <code>refresh</code> (bool)
                 </p>
-                <h4 className="text-xm font-semibold text-gray-900 mb-2">Response:</h4>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2">{t('endpoints.response')}</h4>
                 <CodeBlock code={codeSnippets.sintaResponse} id="sinta-res" language="json" />
               </div>
 
@@ -1069,11 +1068,11 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
                 <p className="text-xm text-gray-600 mb-3">
                   Hitung Wizdam Impact Score (komposit 4 pilar). Mendukung pola batch dan supplied data.
                 </p>
-                <h4 className="text-xm font-semibold text-gray-900 mb-2">Request body:</h4>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2">{t('endpoints.request_body')}</h4>
                 <CodeBlock code={codeSnippets.impactRequest} id="impact-req" language="json" />
-                <h4 className="text-xm font-semibold text-gray-900 mb-2 mt-4">Response (final):</h4>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2 mt-4">{t('batch.final')}</h4>
                 <CodeBlock code={codeSnippets.impactResponse} id="impact-res" language="json" />
-                <h4 className="text-xm font-semibold text-gray-900 mb-2 mt-4">Formula:</h4>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2 mt-4">{t('endpoints.formula_label')}</h4>
                 <CodeBlock code={codeSnippets.impactFormula} id="impact-formula" language="formula" />
               </div>
 
@@ -1083,47 +1082,47 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
                   <MethodBadge method="POST" />
                   <code className="font-mono text-xm font-semibold text-gray-900">/api/v1/trend/analyze</code>
                 </div>
-                <p className="text-xm text-gray-600 mb-3">Analisis tren berdasarkan data karya peneliti.</p>
-                <h4 className="text-xm font-semibold text-gray-900 mb-2">Request body:</h4>
+                <p className="text-xm text-gray-600 mb-3">{t('endpoints.trend_desc')}</p>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2">{t('endpoints.request_body')}</h4>
                 <CodeBlock code={codeSnippets.trendRequest} id="trend-req" language="json" />
-                <h4 className="text-xm font-semibold text-gray-900 mb-2 mt-4">Tipe analisis (<code>analysis_type</code>):</h4>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2 mt-4">{t('endpoints.analysis_type')}<code>analysis_type</code>):</h4>
                 <div className="overflow-x-auto mb-4">
                   <table className="w-full text-xm">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-4 py-2 text-left font-semibold text-gray-900">Nilai</th>
-                        <th className="px-4 py-2 text-left font-semibold text-gray-900">Keterangan</th>
-                        <th className="px-4 py-2 text-left font-semibold text-gray-900">Data yang Dibutuhkan</th>
+                        <th className="px-4 py-2 text-left font-semibold text-gray-900">{t('errors.th_value')}</th>
+                        <th className="px-4 py-2 text-left font-semibold text-gray-900">{t('errors.th_note')}</th>
+                        <th className="px-4 py-2 text-left font-semibold text-gray-900">{t('endpoints.data_needed')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       <tr>
                         <td className="px-4 py-2 font-mono text-xm"><code>impact_trajectory</code></td>
-                        <td className="px-4 py-2 text-gray-600">Tren jumlah publikasi & sitasi per tahun</td>
+                        <td className="px-4 py-2 text-gray-600">{t('endpoints.trend_series')}</td>
                         <td className="px-4 py-2 text-gray-600"><code>supplied_works</code> dengan <code>publication_year</code></td>
                       </tr>
                       <tr>
                         <td className="px-4 py-2 font-mono text-xm"><code>sdg_evolution</code></td>
-                        <td className="px-4 py-2 text-gray-600">Evolusi distribusi SDG per tahun</td>
+                        <td className="px-4 py-2 text-gray-600">{t('overview.e_trend')}</td>
                         <td className="px-4 py-2 text-gray-600"><code>supplied_works</code> dengan <code>title</code> + <code>publication_year</code></td>
                       </tr>
                       <tr>
                         <td className="px-4 py-2 font-mono text-xm"><code>collaboration_network</code></td>
-                        <td className="px-4 py-2 text-gray-600">Jaringan co-author</td>
+                        <td className="px-4 py-2 text-gray-600">{t('endpoints.orcid_network')}</td>
                         <td className="px-4 py-2 text-gray-600"><code>supplied_works</code> dengan <code>authors_string</code> atau <code>contributors</code></td>
                       </tr>
                       <tr>
                         <td className="px-4 py-2 font-mono text-xm"><code>citation_growth</code></td>
-                        <td className="px-4 py-2 text-gray-600">Tren pertumbuhan sitasi dari Scopus</td>
+                        <td className="px-4 py-2 text-gray-600">{t('endpoints.scopus_trend')}</td>
                         <td className="px-4 py-2 text-gray-600"><code>scopus_id</code> wajib + <code>supplied_scopus</code> opsional</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
                 <p className="text-xm text-gray-600 mb-3">
-                  <strong>Parameter <code>time_range</code>:</strong> <code>1y</code> | <code>3y</code> | <code>5y</code> | <code>10y</code> | <code>all</code>
+                  <strong>{t('endpoints.param_prefix')}<code>time_range</code>:</strong> <code>1y</code> | <code>3y</code> | <code>5y</code> | <code>10y</code> | <code>all</code>
                 </p>
-                <h4 className="text-xm font-semibold text-gray-900 mb-2">Response (<code>impact_trajectory</code>):</h4>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2">{t('endpoints.response_prefix')}<code>impact_trajectory</code>):</h4>
                 <CodeBlock code={codeSnippets.trendResponse} id="trend-res" language="json" />
               </div>
 
@@ -1133,13 +1132,13 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
                   <MethodBadge method="POST" />
                   <code className="font-mono text-xm font-semibold text-gray-900">/api/v1/recommendation/policy</code>
                 </div>
-                <p className="text-xm text-gray-600 mb-3">Rekomendasi kebijakan berbasis data riset.</p>
-                <h4 className="text-xm font-semibold text-gray-900 mb-2">Request body:</h4>
+                <p className="text-xm text-gray-600 mb-3">{t('endpoints.policy_desc')}</p>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2">{t('endpoints.request_body')}</h4>
                 <CodeBlock code={codeSnippets.policyRequest} id="policy-req" language="json" />
                 <p className="text-xm text-gray-600 mb-3">
-                  <strong>Tipe stakeholder (<code>stakeholder_type</code>):</strong> <code>government</code> | <code>institution</code> | <code>industry</code> | <code>researcher</code> | <code>community</code>
+                  <strong>{t('endpoints.stakeholder')}<code>stakeholder_type</code>):</strong> <code>government</code> | <code>institution</code> | <code>industry</code> | <code>researcher</code> | <code>community</code>
                 </p>
-                <h4 className="text-xm font-semibold text-gray-900 mb-2">Response:</h4>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2">{t('endpoints.response')}</h4>
                 <CodeBlock code={codeSnippets.policyResponse} id="policy-res" language="json" />
               </div>
 
@@ -1149,10 +1148,10 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
                   <MethodBadge method="POST" />
                   <code className="font-mono text-xm font-semibold text-gray-900">/api/v1/admin/keys/revoke</code>
                 </div>
-                <p className="text-xm text-gray-600 mb-3">Cabut API key (hanya untuk panggilan dari backend Wizdam Scola).</p>
-                <h4 className="text-xm font-semibold text-gray-900 mb-2">Request body:</h4>
+                <p className="text-xm text-gray-600 mb-3">{t('endpoints.revoke_desc')}</p>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2">{t('endpoints.request_body')}</h4>
                 <CodeBlock code={codeSnippets.revokeRequest} id="revoke-req" language="json" />
-                <h4 className="text-xm font-semibold text-gray-900 mb-2 mt-4">Response:</h4>
+                <h4 className="text-xm font-semibold text-gray-900 mb-2 mt-4">{t('endpoints.response')}</h4>
                 <CodeBlock code={codeSnippets.revokeResponse} id="revoke-res" language="json" />
               </div>
             </section>
@@ -1169,47 +1168,47 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
               </h2>
               
               <div id="error-codes" className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">HTTP Status Codes</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('errors.codes_title')}</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xm">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-900">HTTP Code</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-900">Keterangan</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-900">{t('errors.th_code')}</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-900">{t('errors.th_note')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       <tr>
                         <td className="px-4 py-3 font-mono text-m font-bold text-amber-600">400</td>
-                        <td className="px-4 py-3 text-gray-600">Parameter tidak valid / kurang</td>
+                        <td className="px-4 py-3 text-gray-600">{t('errors.c_400')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3 font-mono text-m font-bold text-red-600">401</td>
-                        <td className="px-4 py-3 text-gray-600">API key tidak ada atau tidak valid</td>
+                        <td className="px-4 py-3 text-gray-600">{t('errors.c_401')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3 font-mono text-m font-bold text-red-600">404</td>
-                        <td className="px-4 py-3 text-gray-600">Data tidak ditemukan</td>
+                        <td className="px-4 py-3 text-gray-600">{t('errors.c_404')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3 font-mono text-m font-bold text-amber-600">410</td>
-                        <td className="px-4 py-3 text-gray-600">Batch session expired — restart dari offset=0</td>
+                        <td className="px-4 py-3 text-gray-600">{t('errors.c_410')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3 font-mono text-m font-bold text-amber-600">429</td>
-                        <td className="px-4 py-3 text-gray-600">Rate limit exceeded</td>
+                        <td className="px-4 py-3 text-gray-600">{t('errors.c_429')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3 font-mono text-m font-bold text-red-600">500</td>
-                        <td className="px-4 py-3 text-gray-600">Internal server error</td>
+                        <td className="px-4 py-3 text-gray-600">{t('errors.c_500')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3 font-mono text-m font-bold text-red-600">502</td>
-                        <td className="px-4 py-3 text-gray-600">External API error (ORCID/Scopus/Crossref tidak merespons)</td>
+                        <td className="px-4 py-3 text-gray-600">{t('errors.c_502')}</td>
                       </tr>
                       <tr>
                         <td className="px-4 py-3 font-mono text-m font-bold text-red-600">503</td>
-                        <td className="px-4 py-3 text-gray-600">API key eksternal (Scopus) tidak dikonfigurasi</td>
+                        <td className="px-4 py-3 text-gray-600">{t('errors.c_503')}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -1217,7 +1216,7 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
               </div>
 
               <div id="error-format">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Format Response Error</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('errors.format_title')}</h3>
                 <CodeBlock code={codeSnippets.errorFormat} id="error-format-code" language="json" />
               </div>
             </section>
@@ -1227,8 +1226,8 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
               <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-6 text-white">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div>
-                    <h3 className="text-2xl font-bold mb-1">Butuh bantuan integrasi API?</h3>
-                    <p className="text-indigo-100 text-m">Tim engineering kami siap membantu implementasi dan troubleshooting.</p>
+                    <h3 className="text-2xl font-bold mb-1">{t('cta.title')}</h3>
+                    <p className="text-indigo-100 text-m">{t('cta.body')}</p>
                   </div>
                   <div className="flex gap-3">
                     <Link to="/contact" className="px-5 py-2.5 bg-white text-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition-colors text-sm whitespace-nowrap">

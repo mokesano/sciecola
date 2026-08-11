@@ -1,0 +1,148 @@
+{
+  "breadcrumb": { "home": "Home", "current": "Documentation" },
+  "title":     "Formulas, Weights, and Methodology",
+  "subtitle":  "Complete technical documentation on Wizdam Impact Score (WIS) computation, SDG classification, API integration, and the Sangia Scieco architecture patterns.",
+  "search_ph": "Search the documentation…",
+  "toc":       "Table of Contents",
+
+  "nav": {
+    "wis":      { "title": "Wizdam Impact Score", "sub": { "wis-overview": "Overview & Formula", "wis-pillars": "The 4 Pillars" } },
+    "academic": { "title": "Academic Pillar",     "sub": { "academic-metrics": "Academic Metrics", "academic-formula": "Internal Formula" } },
+    "social":   { "title": "Social Pillar",       "sub": { "social-fields": "Fields & Ranges", "social-formula": "Computation Formula" } },
+    "economic": { "title": "Economic Pillar",     "sub": { "economic-fields": "Economic Fields" } },
+    "sdg":      { "title": "SDG Pillar",          "sub": { "sdg-score": "SDG Score Calculation", "sdg-config": "SDG Weight Configuration", "sdg-list": "The 17 SDGs" } },
+    "api":      { "title": "API Key & HMAC",      "sub": { "api-format": "API Key Format", "api-validation": "Validation & TTL", "api-example": "Usage Example" } },
+    "data":     { "title": "Supplied Data Pattern", "sub": { "data-flow": "Supplied Data Flow", "data-caching": "Caching Strategy" } },
+    "batch":    { "title": "Batch Anti-Timeout",  "sub": { "batch-pattern": "Batch Processing Pattern", "batch-retry": "Retry Logic" } },
+    "crawler":  { "title": "WizdamCrawler",       "sub": { "crawler-sources": "Data Sources & Priority", "crawler-limits": "Rate Limiting" } }
+  },
+
+  "wis": {
+    "intro":         "The Wizdam Impact Score is a composite 0–100 score measuring the real-world impact of a researcher or research output across four dimensions:",
+    "pillars_title": "The 4 Pillars",
+    "th_pillar":     "Pillar",
+    "th_weight":     "Default Weight",
+    "th_source":     "Data Source",
+    "src_academic":  "Citations, h-index, i10-index (ORCID + Scopus)",
+    "src_social":    "Media mentions, policy citations, public engagement",
+    "src_economic":  "Industry adoption, patents, industry collaboration",
+    "src_sdg":       "Alignment with the 17 UN SDGs (via Sangia AI)",
+    "note_label":    "Note:"
+  },
+
+  "academic": {
+    "intro":        "Computed by the Sangia API Engine based on:",
+    "metrics_title":"Academic Metrics",
+    "th_metric":    "Metric",
+    "th_desc":      "Description",
+    "d_hindex":     "Number of h works with at least h citations each",
+    "d_i10":        "Number of works with at least 10 citations",
+    "d_citations":  "Total citations across all works",
+    "d_velocity":   "Citation growth rate (citations/year)",
+    "d_recency":    "Higher weight for citations in the last 5 years",
+    "d_network":    "Breadth of the international collaboration network",
+    "formula_title":"Internal Formula (Sangia)"
+  },
+
+  "social": {
+    "intro":       "Entered manually or via crawler for each researcher:",
+    "fields_title":"Fields & Ranges",
+    "th_field":    "Field",
+    "th_range":    "Range",
+    "th_desc":     "Description",
+    "d_media":     "Mentions in news media or blogs",
+    "d_policy":    "Cited in government policy documents",
+    "d_public":    "Public engagement (seminars, podcasts, etc.)",
+    "d_altmetric": "Impact on academic social media (ResearchGate, Academia)",
+    "formula":     "Formula"
+  },
+
+  "economic": {
+    "fields_title": "Economic Fields",
+    "th_field":     "Field",
+    "th_range":     "Range",
+    "th_desc":      "Description",
+    "d_adoption":   "Adoption of research results by industry",
+    "d_patents":    "Patents citing or based on the researcher's work",
+    "d_startups":   "Startups born out of the research",
+    "d_transfer":   "Technology transfer to industry partners"
+  },
+
+  "sdg": {
+    "intro":        "The SDG score is derived from how strongly a researcher's whole body of work aligns with the 17 UN Sustainable Development Goals.",
+    "score_title":  "SDG Score Calculation",
+    "config_title": "SDG Scoring Weight Configuration (key: ",
+    "th_param":     "Parameter",
+    "th_default":   "Default",
+    "th_note":      "Description",
+    "d_keyword":    "Weight of SDG keyword matching",
+    "d_semantic":   "Weight of semantic similarity (embeddings)",
+    "d_context":    "Weight of substantive context analysis",
+    "d_causal":     "Weight of causal linkage to an SDG",
+    "d_max":        "Maximum number of SDGs attributed",
+    "d_min_rel":    "Minimum score to be categorized relevant",
+    "d_min_show":   "Minimum score to be displayed",
+    "d_high_rel":   "Score threshold for the “Highly Relevant” label",
+    "list": {
+      "1":  "No Poverty",
+      "2":  "Zero Hunger",
+      "3":  "Good Health and Well-being",
+      "4":  "Quality Education",
+      "5":  "Gender Equality",
+      "6":  "Clean Water and Sanitation",
+      "7":  "Affordable and Clean Energy",
+      "8":  "Decent Work and Economic Growth",
+      "9":  "Industry, Innovation and Infrastructure",
+      "10": "Reduced Inequalities",
+      "11": "Sustainable Cities and Communities",
+      "12": "Responsible Consumption and Production",
+      "13": "Climate Action",
+      "14": "Life Below Water",
+      "15": "Life on Land",
+      "16": "Peace, Justice and Strong Institutions",
+      "17": "Partnerships for the Goals"
+    }
+  },
+
+  "api": {
+    "intro":          "API keys generated for users follow this format:",
+    "format_title":   "API Key Format",
+    "validation":     "Validation",
+    "example":        "Example"
+  },
+
+  "data": {
+    "intro":      "To save API quota and reduce latency, Wizdam Scola sends data it already holds in the database to the Sangia API (supplied_data), so Sangia doesn't need to re-fetch it from ORCID/Scopus.",
+    "flow_title": "Supplied Data Flow"
+  },
+
+  "batch": {
+    "intro":         "For long-running computations (many works), the Sangia API uses a batch pattern:",
+    "pattern_title": "Batch Processing Pattern",
+    "retry_title":   "Retry Logic",
+    "retry_note":    "Retry up to 3× on HTTP 410 (session expired)",
+    "reset_label":   "Reset ",
+    "sleep_note":    "Sleep 300ms between requests to avoid rate limiting"
+  },
+
+  "crawler": {
+    "sources_title": "Data Sources & Priority",
+    "th_source":     "Source",
+    "th_rate":       "Rate Limit",
+    "th_delay":      "Delay",
+    "th_note":       "Notes",
+    "n_scholar":     "CAPTCHA may appear",
+    "n_rg":          "JavaScript-heavy",
+    "n_semantic":    "Use an API key for a higher quota",
+    "n_opencit":     "Free and public",
+    "n_scimago":     "Open data",
+    "n_sinta":       "Use via the Sangia API",
+    "no_api":        "No official API",
+    "unlimited":     "Unlimited"
+  },
+
+  "cta": {
+    "title": "Need further clarification?",
+    "body":  "Contact our engineering team for an in-depth technical discussion."
+  }
+}

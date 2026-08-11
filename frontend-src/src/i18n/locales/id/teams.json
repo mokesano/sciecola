@@ -11,7 +11,8 @@
   },
   "filter": {
     "all":         "Semua Divisi",
-    "search":      "Cari nama atau keahlian…"
+    "search":      "Cari nama atau keahlian…",
+    "reset":       "Reset filter"
   },
   "card": {
     "view_profile": "Lihat profil →",
