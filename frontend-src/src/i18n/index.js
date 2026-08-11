@@ -107,6 +107,10 @@ import idLogHistory         from './locales/id/log_history.json';
 import enLogHistory         from './locales/en/log_history.json';
 import idTutorialDoi        from './locales/id/tutorial_doi.json';
 import enTutorialDoi        from './locales/en/tutorial_doi.json';
+import idTutorialResults    from './locales/id/tutorial_results.json';
+import enTutorialResults    from './locales/en/tutorial_results.json';
+import idTutorialExport     from './locales/id/tutorial_export.json';
+import enTutorialExport     from './locales/en/tutorial_export.json';
 
 // ─── Deteksi bahasa awal ─────────────────────────────────────────────
 // Prioritas: (1) preferensi tersimpan user → (2) bahasa browser →
@@ -180,6 +184,8 @@ i18n
         docs_page:               idDocsPage,
         log_history:             idLogHistory,
         tutorial_doi:            idTutorialDoi,
+        tutorial_results:        idTutorialResults,
+        tutorial_export:         idTutorialExport,
       },
       en: {
         translation: enCommon,
@@ -233,12 +239,14 @@ i18n
         docs_page:               enDocsPage,
         log_history:             enLogHistory,
         tutorial_doi:            enTutorialDoi,
+        tutorial_results:        enTutorialResults,
+        tutorial_export:         enTutorialExport,
       },
     },
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams', 'insights_page', 'change_password', 'settings', 'auth', 'my_activity', 'notifications', 'my_statistics', 'messages', 'my_articles', 'dashboard_page', 'my_profile', 'feeds', 'terms', 'privacy', 'faq', 'help', 'sitemap', 'system_status', 'tutorial_orcid', 'docs_page', 'log_history', 'tutorial_doi'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams', 'insights_page', 'change_password', 'settings', 'auth', 'my_activity', 'notifications', 'my_statistics', 'messages', 'my_articles', 'dashboard_page', 'my_profile', 'feeds', 'terms', 'privacy', 'faq', 'help', 'sitemap', 'system_status', 'tutorial_orcid', 'docs_page', 'log_history', 'tutorial_doi', 'tutorial_results', 'tutorial_export'],
     interpolation: { escapeValue: false },
   });
 

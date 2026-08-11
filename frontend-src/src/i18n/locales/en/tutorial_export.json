@@ -1,0 +1,52 @@
+{
+  "breadcrumb": {
+    "home":    "Home",
+    "help":    "Help",
+    "current": "Export Tutorial"
+  },
+  "title":     "Export Tutorial",
+  "subtitle":  "A complete guide to exporting SDG analysis results in multiple formats",
+  "duration":  "4 minutes",
+  "level":     "Beginner",
+  "about_title": "About This Tutorial",
+  "about_body":  "This tutorial walks you through exporting SDG analysis results into multiple formats such as PDF, CSV, Excel, and JSON. Exports let you save, share, and integrate research results with other systems.",
+  "steps_title": "Steps",
+  "steps": [
+    { "title": "Finish the Analysis", "description": "Make sure you've finished the SDG analysis for the article or researcher profile." },
+    { "title": "Click Export",         "description": "On the results page, click the 'Export Results' button in the top-right corner." },
+    { "title": "Pick a Format",        "description": "Choose the export format that fits your needs (PDF, CSV, Excel, or JSON)." },
+    { "title": "Download & Share",     "description": "The file downloads automatically. You can save it or share it with colleagues." }
+  ],
+  "formats_title": "Available Export Formats",
+  "formats_use_label": "Use case:",
+  "formats": [
+    { "title": "PDF Document",       "description": "Portable document format, ideal for official reports, presentations, and archives.",       "useCase": "Institutional reports, publications, official documentation", "features": ["Fixed layout", "Print ready", "Universal"] },
+    { "title": "CSV Data",           "description": "Raw data format that opens in any spreadsheet application.",                                "useCase": "Advanced data analysis, import into stats tools",              "features": ["Lightweight", "Widely compatible", "Easy to process"] },
+    { "title": "Excel Spreadsheet",  "description": "Spreadsheet format with formatting and multi-sheet support.",                              "useCase": "Deep analysis, pivot tables, data visualization",              "features": ["Multiple sheets", "Formatting", "Formula ready"] },
+    { "title": "JSON Data",          "description": "Structured data format for API integration and application development.",                  "useCase": "System integration, development, automation",                  "features": ["Machine readable", "API ready", "Structured"] }
+  ],
+  "pro_tips_title":  "Professional Tips",
+  "pro_tips": {
+    "data_management": "Data Management",
+    "data_items": [
+      "Give files descriptive names that include the analysis date",
+      "Keep backups in cloud storage for safety",
+      "Use CSV/Excel for follow-up analysis"
+    ],
+    "collab": "Sharing & Collaboration",
+    "collab_items": [
+      "PDF is ideal for stakeholder distribution",
+      "JSON is best for integrating with other systems",
+      "Include metadata in PDF reports"
+    ]
+  },
+  "issues_title": "Common Issues & Fixes",
+  "issues": [
+    { "problem": "File didn't download",           "solution": "Check your browser settings for pop-up blockers and download permissions." },
+    { "problem": "Missing data in the export",     "solution": "Make sure every part of the analysis has loaded before exporting." },
+    { "problem": "File format looks off",          "solution": "Try an alternate format, or update your browser to the latest version." }
+  ],
+  "cta_title":  "Ready to Export Your Analysis?",
+  "cta_body":   "Run an SDG analysis now and export the results in multiple formats for your research and reporting needs",
+  "cta_button": "Try Exporting"
+}
