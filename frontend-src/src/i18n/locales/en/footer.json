@@ -36,7 +36,7 @@
   },
   "cta": {
     "eyebrow":   "Start free",
-    "title":     "Check your ORCID profile without signing in",
+    "title":     "Check your ORCID profile",
     "subtitle":  "Enter an ORCID, Scopus, SINTA, or ResearcherID to see your research impact.",
     "primary":   "Check Profile",
     "secondary": "Create Account"
