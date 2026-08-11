@@ -15,7 +15,7 @@
     "reset":       "Reset filter"
   },
   "card": {
-    "view_profile": "Lihat profil →",
+    "view_profile": "Lihat profil",
     "joined":       "Bergabung {{year}}"
   },
   "empty": {

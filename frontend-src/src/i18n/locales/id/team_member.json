@@ -16,6 +16,9 @@
     "code":        "ID Anggota",
     "role":        "Peran"
   },
+  "achievement": {
+    "proof":      "Lihat bukti"
+  },
   "back":         "Kembali ke Tim",
   "not_found": {
     "title":      "Anggota Tim Tidak Ditemukan",
