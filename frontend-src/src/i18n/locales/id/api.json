@@ -1,0 +1,114 @@
+{
+  "breadcrumb": { "home": "Beranda", "docs": "Dokumentasi", "current": "API Reference" },
+  "title":     "API Reference",
+  "search_ph": "Cari endpoint atau parameter…",
+
+  "nav": {
+    "overview":     { "title": "Overview",        "sub": { "base-url": "Base URL & Version", "endpoints-list": "Daftar Endpoint" } },
+    "auth":         { "title": "Autentikasi",     "sub": { "auth-methods": "Cara Mengirim API Key", "key-format": "Format & Validasi Key", "rate-limit": "Rate Limiting" } },
+    "architecture": { "title": "Arsitektur Data", "sub": { "supplied-data": "Pola supplied_data", "raw-data": "Pola raw_data" } },
+    "weights":      { "title": "Override Bobot",  "sub": { "sdg-weights": "SDG Classify Weights", "impact-weights": "Impact Calculate Weights" } },
+    "batch":        { "title": "Batch Pattern",   "sub": { "batch-flow": "Alur Batch Processing", "batch-code": "Contoh Implementasi" } },
+    "endpoints":    { "title": "Endpoint Detail" },
+    "errors":       { "title": "Error Responses", "sub": { "error-codes": "HTTP Status Codes", "error-format": "Format Response Error" } }
+  },
+
+  "overview": {
+    "base_url":      "Base URL & Versi",
+    "base_url_label":"Base URL",
+    "version_label": "Versi API",
+    "catalog":       "Katalog endpoint",
+    "endpoints_list":"Daftar Endpoint",
+    "th_endpoint":   "Endpoint",
+    "th_method":     "Method",
+    "th_auth":       "Auth",
+    "th_note":       "Keterangan",
+    "e_health":      "Status layanan",
+    "e_versions":    "Daftar versi SDG + bobot default",
+    "e_classify":    "Klasifikasi SDG",
+    "e_scopus":      "Profil author Scopus",
+    "e_orcid":       "Profil peneliti ORCID",
+    "e_citation":    "Sitasi multi-sumber",
+    "e_journal":     "Metrik jurnal Scopus",
+    "e_sinta":       "Skor jurnal SINTA",
+    "e_impact":      "Wizdam Impact Score",
+    "e_trend":       "Evolusi distribusi SDG per tahun",
+    "e_policy":      "Policy Recommendations",
+    "e_revoke":      "Cabut API key"
+  },
+
+  "auth": {
+    "intro":      "API key dihasilkan oleh Wizdam Scola dan divalidasi secara stateless menggunakan HMAC-SHA256. Semua endpoint wajib menyertakan API key kecuali yang ditandai (publik).",
+    "methods":    "Cara Mengirim API Key",
+    "send_via":   "Kirim API key melalui salah satu cara:",
+    "key_format": "Format & Validasi Key",
+    "hmac_label": "X-API-Key (HMAC-SHA256)",
+    "ttl_label":  "TTL:",
+    "rate_title": "Rate Limiting & Error Response",
+    "rate_label": "Rate Limit:",
+    "limit_hdr":  "X-RateLimit-Limit",
+    "remain_hdr": "X-RateLimit-Remaining",
+    "err_401":    "Response 401 jika key tidak valid:"
+  },
+
+  "weights": {
+    "intro":  "Semua endpoint SDG classify dan impact calculate menerima objek weights dalam request body. Bobot dari Sangia Scieco admin panel selalu prioritas; nilai default dalam kode hanya fallback.",
+    "sdg":    "SDG Classify — override bobot + threshold",
+    "impact": "Impact Calculate — override bobot komposit"
+  },
+
+  "batch": {
+    "intro":  "Endpoint yang memproses profil ORCID (banyak karya) menggunakan pola batch untuk menghindari PHP timeout. Client memanggil endpoint berulang kali dengan next_offset sampai mendapat status: \"success\".",
+    "example":"Contoh Alur (JavaScript/Sangia Scieco)",
+    "processing":"Response saat processing",
+    "final":  "Response (final):"
+  },
+
+  "endpoints": {
+    "health_desc":   "Status layanan. Tidak memerlukan API key.",
+    "versions_desc": "Daftar versi SDG analyzer + bobot dan threshold default.",
+    "alias_v5":      "Alias v5",
+    "trend_desc":    "Analisis tren berdasarkan data karya peneliti.",
+    "policy_desc":   "Rekomendasi kebijakan berbasis data riset.",
+    "revoke_desc":   "Cabut API key (hanya untuk panggilan dari backend Wizdam Scola).",
+    "scopus_trend":  "Tren pertumbuhan sitasi dari Scopus",
+    "orcid_network": "Jaringan co-author",
+    "trend_series":  "Tren jumlah publikasi & sitasi per tahun",
+    "analysis_type": "Tipe analisis (",
+    "stakeholder":   "Tipe stakeholder (",
+    "data_needed":   "Data yang Dibutuhkan",
+    "request_body":  "Request body:",
+    "request_body_optional": "Request body (opsional — supplied data):",
+    "response":      "Response:",
+    "response_title_abstract": "Response (title+abstract):",
+    "response_prefix":"Response (",
+    "query_params":  "Query params:",
+    "param":         "Parameter",
+    "param_prefix":  "Parameter ",
+    "source_label":  "Sumber:",
+    "formula_label": "Formula:",
+    "caution":       "Perhatian:",
+    "pattern_label": "Pola "
+  },
+
+  "errors": {
+    "codes_title":  "HTTP Status Codes",
+    "th_code":      "HTTP Code",
+    "th_note":      "Keterangan",
+    "c_400":        "Parameter tidak valid / kurang",
+    "c_401":        "API key tidak ada atau tidak valid",
+    "c_404":        "Data tidak ditemukan",
+    "c_410":        "Batch session expired — restart dari offset=0",
+    "c_429":        "Rate limit exceeded",
+    "c_500":        "Internal server error",
+    "c_502":        "External API error (ORCID/Scopus/Crossref tidak merespons)",
+    "c_503":        "API key eksternal (Scopus) tidak dikonfigurasi",
+    "format_title": "Format Response Error",
+    "th_value":     "Nilai"
+  },
+
+  "cta": {
+    "title": "Butuh bantuan integrasi API?",
+    "body":  "Tim engineering kami siap membantu implementasi dan troubleshooting."
+  }
+}

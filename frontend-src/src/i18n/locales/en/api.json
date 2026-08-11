@@ -1,0 +1,114 @@
+{
+  "breadcrumb": { "home": "Home", "docs": "Documentation", "current": "API Reference" },
+  "title":     "API Reference",
+  "search_ph": "Search endpoints or parameters…",
+
+  "nav": {
+    "overview":     { "title": "Overview",          "sub": { "base-url": "Base URL & Version", "endpoints-list": "Endpoint List" } },
+    "auth":         { "title": "Authentication",    "sub": { "auth-methods": "Sending the API Key", "key-format": "Key Format & Validation", "rate-limit": "Rate Limiting" } },
+    "architecture": { "title": "Data Architecture", "sub": { "supplied-data": "supplied_data Pattern", "raw-data": "raw_data Pattern" } },
+    "weights":      { "title": "Weight Overrides",  "sub": { "sdg-weights": "SDG Classify Weights", "impact-weights": "Impact Calculate Weights" } },
+    "batch":        { "title": "Batch Pattern",     "sub": { "batch-flow": "Batch Processing Flow", "batch-code": "Implementation Example" } },
+    "endpoints":    { "title": "Endpoint Details" },
+    "errors":       { "title": "Error Responses",   "sub": { "error-codes": "HTTP Status Codes", "error-format": "Error Response Format" } }
+  },
+
+  "overview": {
+    "base_url":      "Base URL & Version",
+    "base_url_label":"Base URL",
+    "version_label": "API Version",
+    "catalog":       "Endpoint catalog",
+    "endpoints_list":"Endpoint List",
+    "th_endpoint":   "Endpoint",
+    "th_method":     "Method",
+    "th_auth":       "Auth",
+    "th_note":       "Description",
+    "e_health":      "Service status",
+    "e_versions":    "SDG version list + default weights",
+    "e_classify":    "SDG classification",
+    "e_scopus":      "Scopus author profile",
+    "e_orcid":       "ORCID researcher profile",
+    "e_citation":    "Multi-source citations",
+    "e_journal":     "Scopus journal metrics",
+    "e_sinta":       "SINTA journal score",
+    "e_impact":      "Wizdam Impact Score",
+    "e_trend":       "SDG distribution evolution by year",
+    "e_policy":      "Policy Recommendations",
+    "e_revoke":      "Revoke API key"
+  },
+
+  "auth": {
+    "intro":      "API keys are issued by Wizdam Scola and validated statelessly using HMAC-SHA256. Every endpoint requires an API key except those marked (public).",
+    "methods":    "Sending the API Key",
+    "send_via":   "Send the API key using one of these methods:",
+    "key_format": "Key Format & Validation",
+    "hmac_label": "X-API-Key (HMAC-SHA256)",
+    "ttl_label":  "TTL:",
+    "rate_title": "Rate Limiting & Error Response",
+    "rate_label": "Rate Limit:",
+    "limit_hdr":  "X-RateLimit-Limit",
+    "remain_hdr": "X-RateLimit-Remaining",
+    "err_401":    "401 response when the key is invalid:"
+  },
+
+  "weights": {
+    "intro":  "Every SDG classify and impact calculate endpoint accepts a weights object in the request body. Weights from the Sangia Scieco admin panel always take priority; the defaults in code are only a fallback.",
+    "sdg":    "SDG Classify — weight + threshold override",
+    "impact": "Impact Calculate — composite weight override"
+  },
+
+  "batch": {
+    "intro":  "Endpoints that process ORCID profiles (many works) use a batch pattern to avoid PHP timeouts. The client calls the endpoint repeatedly with next_offset until it receives status: \"success\".",
+    "example":"Example Flow (JavaScript/Sangia Scieco)",
+    "processing":"Response while processing",
+    "final":  "Response (final):"
+  },
+
+  "endpoints": {
+    "health_desc":   "Service status. No API key required.",
+    "versions_desc": "List of SDG analyzer versions plus default weights and thresholds.",
+    "alias_v5":      "Alias for v5",
+    "trend_desc":    "Trend analysis based on a researcher's works.",
+    "policy_desc":   "Policy recommendations derived from research data.",
+    "revoke_desc":   "Revoke an API key (backend-only call from Wizdam Scola).",
+    "scopus_trend":  "Citation growth trend from Scopus",
+    "orcid_network": "Co-author network",
+    "trend_series":  "Publication & citation counts per year",
+    "analysis_type": "Analysis type (",
+    "stakeholder":   "Stakeholder type (",
+    "data_needed":   "Required Data",
+    "request_body":  "Request body:",
+    "request_body_optional": "Request body (optional — supplied data):",
+    "response":      "Response:",
+    "response_title_abstract": "Response (title+abstract):",
+    "response_prefix":"Response (",
+    "query_params":  "Query params:",
+    "param":         "Parameter",
+    "param_prefix":  "Parameter ",
+    "source_label":  "Source:",
+    "formula_label": "Formula:",
+    "caution":       "Caution:",
+    "pattern_label": "Pattern "
+  },
+
+  "errors": {
+    "codes_title":  "HTTP Status Codes",
+    "th_code":      "HTTP Code",
+    "th_note":      "Description",
+    "c_400":        "Invalid or missing parameters",
+    "c_401":        "API key missing or invalid",
+    "c_404":        "Data not found",
+    "c_410":        "Batch session expired — restart from offset=0",
+    "c_429":        "Rate limit exceeded",
+    "c_500":        "Internal server error",
+    "c_502":        "External API error (ORCID/Scopus/Crossref not responding)",
+    "c_503":        "External API key (Scopus) is not configured",
+    "format_title": "Error Response Format",
+    "th_value":     "Value"
+  },
+
+  "cta": {
+    "title": "Need help with API integration?",
+    "body":  "Our engineering team can help with implementation and troubleshooting."
+  }
+}
