@@ -11,6 +11,7 @@
   "meta": {
     "department":  "Department",
     "joined":      "Joined {{year}}",
+    "joined_label":"Joined",
     "location":    "Location",
     "code":        "Member ID",
     "role":        "Role"

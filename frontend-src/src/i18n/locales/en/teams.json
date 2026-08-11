@@ -11,7 +11,8 @@
   },
   "filter": {
     "all":         "All Departments",
-    "search":      "Search by name or expertise…"
+    "search":      "Search by name or expertise…",
+    "reset":       "Reset filters"
   },
   "card": {
     "view_profile": "View profile →",

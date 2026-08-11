@@ -11,6 +11,7 @@
   "meta": {
     "department":  "Divisi",
     "joined":      "Bergabung {{year}}",
+    "joined_label":"Bergabung",
     "location":    "Lokasi",
     "code":        "ID Anggota",
     "role":        "Peran"
