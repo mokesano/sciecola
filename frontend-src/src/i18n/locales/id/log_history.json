@@ -1,0 +1,66 @@
+{
+  "breadcrumb": {
+    "home":      "Beranda",
+    "dashboard": "Dashboard",
+    "current":   "Log History"
+  },
+  "title":         "Log History",
+  "subtitle":      "Lihat riwayat aktivitas Anda di Sciecola. Anda dapat memantau artikel yang dilihat, pencarian yang dilakukan, koleksi, unduhan, dan aktivitas lainnya.",
+  "search_ph":     "Cari dalam riwayat…",
+  "filter":        "Filter",
+  "loading":       "Memuat riwayat log…",
+  "load_failed":   "Gagal memuat riwayat log",
+  "error_prefix":  "Gagal memuat:",
+  "no_orcid": {
+    "title":    "ORCID Belum Terhubung",
+    "subtitle": "Hubungkan ORCID Anda untuk melihat riwayat log.",
+    "cta":      "Hubungkan ORCID"
+  },
+  "stats": {
+    "views":     "Dilihat",
+    "searches":  "Pencarian",
+    "saves":     "Disimpan",
+    "downloads": "Diunduh",
+    "shares":    "Dibagikan",
+    "change_suffix": "dari 30 hari lalu"
+  },
+  "time_range_title":   "Rentang Waktu",
+  "time_range": {
+    "all":      "Semua Waktu",
+    "today":    "Hari Ini",
+    "7days":    "7 Hari Terakhir",
+    "30days":   "30 Hari Terakhir",
+    "3months":  "3 Bulan Terakhir",
+    "year":     "Tahun Ini",
+    "custom":   "Kustom"
+  },
+  "activity_types_title": "Jenis Aktivitas",
+  "activity_types": {
+    "all":      "Semua Aktivitas",
+    "view":     "Dilihat",
+    "search":   "Pencarian",
+    "bookmark": "Disimpan",
+    "download": "Diunduh",
+    "share":    "Dibagikan",
+    "comment":  "Komentar"
+  },
+  "content_types_title": "Tipe Konten",
+  "content_types": {
+    "Artikel":    "Artikel",
+    "Jurnal":     "Jurnal",
+    "Peneliti":   "Peneliti",
+    "Institusi":  "Institusi",
+    "SDGs":       "SDGs",
+    "Berita":     "Berita",
+    "Lainnya":    "Lainnya"
+  },
+  "clear_filters":  "Bersihkan Filter",
+  "list_title":     "Semua Aktivitas",
+  "sort": {
+    "newest": "Terbaru",
+    "oldest": "Terlama",
+    "views":  "Paling Dilihat"
+  },
+  "empty":     "Tidak ada log history untuk periode ini.",
+  "load_more": "Muat Lebih Banyak"
+}
