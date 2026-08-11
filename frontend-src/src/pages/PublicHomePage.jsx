@@ -2,44 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
-  Search, BarChart2, Users, Globe,
-  ArrowRight, CheckCircle, Star, ChevronRight,
-  FlaskConical, Building2, FileText, Target, Brain, Handshake
+  Search, BarChart2, Users, ArrowRight, Check, ChevronRight,
+  FlaskConical, Building2, FileText, Target, Brain, Handshake,
 } from 'lucide-react';
+import Sparkline, { readDirection } from '../components/shared/Sparkline';
 
 // =====================================================================
 // VISUAL CONFIG
-// Icon + warna untuk tiap kartu fitur / langkah. Bukan teks naratif —
-// hanya konfigurasi presentasi yang dipasangkan ke konten naratif
-// berdasarkan urutan. Teks naratifnya bisa berasal dari DB (admin)
-// atau locale file (id.json / en.json) sebagai fallback.
+// Icon untuk tiap kartu fitur / langkah. Bukan teks naratif — hanya
+// konfigurasi presentasi yang dipasangkan ke konten naratif berdasarkan
+// urutan. Teks naratifnya bisa berasal dari DB (admin) atau locale file
+// sebagai fallback.
+//
+// Ikon sengaja tidak lagi membawa warnanya sendiri. Enam keluarga warna
+// berbeda pada satu grid kartu membaca sebagai dekorasi, bukan informasi;
+// seluruh ikon kini memakai satu perlakuan aksen yang sama.
 // =====================================================================
 
-const FEATURE_VISUALS = [
-  { icon: FlaskConical, color: 'from-blue-500 to-indigo-600',   bg: 'bg-blue-50',    border: 'border-blue-100' },
-  { icon: Search,       color: 'from-emerald-500 to-teal-600',  bg: 'bg-emerald-50', border: 'border-emerald-100' },
-  { icon: BarChart2,    color: 'from-violet-500 to-purple-600', bg: 'bg-violet-50',  border: 'border-violet-100' },
-  { icon: Users,        color: 'from-orange-500 to-red-500',    bg: 'bg-orange-50',  border: 'border-orange-100' },
-  { icon: Brain,        color: 'from-pink-500 to-rose-600',     bg: 'bg-pink-50',    border: 'border-pink-100' },
-  { icon: Handshake,    color: 'from-amber-500 to-yellow-500',  bg: 'bg-amber-50',   border: 'border-amber-100' },
-];
+const FEATURE_ICONS = [FlaskConical, Search, BarChart2, Users, Brain, Handshake];
+const STEP_ICONS    = [Search, Brain, BarChart2];
+const STAT_ICONS    = [FileText, Users, Building2, Target];
 
-const STEP_VISUALS = [
-  { icon: Search,    color: 'from-blue-500 to-indigo-600' },
-  { icon: Brain,     color: 'from-violet-500 to-purple-600' },
-  { icon: BarChart2, color: 'from-emerald-500 to-teal-600' },
-];
-
-const STAT_ICON_MAP = [
-  { icon: FileText,  color: 'text-violet-600',  bg: 'bg-violet-50' },
-  { icon: Users,     color: 'text-blue-600',    bg: 'bg-blue-50' },
-  { icon: Building2, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-  { icon: Target,    color: 'text-orange-600',  bg: 'bg-orange-50' },
-];
-
-// Compact public search widget: same detection contract as HeroSearch, but
-// styled for the dark public hero and doesn't force a login step. Anyone can
-// look up any of the four supported researcher IDs (or a DOI) directly.
+// Deteksi identifier yang sama dengan HeroSearch, tapi tanpa memaksa login.
+// Siapa pun bisa menelusuri keempat ID peneliti yang didukung (atau DOI).
 const PATTERNS = {
   orcid:        /^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/i,
   researcherid: /^[A-Z]{1,3}-\d{4}-\d{4}$/i,
@@ -47,7 +32,7 @@ const PATTERNS = {
   numeric:      /^\d{4,12}$/,
 };
 
-const PublicSearch = () => {
+const PublicSearch = ({ t }) => {
   const [q, setQ] = useState('');
   const [ambiguousId, setAmbiguousId] = useState(null);
   const [err, setErr] = useState('');
@@ -65,53 +50,75 @@ const PublicSearch = () => {
     if (PATTERNS.researcherid.test(v))  return go(`/researcherid/${v.toUpperCase()}`);
     if (PATTERNS.doi.test(v))           return go(`/doi/${encodeURIComponent(v)}`);
     if (PATTERNS.numeric.test(v))       return setAmbiguousId(v);
-    setErr('Format tidak dikenali. Coba ORCID, Scopus ID, SINTA ID, ResearcherID, atau DOI.');
+    setErr(t('search.error'));
   };
 
   return (
-    <div className="mx-auto mt-8 max-w-2xl">
-      <form onSubmit={submit} className="flex flex-col sm:flex-row gap-3 rounded-2xl border border-white/20 bg-white/10 p-2 backdrop-blur-md">
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="ORCID · Scopus · SINTA · ResearcherID · DOI"
-          className="flex-1 bg-transparent px-4 py-3 text-white placeholder-slate-300 focus:outline-none"
-        />
+    <div className="mx-auto mt-10 max-w-2xl">
+      <form onSubmit={submit} className="flex flex-col gap-2 sm:flex-row">
+        <div className="relative flex-1">
+          <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder={t('search.placeholder')}
+            className="w-full rounded-lg border border-slate-300 bg-white py-3 pl-10 pr-3 text-[15px] text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+          />
+        </div>
         <button
           type="submit"
-          className="rounded-xl bg-white text-slate-900 px-5 py-3 text-sm font-semibold hover:bg-slate-100 transition-colors whitespace-nowrap"
+          className="shrink-0 rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700"
         >
-          Cek Profil
+          {t('search.submit')}
         </button>
       </form>
-      {err && <p className="mt-3 text-xs text-amber-300">{err}</p>}
+
+      {err && <p className="mt-3 text-sm text-red-600">{err}</p>}
+
       {ambiguousId && (
-        <div className="mt-3 rounded-xl bg-amber-500/15 border border-amber-400/40 p-4 text-left backdrop-blur-md">
-          <p className="text-xs text-amber-100 mb-2">
-            ID <span className="font-mono">{ambiguousId}</span> numerik — pilih sumber:
+        <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-left">
+          <p className="mb-2.5 text-[13px] text-slate-600">
+            {t('search.ambiguous', { id: ambiguousId })}
           </p>
           <div className="flex flex-wrap gap-2">
             <button type="button" onClick={() => go(`/scopus/${ambiguousId}`)}
-              className="px-3 py-1.5 rounded-lg bg-white/90 text-slate-900 text-xs font-semibold hover:bg-white">Scopus</button>
+              className="rounded border border-slate-300 bg-white px-3 py-1.5 text-[13px] font-medium text-slate-700 hover:border-slate-400 hover:bg-slate-50">
+              Scopus
+            </button>
             <button type="button" onClick={() => go(`/sinta/${ambiguousId}`)}
-              className="px-3 py-1.5 rounded-lg bg-white/90 text-slate-900 text-xs font-semibold hover:bg-white">SINTA</button>
+              className="rounded border border-slate-300 bg-white px-3 py-1.5 text-[13px] font-medium text-slate-700 hover:border-slate-400 hover:bg-slate-50">
+              SINTA
+            </button>
             <button type="button" onClick={() => setAmbiguousId(null)}
-              className="px-3 py-1.5 rounded-lg text-amber-100 text-xs font-medium hover:bg-white/10">Batal</button>
+              className="rounded px-3 py-1.5 text-[13px] font-medium text-slate-500 hover:text-slate-900">
+              {t('search.cancel')}
+            </button>
           </div>
         </div>
       )}
-      <p className="mt-3 text-xs text-slate-400">
-        Tidak perlu login. Login hanya dibutuhkan bila Anda ingin mengelola akun ORCID Anda sendiri.
-      </p>
+
+      <p className="mt-3 text-[13px] text-slate-500">{t('search.no_login')}</p>
     </div>
   );
 };
 
-// Helper: pilih nilai dari override DB jika ada, kalau tidak pakai
-// fallback dari locale (t function). Memastikan tidak ada teks
-// naratif yang ter-hardcode di komponen.
-const text = (override, t, key, options) =>
-  override ?? t(key, options);
+// Helper: pilih nilai dari override DB jika ada, kalau tidak pakai fallback
+// dari locale (t function). Memastikan tidak ada teks naratif ter-hardcode.
+const text = (override, t, key, options) => override ?? t(key, options);
+
+/* Kepala seksi dengan ukuran tipografi yang konsisten. Sebelumnya setiap
+   judul seksi memakai text-6xl — sebesar judul hero — sehingga tidak ada
+   hierarki sama sekali di antara keduanya. */
+const SectionHead = ({ eyebrow, title, subtitle, align = 'center', className = 'mb-12', children }) => (
+  <div className={`${className} ${align === 'center' ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl'}`}>
+    {eyebrow && (
+      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-indigo-700">{eyebrow}</p>
+    )}
+    <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">{title}</h2>
+    {subtitle && <p className="mt-4 text-[15px] leading-relaxed text-slate-600">{subtitle}</p>}
+    {children}
+  </div>
+);
 
 // =====================================================================
 // KOMPONEN UTAMA
@@ -129,51 +136,38 @@ const PublicHomePage = () => {
   // Jika empty/error, semua `c.<key>` undefined → fallback ke t().
   const [c, setC] = useState({});
 
-  // Helper utk akses bertingkat tanpa try/catch
-  const pick = (path) => {
-    return path.split('.').reduce((acc, k) => (acc && acc[k] !== undefined ? acc[k] : undefined), c);
-  };
+  const pick = (path) =>
+    path.split('.').reduce((acc, k) => (acc && acc[k] !== undefined ? acc[k] : undefined), c);
 
   useEffect(() => {
-    // ---- Narrative content (DB override per language) ----
     fetch(`/api/landing_content.php?lang=${encodeURIComponent(lang)}`)
       .then(r => r.json())
       .then(json => {
-        if (json.status === 'success' && json.content && typeof json.content === 'object') {
-          setC(json.content);
-        } else {
-          setC({});
-        }
+        setC(json.status === 'success' && json.content && typeof json.content === 'object'
+          ? json.content : {});
       })
       .catch(() => setC({}));
 
-    // ---- Platform statistics ----
     fetch('/api/platform_stats.php')
       .then(r => r.json())
       .then(json => {
         if (json.status === 'success' && Array.isArray(json.data)) {
-          setStats(
-            json.data.slice(0, 4).map((s, i) => ({
-              label: s.label,
-              value: s.value,
-              ...(STAT_ICON_MAP[i] || STAT_ICON_MAP[0]),
-            }))
-          );
+          setStats(json.data.slice(0, 4).map((s, i) => ({
+            label: s.label,
+            value: s.value,
+            icon:  STAT_ICONS[i] ?? STAT_ICONS[0],
+          })));
         }
       })
       .catch(() => {});
 
-    // ---- SDG list ----
     fetch('/api/sdg_distribution.php?sort=id&limit=17')
       .then(r => r.json())
       .then(json => {
-        if (json.status === 'success' && Array.isArray(json.data)) {
-          setSdgList(json.data);
-        }
+        if (json.status === 'success' && Array.isArray(json.data)) setSdgList(json.data);
       })
       .catch(() => {});
 
-    // ---- AI Insights ----
     fetch('/api/insights.php')
       .then(r => r.json())
       .then(json => {
@@ -183,100 +177,94 @@ const PublicHomePage = () => {
       })
       .catch(() => {});
 
-    // ---- Partners ----
     fetch('/api/partners.php?limit=8')
       .then(r => r.json())
       .then(json => {
-        if (json.status === 'success' && Array.isArray(json.partners)) {
-          setPartners(json.partners);
-        }
+        if (json.status === 'success' && Array.isArray(json.partners)) setPartners(json.partners);
       })
       .catch(() => {});
   }, [lang]);
 
-  const sdgColorById = sdgList.reduce((acc, s) => {
-    acc[s.sdg] = s.color;
-    return acc;
-  }, {});
+  const sdgColorById = sdgList.reduce((acc, s) => { acc[s.sdg] = s.color; return acc; }, {});
 
-  // Susun list fitur / how-it-works: prioritaskan override dari DB
-  // (jika array & jumlah elemen mencukupi), kalau tidak pakai locale.
   const featureTexts = Array.isArray(pick('features'))
-    ? pick('features')
-    : t('features', { returnObjects: true });
-  const features = FEATURE_VISUALS.map((vis, i) => ({
-    ...vis,
+    ? pick('features') : t('features', { returnObjects: true });
+  const features = FEATURE_ICONS.map((Icon, i) => ({
+    Icon,
     title: featureTexts?.[i]?.title ?? '',
     desc:  featureTexts?.[i]?.desc  ?? '',
   }));
 
   const stepTexts = Array.isArray(pick('how_it_works'))
-    ? pick('how_it_works')
-    : t('how_it_works', { returnObjects: true });
-  const steps = STEP_VISUALS.map((vis, i) => ({
-    ...vis,
-    step: i + 1,
+    ? pick('how_it_works') : t('how_it_works', { returnObjects: true });
+  const steps = STEP_ICONS.map((Icon, i) => ({
+    Icon,
+    step:  i + 1,
     title: stepTexts?.[i]?.title ?? '',
     desc:  stepTexts?.[i]?.desc  ?? '',
   }));
 
   const trustSignals = Array.isArray(pick('cta_section.trust_signals'))
-    ? pick('cta_section.trust_signals')
-    : t('cta_section.trust_signals', { returnObjects: true });
+    ? pick('cta_section.trust_signals') : t('cta_section.trust_signals', { returnObjects: true });
 
   return (
     <main className="min-h-screen bg-white pt-20">
 
       {/* ============================================================ */}
       {/* HERO                                                          */}
+      {/* Bidang terang dengan kisi tipis, bukan gradien gelap dengan   */}
+      {/* tiga blob blur. Kotak pencarian jadi pusat perhatian, karena  */}
+      {/* penelusuran profil memang tidak memerlukan login.             */}
       {/* ============================================================ */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-900 py-28">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl" />
-          <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-indigo-500/20 blur-3xl" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-violet-600/10 blur-3xl" />
-        </div>
+      <section className="relative overflow-hidden border-b border-slate-200 bg-white">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.55]"
+          style={{
+            backgroundImage:
+              'linear-gradient(to right, #e2e8f0 1px, transparent 1px),' +
+              'linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)',
+            backgroundSize: '64px 64px',
+            maskImage: 'radial-gradient(ellipse 70% 60% at 50% 0%, #000 40%, transparent 100%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 0%, #000 40%, transparent 100%)',
+          }}
+        />
 
-        <div className="relative z-10 mx-auto max-w-7xl px-8 text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-sm">
-            <Globe className="h-4 w-4 text-blue-300" />
-            <span className="text-sm font-medium text-blue-200">
-              {text(pick('hero.badge'), t, 'hero.badge')}
-            </span>
-          </div>
+        <div className="relative mx-auto max-w-5xl px-6 py-24 text-center lg:px-8">
+          <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-[13px] font-medium text-slate-600 shadow-sm">
+            <span className="h-1.5 w-1.5 rounded-full bg-indigo-600" />
+            {text(pick('hero.badge'), t, 'hero.badge')}
+          </span>
 
-          <h1 className="mb-6 text-6xl font-extrabold leading-tight tracking-tight text-white md:text-6xl lg:text-7xl">
-            {text(pick('hero.title_1'), t, 'hero.title_1')} <br />
-            <span className="bg-gradient-to-r from-blue-400 via-violet-400 to-emerald-400 bg-clip-text text-transparent">
+          <h1 className="mt-7 text-4xl font-semibold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+            {text(pick('hero.title_1'), t, 'hero.title_1')}{' '}
+            <span className="text-indigo-600">
               {text(pick('hero.title_2'), t, 'hero.title_2')}
             </span>
           </h1>
 
-          <p className="mx-auto mb-10 max-w-4xl text-lg text-slate-300 md:text-xl">
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
             {text(pick('hero.subtitle'), t, 'hero.subtitle')}
           </p>
 
-          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Link
-              to="/login"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-blue-900/40 transition-all hover:-translate-y-0.5 hover:shadow-xl"
-            >
+          <PublicSearch t={t} />
+
+          <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <Link to="/login"
+              className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-slate-800">
               {text(pick('hero.cta_primary'), t, 'hero.cta_primary')}
-              <ArrowRight className="h-5 w-5" />
+              <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link
-              to="/register"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
-            >
+            <Link to="/register"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-400 hover:bg-slate-50">
               {text(pick('hero.cta_secondary'), t, 'hero.cta_secondary')}
             </Link>
           </div>
 
-          <PublicSearch />
-
-          <p className="mt-6 text-sm text-slate-400">
-            {text(pick('hero.orcid_hint_prefix'), t, 'hero.orcid_hint_prefix')}&nbsp;
-            <Link to="/tutorial-orcid" className="font-medium text-blue-400 hover:text-blue-300 underline underline-offset-2">
+          <p className="mt-6 text-[13px] text-slate-500">
+            {text(pick('hero.orcid_hint_prefix'), t, 'hero.orcid_hint_prefix')}{' '}
+            <Link to="/tutorial-orcid"
+              className="font-medium text-indigo-700 underline-offset-4 hover:underline">
               {text(pick('hero.orcid_hint_link'), t, 'hero.orcid_hint_link')}
             </Link>
           </p>
@@ -287,19 +275,21 @@ const PublicHomePage = () => {
       {/* PLATFORM STATS                                                */}
       {/* ============================================================ */}
       {stats.length > 0 && (
-        <section className="bg-white py-14">
-          <div className="mx-auto max-w-7xl px-8">
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <section className="border-b border-slate-200 bg-slate-50">
+          <div className="mx-auto max-w-6xl px-6 lg:px-8">
+            <dl className="grid grid-cols-2 divide-slate-200 sm:divide-x md:grid-cols-4">
               {stats.map((s, i) => (
-                <div key={i} className={`flex flex-col items-center rounded-2xl border ${s.bg} border-gray-100 p-6 text-center shadow-sm`}>
-                  <div className={`mb-3 flex h-12 w-12 items-center justify-center rounded-xl ${s.bg}`}>
-                    <s.icon className={`h-6 w-6 ${s.color}`} />
+                <div key={i} className="flex items-center gap-4 px-2 py-8 sm:px-6">
+                  <s.icon className="h-5 w-5 shrink-0 text-slate-400" />
+                  <div className="min-w-0">
+                    <dd className="text-2xl font-semibold tabular-nums tracking-tight text-slate-900">
+                      {s.value}
+                    </dd>
+                    <dt className="mt-0.5 text-[13px] leading-snug text-slate-500">{s.label}</dt>
                   </div>
-                  <div className={`text-3xl font-extrabold ${s.color}`}>{s.value}</div>
-                  <div className="mt-1 text-sm font-medium text-gray-500">{s.label}</div>
                 </div>
               ))}
-            </div>
+            </dl>
           </div>
         </section>
       )}
@@ -307,25 +297,21 @@ const PublicHomePage = () => {
       {/* ============================================================ */}
       {/* FITUR UTAMA                                                   */}
       {/* ============================================================ */}
-      <section className="bg-gray-50 py-20">
-        <div className="mx-auto max-w-7xl px-8">
-          <div className="mb-14 text-center">
-            <h2 className="mb-4 text-6xl font-bold text-gray-900">
-              {text(pick('features_section.title'), t, 'features_section.title')}
-            </h2>
-            <p className="mx-auto max-w-4xl text-lg text-gray-500">
-              {text(pick('features_section.subtitle'), t, 'features_section.subtitle')}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="bg-white py-24">
+        <div className="mx-auto max-w-6xl px-6 lg:px-8">
+          <SectionHead
+            title={text(pick('features_section.title'), t, 'features_section.title')}
+            subtitle={text(pick('features_section.subtitle'), t, 'features_section.subtitle')}
+          />
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f, i) => (
-              <div key={i} className={`group rounded-2xl border ${f.border} ${f.bg} p-6 transition-all hover:-translate-y-1 hover:shadow-lg`}>
-                <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${f.color} text-white shadow-md`}>
-                  <f.icon className="h-6 w-6" />
+              <div key={i}
+                className="rounded-xl border border-slate-200 bg-white p-6 transition-colors hover:border-slate-300 hover:bg-slate-50">
+                <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                  <f.Icon className="h-5 w-5" />
                 </div>
-                <h3 className="mb-2 text-lg font-bold text-gray-900">{f.title}</h3>
-                <p className="text-sm leading-relaxed text-gray-600">{f.desc}</p>
+                <h3 className="mt-4 text-[15px] font-semibold text-slate-900">{f.title}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -333,49 +319,45 @@ const PublicHomePage = () => {
       </section>
 
       {/* ============================================================ */}
-      {/* 17 SDGs                                                       */}
+      {/* 17 SDGs — warna resmi PBB dipertahankan karena ia data,       */}
+      {/* bukan dekorasi.                                               */}
       {/* ============================================================ */}
       {sdgList.length > 0 && (
-        <section className="py-20 bg-white">
-          <div className="mx-auto max-w-7xl px-8">
-            <div className="mb-14 text-center">
-              <h2 className="mb-4 text-6xl font-bold text-gray-900">
-                {text(pick('sdg_section.title'), t, 'sdg_section.title')}
-              </h2>
-              <p className="mx-auto max-w-4xl text-lg text-gray-500">
-                {text(pick('sdg_section.subtitle'), t, 'sdg_section.subtitle')}
-              </p>
-            </div>
+        <section className="border-y border-slate-200 bg-slate-50 py-24">
+          <div className="mx-auto max-w-6xl px-6 lg:px-8">
+            <SectionHead
+              title={text(pick('sdg_section.title'), t, 'sdg_section.title')}
+              subtitle={text(pick('sdg_section.subtitle'), t, 'sdg_section.subtitle')}
+            />
 
-            <div className="grid grid-cols-4 gap-3 sm:grid-cols-6 md:grid-cols-9 lg:grid-cols-9">
+            <div className="grid grid-cols-4 gap-3 sm:grid-cols-6 lg:grid-cols-9">
               {sdgList.map((sdg) => (
                 <Link key={sdg.sdg} to="/sdgs" className="group flex flex-col items-center">
                   <div
-                    className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl shadow-sm transition-all group-hover:-translate-y-1 group-hover:shadow-md"
+                    className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-lg transition-transform group-hover:scale-[1.04]"
                     style={{ backgroundColor: sdg.color }}
                   >
                     <img
                       src={`/assets/sdgs/icons/sdg-${sdg.sdg}.svg`}
                       alt={`SDG ${sdg.sdg}`}
-                      className="h-12 w-12 object-contain"
+                      className="h-11 w-11 object-contain"
                       onError={(e) => {
                         e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = `<span class="text-white font-bold text-lg">${sdg.sdg}</span>`;
+                        e.target.parentElement.innerHTML =
+                          `<span class="text-white font-semibold text-lg">${sdg.sdg}</span>`;
                       }}
                     />
                   </div>
-                  <span className="mt-1.5 text-center text-[10px] font-medium leading-tight text-gray-500 group-hover:text-gray-800">
+                  <span className="mt-2 text-center text-[10px] font-medium leading-tight text-slate-500 group-hover:text-slate-900">
                     {sdg.name}
                   </span>
                 </Link>
               ))}
             </div>
 
-            <div className="mt-10 text-center">
-              <Link
-                to="/sdgs"
-                className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-gray-700"
-              >
+            <div className="mt-12 text-center">
+              <Link to="/sdgs"
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-400">
                 {text(pick('sdg_section.cta_label'), t, 'sdg_section.cta_label')}
                 <ChevronRight className="h-4 w-4" />
               </Link>
@@ -387,87 +369,95 @@ const PublicHomePage = () => {
       {/* ============================================================ */}
       {/* HOW IT WORKS                                                  */}
       {/* ============================================================ */}
-      <section className="bg-gradient-to-br from-slate-50 to-blue-50 py-20">
-        <div className="mx-auto max-w-7xl px-8">
-          <div className="mb-14 text-center">
-            <h2 className="mb-4 text-6xl font-bold text-gray-900">
-              {text(pick('how_it_works_section.title'), t, 'how_it_works_section.title')}
-            </h2>
-            <p className="mx-auto max-w-4xl text-lg text-gray-500">
-              {text(pick('how_it_works_section.subtitle'), t, 'how_it_works_section.subtitle')}
-            </p>
-          </div>
+      <section className="bg-white py-24">
+        <div className="mx-auto max-w-6xl px-6 lg:px-8">
+          <SectionHead
+            title={text(pick('how_it_works_section.title'), t, 'how_it_works_section.title')}
+            subtitle={text(pick('how_it_works_section.subtitle'), t, 'how_it_works_section.subtitle')}
+          />
 
-          <div className="relative grid grid-cols-1 gap-8 md:grid-cols-3">
-            <div className="absolute top-10 left-[calc(16.67%+2rem)] right-[calc(16.67%+2rem)] hidden h-0.5 bg-gradient-to-r from-blue-200 via-violet-200 to-emerald-200 md:block" />
-
+          <ol className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {steps.map((item) => (
-              <div key={item.step} className="relative flex flex-col items-center text-center">
-                <div className="relative mb-6 flex h-20 w-20 items-center justify-center">
-                  <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${item.color} opacity-10`} />
-                  <div className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${item.color} text-white shadow-lg`}>
-                    <item.icon className="h-8 w-8" />
-                  </div>
-                  <span className="absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full bg-white text-xs font-extrabold text-gray-800 shadow">
-                    {item.step}
+              <li key={item.step} className="border-t-2 border-slate-900 pt-5">
+                <div className="flex items-center gap-3">
+                  <span className="font-mono text-xs tabular-nums text-slate-400">
+                    {String(item.step).padStart(2, '0')}
                   </span>
+                  <item.Icon className="h-4 w-4 text-indigo-600" />
                 </div>
-                <h3 className="mb-2 text-xl font-bold text-gray-900">{item.title}</h3>
-                <p className="text-sm leading-relaxed text-gray-500">{item.desc}</p>
-              </div>
+                <h3 className="mt-3 text-lg font-semibold tracking-tight text-slate-900">{item.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.desc}</p>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 
       {/* ============================================================ */}
-      {/* AI INSIGHTS                                                   */}
+      {/* AI INSIGHTS — tiap kartu membawa sparkline agar pembaca       */}
+      {/* melihat arah perubahannya, bukan hanya angka akhirnya.        */}
       {/* ============================================================ */}
       {insights.length > 0 && (
-        <section className="bg-white py-20">
-          <div className="mx-auto max-w-7xl px-8">
-            <div className="mb-14 flex flex-col items-center gap-4 text-center md:flex-row md:justify-between md:text-left">
-              <div>
-                <h2 className="mb-3 text-6xl font-bold text-gray-900">
-                  {text(pick('insights_section.title'), t, 'insights_section.title')}
-                </h2>
-                <p className="max-w-4xl text-lg text-gray-500">
-                  {text(pick('insights_section.subtitle'), t, 'insights_section.subtitle')}
-                </p>
-              </div>
-              <Link
-                to="/insights"
-                className="inline-flex items-center gap-2 rounded-xl border border-gray-200 px-5 py-3 text-sm font-semibold text-gray-700 transition-all hover:border-gray-300 hover:bg-gray-50 whitespace-nowrap"
-              >
+        <section className="border-y border-slate-200 bg-slate-50 py-24">
+          <div className="mx-auto max-w-6xl px-6 lg:px-8">
+            <div className="mb-12 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+              <SectionHead
+                align="left"
+                className=""
+                title={text(pick('insights_section.title'), t, 'insights_section.title')}
+                subtitle={text(pick('insights_section.subtitle'), t, 'insights_section.subtitle')}
+              />
+              <Link to="/insights"
+                className="inline-flex shrink-0 items-center gap-2 pb-1 text-sm font-medium text-indigo-700 underline-offset-4 hover:underline">
                 {text(pick('insights_section.cta_label'), t, 'insights_section.cta_label')}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
               {insights.map((ins) => {
-                const color = sdgColorById[ins.sdg] || '#6b7280';
+                const color     = sdgColorById[ins.sdg] || '#64748b';
+                const series    = Array.isArray(ins.series) ? ins.series : [];
+                const direction = readDirection(series, ins.trend);
+                const start     = ins.series_start;
+                const end       = start && series.length ? start + series.length - 1 : null;
+
                 return (
-                  <div key={ins.id} className="rounded-4xl border border-gray-100 p-6 shadow-sm transition-all hover:shadow-md">
-                    <div className="mb-4 flex items-center gap-3">
-                      <div
-                        className="flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold text-white"
-                        style={{ backgroundColor: color }}
-                      >
-                        {ins.sdg}
-                      </div>
-                      {ins.trend && (
-                        <span
-                          className="rounded-full px-3 py-1 text-xs font-bold text-white"
-                          style={{ backgroundColor: color }}
-                        >
-                          {ins.trend}
+                  <article key={ins.id} className="flex flex-col rounded-xl border border-slate-200 bg-white p-6">
+                    <div className="flex items-center gap-2.5">
+                      <span aria-hidden className="h-3 w-3 rounded-[3px]" style={{ backgroundColor: color }} />
+                      <span className="font-mono text-[11px] tabular-nums text-slate-400">
+                        SDG {String(ins.sdg).padStart(2, '0')}
+                      </span>
+                      {ins.category && (
+                        <span className="ml-auto rounded-full border border-slate-200 px-2 py-0.5 text-[11px] font-medium text-slate-500">
+                          {ins.category}
                         </span>
                       )}
                     </div>
-                    <h3 className="mb-2 text-base font-bold text-gray-900">{ins.title}</h3>
-                    <p className="text-sm leading-relaxed text-gray-500">{ins.text}</p>
-                  </div>
+
+                    <h3 className="mt-4 text-[15px] font-semibold leading-snug text-slate-900">{ins.title}</h3>
+                    <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{ins.text}</p>
+
+                    <div className="mt-5 flex items-end justify-between border-t border-slate-100 pt-4">
+                      <div>
+                        {ins.trend && (
+                          <p className={`text-xl font-semibold tabular-nums ${
+                            direction === 'down' ? 'text-red-600'
+                              : direction === 'up' ? 'text-indigo-700' : 'text-slate-700'
+                          }`}>
+                            {ins.trend}
+                          </p>
+                        )}
+                        {start && end && (
+                          <p className="font-mono text-[10px] tabular-nums text-slate-400">{start}–{end}</p>
+                        )}
+                      </div>
+                      {series.length > 1 && (
+                        <Sparkline values={series} direction={direction} className="h-12 w-28" />
+                      )}
+                    </div>
+                  </article>
                 );
               })}
             </div>
@@ -479,33 +469,25 @@ const PublicHomePage = () => {
       {/* PARTNERS                                                      */}
       {/* ============================================================ */}
       {partners.length > 0 && (
-        <section className="bg-gray-50 py-16">
-          <div className="mx-auto max-w-7xl px-8">
-            <div className="mb-10 text-center">
-              <h2 className="mb-3 text-6xl font-bold text-gray-900">
-                {text(pick('partners_section.title'), t, 'partners_section.title')}
-              </h2>
-              <p className="text-gray-500">
-                {text(pick('partners_section.subtitle'), t, 'partners_section.subtitle')}
-              </p>
-            </div>
+        <section className="bg-white py-20">
+          <div className="mx-auto max-w-6xl px-6 lg:px-8">
+            <SectionHead
+              title={text(pick('partners_section.title'), t, 'partners_section.title')}
+              subtitle={text(pick('partners_section.subtitle'), t, 'partners_section.subtitle')}
+            />
 
-            <div className="flex flex-wrap items-center justify-center gap-4">
+            <div className="flex flex-wrap items-center justify-center gap-3">
               {partners.map((p) => (
-                <div
-                  key={p.id ?? p.name}
-                  className="rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-600 shadow-sm transition-all hover:shadow-md"
-                >
+                <span key={p.id ?? p.name}
+                  className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600">
                   {p.name}
-                </div>
+                </span>
               ))}
             </div>
 
             <div className="mt-8 text-center">
-              <Link
-                to="/partners"
-                className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
-              >
+              <Link to="/partners"
+                className="inline-flex items-center gap-1 text-sm font-medium text-indigo-700 underline-offset-4 hover:underline">
                 {text(pick('partners_section.cta_label'), t, 'partners_section.cta_label')}
                 <ChevronRight className="h-4 w-4" />
               </Link>
@@ -515,48 +497,37 @@ const PublicHomePage = () => {
       )}
 
       {/* ============================================================ */}
-      {/* CTA                                                           */}
+      {/* CTA — panel gelap pekat, tanpa gradien maupun orb blur.       */}
       {/* ============================================================ */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-700 to-violet-800 py-24 text-white">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute top-0 right-0 h-80 w-80 rounded-full bg-white/5 blur-3xl" />
-          <div className="absolute bottom-0 left-0 h-80 w-80 rounded-full bg-indigo-300/10 blur-3xl" />
-        </div>
+      <section className="bg-slate-900 py-24 text-white">
+        <div className="mx-auto max-w-4xl px-6 text-center lg:px-8">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-[13px] font-medium text-slate-300">
+            {text(pick('cta_section.badge'), t, 'cta_section.badge')}
+          </span>
 
-        <div className="relative mx-auto max-w-7xl px-8 text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2">
-            <Star className="h-4 w-4 text-yellow-300" />
-            <span className="text-sm font-medium">
-              {text(pick('cta_section.badge'), t, 'cta_section.badge')}
-            </span>
-          </div>
-          <h2 className="mb-6 text-6xl font-extrabold leading-tight md:text-5xl">
+          <h2 className="mt-6 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
             {text(pick('cta_section.title'), t, 'cta_section.title')}
           </h2>
-          <p className="mx-auto mb-10 max-w-4xl text-lg text-blue-100">
+          <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-relaxed text-slate-300">
             {text(pick('cta_section.subtitle'), t, 'cta_section.subtitle')}
           </p>
 
-          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Link
-              to="/register"
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-bold text-blue-700 shadow-lg transition-all hover:-translate-y-0.5 hover:bg-blue-50 hover:shadow-xl"
-            >
+          <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <Link to="/register"
+              className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition-colors hover:bg-slate-100">
               {text(pick('cta_section.cta_primary'), t, 'cta_section.cta_primary')}
-              <ArrowRight className="h-5 w-5" />
+              <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link
-              to="/login"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
-            >
+            <Link to="/login"
+              className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10">
               {text(pick('cta_section.cta_secondary'), t, 'cta_section.cta_secondary')}
             </Link>
           </div>
 
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-blue-200">
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] text-slate-400">
             {(Array.isArray(trustSignals) ? trustSignals : []).map((label, i) => (
               <span key={i} className="flex items-center gap-1.5">
-                <CheckCircle className="h-4 w-4 text-emerald-400" />
+                <Check className="h-3.5 w-3.5 text-indigo-400" />
                 {label}
               </span>
             ))}
