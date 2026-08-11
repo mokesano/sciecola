@@ -105,6 +105,8 @@ import idDocsPage           from './locales/id/docs_page.json';
 import enDocsPage           from './locales/en/docs_page.json';
 import idLogHistory         from './locales/id/log_history.json';
 import enLogHistory         from './locales/en/log_history.json';
+import idTutorialDoi        from './locales/id/tutorial_doi.json';
+import enTutorialDoi        from './locales/en/tutorial_doi.json';
 
 // ─── Deteksi bahasa awal ─────────────────────────────────────────────
 // Prioritas: (1) preferensi tersimpan user → (2) bahasa browser →
@@ -177,6 +179,7 @@ i18n
         tutorial_orcid:          idTutorialOrcid,
         docs_page:               idDocsPage,
         log_history:             idLogHistory,
+        tutorial_doi:            idTutorialDoi,
       },
       en: {
         translation: enCommon,
@@ -229,12 +232,13 @@ i18n
         tutorial_orcid:          enTutorialOrcid,
         docs_page:               enDocsPage,
         log_history:             enLogHistory,
+        tutorial_doi:            enTutorialDoi,
       },
     },
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams', 'insights_page', 'change_password', 'settings', 'auth', 'my_activity', 'notifications', 'my_statistics', 'messages', 'my_articles', 'dashboard_page', 'my_profile', 'feeds', 'terms', 'privacy', 'faq', 'help', 'sitemap', 'system_status', 'tutorial_orcid', 'docs_page', 'log_history'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams', 'insights_page', 'change_password', 'settings', 'auth', 'my_activity', 'notifications', 'my_statistics', 'messages', 'my_articles', 'dashboard_page', 'my_profile', 'feeds', 'terms', 'privacy', 'faq', 'help', 'sitemap', 'system_status', 'tutorial_orcid', 'docs_page', 'log_history', 'tutorial_doi'],
     interpolation: { escapeValue: false },
   });
 
