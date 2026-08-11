@@ -1,0 +1,12 @@
+{
+  "breadcrumb": {
+    "home": "Beranda",
+    "docs": "Dokumentasi"
+  },
+  "sidebar": {
+    "help":            "Bantuan",
+    "faq":             "FAQ",
+    "api-reference":   "Referensi API",
+    "documentation":   "Dokumentasi"
+  }
+}

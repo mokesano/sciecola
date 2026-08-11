@@ -1,8 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 
+// Stat card metadata (icons/colors) is chrome — labels come from i18n.
+const STAT_META = [
+  { key: 'views',     icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z', color: 'text-indigo-600 bg-indigo-50' },
+  { key: 'searches',  icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z', color: 'text-purple-600 bg-purple-50' },
+  { key: 'saves',     icon: 'M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z', color: 'text-blue-600 bg-blue-50' },
+  { key: 'downloads', icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4', color: 'text-green-600 bg-green-50' },
+  { key: 'shares',    icon: 'M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z', color: 'text-orange-600 bg-orange-50' },
+];
+
+const TIME_RANGES = ['all', 'today', '7days', '30days', '3months', 'year', 'custom'];
+const ACTIVITY_TYPES = ['all', 'view', 'search', 'bookmark', 'download', 'share', 'comment'];
+const CONTENT_TYPES = ['Artikel', 'Jurnal', 'Peneliti', 'Institusi', 'SDGs', 'Berita', 'Lainnya'];
+
 const LogHistory = () => {
+  const { t } = useTranslation('log_history');
   const { user } = useAuth();
 
   // State Management
@@ -14,13 +29,13 @@ const LogHistory = () => {
   const [logHistory, setLogHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [summaryStats, setSummaryStats] = useState([
-    { label: 'Dilihat', value: 126, change: '+12%', icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z', color: 'text-indigo-600 bg-indigo-50' },
-    { label: 'Pencarian', value: 84, change: '+8%', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z', color: 'text-purple-600 bg-purple-50' },
-    { label: 'Disimpan', value: 32, change: '+15%', icon: 'M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z', color: 'text-blue-600 bg-blue-50' },
-    { label: 'Diunduh', value: 18, change: '+5%', icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4', color: 'text-green-600 bg-green-50' },
-    { label: 'Dibagikan', value: 9, change: '+3%', icon: 'M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z', color: 'text-orange-600 bg-orange-50' }
-  ]);
+  // Raw stat values keyed by STAT_META.key — labels come from i18n.
+  const [statValues, setStatValues] = useState({
+    views: 126, searches: 84, saves: 32, downloads: 18, shares: 9,
+  });
+  const [statChanges, setStatChanges] = useState({
+    views: '+12%', searches: '+8%', saves: '+15%', downloads: '+5%', shares: '+3%',
+  });
 
   // Fetch log history from API
   useEffect(() => {
@@ -41,21 +56,24 @@ const LogHistory = () => {
         if (data.status === 'success') {
           setLogHistory(data.logs ?? []);
           if (data.summary) {
-            setSummaryStats([
-              { label: 'Dilihat', value: data.summary.views || 0, change: '+0%', icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z', color: 'text-indigo-600 bg-indigo-50' },
-              { label: 'Pencarian', value: data.summary.searches || 0, change: '+0%', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z', color: 'text-purple-600 bg-purple-50' },
-              { label: 'Disimpan', value: data.summary.saves || 0, change: '+0%', icon: 'M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z', color: 'text-blue-600 bg-blue-50' },
-              { label: 'Diunduh', value: data.summary.downloads || 0, change: '+0%', icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4', color: 'text-green-600 bg-green-50' },
-              { label: 'Dibagikan', value: data.summary.shares || 0, change: '+0%', icon: 'M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z', color: 'text-orange-600 bg-orange-50' }
-            ]);
+            setStatValues({
+              views:     data.summary.views     || 0,
+              searches:  data.summary.searches  || 0,
+              saves:     data.summary.saves     || 0,
+              downloads: data.summary.downloads || 0,
+              shares:    data.summary.shares    || 0,
+            });
+            setStatChanges({
+              views: '+0%', searches: '+0%', saves: '+0%', downloads: '+0%', shares: '+0%',
+            });
           }
         } else {
-          setError(data.message || 'Gagal memuat riwayat log');
+          setError(data.message || t('load_failed'));
         }
       })
-      .catch(err => setError('Gagal memuat: ' + err.message))
+      .catch(err => setError(`${t('error_prefix')} ${err.message}`))
       .finally(() => setLoading(false));
-  }, [user?.orcid, timeRange, activityTypes, searchQuery]);
+  }, [user?.orcid, timeRange, activityTypes, searchQuery, t]);
 
   const activities = [
     {
@@ -118,10 +136,10 @@ const LogHistory = () => {
     return (
       <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
         <div className="text-center py-20">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">ORCID Belum Terhubung</h2>
-          <p className="text-gray-600 mb-6">Hubungkan ORCID Anda untuk melihat riwayat log.</p>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">{t('no_orcid.title')}</h2>
+          <p className="text-gray-600 mb-6">{t('no_orcid.subtitle')}</p>
           <Link to="/settings" className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700">
-            Hubungkan ORCID
+            {t('no_orcid.cta')}
           </Link>
         </div>
       </main>
@@ -137,7 +155,7 @@ const LogHistory = () => {
       {loading && (
         <div className="flex items-center justify-center py-20">
           <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mr-3" />
-          <span className="text-gray-600">Memuat riwayat log…</span>
+          <span className="text-gray-600">{t('loading')}</span>
         </div>
       )}
 
@@ -145,30 +163,28 @@ const LogHistory = () => {
       <>
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-4">
-        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
+        <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
-        <Link to="/dashboard" className="hover:text-indigo-600 transition-colors">Dashboard</Link>
+        <Link to="/dashboard" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.dashboard')}</Link>
         <span className="text-gray-400">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
-        <span className="text-gray-900 font-medium">Log History</span>
+        <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
       </nav>
 
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Log History</h1>
-          <p className="text-gray-600 max-w-2xl">
-            Lihat riwayat aktivitas Anda di Sciecola. Anda dapat memantau artikel yang dilihat, pencarian yang dilakukan, koleksi, unduhan, dan aktivitas lainnya.
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
+          <p className="text-gray-600 max-w-2xl">{t('subtitle')}</p>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
           <div className="relative flex-grow md:flex-grow-0">
             <input
               type="text"
-              placeholder="Cari dalam riwayat..."
+              placeholder={t('search_ph')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full md:w-72 pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
@@ -181,25 +197,27 @@ const LogHistory = () => {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
             </svg>
-            Filter
+            {t('filter')}
           </button>
         </div>
       </div>
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-        {summaryStats.map((stat, idx) => (
-          <div key={idx} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+        {STAT_META.map((meta) => (
+          <div key={meta.key} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
             <div className="flex items-center gap-3 mb-2">
-              <div className={`w-10 h-10 ${stat.color} rounded-full flex items-center justify-center`}>
+              <div className={`w-10 h-10 ${meta.color} rounded-full flex items-center justify-center`}>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={stat.icon} />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={meta.icon} />
                 </svg>
               </div>
-              <span className="text-sm text-gray-600 font-medium">{stat.label}</span>
+              <span className="text-sm text-gray-600 font-medium">{t(`stats.${meta.key}`)}</span>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-            <p className="text-xs font-medium text-green-600 mt-1">{stat.change} dari 30 hari lalu</p>
+            <p className="text-2xl font-bold text-gray-900">{statValues[meta.key]}</p>
+            <p className="text-xs font-medium text-green-600 mt-1">
+              {statChanges[meta.key]} {t('stats.change_suffix')}
+            </p>
           </div>
         ))}
       </div>
@@ -210,26 +228,18 @@ const LogHistory = () => {
         <aside className="lg:col-span-1 space-y-8">
           {/* Time Range */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-3">Rentang Waktu</h3>
+            <h3 className="font-semibold text-gray-900 mb-3">{t('time_range_title')}</h3>
             <div className="space-y-2">
-              {[
-                { id: 'all', label: 'Semua Waktu' },
-                { id: 'today', label: 'Hari Ini' },
-                { id: '7days', label: '7 Hari Terakhir' },
-                { id: '30days', label: '30 Hari Terakhir' },
-                { id: '3months', label: '3 Bulan Terakhir' },
-                { id: 'year', label: 'Tahun Ini' },
-                { id: 'custom', label: 'Kustom' }
-              ].map((opt) => (
-                <label key={opt.id} className="flex items-center gap-2.5 cursor-pointer group">
+              {TIME_RANGES.map((id) => (
+                <label key={id} className="flex items-center gap-2.5 cursor-pointer group">
                   <input
                     type="radio"
                     name="timeRange"
-                    checked={timeRange === opt.id}
-                    onChange={() => setTimeRange(opt.id)}
+                    checked={timeRange === id}
+                    onChange={() => setTimeRange(id)}
                     className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
                   />
-                  <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">{opt.label}</span>
+                  <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">{t(`time_range.${id}`)}</span>
                 </label>
               ))}
             </div>
@@ -237,25 +247,17 @@ const LogHistory = () => {
 
           {/* Activity Types */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-3">Jenis Aktivitas</h3>
+            <h3 className="font-semibold text-gray-900 mb-3">{t('activity_types_title')}</h3>
             <div className="space-y-2">
-              {[
-                { id: 'all', label: 'Semua Aktivitas' },
-                { id: 'view', label: 'Dilihat' },
-                { id: 'search', label: 'Pencarian' },
-                { id: 'bookmark', label: 'Disimpan' },
-                { id: 'download', label: 'Diunduh' },
-                { id: 'share', label: 'Dibagikan' },
-                { id: 'comment', label: 'Komentar' }
-              ].map((act) => (
-                <label key={act.id} className="flex items-center gap-2.5 cursor-pointer group">
+              {ACTIVITY_TYPES.map((id) => (
+                <label key={id} className="flex items-center gap-2.5 cursor-pointer group">
                   <input
                     type="checkbox"
-                    checked={activityTypes.includes(act.id)}
-                    onChange={() => handleActivityToggle(act.id)}
+                    checked={activityTypes.includes(id)}
+                    onChange={() => handleActivityToggle(id)}
                     className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                   />
-                  <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">{act.label}</span>
+                  <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">{t(`activity_types.${id}`)}</span>
                 </label>
               ))}
             </div>
@@ -263,17 +265,17 @@ const LogHistory = () => {
 
           {/* Content Types */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-3">Tipe Konten</h3>
+            <h3 className="font-semibold text-gray-900 mb-3">{t('content_types_title')}</h3>
             <div className="space-y-2">
-              {['Artikel', 'Jurnal', 'Peneliti', 'Institusi', 'SDGs', 'Berita', 'Lainnya'].map((type) => (
+              {CONTENT_TYPES.map((type) => (
                 <label key={type} className="flex items-center gap-2.5 cursor-pointer group">
                   <input
                     type="checkbox"
                     checked={contentTypes.includes(type)}
-                    onChange={() => setContentTypes(contentTypes.includes(type) ? contentTypes.filter(t => t !== type) : [...contentTypes, type])}
+                    onChange={() => setContentTypes(contentTypes.includes(type) ? contentTypes.filter(x => x !== type) : [...contentTypes, type])}
                     className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                   />
-                  <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">{type}</span>
+                  <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">{t(`content_types.${type}`)}</span>
                 </label>
               ))}
             </div>
@@ -283,22 +285,22 @@ const LogHistory = () => {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
             </svg>
-            Bersihkan Filter
+            {t('clear_filters')}
           </button>
         </aside>
 
         {/* Activity List */}
         <div className="lg:col-span-3">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Semua Aktivitas</h2>
+            <h2 className="text-xl font-bold text-gray-900">{t('list_title')}</h2>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               className="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer"
             >
-              <option value="newest">Terbaru</option>
-              <option value="oldest">Terlama</option>
-              <option value="views">Paling Dilihat</option>
+              <option value="newest">{t('sort.newest')}</option>
+              <option value="oldest">{t('sort.oldest')}</option>
+              <option value="views">{t('sort.views')}</option>
             </select>
           </div>
 
@@ -358,7 +360,7 @@ const LogHistory = () => {
               </div>
             )) : (
               <div className="px-6 py-12 text-center text-gray-500">
-                <p>Tidak ada log history untuk periode ini.</p>
+                <p>{t('empty')}</p>
               </div>
             )}
           </div>
@@ -366,7 +368,7 @@ const LogHistory = () => {
           {logHistory.length > 0 && (
           <div className="mt-6 text-center">
             <button className="px-6 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 hover:border-gray-300 transition-all inline-flex items-center gap-2 shadow-sm">
-              Muat Lebih Banyak
+              {t('load_more')}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
               </svg>

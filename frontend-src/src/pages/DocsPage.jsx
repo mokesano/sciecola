@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { useParams, Link, Navigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 // Lazy-load each MDX document
 const DOC_MODULES = {
@@ -56,23 +57,27 @@ const MDX_COMPONENTS = {
 
 export default function DocsPage() {
   const { slug } = useParams();
+  const { t } = useTranslation('docs_page');
   const Doc = DOC_MODULES[slug];
 
   if (!Doc) return <Navigate to="/docs/documentation" replace />;
+
+  // Fallback to the humanized slug if no translation exists for a slug.
+  const slugLabel = (key) => t(`sidebar.${key}`, { defaultValue: key.replace(/-/g, ' ') });
 
   return (
     <main className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
-        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
+        <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
-        <Link to="/docs/documentation" className="hover:text-indigo-600 transition-colors">Dokumentasi</Link>
+        <Link to="/docs/documentation" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.docs')}</Link>
         <span className="text-gray-400">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
-        <span className="text-gray-900 font-medium capitalize">{slug.replace(/-/g, ' ')}</span>
+        <span className="text-gray-900 font-medium">{slugLabel(slug)}</span>
       </nav>
 
       {/* Sidebar navigation */}
@@ -83,13 +88,13 @@ export default function DocsPage() {
               <Link
                 key={key}
                 to={`/docs/${key}`}
-                className={`block px-3 py-2 rounded-lg text-sm font-medium transition-colors capitalize ${
+                className={`block px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   key === slug
                     ? 'bg-indigo-50 text-indigo-700'
                     : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                 }`}
               >
-                {key.replace(/-/g, ' ')}
+                {slugLabel(key)}
               </Link>
             ))}
           </nav>

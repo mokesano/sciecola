@@ -1,0 +1,52 @@
+{
+  "breadcrumb": {
+    "home":    "Beranda",
+    "help":    "Bantuan",
+    "current": "Tutorial Ekspor"
+  },
+  "title":     "Tutorial Ekspor Hasil",
+  "subtitle":  "Panduan lengkap mengekspor hasil analisis SDGs ke berbagai format",
+  "duration":  "4 menit",
+  "level":     "Pemula",
+  "about_title": "Tentang Tutorial Ini",
+  "about_body":  "Tutorial ini akan memandu Anda langkah demi langkah untuk mengekspor hasil analisis SDGs ke berbagai format seperti PDF, CSV, Excel, dan JSON. Fitur ekspor memungkinkan Anda menyimpan, membagikan, dan mengintegrasikan hasil penelitian dengan sistem lain.",
+  "steps_title": "Langkah-langkah",
+  "steps": [
+    { "title": "Selesaikan Analisis", "description": "Pastikan Anda telah menyelesaikan analisis SDGs terhadap artikel atau profil peneliti." },
+    { "title": "Klik Tombol Ekspor", "description": "Pada halaman hasil analisis, klik tombol ‘Ekspor Hasil’ di pojok kanan atas." },
+    { "title": "Pilih Format", "description": "Pilih format ekspor yang sesuai dengan kebutuhan Anda (PDF, CSV, Excel, atau JSON)." },
+    { "title": "Unduh & Bagikan", "description": "File akan otomatis diunduh. Anda dapat menyimpannya atau membagikannya kepada kolega." }
+  ],
+  "formats_title": "Format Ekspor Tersedia",
+  "formats_use_label": "Kegunaan:",
+  "formats": [
+    { "title": "PDF Document",       "description": "Format dokumen portabel yang ideal untuk laporan resmi, presentasi, dan arsip.",       "useCase": "Laporan institusi, publikasi, dokumentasi resmi",     "features": ["Layout tetap", "Siap cetak", "Universal"] },
+    { "title": "CSV Data",           "description": "Format data mentah yang dapat dibuka di berbagai aplikasi spreadsheet.",              "useCase": "Analisis data lanjutan, import ke tools statistik",   "features": ["Ringan", "Kompatibel luas", "Mudah diproses"] },
+    { "title": "Excel Spreadsheet",  "description": "Format spreadsheet dengan formatting dan multiple sheet support.",                     "useCase": "Analisis mendalam, pivot table, visualisasi data",    "features": ["Multiple sheet", "Formatting", "Formula ready"] },
+    { "title": "JSON Data",          "description": "Format data terstruktur untuk integrasi API dan pengembangan aplikasi.",              "useCase": "Integrasi sistem, development, automation",           "features": ["Machine readable", "API ready", "Structured"] }
+  ],
+  "pro_tips_title":  "Tips Profesional",
+  "pro_tips": {
+    "data_management": "Manajemen Data",
+    "data_items": [
+      "Beri nama file yang deskriptif dengan tanggal analisis",
+      "Simpan backup di cloud storage untuk keamanan",
+      "Gunakan format CSV/Excel untuk analisis lanjutan"
+    ],
+    "collab": "Berbagi & Kolaborasi",
+    "collab_items": [
+      "PDF ideal untuk distribusi ke stakeholder",
+      "JSON untuk integrasi dengan sistem lain",
+      "Sertakan metadata dalam laporan PDF"
+    ]
+  },
+  "issues_title": "Masalah Umum & Solusi",
+  "issues": [
+    { "problem": "File tidak terunduh",             "solution": "Periksa pengaturan browser Anda untuk pop-up blocker dan izin unduhan." },
+    { "problem": "Data tidak lengkap di ekspor",    "solution": "Pastikan semua bagian hasil analisis telah dimuat sebelum melakukan ekspor." },
+    { "problem": "Format file tidak sesuai",        "solution": "Coba format alternatif atau perbarui browser Anda ke versi terbaru." }
+  ],
+  "cta_title":  "Siap Mengekspor Hasil Analisis Anda?",
+  "cta_body":   "Lakukan analisis SDGs sekarang dan ekspor hasilnya dalam berbagai format untuk kebutuhan penelitian dan pelaporan Anda",
+  "cta_button": "Coba Ekspor Hasil"
+}

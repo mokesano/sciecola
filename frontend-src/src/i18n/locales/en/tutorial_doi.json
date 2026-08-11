@@ -1,0 +1,49 @@
+{
+  "breadcrumb": {
+    "home":    "Home",
+    "help":    "Help",
+    "current": "DOI Tutorial"
+  },
+  "title":     "DOI Analysis Tutorial",
+  "subtitle":  "Step-by-step guide to analyzing research articles using a Digital Object Identifier (DOI)",
+  "duration":  "5 minutes",
+  "level":     "Beginner",
+  "about_title": "About This Tutorial",
+  "about_body":  "This tutorial guides you step by step through analyzing a research article by DOI. A DOI (Digital Object Identifier) is a unique identifier system that lets us pull complete metadata for a scientific article automatically.",
+  "example_title":   "Example of a Valid DOI",
+  "example_copy":    "Copy example DOI",
+  "example_copied":  "Example DOI copied!",
+  "steps_title": "Steps",
+  "steps": [
+    { "title": "Understand the DOI Format",
+      "content": "A DOI (Digital Object Identifier) is a unique identifier for a digital document. The standard format is: 10.xxxx/xxxxx",
+      "tips": "A DOI always starts with “10.” followed by a prefix and suffix separated by a slash (/)." },
+    { "title": "Find the Article's DOI",
+      "content": "The DOI is usually printed on the first page of a journal article, in the metadata section, or in the article URL.",
+      "tips": "Look for the label “DOI:” or “https://doi.org/” on the article page." },
+    { "title": "Copy the DOI Correctly",
+      "content": "Copy the entire DOI string with no spaces or extra characters. Make sure there's no trailing period if the DOI appears at the end of a sentence.",
+      "tips": "Avoid copying “https://doi.org/” — copy just the DOI code (e.g. 10.1038/s41586-021-03616-x)" },
+    { "title": "Analyze the Research Profile",
+      "content": "Enter the DOI in Sciecola to analyze the research profile, citations, and links to SDGs.",
+      "tips": "The system automatically fetches complete metadata for a valid DOI." }
+  ],
+  "tips_prefix": "Tip:",
+  "errors_title": "Common Errors and Fixes",
+  "errors_prefix": "Error:",
+  "solution_prefix": "Fix:",
+  "errors": [
+    { "error": "Including “https://doi.org/” in the input",
+      "solution": "Use just the DOI code (e.g. 10.1038/s41586-021-03616-x)" },
+    { "error": "Whitespace at the start or end of the DOI",
+      "solution": "Make sure there's no space before or after the DOI" },
+    { "error": "Trailing period after the DOI",
+      "solution": "Remove the period if the DOI appears at the end of a sentence" },
+    { "error": "Incomplete DOI",
+      "solution": "Make sure you copied the full DOI including the suffix after the slash" }
+  ],
+  "resources_title": "Additional Resources",
+  "cta_title":  "Ready to Analyze Your Article's DOI?",
+  "cta_body":   "Start now and discover the SDG classification of your research articles",
+  "cta_button": "Try DOI Analysis Now"
+}

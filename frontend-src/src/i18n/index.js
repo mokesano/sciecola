@@ -101,6 +101,20 @@ import idSystemStatus       from './locales/id/system_status.json';
 import enSystemStatus       from './locales/en/system_status.json';
 import idTutorialOrcid      from './locales/id/tutorial_orcid.json';
 import enTutorialOrcid      from './locales/en/tutorial_orcid.json';
+import idDocsPage           from './locales/id/docs_page.json';
+import enDocsPage           from './locales/en/docs_page.json';
+import idLogHistory         from './locales/id/log_history.json';
+import enLogHistory         from './locales/en/log_history.json';
+import idTutorialDoi        from './locales/id/tutorial_doi.json';
+import enTutorialDoi        from './locales/en/tutorial_doi.json';
+import idTutorialResults    from './locales/id/tutorial_results.json';
+import enTutorialResults    from './locales/en/tutorial_results.json';
+import idTutorialExport     from './locales/id/tutorial_export.json';
+import enTutorialExport     from './locales/en/tutorial_export.json';
+import idSciecoDashboard    from './locales/id/scieco_dashboard.json';
+import enSciecoDashboard    from './locales/en/scieco_dashboard.json';
+import idCollectionDetail   from './locales/id/collection_detail.json';
+import enCollectionDetail   from './locales/en/collection_detail.json';
 
 // ─── Deteksi bahasa awal ─────────────────────────────────────────────
 // Prioritas: (1) preferensi tersimpan user → (2) bahasa browser →
@@ -171,6 +185,13 @@ i18n
         sitemap:                 idSitemap,
         system_status:           idSystemStatus,
         tutorial_orcid:          idTutorialOrcid,
+        docs_page:               idDocsPage,
+        log_history:             idLogHistory,
+        tutorial_doi:            idTutorialDoi,
+        tutorial_results:        idTutorialResults,
+        tutorial_export:         idTutorialExport,
+        scieco_dashboard:        idSciecoDashboard,
+        collection_detail:       idCollectionDetail,
       },
       en: {
         translation: enCommon,
@@ -221,12 +242,19 @@ i18n
         sitemap:                 enSitemap,
         system_status:           enSystemStatus,
         tutorial_orcid:          enTutorialOrcid,
+        docs_page:               enDocsPage,
+        log_history:             enLogHistory,
+        tutorial_doi:            enTutorialDoi,
+        tutorial_results:        enTutorialResults,
+        tutorial_export:         enTutorialExport,
+        scieco_dashboard:        enSciecoDashboard,
+        collection_detail:       enCollectionDetail,
       },
     },
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams', 'insights_page', 'change_password', 'settings', 'auth', 'my_activity', 'notifications', 'my_statistics', 'messages', 'my_articles', 'dashboard_page', 'my_profile', 'feeds', 'terms', 'privacy', 'faq', 'help', 'sitemap', 'system_status', 'tutorial_orcid'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams', 'insights_page', 'change_password', 'settings', 'auth', 'my_activity', 'notifications', 'my_statistics', 'messages', 'my_articles', 'dashboard_page', 'my_profile', 'feeds', 'terms', 'privacy', 'faq', 'help', 'sitemap', 'system_status', 'tutorial_orcid', 'docs_page', 'log_history', 'tutorial_doi', 'tutorial_results', 'tutorial_export', 'scieco_dashboard', 'collection_detail'],
     interpolation: { escapeValue: false },
   });
 

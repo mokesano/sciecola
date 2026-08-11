@@ -1,0 +1,66 @@
+{
+  "breadcrumb": {
+    "home":      "Home",
+    "dashboard": "Dashboard",
+    "current":   "Log History"
+  },
+  "title":         "Log History",
+  "subtitle":      "Review your activity on Sciecola. Track viewed articles, searches, collections, downloads, and more.",
+  "search_ph":     "Search history…",
+  "filter":        "Filter",
+  "loading":       "Loading log history…",
+  "load_failed":   "Failed to load log history",
+  "error_prefix":  "Failed to load:",
+  "no_orcid": {
+    "title":    "ORCID Not Linked",
+    "subtitle": "Link your ORCID to see your log history.",
+    "cta":      "Link ORCID"
+  },
+  "stats": {
+    "views":     "Views",
+    "searches":  "Searches",
+    "saves":     "Saved",
+    "downloads": "Downloads",
+    "shares":    "Shares",
+    "change_suffix": "vs 30 days ago"
+  },
+  "time_range_title":   "Time Range",
+  "time_range": {
+    "all":      "All Time",
+    "today":    "Today",
+    "7days":    "Last 7 Days",
+    "30days":   "Last 30 Days",
+    "3months":  "Last 3 Months",
+    "year":     "This Year",
+    "custom":   "Custom"
+  },
+  "activity_types_title": "Activity Types",
+  "activity_types": {
+    "all":      "All Activities",
+    "view":     "Views",
+    "search":   "Searches",
+    "bookmark": "Saved",
+    "download": "Downloads",
+    "share":    "Shares",
+    "comment":  "Comments"
+  },
+  "content_types_title": "Content Types",
+  "content_types": {
+    "Artikel":    "Article",
+    "Jurnal":     "Journal",
+    "Peneliti":   "Researcher",
+    "Institusi":  "Institution",
+    "SDGs":       "SDGs",
+    "Berita":     "News",
+    "Lainnya":    "Other"
+  },
+  "clear_filters":  "Clear Filters",
+  "list_title":     "All Activities",
+  "sort": {
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "views":  "Most Viewed"
+  },
+  "empty":     "No log history for this period.",
+  "load_more": "Load More"
+}

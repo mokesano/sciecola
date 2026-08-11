@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 
 const CollectionDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation('collection_detail');
   const { user } = useAuth();
   
   // State Management
@@ -270,7 +272,7 @@ const CollectionDetail = () => {
         if (data.status === 'success') {
           setCollection({ ...collection, ...data.collection });
           setIsEditModalOpen(false);
-          showToast('Koleksi berhasil diperbarui!');
+          showToast(t('toast.updated'));
         } else {
           showToast(data.message || 'Gagal memperbarui koleksi');
         }
@@ -290,7 +292,7 @@ const CollectionDetail = () => {
       .then(r => r.json())
       .then(data => {
         if (data.status === 'success') {
-          showToast('Koleksi berhasil dihapus');
+          showToast(t('toast.deleted'));
           navigate('/my-collections');
         } else {
           showToast(data.message || 'Gagal menghapus koleksi');
@@ -304,17 +306,18 @@ const CollectionDetail = () => {
     
     // In real implementation, call API to remove item
     setItems(items.filter(item => item.id !== itemId));
-    showToast('Item berhasil dihapus dari koleksi');
+    showToast(t('toast.item_removed'));
   };
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
     const now = new Date();
     const diff = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-    if (diff === 0) return 'Hari ini';
-    if (diff === 1) return 'Kemarin';
-    if (diff < 7) return `${diff} hari lalu`;
-    return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+    if (diff === 0) return t('date.today');
+    if (diff === 1) return t('date.yesterday');
+    if (diff < 7)   return t('date.days_ago', { count: diff });
+    const locale = i18n.language === 'id' ? 'id-ID' : 'en-US';
+    return date.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
   const getSDGColor = (sdg) => {
@@ -332,7 +335,7 @@ const CollectionDetail = () => {
       <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
         <div className="flex items-center justify-center py-20">
           <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mr-3" />
-          <span className="text-gray-600">Memuat detail koleksi…</span>
+          <span className="text-gray-600">{t('loading')}</span>
         </div>
       </main>
     );
@@ -342,10 +345,10 @@ const CollectionDetail = () => {
     return (
       <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <h2 className="text-xl font-bold text-red-800 mb-2">Terjadi Kesalahan</h2>
+          <h2 className="text-xl font-bold text-red-800 mb-2">{t('error_title')}</h2>
           <p className="text-red-600 mb-4">{error}</p>
           <Link to="/my-collections" className="text-indigo-600 hover:text-indigo-700 font-medium">
-            ← Kembali ke Koleksi Saya
+            {t('back_link')}
           </Link>
         </div>
       </main>
@@ -356,15 +359,15 @@ const CollectionDetail = () => {
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
-        <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
+        <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
-        <Link to="/dashboard" className="hover:text-indigo-600 transition-colors">Dashboard</Link>
+        <Link to="/dashboard" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.dashboard')}</Link>
         <span className="text-gray-400">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
-        <Link to="/my-collections" className="hover:text-indigo-600 transition-colors">Koleksi Saya</Link>
+        <Link to="/my-collections" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.collections')}</Link>
         <span className="text-gray-400">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
         </span>
@@ -378,9 +381,9 @@ const CollectionDetail = () => {
             <div className="flex items-center gap-3 mb-2">
               <h1 className="text-2xl font-bold text-gray-900">{collection?.name}</h1>
               {collection?.privacy === 'public' ? (
-                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">Publik</span>
+                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">{t('privacy.public')}</span>
               ) : (
-                <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-bold">Privat</span>
+                <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-bold">{t('privacy.private')}</span>
               )}
             </div>
             <p className="text-gray-600 mb-4">{collection?.description}</p>
@@ -404,21 +407,21 @@ const CollectionDetail = () => {
               className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-              Edit
+              {t('actions.edit')}
             </button>
             <button 
-              onClick={() => showToast('Fitur berbagi akan segera hadir')}
+              onClick={() => showToast(t('toast.share_soon'))}
               className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center gap-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
-              Bagikan
+              {t('actions.share')}
             </button>
             <button 
               onClick={handleDeleteCollection}
               className="px-4 py-2 border border-red-300 text-red-700 rounded-lg font-medium hover:bg-red-50 transition-colors flex items-center gap-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-              Hapus
+              {t('actions.delete')}
             </button>
           </div>
         </div>
@@ -427,15 +430,15 @@ const CollectionDetail = () => {
         <div className="flex flex-wrap items-center gap-6 pt-4 border-t border-gray-100">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-            <span>Dibuat oleh <strong>{collection?.owner?.name}</strong></span>
+            <span>{t('meta.created_by')} <strong>{collection?.owner?.name}</strong></span>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-            <span>Dibuat {formatDate(collection?.createdAt)}</span>
+            <span>{t('meta.created_at')} {formatDate(collection?.createdAt)}</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-            <span>Terakhir diupdate {formatDate(collection?.lastUpdated)}</span>
+            <span>{t('meta.last_updated')} {formatDate(collection?.lastUpdated)}</span>
           </div>
         </div>
       </div>
@@ -466,7 +469,7 @@ const CollectionDetail = () => {
           <div className="flex-grow relative">
             <input 
               type="text" 
-              placeholder="Cari judul, penulis, atau jurnal..." 
+              placeholder={t('search_ph')} 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
@@ -476,9 +479,9 @@ const CollectionDetail = () => {
           
           <div className="flex gap-3">
             <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-indigo-500">
-              <option value="date">Tanggal Terbit</option>
-              <option value="citations">Jumlah Sitasi</option>
-              <option value="title">Judul A-Z</option>
+              <option value="date">{t('sort.date')}</option>
+              <option value="citations">{t('sort.citations')}</option>
+              <option value="title">{t('sort.title')}</option>
             </select>
             <div className="flex bg-gray-100 rounded-lg p-1">
               <button 
@@ -522,7 +525,7 @@ const CollectionDetail = () => {
                   <button 
                     onClick={() => handleRemoveItem(item.id)}
                     className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                    title="Hapus dari koleksi"
+                    title={t('item.remove_title')}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                   </button>
@@ -543,7 +546,7 @@ const CollectionDetail = () => {
                         key={sdg}
                         className="w-7 h-7 rounded flex items-center justify-center text-white text-xs font-bold"
                         style={{ backgroundColor: getSDGColor(sdg) }}
-                        title={`SDG ${sdg}`}
+                        title={t('item.sdg_title', { n: sdg })}
                       >
                         {sdg}
                       </span>
@@ -555,7 +558,7 @@ const CollectionDetail = () => {
                   <div className="flex items-center gap-3 text-xs text-gray-500">
                     <span className="flex items-center gap-1">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                      {item.citations} sitasi
+                      {t('item.citations', { count: item.citations })}
                     </span>
                   </div>
                   <a 
@@ -575,16 +578,16 @@ const CollectionDetail = () => {
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center">
           <svg className="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Tidak ada item ditemukan</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('empty.title')}</h3>
           <p className="text-gray-600 mb-6 max-w-md mx-auto">
-            {searchQuery ? 'Coba kata kunci pencarian lain atau reset filter.' : 'Koleksi ini belum memiliki item.'}
+            {searchQuery ? t('empty.with_search') : t('empty.no_items')}
           </p>
           {searchQuery && (
             <button 
               onClick={() => setSearchQuery('')}
               className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors"
             >
-              Reset Pencarian
+              {t('empty.reset')}
             </button>
           )}
         </div>
@@ -595,45 +598,45 @@ const CollectionDetail = () => {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-fade-in">
             <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-              <h3 className="text-lg font-bold text-gray-900">Edit Koleksi</h3>
+              <h3 className="text-lg font-bold text-gray-900">{t('modal.title')}</h3>
               <button onClick={() => setIsEditModalOpen(false)} className="text-gray-400 hover:text-gray-600">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             <form onSubmit={handleUpdateCollection} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Koleksi *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('modal.name_label')}</label>
                 <input 
                   type="text" 
                   required
                   value={editCollection.name}
                   onChange={(e) => setEditCollection({...editCollection, name: e.target.value})}
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Nama koleksi"
+                  placeholder={t('modal.name_ph')}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('modal.desc_label')}</label>
                 <textarea 
                   rows={3}
                   value={editCollection.description}
                   onChange={(e) => setEditCollection({...editCollection, description: e.target.value})}
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
-                  placeholder="Deskripsi koleksi"
+                  placeholder={t('modal.desc_ph')}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tag (pisahkan dengan koma)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('modal.tags_label')}</label>
                 <input 
                   type="text" 
                   value={editCollection.tags}
                   onChange={(e) => setEditCollection({...editCollection, tags: e.target.value})}
                   className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Tag1, Tag2, Tag3"
+                  placeholder={t('modal.tags_ph')}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Privasi</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('modal.privacy_label')}</label>
                 <div className="flex gap-4">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input 
@@ -644,7 +647,7 @@ const CollectionDetail = () => {
                       onChange={(e) => setEditCollection({...editCollection, privacy: e.target.value})}
                       className="text-indigo-600 focus:ring-indigo-500"
                     />
-                    <span className="text-sm text-gray-700">Privat</span>
+                    <span className="text-sm text-gray-700">{t('privacy.private')}</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input 
@@ -655,7 +658,7 @@ const CollectionDetail = () => {
                       onChange={(e) => setEditCollection({...editCollection, privacy: e.target.value})}
                       className="text-indigo-600 focus:ring-indigo-500"
                     />
-                    <span className="text-sm text-gray-700">Publik</span>
+                    <span className="text-sm text-gray-700">{t('privacy.public')}</span>
                   </label>
                 </div>
               </div>
@@ -665,13 +668,13 @@ const CollectionDetail = () => {
                   onClick={() => setIsEditModalOpen(false)}
                   className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                 >
-                  Batal
+                  {t('modal.cancel')}
                 </button>
                 <button 
                   type="submit" 
                   className="flex-1 px-4 py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
                 >
-                  Simpan Perubahan
+                  {t('modal.save')}
                 </button>
               </div>
             </form>

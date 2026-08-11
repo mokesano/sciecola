@@ -1,0 +1,82 @@
+{
+  "breadcrumb": {
+    "home":    "Home",
+    "help":    "Help",
+    "current": "Results Tutorial"
+  },
+  "title":     "Tutorial: Reading SDG Mapping Results",
+  "subtitle":  "A complete guide to interpreting your research analysis results",
+  "duration":  "7 minutes",
+  "level":     "Intermediate",
+  "about_title": "About This Tutorial",
+  "about_body":  "This tutorial walks you through reading and interpreting SDG mapping results for your research. Understanding these results is essential for spotting the strengths of your research portfolio and finding collaboration opportunities.",
+  "steps_title": "Steps",
+  "steps": [
+    { "title": "Understand SDG Match Scores",
+      "description": "Each research article is displayed with a percentage score showing how strongly it maps to a particular SDG.",
+      "details": [
+        "Score 80–100%: Very strong alignment with that SDG",
+        "Score 60–79%: Moderate alignment, relevant to several SDG aspects",
+        "Score 40–59%: Weak alignment, may only touch the topic indirectly",
+        "Score <40%: Minimal or no relevance"
+      ] },
+    { "title": "Analyze the SDG Distribution",
+      "description": "The distribution chart shows how your research topics spread across the 17 SDGs.",
+      "details": [
+        "Identify which SDGs dominate your research portfolio",
+        "Find research gaps for future topic development",
+        "Compare your distribution against global trends or other institutions",
+        "Use the year filter to see how your research focus evolves over time"
+      ] },
+    { "title": "Interpret the Keywords",
+      "description": "The system extracts and maps keywords from research abstracts to the relevant SDGs.",
+      "details": [
+        "Highlighted keywords show the most influential terms in the SDG score",
+        "Click a keyword to see its definition and usage context",
+        "Verify that your key terms are correctly detected",
+        "Add synonyms or term variations if needed to improve accuracy"
+      ] },
+    { "title": "Use the Recommendations",
+      "description": "Based on the analysis, the system recommends ways to strengthen your research alignment with SDGs.",
+      "details": [
+        "Follow the suggestions to broaden your research scope",
+        "Consider collaborating with researchers focused on related SDGs",
+        "Use the recommended references to reinforce your theoretical grounding",
+        "Adjust your methodology to align better with the target SDGs"
+      ] }
+  ],
+  "example": {
+    "title":  "Example Result Interpretation",
+    "article_label":     "Article Title:",
+    "article_title":     "Implementing Blockchain Technology for Transparent Sustainable Food Supply Chains",
+    "sdgs_label":        "Detected SDGs:",
+    "sdgs": [
+      { "goal": 2,  "name": "Zero Hunger",                                "score": 85 },
+      { "goal": 9,  "name": "Industry, Innovation and Infrastructure",     "score": 92 },
+      { "goal": 12, "name": "Responsible Consumption and Production",      "score": 78 }
+    ],
+    "interpretation_label": "Interpretation:",
+    "interpretation":       "This article shows strong alignment with SDG 9 (blockchain technology) and SDG 2 (food security), and moderate contribution to SDG 12 (supply chain sustainability).",
+    "copy":                 "Copy interpretation"
+  },
+  "mistakes_title": "Common Mistakes and Fixes",
+  "mistakes": [
+    { "mistake": "Dismissing low scores",
+      "solution": "A low score doesn't mean the research is worthless. Use it as a chance to identify SDG angles you haven't covered yet." },
+    { "mistake": "Focusing on a single SDG",
+      "solution": "Quality research usually contributes to multiple SDGs. Explore every detected link." },
+    { "mistake": "Not validating keywords",
+      "solution": "Always check that the extracted keywords match your research context. Correct them when needed." },
+    { "mistake": "Ignoring temporal trends",
+      "solution": "Use the time filter to see how your research focus evolves and align it with current SDG priorities." }
+  ],
+  "resources_title": "Additional Resources",
+  "resources": [
+    { "title": "SDG Tracker",              "description": "Latest global data for every SDG",              "url": "https://sdg-tracker.org" },
+    { "title": "UN SDG Knowledge Platform", "description": "Official guidance and SDG documentation",       "url": "https://sustainabledevelopment.un.org" },
+    { "title": "SciVal SDGs",              "description": "SDG-based research benchmarking",               "url": "https://www.scival.com" }
+  ],
+  "cta_title":  "Ready to Analyze Your Research?",
+  "cta_body":   "Put what you learned here into practice to interpret the SDG mapping results for your research",
+  "cta_button": "Try the Analyzer Now"
+}

@@ -1,0 +1,49 @@
+{
+  "breadcrumb": {
+    "home":    "Beranda",
+    "help":    "Bantuan",
+    "current": "Tutorial DOI"
+  },
+  "title":     "Tutorial Analisis DOI",
+  "subtitle":  "Panduan langkah demi langkah untuk menganalisis artikel penelitian menggunakan Digital Object Identifier (DOI)",
+  "duration":  "5 menit",
+  "level":     "Pemula",
+  "about_title": "Tentang Tutorial Ini",
+  "about_body":  "Tutorial ini akan memandu Anda langkah demi langkah untuk menganalisis artikel penelitian menggunakan DOI. DOI (Digital Object Identifier) adalah sistem identifikasi unik yang memungkinkan sistem untuk mengambil metadata lengkap dari artikel ilmiah secara otomatis.",
+  "example_title":   "Contoh Format DOI yang Benar",
+  "example_copy":    "Salin contoh DOI",
+  "example_copied":  "DOI contoh berhasil disalin!",
+  "steps_title": "Langkah-langkah",
+  "steps": [
+    { "title": "Pahami Format DOI",
+      "content": "DOI (Digital Object Identifier) adalah identifikasi unik untuk dokumen digital. Format standar DOI adalah: 10.xxxx/xxxxx",
+      "tips": "DOI selalu dimulai dengan angka “10.” diikuti oleh prefix dan suffix yang dipisahkan dengan garis miring (/)." },
+    { "title": "Temukan DOI Artikel",
+      "content": "DOI biasanya tercantum di halaman pertama artikel jurnal, bagian metadata, atau URL artikel.",
+      "tips": "Cari label “DOI:” atau “https://doi.org/” pada halaman artikel." },
+    { "title": "Salin DOI dengan Benar",
+      "content": "Salin seluruh string DOI tanpa spasi atau karakter tambahan. Pastikan tidak ada titik di akhir kalimat jika DOI berada di akhir paragraf.",
+      "tips": "Hindari menyalin “https://doi.org/” — cukup salin kode DOI-nya saja (contoh: 10.1038/s41586-021-03616-x)" },
+    { "title": "Analisis Profil Penelitian",
+      "content": "Masukkan DOI ke dalam sistem Sciecola untuk menganalisis profil penelitian, sitasi, dan keterkaitan dengan SDGs.",
+      "tips": "Sistem akan otomatis mengambil metadata lengkap dari DOI yang valid." }
+  ],
+  "tips_prefix": "Tips Penting:",
+  "errors_title": "Kesalahan Umum dan Solusinya",
+  "errors_prefix": "Kesalahan:",
+  "solution_prefix": "Solusi:",
+  "errors": [
+    { "error": "Menyertakan “https://doi.org/” dalam input",
+      "solution": "Gunakan hanya kode DOI (contoh: 10.1038/s41586-021-03616-x)" },
+    { "error": "Spasi di awal atau akhir DOI",
+      "solution": "Pastikan tidak ada spasi sebelum atau setelah DOI" },
+    { "error": "Titik di akhir DOI",
+      "solution": "Hapus titik jika DOI berada di akhir kalimat" },
+    { "error": "DOI tidak lengkap",
+      "solution": "Pastikan menyalin seluruh string DOI termasuk suffix setelah garis miring" }
+  ],
+  "resources_title": "Sumber Daya Tambahan",
+  "cta_title":  "Siap Menganalisis DOI Artikel Anda?",
+  "cta_body":   "Mulai analisis sekarang dan temukan klasifikasi SDG dari artikel penelitian Anda",
+  "cta_button": "Coba Analisis DOI Sekarang"
+}

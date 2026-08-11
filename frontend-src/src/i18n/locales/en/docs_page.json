@@ -1,0 +1,12 @@
+{
+  "breadcrumb": {
+    "home": "Home",
+    "docs": "Documentation"
+  },
+  "sidebar": {
+    "help":            "Help",
+    "faq":             "FAQ",
+    "api-reference":   "API Reference",
+    "documentation":   "Documentation"
+  }
+}
