@@ -1,0 +1,111 @@
+{
+  "tabs": {
+    "dashboard":          "Dashboard",
+    "impact-config":      "Konfigurasi WIS",
+    "api-security":       "API & Keamanan",
+    "user-management":    "Pengguna",
+    "content-moderation": "Konten",
+    "ui-customization":   "Tampilan",
+    "system":             "Sistem",
+    "crawl-queue":        "Crawl Queue",
+    "cache-migration":    "Cache & DB",
+    "audit":              "Audit Log"
+  },
+  "dashboard": {
+    "title":       "Dashboard Admin",
+    "description": "Ringkasan aktivitas dan metrik sistem WIZDAM",
+    "stats": {
+      "users":    "Total Pengguna",
+      "api_keys": "API Key Aktif",
+      "requests": "Permintaan/Hari",
+      "uptime":   "Uptime"
+    },
+    "recent_activity": "Aktivitas Terbaru"
+  },
+  "wis": {
+    "total_prefix": "Total:",
+    "must_be_100":  "Harus 100%"
+  },
+  "api_security": {
+    "title":        "API & Keamanan",
+    "description":  "Konfigurasi kunci API eksternal dan kebijakan keamanan platform.",
+    "external_keys":"Kunci API Eksternal",
+    "user_keys":    "Manajemen API Key Pengguna",
+    "helpers": {
+      "cloudflareTurnstile": "Digunakan untuk proteksi bot pada form registrasi & login",
+      "recaptchaV3":         "Verifikasi manusia invisible untuk aksi sensitif",
+      "sangiaApi":           "Kunci rahasia untuk komunikasi backend Sangia Engine"
+    },
+    "table": {
+      "user":    "Pengguna",
+      "api_key": "API Key",
+      "created": "Dibuat",
+      "status":  "Status",
+      "actions": "Aksi"
+    },
+    "revoke": "Cabut"
+  },
+  "users": {
+    "title":       "Manajemen Pengguna",
+    "description": "Kelola akun peneliti, peran, dan status akses.",
+    "table": {
+      "name_email": "Nama & Email",
+      "role":       "Peran",
+      "status":     "Status",
+      "joined":     "Bergabung",
+      "actions":    "Aksi"
+    },
+    "actions": {
+      "promote":   "Jadikan Co-Admin",
+      "suspend":   "Tangguhkan",
+      "disable":   "Nonaktifkan",
+      "activate":  "Aktifkan",
+      "delete":    "Hapus"
+    }
+  },
+  "content": {
+    "title":       "Moderasi Konten",
+    "description": "Kontrol visibilitas halaman utama untuk setiap modul konten.",
+    "saving":      "Menyimpan…",
+    "save":        "Simpan Pengaturan",
+    "toggles": {
+      "showJournalsMain":     { "label": "Tampilkan Halaman Utama Journals",     "desc": "Jika dinonaktifkan, halaman /journals akan redirect ke dashboard" },
+      "showInstitutionsMain": { "label": "Tampilkan Halaman Utama Institutions", "desc": "Mengontrol akses publik ke daftar institusi mitra" },
+      "showResearchersMain":  { "label": "Tampilkan Halaman Utama Researchers",  "desc": "Menyembunyikan direktori peneliti dari publik" }
+    }
+  },
+  "ui": {
+    "title":        "Kustomisasi Tampilan",
+    "description":  "Sesuaikan tema, tipografi, dan visualisasi aplikasi.",
+    "applying":     "Menerapkan…",
+    "apply":        "Terapkan Perubahan",
+    "color_theme":  "Tema Warna",
+    "primary":      "Warna Primer",
+    "secondary":    "Warna Sekunder",
+    "font":         "Font Utama",
+    "chart_type":   "Jenis Grafik Default"
+  },
+  "system": {
+    "title":       "Pengaturan Sistem",
+    "description": "Konfigurasi global untuk perilaku dan kebijakan platform.",
+    "saving":      "Menyimpan…",
+    "save":        "Simpan Pengaturan",
+    "maintenance":       "Mode Pemeliharaan",
+    "maintenance_desc":  "Aktifkan untuk menampilkan halaman maintenance ke semua pengguna non-admin",
+    "registration":      "Izinkan Pendaftaran Baru",
+    "registration_desc": "Nonaktifkan untuk mode invite-only",
+    "email_verify":      "Verifikasi Email Wajib",
+    "email_verify_desc": "Pengguna harus verifikasi email sebelum akses penuh"
+  },
+  "audit": {
+    "title":       "Audit Log",
+    "description": "Riwayat lengkap aksi administratif dan perubahan sistem.",
+    "table": {
+      "time":   "Waktu",
+      "admin":  "Admin",
+      "action": "Aksi",
+      "target": "Target",
+      "status": "Status"
+    }
+  }
+}

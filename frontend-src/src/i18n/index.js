@@ -117,6 +117,8 @@ import idCollectionDetail   from './locales/id/collection_detail.json';
 import enCollectionDetail   from './locales/en/collection_detail.json';
 import idContact            from './locales/id/contact.json';
 import enContact            from './locales/en/contact.json';
+import idAdmin              from './locales/id/admin.json';
+import enAdmin              from './locales/en/admin.json';
 
 // ─── Deteksi bahasa awal ─────────────────────────────────────────────
 // Prioritas: (1) preferensi tersimpan user → (2) bahasa browser →
@@ -195,6 +197,7 @@ i18n
         scieco_dashboard:        idSciecoDashboard,
         collection_detail:       idCollectionDetail,
         contact:                 idContact,
+        admin:                   idAdmin,
       },
       en: {
         translation: enCommon,
@@ -253,12 +256,13 @@ i18n
         scieco_dashboard:        enSciecoDashboard,
         collection_detail:       enCollectionDetail,
         contact:                 enContact,
+        admin:                   enAdmin,
       },
     },
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams', 'insights_page', 'change_password', 'settings', 'auth', 'my_activity', 'notifications', 'my_statistics', 'messages', 'my_articles', 'dashboard_page', 'my_profile', 'feeds', 'terms', 'privacy', 'faq', 'help', 'sitemap', 'system_status', 'tutorial_orcid', 'docs_page', 'log_history', 'tutorial_doi', 'tutorial_results', 'tutorial_export', 'scieco_dashboard', 'collection_detail', 'contact'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams', 'insights_page', 'change_password', 'settings', 'auth', 'my_activity', 'notifications', 'my_statistics', 'messages', 'my_articles', 'dashboard_page', 'my_profile', 'feeds', 'terms', 'privacy', 'faq', 'help', 'sitemap', 'system_status', 'tutorial_orcid', 'docs_page', 'log_history', 'tutorial_doi', 'tutorial_results', 'tutorial_export', 'scieco_dashboard', 'collection_detail', 'contact', 'admin'],
     interpolation: { escapeValue: false },
   });
 
