@@ -219,7 +219,7 @@ const TeamMemberProfile = () => {
         </div>
       </AmbientSection>
 
-      <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
 
         {/* Identifier strip — each source keyed by its own brand colour. */}
         {(identifiers.length > 0 || m.email || social.length > 0) && (
