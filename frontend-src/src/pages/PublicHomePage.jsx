@@ -113,7 +113,7 @@ const SectionHead = ({ eyebrow, title, subtitle, align = 'center', className = '
     {eyebrow && (
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-700">{eyebrow}</p>
     )}
-    <h2 className="mt-3 font-serif text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">{title}</h2>
+    <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">{title}</h2>
     {subtitle && <p className="mt-4 text-base leading-relaxed text-slate-600">{subtitle}</p>}
     {children}
   </div>
@@ -218,14 +218,14 @@ const PublicHomePage = () => {
       {/* tiga blob blur. Kotak pencarian jadi pusat perhatian, karena  */}
       {/* penelusuran profil memang tidak memerlukan login.             */}
       {/* ============================================================ */}
-      <section className="relative overflow-hidden border-b border-slate-200 bg-white">
+      <section className="relative overflow-hidden border-b border-indigo-100 bg-indigo-50">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-[0.55]"
           style={{
             backgroundImage:
-              'linear-gradient(to right, #e2e8f0 1px, transparent 1px),' +
-              'linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)',
+              'linear-gradient(to right, #c7d2fe 1px, transparent 1px),' +
+              'linear-gradient(to bottom, #c7d2fe 1px, transparent 1px)',
             backgroundSize: '64px 64px',
             maskImage: 'radial-gradient(ellipse 70% 60% at 50% 0%, #000 40%, transparent 100%)',
             WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 0%, #000 40%, transparent 100%)',
@@ -238,7 +238,7 @@ const PublicHomePage = () => {
             {text(pick('hero.badge'), t, 'hero.badge')}
           </span>
 
-          <h1 className="mt-7 font-serif text-4xl font-semibold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+          <h1 className="mt-7 text-4xl font-semibold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
             {text(pick('hero.title_1'), t, 'hero.title_1')}{' '}
             <span className="text-indigo-600">
               {text(pick('hero.title_2'), t, 'hero.title_2')}
@@ -254,8 +254,10 @@ const PublicHomePage = () => {
           {Array.isArray(heroHighlights) && heroHighlights.length > 0 && (
             <ul className="mx-auto mt-8 grid max-w-2xl gap-x-8 gap-y-2.5 text-left sm:grid-cols-2">
               {heroHighlights.map((item, i) => (
-                <li key={i} className="flex items-start gap-2.5 text-[15px] leading-snug text-slate-700">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-indigo-600" />
+                <li key={i} className="flex items-start gap-3 text-[15px] leading-snug text-slate-800">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white">
+                    <Check className="h-3 w-3" strokeWidth={3} />
+                  </span>
                   {item}
                 </li>
               ))}
@@ -266,7 +268,7 @@ const PublicHomePage = () => {
 
           <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link to="/login"
-              className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-6 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-slate-800">
+              className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-[15px] font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700">
               {text(pick('hero.cta_primary'), t, 'hero.cta_primary')}
               <ArrowRight className="h-4 w-4" />
             </Link>
@@ -298,7 +300,7 @@ const PublicHomePage = () => {
             <dl className="mt-10 grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-4">
               {stats.map((s, i) => (
                 <div key={i} className="text-center">
-                  <dd className="text-4xl font-semibold tabular-nums tracking-tight sm:text-5xl">
+                  <dd className="text-4xl font-bold tabular-nums tracking-tight text-indigo-400 sm:text-5xl">
                     {s.value}
                   </dd>
                   <div aria-hidden className="mx-auto mt-4 h-px w-10 bg-indigo-500" />
@@ -323,16 +325,18 @@ const PublicHomePage = () => {
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f, i) => (
               <div key={i}
-                className="group rounded-xl border border-slate-200 bg-white p-6 transition-colors hover:border-slate-300">
+                className="group rounded-xl border border-slate-200 bg-white p-6 transition-all hover:border-indigo-300 hover:shadow-md hover:shadow-indigo-100">
                 <div className="flex items-start justify-between gap-3">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-indigo-600 text-white">
+                    <f.Icon className="h-5 w-5" />
+                  </span>
                   {f.label && (
-                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-indigo-700">
+                    <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.1em] text-indigo-700">
                       {f.label}
                     </span>
                   )}
-                  <f.Icon className="h-4 w-4 shrink-0 text-slate-300 transition-colors group-hover:text-indigo-600" />
                 </div>
-                <h3 className="mt-5 font-serif text-lg font-semibold tracking-tight text-slate-900">{f.title}</h3>
+                <h3 className="mt-5 text-lg font-semibold tracking-tight text-slate-900">{f.title}</h3>
                 <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{f.desc}</p>
               </div>
             ))}
@@ -357,13 +361,13 @@ const PublicHomePage = () => {
               {sdgList.map((sdg) => (
                 <Link key={sdg.sdg} to="/sdgs" className="group flex flex-col items-center">
                   <div
-                    className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-lg transition-transform group-hover:scale-[1.04]"
+                    className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-lg shadow-sm transition-transform group-hover:scale-[1.06]"
                     style={{ backgroundColor: sdg.color }}
                   >
                     <img
                       src={`/assets/sdgs/icons/sdg-${sdg.sdg}.svg`}
                       alt={`SDG ${sdg.sdg}`}
-                      className="h-11 w-11 object-contain"
+                      className="h-14 w-14 object-contain"
                       onError={(e) => {
                         e.target.style.display = 'none';
                         e.target.parentElement.innerHTML =
@@ -402,12 +406,12 @@ const PublicHomePage = () => {
 
           <ol className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {steps.map((item) => (
-              <li key={item.step} className="border-t-2 border-slate-900 pt-5">
+              <li key={item.step} className="border-t-2 border-indigo-600 pt-5">
                 <div className="flex items-center gap-3">
-                  <span className="font-mono text-sm tabular-nums text-slate-400">
-                    {String(item.step).padStart(2, '0')}
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-sm font-bold tabular-nums text-white">
+                    {item.step}
                   </span>
-                  <item.Icon className="h-4 w-4 text-indigo-600" />
+                  <item.Icon className="h-5 w-5 text-indigo-600" />
                 </div>
                 <h3 className="mt-3 text-lg font-semibold tracking-tight text-slate-900">{item.title}</h3>
                 <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{item.desc}</p>
@@ -525,22 +529,22 @@ const PublicHomePage = () => {
       {/* ============================================================ */}
       {/* CTA — panel gelap pekat, tanpa gradien maupun orb blur.       */}
       {/* ============================================================ */}
-      <section className="bg-slate-900 py-24 text-white">
+      <section className="bg-indigo-700 py-24 text-white">
         <div className="mx-auto max-w-4xl px-6 text-center lg:px-8">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-[15px] font-medium text-slate-300">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-[15px] font-medium text-white">
             {text(pick('cta_section.badge'), t, 'cta_section.badge')}
           </span>
 
-          <h2 className="mt-6 font-serif text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
+          <h2 className="mt-6 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
             {text(pick('cta_section.title'), t, 'cta_section.title')}
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-300">
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-indigo-100">
             {text(pick('cta_section.subtitle'), t, 'cta_section.subtitle')}
           </p>
 
           <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link to="/register"
-              className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-[15px] font-semibold text-slate-900 transition-colors hover:bg-slate-100">
+              className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-[15px] font-semibold text-indigo-700 shadow-sm transition-colors hover:bg-indigo-50">
               {text(pick('cta_section.cta_primary'), t, 'cta_section.cta_primary')}
               <ArrowRight className="h-4 w-4" />
             </Link>
@@ -550,10 +554,10 @@ const PublicHomePage = () => {
             </Link>
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[15px] text-slate-400">
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[15px] text-indigo-200">
             {(Array.isArray(trustSignals) ? trustSignals : []).map((label, i) => (
               <span key={i} className="flex items-center gap-1.5">
-                <Check className="h-3.5 w-3.5 text-indigo-400" />
+                <Check className="h-4 w-4 text-white" strokeWidth={3} />
                 {label}
               </span>
             ))}

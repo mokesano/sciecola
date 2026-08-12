@@ -59,6 +59,20 @@ const MemberCard = ({ member, t }) => (
   </Link>
 );
 
+/*
+ * Grid mengikuti jumlah anggota di grup, bukan dikunci empat kolom. Satu
+ * anggota di grid empat kolom menyisakan tiga sel kosong dan membuat halaman
+ * terlihat rusak. Kelas ditulis utuh (bukan dirangkai dari variabel) supaya
+ * tetap terbaca pemindai kelas Tailwind.
+ */
+function gridForCount(n) {
+  if (n === 1) return 'grid-cols-1 max-w-xs';
+  if (n === 2) return 'grid-cols-1 sm:grid-cols-2 max-w-xl';
+  if (n === 3) return 'grid-cols-2 sm:grid-cols-3 max-w-3xl';
+  if (n === 4) return 'grid-cols-2 sm:grid-cols-4 max-w-4xl';
+  return 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4';
+}
+
 /* ─── main ────────────────────────────────────────────────────────────────── */
 const Teams = () => {
   const { t } = useTranslation('teams');
@@ -131,7 +145,7 @@ const Teams = () => {
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-700">
             {t('breadcrumb.current')}
           </p>
-          <h1 className="mt-3 font-serif text-4xl font-semibold tracking-tight text-slate-900 lg:text-5xl">
+          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900 lg:text-5xl">
             {t('header.title')}
           </h1>
           <p className="mt-5 text-base leading-relaxed text-slate-600">
@@ -140,7 +154,7 @@ const Teams = () => {
         </header>
 
         {/* Key figures */}
-        {!loading && !error && members.length > 0 && (
+        {!loading && !error && members.length > 2 && (
           <dl className="mx-auto mt-12 grid max-w-2xl grid-cols-3 divide-x divide-slate-200 border-y border-slate-200">
             <Figure value={members.length}     label={t('stats.members')} />
             <Figure value={departments.length} label={t('stats.departments')} />
@@ -150,7 +164,9 @@ const Teams = () => {
 
         {/* Filters — sticks below the navbar so filtering stays reachable
             while scrolling a long roster. */}
-        {!loading && !error && members.length > 0 && (
+        {/* Menyaring daftar yang muat dalam satu layar tidak ada gunanya —
+            bilahnya baru muncul saat rosternya cukup panjang. */}
+        {!loading && !error && members.length > 6 && (
           <div className="sticky top-20 z-30 -mx-4 mt-2 border-b border-slate-200 bg-white px-4 py-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="relative w-full lg:max-w-xs">
@@ -207,14 +223,18 @@ const Teams = () => {
             <div className="mt-16 space-y-20">
               {Object.entries(grouped).map(([deptName, list]) => (
                 <section key={deptName}>
-                  <div className="mb-12 text-center">
-                    <h2 className="font-serif text-2xl font-semibold tracking-tight text-slate-900">
-                      {deptName}
-                    </h2>
-                    <div aria-hidden className="mx-auto mt-3 h-px w-10 bg-indigo-600" />
-                    <p className="mt-3 text-[15px] tabular-nums text-slate-400">{list.length}</p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
+                  {/* Judul divisi hanya berguna kalau ada divisi lain untuk
+                      dibedakan. Satu grup tunggal cukup memakai judul halaman. */}
+                  {Object.keys(grouped).length > 1 && (
+                    <div className="mb-12 text-center">
+                      <h2 className="text-2xl font-semibold tracking-tight text-slate-900">
+                        {deptName}
+                      </h2>
+                      <div aria-hidden className="mx-auto mt-3 h-px w-10 bg-indigo-600" />
+                      <p className="mt-3 text-[15px] tabular-nums text-slate-400">{list.length}</p>
+                    </div>
+                  )}
+                  <div className={`mx-auto grid gap-x-6 gap-y-12 ${gridForCount(list.length)}`}>
                     {list.map(m => <MemberCard key={m.id} member={m} t={t} />)}
                   </div>
                 </section>
@@ -231,14 +251,14 @@ const Teams = () => {
         )}
 
         {/* Enquiries */}
-        <section className="mt-16 rounded-lg bg-slate-900 px-6 py-10 text-white sm:px-10">
+        <section className="mt-16 rounded-lg bg-indigo-700 px-6 py-10 text-white sm:px-10">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="max-w-xl">
-              <h3 className="font-serif text-2xl font-semibold tracking-tight">{t('cta.title')}</h3>
-              <p className="mt-2 text-[15px] leading-relaxed text-slate-300">{t('cta.subtitle')}</p>
+              <h3 className="text-2xl font-semibold tracking-tight">{t('cta.title')}</h3>
+              <p className="mt-2 text-[15px] leading-relaxed text-indigo-100">{t('cta.subtitle')}</p>
             </div>
             <Link to="/contact"
-              className="inline-flex shrink-0 items-center justify-center rounded-lg bg-white px-6 py-2.5 text-[15px] font-semibold text-slate-900 transition-colors hover:bg-slate-100">
+              className="inline-flex shrink-0 items-center justify-center rounded-lg bg-white px-6 py-2.5 text-[15px] font-semibold text-indigo-700 transition-colors hover:bg-indigo-50">
               {t('cta.button')}
             </Link>
           </div>

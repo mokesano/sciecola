@@ -39,7 +39,7 @@ const Hero = () => {
             {t('hero.badge')}
           </span>
 
-          <h1 className="mb-6 font-serif text-4xl font-semibold leading-[1.15] tracking-tight text-slate-900 md:text-5xl">
+          <h1 className="mb-6 text-4xl font-semibold leading-[1.15] tracking-tight text-slate-900 md:text-5xl">
             {t('hero.title_1')} <br className="hidden lg:block" />
             {t('hero.title_2')}{' '}
             <span className="text-indigo-600">{t('hero.title_highlight')}</span>
@@ -52,7 +52,7 @@ const Hero = () => {
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
             <button
               onClick={() => navigate('/researchers')}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-6 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-slate-800 sm:w-auto"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-[15px] font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700 sm:w-auto"
             >
               {t('hero.cta_explore')}
               <ArrowRight className="h-4 w-4" />

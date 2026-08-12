@@ -109,7 +109,7 @@ const Fact = ({ label, children, mono = false }) => (
 const NotFound = ({ slug, t }) => (
   <main className="mx-auto max-w-3xl px-4 pb-24 pt-32 sm:px-6 lg:px-8">
     <div className="rounded-lg border border-slate-200 bg-slate-50 px-6 py-16 text-center">
-      <h2 className="font-serif text-2xl font-semibold tracking-tight text-slate-900">{t('not_found.title')}</h2>
+      <h2 className="text-2xl font-semibold tracking-tight text-slate-900">{t('not_found.title')}</h2>
       <p className="mt-2 text-[15px] text-slate-600">
         {t('not_found.subtitle')} <span className="font-mono text-slate-900">{slug}</span>.
       </p>
@@ -200,7 +200,7 @@ const TeamMemberProfile = () => {
               {m.code && (
                 <p className="font-mono text-xs uppercase tracking-[0.14em] text-indigo-300">{m.code}</p>
               )}
-              <h1 className="mt-1.5 font-serif text-3xl font-semibold leading-tight tracking-tight sm:text-[2.5rem]">
+              <h1 className="mt-1.5 text-3xl font-semibold leading-tight tracking-tight sm:text-[2.5rem]">
                 {m.name}
               </h1>
               {m.position && (

@@ -60,9 +60,8 @@ const Navbar = () => {
           {/* ── Logo ── */}
           <NavLink to="/" className="flex items-center gap-3 cursor-pointer group">
             <div className="flex flex-col">
-              {/* Serif wordmark, matching the Sangia Publishing parent imprint. */}
-              <div className="font-serif text-3xl font-semibold tracking-tight text-indigo-600 transition-colors group-hover:text-indigo-700">
-                Sciecola
+              <div className="text-3xl font-black text-indigo-600 transition-colors group-hover:text-indigo-700">
+                SCIECOLA
               </div>
               <div className="hidden md:block text-xs text-gray-500 font-semibold tracking-wider uppercase leading-none mt-1">
                 {t('brand_tagline')}

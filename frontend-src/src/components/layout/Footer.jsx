@@ -43,7 +43,7 @@ const Footer = () => {
         <div className="flex flex-col gap-6 pb-8 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <Link to="/" className="inline-flex items-baseline gap-3">
-              <span className="font-serif text-3xl tracking-tight text-white">Sciecola</span>
+              <span className="text-3xl font-black tracking-tight text-white">SCIECOLA</span>
               <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                 {t('brand_tagline')}
               </span>
@@ -135,7 +135,7 @@ const Footer = () => {
 
 const FooterColumn = ({ title, children }) => (
   <div>
-    <h4 className="mb-4 font-serif text-xl text-white">{title}</h4>
+    <h4 className="mb-4 text-base font-bold text-white">{title}</h4>
     <ul className="space-y-2.5">{children}</ul>
   </div>
 );
