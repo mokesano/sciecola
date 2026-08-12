@@ -16,6 +16,9 @@
     "code":        "Member ID",
     "role":        "Role"
   },
+  "achievement": {
+    "proof":      "View proof"
+  },
   "back":         "Back to Team",
   "not_found": {
     "title":      "Team Member Not Found",

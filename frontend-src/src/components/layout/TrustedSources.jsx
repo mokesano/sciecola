@@ -27,14 +27,14 @@ const TrustedSources = () => {
   }, []);
 
   return (
-    <div className="mt-6 mb-6 bg-white border border-gray-100 shadow-sm rounded-2xl p-8 md:p-6">
+    <div className="mb-6 mt-6 rounded-xl border border-slate-200 bg-white p-6 md:p-8">
 
-      <h2 className="text-xl font-bold text-gray-900 mb-12">
+      <h2 className="mb-8 text-[13px] font-semibold uppercase tracking-[0.12em] text-slate-900">
         {t('trusted_sources.title')}
       </h2>
 
       {loaded && sources.length === 0 ? (
-        <p className="text-center text-sm text-gray-500 py-6">
+        <p className="py-6 text-center text-sm text-slate-500">
           {t('trusted_sources.empty')}
         </p>
       ) : (

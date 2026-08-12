@@ -26,145 +26,102 @@ const DATA_SOURCES = [
 
 /* ─── Component ───────────────────────────────────────────────────────────── */
 
+/*
+ * Structured after the Sangia Publishing footer — Sciecola's parent imprint —
+ * so the two sites read as one house: a flat warm-grey field, wordmark and
+ * secondary links on one row, a hairline, then serif column headings over
+ * sans links, closing on a darker legal bar.
+ */
 const Footer = () => {
   const { t } = useTranslation('footer');
 
   return (
-    <footer className="relative isolate mt-16 overflow-hidden bg-[#0b0d17] text-slate-300">
-      {/* soft blurred aurora — subtle depth cue without being loud */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-40 left-1/4 h-96 w-96 rounded-full bg-indigo-600/10 blur-3xl" />
-        <div className="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-violet-500/10 blur-3xl" />
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo-500/60 to-transparent" />
-      </div>
+    <footer className="mt-16 bg-[#3d3d3d] text-slate-300">
+      <div className="mx-auto max-w-7xl px-4 pt-14 sm:px-6 lg:px-8">
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-8">
-
-        {/* ── Row 1: brand + CTA card (asymmetric) ─────────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 mb-12">
-          <div className="lg:col-span-7">
-            <Link to="/" className="inline-flex items-baseline gap-2 group">
-              <span className="text-3xl font-black tracking-tight text-white group-hover:text-indigo-300 transition-colors">SCIECOLA</span>
-              <span className="text-xs uppercase tracking-[0.2em] text-indigo-400 font-semibold">
+        {/* ── Row 1: wordmark, secondary links, social ─────────────────── */}
+        <div className="flex flex-col gap-6 pb-8 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <Link to="/" className="inline-flex items-baseline gap-3">
+              <span className="font-serif text-3xl tracking-tight text-white">Sciecola</span>
+              <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
                 {t('brand_tagline')}
               </span>
             </Link>
-            <p className="mt-5 max-w-xl text-sm leading-relaxed text-slate-400">
-              {t('description')}
-            </p>
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+          </div>
+
+          <div className="flex flex-wrap items-center gap-x-7 gap-y-3">
+            <Link to="/about"   className="text-[15px] text-slate-200 underline-offset-4 hover:underline">
+              {t('links.about')}
+            </Link>
+            <Link to="/contact" className="text-[15px] text-slate-200 underline-offset-4 hover:underline">
+              {t('links.contact', 'Kontak')}
+            </Link>
+            <div className="flex items-center gap-4">
               {SOCIAL_LINKS.map(s => (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
                   aria-label={s.label}
-                  className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-slate-300 backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:border-indigo-400/60 hover:bg-indigo-500/15 hover:text-white"
-                >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  className="text-slate-300 transition-colors hover:text-white">
+                  <svg className="h-[18px] w-[18px]" fill="currentColor" viewBox="0 0 24 24">
                     <path d={s.path} />
                   </svg>
                 </a>
               ))}
             </div>
           </div>
-
-          {/* CTA card — asymmetric, glass-morphism */}
-          <div className="lg:col-span-5">
-            <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-indigo-500/15 via-violet-500/10 to-transparent p-6 backdrop-blur-sm">
-              <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-indigo-500/25 blur-2xl" />
-              <p className="relative text-xs font-semibold uppercase tracking-wider text-indigo-300">
-                {t('cta.eyebrow', 'Mulai gratis')}
-              </p>
-              <h3 className="relative mt-2 text-xl font-bold text-white">
-                {t('cta.title', 'Cek profil ORCID Anda tanpa login')}
-              </h3>
-              <p className="relative mt-2 text-sm text-slate-300">
-                {t('cta.subtitle', 'Masukkan ORCID, Scopus, SINTA, atau ResearcherID untuk melihat dampak riset.')}
-              </p>
-              <div className="relative mt-5 flex flex-wrap gap-3">
-                <Link
-                  to="/"
-                  className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg"
-                >
-                  {t('cta.primary', 'Cek Profil')}
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </Link>
-                <Link
-                  to="/register"
-                  className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-white/10"
-                >
-                  {t('cta.secondary', 'Buat Akun')}
-                </Link>
-              </div>
-            </div>
-          </div>
         </div>
 
-        {/* ── Row 2: dense link columns with subtle divider ───────────── */}
-        <div className="relative">
-          <div className="pointer-events-none absolute inset-x-0 -top-4 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-8">
+        <div className="border-t border-white/15" />
 
-            <FooterColumn title={t('columns.product')}>
-              <FooterLink to="/trends-analysis">{t('links.trends')}</FooterLink>
-              <FooterLink to="/sdgs">{t('links.sdgs_explorer')}</FooterLink>
-              <FooterLink to="/article-impact">{t('links.article_impact')}</FooterLink>
-              <FooterLink to="/researchers">{t('links.researchers')}</FooterLink>
-              <FooterLink to="/journals">{t('links.journals')}</FooterLink>
-              <FooterLink to="/docs/api-reference">{t('links.api')}</FooterLink>
-            </FooterColumn>
+        {/* ── Row 2: link columns ──────────────────────────────────────── */}
+        <div className="grid grid-cols-2 gap-x-8 gap-y-10 py-12 md:grid-cols-4">
 
-            <FooterColumn title={t('columns.data_sources')}>
-              {DATA_SOURCES.map(({ href, label }) => (
-                <li key={href}>
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-sm text-slate-400 transition-colors hover:text-indigo-300"
-                  >
-                    {label}
-                    <svg className="w-3 h-3 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                  </a>
-                </li>
-              ))}
-            </FooterColumn>
+          <FooterColumn title={t('columns.product')}>
+            <FooterLink to="/trends-analysis">{t('links.trends')}</FooterLink>
+            <FooterLink to="/sdgs">{t('links.sdgs_explorer')}</FooterLink>
+            <FooterLink to="/article-impact">{t('links.article_impact')}</FooterLink>
+            <FooterLink to="/researchers">{t('links.researchers')}</FooterLink>
+            <FooterLink to="/journals">{t('links.journals')}</FooterLink>
+            <FooterLink to="/docs/api-reference">{t('links.api')}</FooterLink>
+          </FooterColumn>
 
-            <FooterColumn title={t('columns.information')}>
-              <FooterLink to="/about">{t('links.about')}</FooterLink>
-              <FooterLink to="/docs/documentation">{t('links.docs')}</FooterLink>
-              <FooterLink to="/docs/faq">{t('links.faq')}</FooterLink>
-              <FooterLink to="/help">{t('links.help')}</FooterLink>
-              <FooterLink to="/contact">{t('links.contact', 'Kontak')}</FooterLink>
-            </FooterColumn>
+          <FooterColumn title={t('columns.data_sources')}>
+            {DATA_SOURCES.map(({ href, label }) => (
+              <li key={href}>
+                <a href={href} target="_blank" rel="noopener noreferrer"
+                  className="text-[15px] leading-relaxed text-slate-300 underline-offset-4 transition-colors hover:text-white hover:underline">
+                  {label}
+                </a>
+              </li>
+            ))}
+          </FooterColumn>
 
-            <FooterColumn title={t('columns.legal', 'Legal')}>
-              <FooterLink to="/privacy">{t('links.privacy')}</FooterLink>
-              <FooterLink to="/terms">{t('links.terms')}</FooterLink>
-              <FooterLink to="/tutorial-orcid">{t('links.tutorial_orcid', 'Tutorial ORCID')}</FooterLink>
-              <FooterLink to="/tutorial-doi">{t('links.tutorial_doi', 'Tutorial DOI')}</FooterLink>
-              <FooterLink to="/tutorial-export">{t('links.tutorial_export', 'Tutorial Ekspor')}</FooterLink>
-            </FooterColumn>
-          </div>
+          <FooterColumn title={t('columns.information')}>
+            <FooterLink to="/about">{t('links.about')}</FooterLink>
+            <FooterLink to="/docs/documentation">{t('links.docs')}</FooterLink>
+            <FooterLink to="/docs/faq">{t('links.faq')}</FooterLink>
+            <FooterLink to="/help">{t('links.help')}</FooterLink>
+            <FooterLink to="/contact">{t('links.contact', 'Kontak')}</FooterLink>
+          </FooterColumn>
+
+          <FooterColumn title={t('columns.legal', 'Legal')}>
+            <FooterLink to="/privacy">{t('links.privacy')}</FooterLink>
+            <FooterLink to="/terms">{t('links.terms')}</FooterLink>
+            <FooterLink to="/tutorial-orcid">{t('links.tutorial_orcid', 'Tutorial ORCID')}</FooterLink>
+            <FooterLink to="/tutorial-doi">{t('links.tutorial_doi', 'Tutorial DOI')}</FooterLink>
+            <FooterLink to="/tutorial-export">{t('links.tutorial_export', 'Tutorial Ekspor')}</FooterLink>
+          </FooterColumn>
         </div>
+      </div>
 
-        {/* ── Row 3: bottom bar ───────────────────────────────────────── */}
-        <div className="mt-12 pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      {/* ── Row 3: legal bar ───────────────────────────────────────────── */}
+      <div className="bg-[#333333]">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-[13px] text-slate-400 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
           <p>© {new Date().getFullYear()} Sciecola. {t('copyright.rights')}</p>
-          <p className="text-center md:text-right">
+          <p>
             {t('copyright.developed_by')}{' '}
-            <a
-              href="https://sangia.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-slate-300 hover:text-indigo-300 transition-colors"
-            >
+            <a href="https://sangia.org" target="_blank" rel="noopener noreferrer"
+              className="text-slate-200 underline-offset-4 hover:underline">
               Sangia Research Media &amp; Publishing
             </a>
           </p>
@@ -178,16 +135,15 @@ const Footer = () => {
 
 const FooterColumn = ({ title, children }) => (
   <div>
-    <h4 className="text-xs font-semibold uppercase tracking-[0.15em] text-white/80 mb-4">
-      {title}
-    </h4>
+    <h4 className="mb-4 font-serif text-xl text-white">{title}</h4>
     <ul className="space-y-2.5">{children}</ul>
   </div>
 );
 
 const FooterLink = ({ to, children }) => (
   <li>
-    <Link to={to} className="text-sm text-slate-400 transition-colors hover:text-indigo-300">
+    <Link to={to}
+      className="text-[15px] leading-relaxed text-slate-300 underline-offset-4 transition-colors hover:text-white hover:underline">
       {children}
     </Link>
   </li>

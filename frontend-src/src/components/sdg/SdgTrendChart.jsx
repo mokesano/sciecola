@@ -61,7 +61,7 @@ const SdgTrendChart = ({ rawData }) => {
   const hasData = chartData.length > 0;
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+    <div className="rounded-xl border border-slate-200 bg-white p-6">
       <div className="flex justify-between items-end mb-6">
         <h3 className="text-lg md:text-xl font-bold text-gray-900">{t('sdg_trend.title')}</h3>
         <Link to="/trends-analysis" className="text-sm text-blue-600 hover:text-blue-800 font-semibold transition-colors pb-0.5">

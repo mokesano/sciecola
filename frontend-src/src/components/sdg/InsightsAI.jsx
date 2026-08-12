@@ -1,93 +1,98 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import Sparkline, { readDirection } from '../shared/Sparkline';
 
-const ICON_STYLES = [
-  { iconColor: 'text-green-400',  iconBg: 'bg-green-500/20'  },
-  { iconColor: 'text-blue-400',   iconBg: 'bg-blue-500/20'   },
-  { iconColor: 'text-orange-400', iconBg: 'bg-orange-500/20' },
-];
+/* ─── insight row ────────────────────────────────────────────────────────── */
 
-const TrendIcon = ({ trend }) => {
-  if (trend === 'up') return (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-    </svg>
-  );
-  if (trend === 'down') return (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-    </svg>
-  );
+const InsightRow = ({ item }) => {
+  const series    = Array.isArray(item.series) ? item.series : [];
+  const direction = readDirection(series, item.trend);
+  const start     = item.series_start;
+  const end       = start && series.length ? start + series.length - 1 : null;
+
+  const trendClass = {
+    up:   'text-indigo-700',
+    down: 'text-red-600',
+    flat: 'text-slate-600',
+  }[direction];
+
   return (
-    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-    </svg>
+    <li className="flex items-start gap-4 border-b border-slate-100 py-4 first:pt-0 last:border-0 last:pb-0">
+      <div className="min-w-0 flex-1">
+        {item.category && (
+          <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-400">
+            {item.category}
+          </p>
+        )}
+        {item.title && (
+          <p className="mt-1 text-sm font-semibold leading-snug text-slate-900">{item.title}</p>
+        )}
+        <p className="mt-1 text-[13px] leading-relaxed text-slate-600">{item.text}</p>
+      </div>
+
+      <div className="flex shrink-0 flex-col items-end gap-1">
+        {series.length > 1 && <Sparkline values={series} direction={direction} />}
+        {item.trend && (
+          <span className={`text-sm font-semibold tabular-nums ${trendClass}`}>{item.trend}</span>
+        )}
+        {start && end && (
+          <span className="font-mono text-[10px] tabular-nums text-slate-400">{start}–{end}</span>
+        )}
+      </div>
+    </li>
   );
 };
 
+/* ─── main ───────────────────────────────────────────────────────────────── */
+
 const InsightsAI = () => {
   const { t } = useTranslation('dashboard');
-  const [displayInsights, setDisplayInsights] = useState([]);
+  const [insights, setInsights] = useState([]);
 
   useEffect(() => {
     fetch('/api/insights.php')
       .then(res => res.json())
       .then(json => {
-        if (json.status === 'ok' && Array.isArray(json.insights) && json.insights.length > 0) {
-          setDisplayInsights(
-            json.insights.slice(0, 3).map((item, i) => ({
-              ...item,
-              ...ICON_STYLES[i % ICON_STYLES.length],
-              trend: item.trend || 'neutral',
-            }))
-          );
+        if (json.status === 'ok' && Array.isArray(json.insights)) {
+          setInsights(json.insights.slice(0, 3));
         }
       })
       .catch(() => {});
   }, []);
 
   return (
-    <div className="bg-[#1e1b4b] rounded-2xl p-6 text-white h-full flex flex-col shadow-lg relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500 rounded-full blur-3xl opacity-20 transform translate-x-1/2 -translate-y-1/2" />
-
-      <div className="flex justify-between items-center mb-6 relative z-10">
-        <div className="flex items-center gap-2">
-          <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-          <h3 className="font-semibold text-lg">{t('insights_ai.title')}</h3>
-        </div>
-        <Link to="/insights" className="text-sm text-gray-300 hover:text-white transition-colors">
+    <section className="flex h-full flex-col rounded-lg border border-slate-200 bg-white">
+      <header className="flex items-center justify-between border-b border-slate-200 px-5 py-3.5">
+        <h3 className="text-[13px] font-semibold uppercase tracking-[0.12em] text-slate-900">
+          {t('insights_ai.title')}
+        </h3>
+        <Link to="/insights"
+          className="text-[13px] text-slate-500 underline-offset-4 hover:text-indigo-700 hover:underline">
           {t('insights_ai.view_all')}
         </Link>
+      </header>
+
+      <div className="flex-grow px-5">
+        {insights.length === 0 ? (
+          <p className="py-10 text-center text-sm text-slate-500">{t('insights_ai.empty')}</p>
+        ) : (
+          <ul>
+            {insights.map(item => <InsightRow key={item.id} item={item} />)}
+          </ul>
+        )}
       </div>
 
-      <div className="flex-grow space-y-4 relative z-10">
-        {displayInsights.length === 0 ? (
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6 text-center text-sm text-gray-300">
-            {t('insights_ai.empty')}
-          </div>
-        ) : displayInsights.map((item) => (
-          <div key={item.id} className="bg-white/5 border border-white/10 rounded-xl p-4 flex gap-4 items-start transition hover:bg-white/10">
-            <div className={`p-2 rounded-lg ${item.iconBg} ${item.iconColor} shrink-0`}>
-              <TrendIcon trend={item.trend} />
-            </div>
-            <p className="text-sm text-gray-200 leading-relaxed">{item.text}</p>
-          </div>
-        ))}
+      <div className="border-t border-slate-200 px-5 py-3">
+        <Link to="/insights"
+          className="flex items-center justify-center gap-2 rounded border border-slate-300 py-2 text-[13px] font-medium text-slate-700 transition-colors hover:border-slate-400 hover:bg-slate-50">
+          {t('insights_ai.cta')}
+          <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </Link>
       </div>
-
-      <Link
-        to="/insights"
-        className="mt-6 w-full py-3 px-4 border border-white/20 rounded-xl text-sm font-medium hover:bg-white/10 transition-colors flex justify-center items-center gap-2 relative z-10"
-      >
-        {t('insights_ai.cta')}
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-        </svg>
-      </Link>
-    </div>
+    </section>
   );
 };
 
