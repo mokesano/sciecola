@@ -170,6 +170,10 @@ export const AmbientSection = ({
   blob = true,
   photo,          // aset raster yang sudah ada, dipakai sebagai foto latar
   photoOpacity = 0.28,
+  surfaceColor,   // hex; menggantikan kelas permukaan aksen
+  artColor,       // hex; menggantikan tint artwork aksen
+  litColor,       // warna artwork saat dilewati pointer
+  blobColor,
   className = '',
   children,
   ...rest
@@ -198,7 +202,8 @@ export const AmbientSection = ({
     <section
       ref={ref}
       onPointerMove={onPointerMove}
-      className={`relative overflow-hidden ${a.surface} ${className}`}
+      className={`relative overflow-hidden ${surfaceColor ? '' : a.surface} ${className}`}
+      style={surfaceColor ? { backgroundColor: surfaceColor } : undefined}
       {...rest}
     >
       {photo && (
@@ -215,12 +220,12 @@ export const AmbientSection = ({
         <>
           {/* Artwork dasar, diwarnai aksen seksi */}
           <span aria-hidden className="pointer-events-none absolute inset-0"
-            style={{ ...maskStyle, backgroundColor: a.art, opacity: artOpacity }} />
+            style={{ ...maskStyle, backgroundColor: artColor ?? a.art, opacity: artOpacity }} />
           {/* Artwork yang menyala mengikuti pointer */}
           <span aria-hidden className="pointer-events-none absolute inset-0 motion-reduce:hidden"
             style={{
               ...maskStyle,
-              background: `radial-gradient(340px circle at var(--mx, -999px) var(--my, -999px), ${a.lit}, transparent 65%)`,
+              background: `radial-gradient(340px circle at var(--mx, -999px) var(--my, -999px), ${litColor ?? a.lit}, transparent 65%)`,
             }} />
         </>
       )}
@@ -228,7 +233,7 @@ export const AmbientSection = ({
       {blob && (
         <span aria-hidden
           className="pointer-events-none absolute left-1/2 top-0 h-[30rem] w-[52rem] -translate-x-1/2 -translate-y-1/3 rounded-full blur-[110px]"
-          style={{ background: a.blob }} />
+          style={{ background: blobColor ?? a.blob }} />
       )}
 
       <div className="relative">{children}</div>
