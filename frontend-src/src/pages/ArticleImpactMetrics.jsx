@@ -41,8 +41,8 @@ const EmptySection = ({ title, subtitle, compact = false }) => (
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"
         d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
     </svg>
-    <p className="font-semibold text-gray-700 text-sm">{title}</p>
-    {subtitle && <p className="text-xs text-gray-500 mt-1 max-w-sm">{subtitle}</p>}
+    <p className="font-semibold text-gray-700 text-[15px]">{title}</p>
+    {subtitle && <p className="text-sm text-gray-500 mt-1 max-w-sm">{subtitle}</p>}
   </div>
 );
 
@@ -53,10 +53,10 @@ const ChevronRight = () => (
 );
 
 const SintaChip = ({ grade }) => {
-  if (!grade) return <span className="text-xs text-gray-400">—</span>;
+  if (!grade) return <span className="text-sm text-gray-400">—</span>;
   const style = SINTA_STYLE[grade];
-  if (!style) return <span className="text-xs text-gray-400">{grade}</span>;
-  return <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${style.chip}`}>SINTA {grade.slice(1)}</span>;
+  if (!style) return <span className="text-sm text-gray-400">{grade}</span>;
+  return <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${style.chip}`}>SINTA {grade.slice(1)}</span>;
 };
 
 const ImpactBar = ({ value, color }) => (
@@ -165,7 +165,7 @@ const ArticleImpactMetrics = () => {
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
 
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400"><ChevronRight /></span>
         <Link to="/analytics" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.analytics')}</Link>
@@ -183,7 +183,7 @@ const ArticleImpactMetrics = () => {
           <select
             value={sdg}
             onChange={e => setSdg(Number(e.target.value))}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="border border-gray-200 rounded-lg px-3 py-2 text-[15px] bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value={0}>{t('filter.sdg_all')}</option>
             {Array.from({ length: 17 }, (_, i) => i + 1).map(n => (
@@ -193,7 +193,7 @@ const ArticleImpactMetrics = () => {
           <select
             value={years}
             onChange={e => setYears(Number(e.target.value))}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="border border-gray-200 rounded-lg px-3 py-2 text-[15px] bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
             {PERIOD_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>{t(`filter.period.${opt.key}`)}</option>
@@ -202,7 +202,7 @@ const ArticleImpactMetrics = () => {
           <select
             value={sort}
             onChange={e => setSort(e.target.value)}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="border border-gray-200 rounded-lg px-3 py-2 text-[15px] bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
             {SORT_OPTIONS.map(s => (
               <option key={s} value={s}>{t(`filter.sort.${s}`)}</option>
@@ -211,7 +211,7 @@ const ArticleImpactMetrics = () => {
           {hasActiveFilters && (
             <button
               onClick={resetFilters}
-              className="px-3 py-2 text-sm text-indigo-600 font-medium hover:bg-indigo-50 rounded-lg transition-colors"
+              className="px-3 py-2 text-[15px] text-indigo-600 font-medium hover:bg-indigo-50 rounded-lg transition-colors"
             >
               {t('filter.reset')}
             </button>
@@ -222,7 +222,7 @@ const ArticleImpactMetrics = () => {
       {/* Impact score explanation */}
       <div className="bg-blue-50 p-5 rounded-xl border border-blue-100 mb-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('explanation.title')}</h3>
-        <p className="text-sm text-gray-600 mb-4">{t('explanation.subtitle')}</p>
+        <p className="text-[15px] text-gray-600 mb-4">{t('explanation.subtitle')}</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {['academic', 'social', 'practical'].map(dim => {
             const s = DIM_STYLE[dim];
@@ -232,11 +232,11 @@ const ArticleImpactMetrics = () => {
                   <div className={`h-8 w-8 rounded-full flex items-center justify-center ${s.bg} ${s.icon}`}>
                     <DimensionIcon dim={dim} />
                   </div>
-                  <h4 className={`font-semibold text-sm ${s.text}`}>
+                  <h4 className={`font-semibold text-[15px] ${s.text}`}>
                     {t(`explanation.dimensions.${dim}.title`)} ({t(`explanation.dimensions.${dim}.weight`)})
                   </h4>
                 </div>
-                <p className="text-xs text-gray-600 leading-relaxed">
+                <p className="text-sm text-gray-600 leading-relaxed">
                   {t(`explanation.dimensions.${dim}.desc`)}
                 </p>
               </div>
@@ -244,7 +244,7 @@ const ArticleImpactMetrics = () => {
           })}
         </div>
         {(!dimsAvailable.social || !dimsAvailable.practical) && (
-          <p className="text-xs text-gray-500 mt-3 italic">* {t('explanation.data_note')}</p>
+          <p className="text-sm text-gray-500 mt-3 italic">* {t('explanation.data_note')}</p>
         )}
       </div>
 
@@ -262,8 +262,8 @@ const ArticleImpactMetrics = () => {
           <svg className="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
-          <span className="text-red-700 text-sm flex-grow">{error}</span>
-          <button onClick={fetchData} className="text-sm text-red-600 underline shrink-0">{t('retry')}</button>
+          <span className="text-red-700 text-[15px] flex-grow">{error}</span>
+          <button onClick={fetchData} className="text-[15px] text-red-600 underline shrink-0">{t('retry')}</button>
         </div>
       )}
 
@@ -274,7 +274,7 @@ const ArticleImpactMetrics = () => {
             <div className="bg-indigo-50 border border-indigo-200 p-5 rounded-xl mb-6">
               <div className="flex justify-between items-start gap-4 mb-4">
                 <div>
-                  <p className="text-xs font-semibold text-indigo-600 mb-1 uppercase tracking-wide">{t('detail.title')}</p>
+                  <p className="text-sm font-semibold text-indigo-600 mb-1 uppercase tracking-wide">{t('detail.title')}</p>
                   <h3 className="font-bold text-gray-900 text-lg leading-snug">{selectedArticle.title}</h3>
                 </div>
                 <button
@@ -289,7 +289,7 @@ const ArticleImpactMetrics = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2 text-sm text-gray-700">
+                <div className="space-y-2 text-[15px] text-gray-700">
                   <p><b>{t('detail.authors')}:</b> {(selectedArticle.authors ?? []).join(', ') || '—'}</p>
                   <p><b>{t('detail.journal')}:</b> {selectedArticle.journal || '—'}</p>
                   <p><b>{t('detail.year')}:</b> {selectedArticle.year || '—'}</p>
@@ -301,7 +301,7 @@ const ArticleImpactMetrics = () => {
                     <div className="space-y-2">
                       {['academic', 'social', 'practical'].map(dim => (
                         <div key={dim}>
-                          <div className="flex justify-between text-xs mb-1">
+                          <div className="flex justify-between text-sm mb-1">
                             <span className="text-gray-700">{t(`impact_dims.${dim}`)}</span>
                             <span className="font-semibold">{selectedArticle[`${dim}_impact`] ?? 0}</span>
                           </div>
@@ -314,7 +314,7 @@ const ArticleImpactMetrics = () => {
                   {selectedArticle.doi && (
                     <Link
                       to={`/doi/${encodeURIComponent(selectedArticle.doi)}`}
-                      className="inline-flex items-center gap-1 mt-3 text-sm text-indigo-600 font-medium hover:text-indigo-700"
+                      className="inline-flex items-center gap-1 mt-3 text-[15px] text-indigo-600 font-medium hover:text-indigo-700"
                     >
                       {t('detail.open_article')} →
                     </Link>
@@ -342,7 +342,7 @@ const ArticleImpactMetrics = () => {
             <div className="p-5 border-b border-gray-100 flex justify-between items-center">
               <h3 className="text-lg font-semibold text-gray-900">{t('table.title')}</h3>
               {total > 0 && (
-                <span className="text-xs text-gray-500">
+                <span className="text-sm text-gray-500">
                   {t('pagination.showing', { from: fromIdx, to: toIdx, total: total.toLocaleString() })}
                 </span>
               )}
@@ -350,8 +350,8 @@ const ArticleImpactMetrics = () => {
 
             {articles.length > 0 ? (
               <div className="overflow-x-auto">
-                <table className="min-w-full text-sm">
-                  <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
+                <table className="min-w-full text-[15px]">
+                  <thead className="bg-gray-50 text-sm text-gray-500 uppercase tracking-wider">
                     <tr>
                       <th className="px-4 py-3 text-left font-medium">{t('table.columns.title_authors')}</th>
                       <th className="px-4 py-3 text-left font-medium">{t('table.columns.journal')}</th>
@@ -373,20 +373,20 @@ const ArticleImpactMetrics = () => {
                         onClick={() => setSelectedArticle(article)}
                       >
                         <td className="px-4 py-3 max-w-md">
-                          <div className="text-sm font-medium text-gray-900 line-clamp-2">{article.title}</div>
-                          <div className="text-xs text-gray-500 truncate">{(article.authors ?? []).join(', ')}</div>
+                          <div className="text-[15px] font-medium text-gray-900 line-clamp-2">{article.title}</div>
+                          <div className="text-sm text-gray-500 truncate">{(article.authors ?? []).join(', ')}</div>
                         </td>
                         <td className="px-4 py-3">
-                          <div className="text-sm text-gray-700 truncate max-w-[180px]">{article.journal || '—'}</div>
+                          <div className="text-[15px] text-gray-700 truncate max-w-[180px]">{article.journal || '—'}</div>
                           <div className="mt-0.5"><SintaChip grade={article.sinta} /></div>
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-700">{article.year || '—'}</td>
-                        <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900">{article.citations.toLocaleString()}</td>
-                        <td className="px-4 py-3 text-right text-sm text-gray-700">{article.academic_impact}</td>
-                        <td className="px-4 py-3 text-right text-sm text-gray-400">
+                        <td className="px-4 py-3 text-[15px] text-gray-700">{article.year || '—'}</td>
+                        <td className="px-4 py-3 text-right text-[15px] font-semibold text-gray-900">{article.citations.toLocaleString()}</td>
+                        <td className="px-4 py-3 text-right text-[15px] text-gray-700">{article.academic_impact}</td>
+                        <td className="px-4 py-3 text-right text-[15px] text-gray-400">
                           {dimsAvailable.social ? article.social_impact : '—'}
                         </td>
-                        <td className="px-4 py-3 text-right text-sm text-gray-400">
+                        <td className="px-4 py-3 text-right text-[15px] text-gray-400">
                           {dimsAvailable.practical ? article.practical_impact : '—'}
                         </td>
                         <td className="px-4 py-3">
@@ -395,7 +395,7 @@ const ArticleImpactMetrics = () => {
                               <div className="bg-indigo-600 h-2 rounded-full transition-all"
                                 style={{ width: `${Math.max(0, Math.min(100, article.total_impact))}%` }} />
                             </div>
-                            <span className="text-xs font-semibold text-gray-900 shrink-0">{article.total_impact}</span>
+                            <span className="text-sm font-semibold text-gray-900 shrink-0">{article.total_impact}</span>
                           </div>
                         </td>
                       </tr>
@@ -416,7 +416,7 @@ const ArticleImpactMetrics = () => {
                 <button
                   onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page <= 1}
-                  className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="text-[15px] px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {t('pagination.prev')}
                 </button>
@@ -425,7 +425,7 @@ const ArticleImpactMetrics = () => {
                     <button
                       key={p}
                       onClick={() => setPage(p)}
-                      className={`text-sm px-3 py-1.5 rounded-lg ${
+                      className={`text-[15px] px-3 py-1.5 rounded-lg ${
                         page === p
                           ? 'bg-indigo-600 text-white'
                           : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
@@ -438,7 +438,7 @@ const ArticleImpactMetrics = () => {
                 <button
                   onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                   disabled={page >= totalPages}
-                  className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="text-[15px] px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {t('pagination.next')}
                 </button>
@@ -451,7 +451,7 @@ const ArticleImpactMetrics = () => {
             {/* Impact by SDG (radar) */}
             <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
               <h3 className="font-semibold text-gray-900 mb-1">{t('by_sdg.title')}</h3>
-              <p className="text-xs text-gray-500 mb-4">{t('by_sdg.subtitle')}</p>
+              <p className="text-sm text-gray-500 mb-4">{t('by_sdg.subtitle')}</p>
               {impactBySdg.length > 0 ? (
                 <ResponsiveContainer width="100%" height={320}>
                   <RadarChart outerRadius={110} data={impactBySdg}>
@@ -482,7 +482,7 @@ const ArticleImpactMetrics = () => {
             {/* SINTA breakdown (horizontal bar with SINTA color gradient) */}
             <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
               <h3 className="font-semibold text-gray-900 mb-1">{t('by_sinta.title')}</h3>
-              <p className="text-xs text-gray-500 mb-4">{t('by_sinta.subtitle')}</p>
+              <p className="text-sm text-gray-500 mb-4">{t('by_sinta.subtitle')}</p>
               {sintaBreakdown.length > 0 ? (
                 <>
                   <ResponsiveContainer width="100%" height={300}>
@@ -502,8 +502,8 @@ const ArticleImpactMetrics = () => {
                     {sintaBreakdown.map(row => (
                       <div key={row.sinta} className="bg-gray-50 p-2 rounded text-center">
                         <SintaChip grade={row.sinta} />
-                        <p className="text-sm font-bold text-gray-900 mt-1">{row.article_count.toLocaleString()}</p>
-                        <p className="text-[10px] text-gray-500">{t('by_sinta.articles')}</p>
+                        <p className="text-[15px] font-bold text-gray-900 mt-1">{row.article_count.toLocaleString()}</p>
+                        <p className="text-xs text-gray-500">{t('by_sinta.articles')}</p>
                       </div>
                     ))}
                   </div>

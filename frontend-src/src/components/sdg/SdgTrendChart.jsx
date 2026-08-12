@@ -64,13 +64,13 @@ const SdgTrendChart = ({ rawData }) => {
     <div className="rounded-xl border border-slate-200 bg-white p-6">
       <div className="flex justify-between items-end mb-6">
         <h3 className="text-lg md:text-xl font-bold text-gray-900">{t('sdg_trend.title')}</h3>
-        <Link to="/trends-analysis" className="text-sm text-blue-600 hover:text-blue-800 font-semibold transition-colors pb-0.5">
+        <Link to="/trends-analysis" className="text-[15px] text-blue-600 hover:text-blue-800 font-semibold transition-colors pb-0.5">
           {t('sdg_trend.view_all')}
         </Link>
       </div>
 
       {!hasData ? (
-        <div className="h-[300px] w-full flex items-center justify-center text-center text-sm text-gray-500 px-6">
+        <div className="h-[300px] w-full flex items-center justify-center text-center text-[15px] text-gray-500 px-6">
           {t('sdg_trend.empty')}
         </div>
       ) : (

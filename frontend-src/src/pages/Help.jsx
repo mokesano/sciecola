@@ -52,7 +52,7 @@ const Help = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-8">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">›</span>
         <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
@@ -96,12 +96,12 @@ const Help = () => {
 
         {/* Popular Searches */}
         <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-gray-100">
-          <span className="text-sm text-gray-500">{t('search.popular')}</span>
+          <span className="text-[15px] text-gray-500">{t('search.popular')}</span>
           {popularSearches.map((tag, idx) => (
             <button
               key={idx}
               onClick={() => handleSearchTagClick(tag)}
-              className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm font-medium hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+              className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-[15px] font-medium hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
             >
               {tag}
             </button>
@@ -131,8 +131,8 @@ const Help = () => {
                 </div>
                 <div className="flex-grow">
                   <h3 className="font-bold text-gray-900 mb-1">{category.title}</h3>
-                  <p className="text-sm text-gray-600 mb-3">{category.description}</p>
-                  <span className="text-xs font-medium text-indigo-600 bg-indigo-50 px-2 py-1 rounded">
+                  <p className="text-[15px] text-gray-600 mb-3">{category.description}</p>
+                  <span className="text-sm font-medium text-indigo-600 bg-indigo-50 px-2 py-1 rounded">
                     {t('articles_label', { count: category.articleCount })}
                   </span>
                 </div>
@@ -159,7 +159,7 @@ const Help = () => {
             <button
               key={cat}
               onClick={() => setActiveFaqCategory(cat)}
-              className={`px-4 py-2 text-sm font-medium whitespace-nowrap rounded-lg transition-colors ${
+              className={`px-4 py-2 text-[15px] font-medium whitespace-nowrap rounded-lg transition-colors ${
                 activeFaqCategory === cat
                   ? 'bg-indigo-600 text-white'
                   : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
@@ -190,7 +190,7 @@ const Help = () => {
               </button>
               {openFaqs[faq.id] && (
                 <div className="px-6 pb-4 pt-2 border-t border-gray-100">
-                  <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
+                  <p className="text-[15px] text-gray-600 leading-relaxed whitespace-pre-line">
                     {faq.answer}
                   </p>
                 </div>
@@ -218,16 +218,16 @@ const Help = () => {
                 </svg>
               </div>
               <h3 className="font-bold text-gray-900 mb-2">{option.title}</h3>
-              <p className="text-sm text-gray-600 mb-4">{option.description}</p>
+              <p className="text-[15px] text-gray-600 mb-4">{option.description}</p>
               {option.link ? (
                 <Link 
                   to={option.link}
-                  className="inline-block px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
+                  className="inline-block px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 transition-colors"
                 >
                   {option.buttonText}
                 </Link>
               ) : (
-                <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors">
+                <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 transition-colors">
                   {option.buttonText}
                 </button>
               )}
@@ -262,8 +262,8 @@ const Help = () => {
                 <h4 className="font-bold text-gray-900 mb-1 group-hover:text-indigo-600 transition-colors">
                   {tutorial.title}
                 </h4>
-                <p className="text-sm text-gray-600 mb-3">{tutorial.description}</p>
-                <div className="flex items-center gap-3 text-xs text-gray-500">
+                <p className="text-[15px] text-gray-600 mb-3">{tutorial.description}</p>
+                <div className="flex items-center gap-3 text-sm text-gray-500">
                   <span className="flex items-center gap-1">
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -308,7 +308,7 @@ const Help = () => {
               href="https://status.sangia.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-sm font-medium text-green-700 hover:text-green-900"
+              className="inline-flex items-center gap-1 text-[15px] font-medium text-green-700 hover:text-green-900"
             >
               {t('status.link')}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

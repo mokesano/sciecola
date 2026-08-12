@@ -131,7 +131,7 @@ const Register = () => {
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link to="/" className="text-2xl font-bold text-indigo-600">{t('brand')}</Link>
-          <Link to="/login" className="text-sm font-medium text-gray-600 hover:text-indigo-600 transition-colors">
+          <Link to="/login" className="text-[15px] font-medium text-gray-600 hover:text-indigo-600 transition-colors">
             {t('register.top_link')}
           </Link>
         </div>
@@ -146,7 +146,7 @@ const Register = () => {
           </div>
 
           {errors.submit && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 flex items-center gap-2">
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-[15px] text-red-700 flex items-center gap-2">
               <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -157,29 +157,29 @@ const Register = () => {
           <form onSubmit={handleSubmit} className="space-y-5" noValidate>
             {/* Full Name */}
             <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1.5">{t('register.full_name')}</label>
+              <label htmlFor="fullName" className="block text-[15px] font-medium text-gray-700 mb-1.5">{t('register.full_name')}</label>
               <input
                 type="text" id="fullName" name="fullName" value={formData.fullName} onChange={handleChange}
                 className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all ${errors.fullName ? 'border-red-300 focus:ring-red-500' : 'border-gray-200'}`}
                 placeholder={t('register.full_name_ph')}
               />
-              {errors.fullName && <p className="mt-1 text-xs text-red-600">{errors.fullName}</p>}
+              {errors.fullName && <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>}
             </div>
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">{t('register.email')}</label>
+              <label htmlFor="email" className="block text-[15px] font-medium text-gray-700 mb-1.5">{t('register.email')}</label>
               <input
                 type="email" id="email" name="email" value={formData.email} onChange={handleChange}
                 className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all ${errors.email ? 'border-red-300 focus:ring-red-500' : 'border-gray-200'}`}
                 placeholder={t('register.email_ph')}
               />
-              {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email}</p>}
+              {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
             </div>
 
             {/* ORCID */}
             <div>
-              <label htmlFor="orcid" className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label htmlFor="orcid" className="block text-[15px] font-medium text-gray-700 mb-1.5">
                 {t('register.orcid')} <span className="text-gray-400 font-normal">{t('register.orcid_optional')}</span>
               </label>
               <input
@@ -187,12 +187,12 @@ const Register = () => {
                 className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all ${errors.orcid ? 'border-red-300 focus:ring-red-500' : 'border-gray-200'}`}
                 placeholder={t('register.orcid_ph')}
               />
-              {errors.orcid && <p className="mt-1 text-xs text-red-600">{errors.orcid}</p>}
+              {errors.orcid && <p className="mt-1 text-sm text-red-600">{errors.orcid}</p>}
             </div>
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">{t('register.password')}</label>
+              <label htmlFor="password" className="block text-[15px] font-medium text-gray-700 mb-1.5">{t('register.password')}</label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'} id="password" name="password" value={formData.password} onChange={handleChange}
@@ -212,7 +212,7 @@ const Register = () => {
                   )}
                 </button>
               </div>
-              {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password}</p>}
+              {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
 
               {/* Strength Meter */}
               {formData.password && (
@@ -220,27 +220,27 @@ const Register = () => {
                   <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
                     <div className={`h-full ${strengthInfo.color} transition-all duration-300`} style={{ width: strengthInfo.width }}></div>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">{t('register.strength')} <span className="font-medium">{strengthLabel}</span></p>
+                  <p className="text-sm text-gray-500 mt-1">{t('register.strength')} <span className="font-medium">{strengthLabel}</span></p>
                 </div>
               )}
             </div>
 
             {/* Confirm Password */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1.5">{t('register.confirm')}</label>
+              <label htmlFor="confirmPassword" className="block text-[15px] font-medium text-gray-700 mb-1.5">{t('register.confirm')}</label>
               <input
                 type={showPassword ? 'text' : 'password'} id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange}
                 className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all ${errors.confirmPassword ? 'border-red-300 focus:ring-red-500' : 'border-gray-200'}`}
                 placeholder={t('register.confirm_ph')}
               />
-              {errors.confirmPassword && <p className="mt-1 text-xs text-red-600">{errors.confirmPassword}</p>}
+              {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
             </div>
 
             {/* Cloudflare Turnstile */}
             <div>
               <div id="turnstile-container" ref={turnstileContainerRef} className="flex justify-center"></div>
-              {errors.captcha && <p className="mt-1 text-xs text-red-600 text-center">{errors.captcha}</p>}
-              <p className="text-[10px] text-gray-500 text-center mt-1">{t('register.captcha_footer')}</p>
+              {errors.captcha && <p className="mt-1 text-sm text-red-600 text-center">{errors.captcha}</p>}
+              <p className="text-xs text-gray-500 text-center mt-1">{t('register.captcha_footer')}</p>
             </div>
 
             {/* Terms & Privacy */}
@@ -249,7 +249,7 @@ const Register = () => {
                 type="checkbox" name="agreeTerms" checked={formData.agreeTerms} onChange={handleChange}
                 className="mt-1 w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
               />
-              <span className="text-sm text-gray-700">
+              <span className="text-[15px] text-gray-700">
                 {t('register.terms')}{' '}
                 <Link to="/terms" className="text-indigo-600 hover:underline font-medium">{t('register.terms_link')}</Link>
                 {' '}{t('register.terms_and')}{' '}
@@ -257,7 +257,7 @@ const Register = () => {
                 {' '}{t('register.terms_suffix')}
               </span>
             </label>
-            {errors.agreeTerms && <p className="text-xs text-red-600 -mt-3">{errors.agreeTerms}</p>}
+            {errors.agreeTerms && <p className="text-sm text-red-600 -mt-3">{errors.agreeTerms}</p>}
 
             {/* Submit Button */}
             <button
@@ -281,23 +281,23 @@ const Register = () => {
           {/* Divider */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
-            <div className="relative flex justify-center text-xs"><span className="px-2 bg-white text-gray-500">{t('register.divider')}</span></div>
+            <div className="relative flex justify-center text-sm"><span className="px-2 bg-white text-gray-500">{t('register.divider')}</span></div>
           </div>
 
           {/* Social Login Placeholder */}
           <div className="grid grid-cols-2 gap-3">
-            <button className="flex items-center justify-center gap-2 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+            <button className="flex items-center justify-center gap-2 py-2.5 border border-gray-200 rounded-xl text-[15px] font-medium text-gray-700 hover:bg-gray-50 transition-colors">
               <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4" />
               Google
             </button>
-            <button className="flex items-center justify-center gap-2 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+            <button className="flex items-center justify-center gap-2 py-2.5 border border-gray-200 rounded-xl text-[15px] font-medium text-gray-700 hover:bg-gray-50 transition-colors">
               <img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" alt="ORCID" className="w-4 h-4" />
               ORCID
             </button>
           </div>
 
           {/* Footer Link */}
-          <p className="text-center text-sm text-gray-600 mt-6">
+          <p className="text-center text-[15px] text-gray-600 mt-6">
             {t('register.footer_link')} <Link to="/login" className="text-indigo-600 font-semibold hover:underline">{t('register.footer_link_cta')}</Link>
           </p>
         </div>
@@ -305,7 +305,7 @@ const Register = () => {
 
       {/* Footer */}
       <footer className="bg-white border-t border-gray-200 py-6">
-        <div className="max-w-7xl mx-auto px-4 text-center text-xs text-gray-500">
+        <div className="max-w-7xl mx-auto px-4 text-center text-sm text-gray-500">
           {t('footer', { year: new Date().getFullYear() })}
         </div>
       </footer>

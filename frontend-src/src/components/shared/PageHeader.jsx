@@ -14,7 +14,7 @@ export default function PageHeader({ title, subtitle, breadcrumbs = [], actions,
           )}
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{title}</h1>
-            {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
+            {subtitle && <p className="text-[15px] text-gray-500 mt-1">{subtitle}</p>}
           </div>
         </div>
         {actions && <div className="flex items-center gap-2">{actions}</div>}

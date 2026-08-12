@@ -65,7 +65,7 @@ const InstitutionsList = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
@@ -100,7 +100,7 @@ const InstitutionsList = () => {
             <select
               value={selectedCountry}
               onChange={(e) => setSelectedCountry(e.target.value)}
-              className="bg-gray-50 border-none rounded-xl py-3 px-4 text-sm font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+              className="bg-gray-50 border-none rounded-xl py-3 px-4 text-[15px] font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
             >
               {countries.map((c) => (
                 <option key={c} value={c}>{c === 'all' ? t('filters.all_countries') : c}</option>
@@ -109,7 +109,7 @@ const InstitutionsList = () => {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="bg-gray-50 border-none rounded-xl py-3 px-4 text-sm font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+              className="bg-gray-50 border-none rounded-xl py-3 px-4 text-[15px] font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
             >
               <option value="relevance">{t('filters.sort.relevance')}</option>
               <option value="publications">{t('filters.sort.publications')}</option>
@@ -131,7 +131,7 @@ const InstitutionsList = () => {
       {!loading && institutions.length > 0 && (
         <>
           <div className="mb-6 flex justify-between items-center">
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-600 text-[15px]">
               <Trans
                 i18nKey="results.count"
                 ns="institutions"
@@ -180,17 +180,17 @@ const InstitutionsList = () => {
                         <h3 className="font-bold text-gray-900 text-lg group-hover:text-indigo-600 transition-colors truncate">{inst.name}</h3>
                         <div className="flex gap-2 mt-1 flex-wrap">
                           {inst.type && (
-                            <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded text-xs font-medium">{inst.type}</span>
+                            <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded text-sm font-medium">{inst.type}</span>
                           )}
                           {inst.country && (
-                            <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs font-medium">{inst.country}</span>
+                            <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-sm font-medium">{inst.country}</span>
                           )}
                         </div>
                       </div>
                     </div>
 
                     {(inst.established_year || inst.website) && (
-                      <p className="text-sm text-gray-500 mb-4">
+                      <p className="text-[15px] text-gray-500 mb-4">
                         {inst.established_year && (
                           <span>{t('results.established', { year: inst.established_year })}</span>
                         )}
@@ -204,19 +204,19 @@ const InstitutionsList = () => {
                     <div className="grid grid-cols-3 gap-3">
                       <div className="text-center p-2 bg-gray-50 rounded-lg">
                         <p className="text-lg font-bold text-gray-900">{(inst.publications || 0).toLocaleString()}</p>
-                        <p className="text-[10px] text-gray-500 uppercase">{t('results.metrics.publications')}</p>
+                        <p className="text-xs text-gray-500 uppercase">{t('results.metrics.publications')}</p>
                       </div>
                       <div className="text-center p-2 bg-gray-50 rounded-lg">
                         <p className="text-lg font-bold text-gray-900">{(inst.researchers || 0).toLocaleString()}</p>
-                        <p className="text-[10px] text-gray-500 uppercase">{t('results.metrics.researchers')}</p>
+                        <p className="text-xs text-gray-500 uppercase">{t('results.metrics.researchers')}</p>
                       </div>
                       <div className="text-center p-2 bg-gray-50 rounded-lg">
                         <p className="text-lg font-bold text-gray-900">{inst.hIndex || 0}</p>
-                        <p className="text-[10px] text-gray-500 uppercase">{t('results.metrics.hindex')}</p>
+                        <p className="text-xs text-gray-500 uppercase">{t('results.metrics.hindex')}</p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500 flex-wrap">
+                    <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-100 text-sm text-gray-500 flex-wrap">
                       <span className="flex items-center gap-1">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -267,10 +267,10 @@ const InstitutionsList = () => {
             </div>
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('empty.no_match.title')}</h3>
-          <p className="text-gray-500 text-sm mb-6 max-w-md mx-auto">{t('empty.no_match.subtitle')}</p>
+          <p className="text-gray-500 text-[15px] mb-6 max-w-md mx-auto">{t('empty.no_match.subtitle')}</p>
           <button
             onClick={resetAll}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-[15px] font-medium hover:bg-indigo-700 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -290,7 +290,7 @@ const InstitutionsList = () => {
             </svg>
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('empty.no_data.title')}</h3>
-          <p className="text-gray-500 text-sm max-w-md mx-auto">{t('empty.no_data.subtitle')}</p>
+          <p className="text-gray-500 text-[15px] max-w-md mx-auto">{t('empty.no_data.subtitle')}</p>
         </div>
       )}
     </main>

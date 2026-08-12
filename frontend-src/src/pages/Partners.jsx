@@ -54,7 +54,7 @@ const PartnerCard = ({ partner, t }) => {
             <TypeBadge type={partner.type} t={t} />
           </div>
           {partner.since > 0 && (
-            <p className="text-xs text-gray-400 mt-0.5">{t('card.since', { year: partner.since })}</p>
+            <p className="text-sm text-gray-400 mt-0.5">{t('card.since', { year: partner.since })}</p>
           )}
         </div>
       </div>
@@ -65,20 +65,20 @@ const PartnerCard = ({ partner, t }) => {
       {/* body */}
       <div className="p-5 flex flex-col gap-3 flex-1">
         {partner.description && (
-          <p className="text-sm text-gray-600 leading-relaxed line-clamp-3 flex-1">
+          <p className="text-[15px] text-gray-600 leading-relaxed line-clamp-3 flex-1">
             {partner.description}
           </p>
         )}
 
         {partner.cooperation_areas?.length > 0 && (
           <div>
-            <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
               {t('card.cooperation')}
             </p>
             <div className="flex flex-wrap gap-1.5">
               {partner.cooperation_areas.slice(0, 5).map((area, i) => (
                 <span key={i}
-                  className={`px-2 py-0.5 rounded-full text-[11px] font-medium border ${cfg.bg} ${cfg.text} ${cfg.border}`}>
+                  className={`px-2 py-0.5 rounded-full text-xs font-medium border ${cfg.bg} ${cfg.text} ${cfg.border}`}>
                   {area}
                 </span>
               ))}
@@ -88,7 +88,7 @@ const PartnerCard = ({ partner, t }) => {
 
         {partner.website && (
           <a href={partner.website} target="_blank" rel="noopener noreferrer"
-            className="mt-auto inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors group-hover:underline">
+            className="mt-auto inline-flex items-center gap-1.5 text-[15px] font-medium text-indigo-600 hover:text-indigo-700 transition-colors group-hover:underline">
             {t('card.website')}
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
@@ -105,7 +105,7 @@ const PartnerCard = ({ partner, t }) => {
 const TypeBadge = ({ type, t }) => {
   const cfg = TYPE_CFG[type] ?? TYPE_CFG.academic;
   return (
-    <span className={`flex-shrink-0 px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${cfg.bg} ${cfg.text} ${cfg.border}`}>
+    <span className={`flex-shrink-0 px-2.5 py-0.5 rounded-full text-xs font-bold border ${cfg.bg} ${cfg.text} ${cfg.border}`}>
       {t(`type_label.${type}`, { defaultValue: type })}
     </span>
   );
@@ -160,7 +160,7 @@ const Partners = () => {
       <main className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
 
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+        <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-8">
           <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
           <span className="text-gray-400">›</span>
           <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
@@ -194,7 +194,7 @@ const Partners = () => {
                   </div>
                   <div>
                     <p className="text-xl font-bold text-gray-900">{value}</p>
-                    <p className={`text-xs font-medium ${cfg ? cfg.text : 'text-gray-600'}`}>{t(`stats.${key}`)}</p>
+                    <p className={`text-sm font-medium ${cfg ? cfg.text : 'text-gray-600'}`}>{t(`stats.${key}`)}</p>
                   </div>
                 </div>
               );
@@ -207,7 +207,7 @@ const Partners = () => {
           <div className="relative flex-1">
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder={t('filter.search')}
-              className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
+              className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-[15px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
             <svg className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
@@ -227,7 +227,7 @@ const Partners = () => {
               const cfg = TYPE_CFG[type];
               return (
                 <button key={type} onClick={() => setActiveType(type)}
-                  className={`px-3.5 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                  className={`px-3.5 py-2 rounded-xl text-[15px] font-medium transition-colors flex items-center gap-1.5 ${
                     activeType === type
                       ? 'bg-indigo-600 text-white shadow-sm'
                       : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
@@ -236,7 +236,7 @@ const Partners = () => {
                     <span className="w-2 h-2 rounded-full bg-white/60 flex-shrink-0" />
                   )}
                   {t(`filter.${type}`)}
-                  <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                  <span className={`text-sm px-1.5 py-0.5 rounded-full ${
                     activeType === type ? 'bg-white/25' : 'bg-gray-100 text-gray-500'
                   }`}>{count}</span>
                 </button>
@@ -258,7 +258,7 @@ const Partners = () => {
           <div className="flex flex-col items-center gap-3 py-16">
             <p className="text-red-600 font-medium">{t('error')}</p>
             <button onClick={fetchData}
-              className="px-5 py-2 bg-red-600 text-white rounded-xl text-sm font-medium hover:bg-red-700 transition-colors">
+              className="px-5 py-2 bg-red-600 text-white rounded-xl text-[15px] font-medium hover:bg-red-700 transition-colors">
               {t('retry')}
             </button>
           </div>
@@ -277,12 +277,12 @@ const Partners = () => {
               <p className="font-semibold text-gray-800">
                 {t(`empty.${hasFilter ? 'no_match' : 'no_data'}.title`)}
               </p>
-              <p className="text-sm text-gray-500 text-center max-w-sm">
+              <p className="text-[15px] text-gray-500 text-center max-w-sm">
                 {t(`empty.${hasFilter ? 'no_match' : 'no_data'}.subtitle`)}
               </p>
               {hasFilter && (
                 <button onClick={() => { setActiveType('all'); setSearch(''); }}
-                  className="mt-1 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors">
+                  className="mt-1 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-[15px] font-medium hover:bg-indigo-700 transition-colors">
                   Reset
                 </button>
               )}
@@ -305,7 +305,7 @@ const Partners = () => {
             </div>
             <div className="flex flex-col sm:flex-row gap-3 flex-shrink-0">
               <Link to="/contact?subject=partnership"
-                className="px-6 py-3 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition-colors flex items-center gap-2 text-sm whitespace-nowrap">
+                className="px-6 py-3 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition-colors flex items-center gap-2 text-[15px] whitespace-nowrap">
                 {t('cta.button')}
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />

@@ -28,7 +28,7 @@ const formatAnswer = (text) => {
   return parts.map((part, idx) => {
     if (part.startsWith('```') && part.endsWith('```')) {
       return (
-        <pre key={idx} className="bg-gray-900 text-gray-100 p-3 rounded-lg text-sm overflow-x-auto my-3">
+        <pre key={idx} className="bg-gray-900 text-gray-100 p-3 rounded-lg text-[15px] overflow-x-auto my-3">
           <code>{part.slice(3, -3).trim()}</code>
         </pre>
       );
@@ -39,7 +39,7 @@ const formatAnswer = (text) => {
         {lines.map((line, lineIdx) => {
           if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
             return (
-              <div key={lineIdx} className="flex gap-2 text-sm text-gray-700">
+              <div key={lineIdx} className="flex gap-2 text-[15px] text-gray-700">
                 <span className="text-indigo-600">•</span>
                 <span>{line.replace(/^[\s•-]+/, '')}</span>
               </div>
@@ -138,7 +138,7 @@ const Faq = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400"><Chevron /></span>
         <Link to="/docs/documentation" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.docs')}</Link>
@@ -199,7 +199,7 @@ const Faq = () => {
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-full text-[15px] font-medium transition-all flex items-center gap-2 ${
                 activeCategory === cat.id
                   ? 'bg-indigo-600 text-white shadow-md'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -211,7 +211,7 @@ const Faq = () => {
                 </svg>
               )}
               {cat.label}
-              <span className={`px-2 py-0.5 rounded-full text-xs ${
+              <span className={`px-2 py-0.5 rounded-full text-sm ${
                 activeCategory === cat.id ? 'bg-indigo-500' : 'bg-gray-200'
               }`}>
                 {cat.count}
@@ -232,7 +232,7 @@ const Faq = () => {
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-colors text-left ${
+                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-[15px] transition-colors text-left ${
                     activeCategory === cat.id
                       ? 'bg-indigo-50 text-indigo-700 font-medium'
                       : 'text-gray-700 hover:bg-gray-50'
@@ -246,7 +246,7 @@ const Faq = () => {
                     )}
                     {cat.label}
                   </span>
-                  <span className={`px-2 py-0.5 rounded-full text-xs ${
+                  <span className={`px-2 py-0.5 rounded-full text-sm ${
                     activeCategory === cat.id ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-600'
                   }`}>
                     {cat.count}
@@ -265,10 +265,10 @@ const Faq = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('empty.title')}</h3>
-              <p className="text-gray-600 text-sm mb-4">{t('empty.subtitle')}</p>
+              <p className="text-gray-600 text-[15px] mb-4">{t('empty.subtitle')}</p>
               <button
                 onClick={() => { setSearchQuery(''); setActiveCategory('all'); }}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 transition-colors"
               >
                 {t('empty.cta')}
               </button>
@@ -282,7 +282,7 @@ const Faq = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={category.icon} />
                     </svg>
                     <h2 className="text-lg font-bold">{category.title}</h2>
-                    <span className="px-2 py-0.5 bg-white/20 rounded-full text-xs font-medium">
+                    <span className="px-2 py-0.5 bg-white/20 rounded-full text-sm font-medium">
                       {t('count_label', { count: category.items.length })}
                     </span>
                   </div>

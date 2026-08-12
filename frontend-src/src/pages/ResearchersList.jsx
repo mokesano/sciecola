@@ -107,7 +107,7 @@ const ResearchersList = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+      <div className="flex items-center gap-2 text-[15px] text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,7 +143,7 @@ const ResearchersList = () => {
             <select
               value={selectedCountry}
               onChange={(e) => setSelectedCountry(e.target.value)}
-              className="bg-gray-50 border-none rounded-xl py-3 px-4 text-sm font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer min-w-[140px]"
+              className="bg-gray-50 border-none rounded-xl py-3 px-4 text-[15px] font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer min-w-[140px]"
             >
               {countries.map((c) => (
                 <option key={c} value={c}>{c === 'all' ? t('filters.all_countries') : c}</option>
@@ -153,7 +153,7 @@ const ResearchersList = () => {
             <select
               value={selectedSdg}
               onChange={(e) => setSelectedSdg(e.target.value)}
-              className="bg-gray-50 border-none rounded-xl py-3 px-4 text-sm font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer min-w-[140px]"
+              className="bg-gray-50 border-none rounded-xl py-3 px-4 text-[15px] font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer min-w-[140px]"
             >
               <option value="all">{t('filters.all_sdgs')}</option>
               {SDG_NUMBERS.map((n) => (
@@ -164,7 +164,7 @@ const ResearchersList = () => {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="bg-gray-50 border-none rounded-xl py-3 px-4 text-sm font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer min-w-[140px]"
+              className="bg-gray-50 border-none rounded-xl py-3 px-4 text-[15px] font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer min-w-[140px]"
             >
               <option value="relevance">{t('filters.sort.relevance')}</option>
               <option value="citations">{t('filters.sort.citations')}</option>
@@ -177,9 +177,9 @@ const ResearchersList = () => {
 
         {(selectedCountry !== 'all' || selectedSdg !== 'all' || searchQuery) && (
           <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100 flex-wrap">
-            <span className="text-sm text-gray-500">{t('filters.active_label')}</span>
+            <span className="text-[15px] text-gray-500">{t('filters.active_label')}</span>
             {selectedCountry !== 'all' && (
-              <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold flex items-center gap-1">
+              <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold flex items-center gap-1">
                 {selectedCountry}
                 <button onClick={() => setSelectedCountry('all')} className="hover:text-indigo-900">
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -189,7 +189,7 @@ const ResearchersList = () => {
               </span>
             )}
             {selectedSdg !== 'all' && (
-              <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold flex items-center gap-1">
+              <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold flex items-center gap-1">
                 {t('filters.sdg_label', { number: selectedSdg })}
                 <button onClick={() => setSelectedSdg('all')} className="hover:text-indigo-900">
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -199,7 +199,7 @@ const ResearchersList = () => {
               </span>
             )}
             {searchQuery && (
-              <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold flex items-center gap-1">
+              <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold flex items-center gap-1">
                 &quot;{searchQuery}&quot;
                 <button onClick={() => setSearchQuery('')} className="hover:text-indigo-900">
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -208,7 +208,7 @@ const ResearchersList = () => {
                 </button>
               </span>
             )}
-            <button onClick={resetAll} className="text-xs text-gray-500 hover:text-gray-700 font-medium ml-2">
+            <button onClick={resetAll} className="text-sm text-gray-500 hover:text-gray-700 font-medium ml-2">
               {t('filters.reset_all')}
             </button>
           </div>
@@ -227,7 +227,7 @@ const ResearchersList = () => {
         <>
           {researchers.length > 0 && (
             <div className="mb-6 flex justify-between items-center">
-              <p className="text-gray-600 text-sm">
+              <p className="text-gray-600 text-[15px]">
                 <Trans
                   i18nKey="results.count"
                   ns="researchers"
@@ -257,8 +257,8 @@ const ResearchersList = () => {
                       <h3 className="font-bold text-gray-900 group-hover:text-indigo-600 text-lg leading-tight mb-0.5 truncate">
                         {pro.name}
                       </h3>
-                      <p className="text-sm text-indigo-600 font-medium">{t('results.title_role')}</p>
-                      <p className="text-xs text-gray-500 truncate">{pro.univ}</p>
+                      <p className="text-[15px] text-indigo-600 font-medium">{t('results.title_role')}</p>
+                      <p className="text-sm text-gray-500 truncate">{pro.univ}</p>
                     </div>
                   </div>
 
@@ -267,7 +267,7 @@ const ResearchersList = () => {
                       {pro.sdgFocus.map((sdg) => (
                         <span
                           key={sdg}
-                          className="px-2 py-0.5 text-white rounded text-[10px] font-bold"
+                          className="px-2 py-0.5 text-white rounded text-xs font-bold"
                           style={{ backgroundColor: SDG_COLORS[sdg] || '#6b7280' }}
                           title={t('filters.sdg_label', { number: sdg })}
                         >
@@ -279,15 +279,15 @@ const ResearchersList = () => {
 
                   {pro.researchInterests.length > 0 && (
                     <div className="mb-4">
-                      <p className="text-xs text-gray-500 mb-1">{t('results.interests')}</p>
+                      <p className="text-sm text-gray-500 mb-1">{t('results.interests')}</p>
                       <div className="flex flex-wrap gap-1">
                         {pro.researchInterests.slice(0, 3).map((interest, idx) => (
-                          <span key={idx} className="px-2 py-0.5 bg-gray-50 text-gray-600 rounded text-[10px]">
+                          <span key={idx} className="px-2 py-0.5 bg-gray-50 text-gray-600 rounded text-xs">
                             {interest}
                           </span>
                         ))}
                         {pro.researchInterests.length > 3 && (
-                          <span className="px-2 py-0.5 text-gray-400 text-[10px]">
+                          <span className="px-2 py-0.5 text-gray-400 text-xs">
                             +{pro.researchInterests.length - 3}
                           </span>
                         )}
@@ -298,21 +298,21 @@ const ResearchersList = () => {
                   <div className="grid grid-cols-3 gap-2 py-3 border-t border-b border-gray-100 mb-4">
                     <div className="text-center">
                       <p className="text-lg font-bold text-gray-900">{formatNumber(pro.citations)}</p>
-                      <p className="text-[10px] text-gray-500 uppercase">{t('results.metrics.citations')}</p>
+                      <p className="text-xs text-gray-500 uppercase">{t('results.metrics.citations')}</p>
                     </div>
                     <div className="text-center border-l border-gray-100">
                       <p className="text-lg font-bold text-gray-900">{pro.hIndex}</p>
-                      <p className="text-[10px] text-gray-500 uppercase">{t('results.metrics.h_index')}</p>
+                      <p className="text-xs text-gray-500 uppercase">{t('results.metrics.h_index')}</p>
                     </div>
                     <div className="text-center border-l border-gray-100">
                       <p className="text-lg font-bold text-gray-900">{pro.publications}</p>
-                      <p className="text-[10px] text-gray-500 uppercase">{t('results.metrics.publications')}</p>
+                      <p className="text-xs text-gray-500 uppercase">{t('results.metrics.publications')}</p>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between mt-auto pt-2">
                     {pro.country && (
-                      <div className="flex items-center gap-1.5 text-xs text-gray-500">
+                      <div className="flex items-center gap-1.5 text-sm text-gray-500">
                         <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -343,10 +343,10 @@ const ResearchersList = () => {
                 </div>
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('empty.no_match.title')}</h3>
-              <p className="text-gray-500 text-sm mb-6 max-w-md mx-auto">{t('empty.no_match.subtitle')}</p>
+              <p className="text-gray-500 text-[15px] mb-6 max-w-md mx-auto">{t('empty.no_match.subtitle')}</p>
               <button
                 onClick={resetAll}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-[15px] font-medium hover:bg-indigo-700 transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -363,7 +363,7 @@ const ResearchersList = () => {
                 </svg>
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('empty.no_data.title')}</h3>
-              <p className="text-gray-500 text-sm max-w-md mx-auto">{t('empty.no_data.subtitle')}</p>
+              <p className="text-gray-500 text-[15px] max-w-md mx-auto">{t('empty.no_data.subtitle')}</p>
             </div>
           )}
         </>

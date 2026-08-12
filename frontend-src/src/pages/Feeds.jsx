@@ -159,7 +159,7 @@ const Feeds = () => {
               <Link to="/messages" className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                 {t('nav.messages')}
-                <span className="ml-auto bg-indigo-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">8</span>
+                <span className="ml-auto bg-indigo-600 text-white text-sm font-bold px-2 py-0.5 rounded-full">8</span>
               </Link>
               <Link to="/my-collections" className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
@@ -168,56 +168,56 @@ const Feeds = () => {
               <Link to="/notifications" className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
                 {t('nav.notifications')}
-                <span className="ml-auto bg-indigo-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">12</span>
+                <span className="ml-auto bg-indigo-600 text-white text-sm font-bold px-2 py-0.5 rounded-full">12</span>
               </Link>
             </nav>
 
             {/* Groups */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-              <h3 className="font-bold text-gray-900 text-sm mb-3 uppercase tracking-wider">{t('sections.groups')}</h3>
+              <h3 className="font-bold text-gray-900 text-[15px] mb-3 uppercase tracking-wider">{t('sections.groups')}</h3>
               <div className="space-y-3">
                 {GROUPS.map((group, idx) => (
                   <Link key={idx} to={`/groups/${idx}`} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
                     <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center text-lg">{group.icon}</div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-900">{group.name}</p>
-                      <p className="text-xs text-gray-500">{t('members', { count: group.members })}</p>
+                      <p className="text-[15px] font-semibold text-gray-900">{group.name}</p>
+                      <p className="text-sm text-gray-500">{t('members', { count: group.members })}</p>
                     </div>
                   </Link>
                 ))}
               </div>
-              <button className="w-full mt-3 text-sm text-indigo-600 font-medium hover:text-indigo-700">{t('see_all.groups')}</button>
+              <button className="w-full mt-3 text-[15px] text-indigo-600 font-medium hover:text-indigo-700">{t('see_all.groups')}</button>
             </div>
 
             {/* Popular Topics */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-              <h3 className="font-bold text-gray-900 text-sm mb-3 uppercase tracking-wider">{t('sections.topics')}</h3>
+              <h3 className="font-bold text-gray-900 text-[15px] mb-3 uppercase tracking-wider">{t('sections.topics')}</h3>
               <div className="space-y-2">
                 {POPULAR_TOPICS.map((topic, idx) => (
                   <div key={idx} className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                    <span className="text-sm font-medium text-gray-900">#{topic.tag}</span>
-                    <span className="text-xs text-gray-500">{t('posts', { count: topic.posts })}</span>
+                    <span className="text-[15px] font-medium text-gray-900">#{topic.tag}</span>
+                    <span className="text-sm text-gray-500">{t('posts', { count: topic.posts })}</span>
                   </div>
                 ))}
               </div>
-              <button className="w-full mt-3 text-sm text-indigo-600 font-medium hover:text-indigo-700">{t('see_all.topics')}</button>
+              <button className="w-full mt-3 text-[15px] text-indigo-600 font-medium hover:text-indigo-700">{t('see_all.topics')}</button>
             </div>
 
             {/* Connections */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-              <h3 className="font-bold text-gray-900 text-sm mb-3 uppercase tracking-wider">{t('sections.connections')}</h3>
+              <h3 className="font-bold text-gray-900 text-[15px] mb-3 uppercase tracking-wider">{t('sections.connections')}</h3>
               <div className="space-y-3">
                 {CONNECTIONS.map((conn, idx) => (
                   <Link key={idx} to={`/profile/${idx}`} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
                     <img src={conn.avatar} alt={conn.name} className="w-8 h-8 rounded-full object-cover" />
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-gray-900 truncate">{conn.name}</p>
-                      <p className="text-xs text-gray-500 truncate">{conn.aff}</p>
+                      <p className="text-[15px] font-semibold text-gray-900 truncate">{conn.name}</p>
+                      <p className="text-sm text-gray-500 truncate">{conn.aff}</p>
                     </div>
                   </Link>
                 ))}
               </div>
-              <button className="w-full mt-3 text-sm text-indigo-600 font-medium hover:text-indigo-700">{t('see_all.connections')}</button>
+              <button className="w-full mt-3 text-[15px] text-indigo-600 font-medium hover:text-indigo-700">{t('see_all.connections')}</button>
             </div>
           </aside>
 
@@ -232,7 +232,7 @@ const Feeds = () => {
                     value={postContent}
                     onChange={(e) => setPostContent(e.target.value)}
                     placeholder={t('composer.placeholder')}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none transition-all"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-[15px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none transition-all"
                     rows={2}
                   />
                 </div>
@@ -246,7 +246,7 @@ const Feeds = () => {
                     { i18n: 'video',   d: 'M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z' },
                     { i18n: 'event',   d: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' },
                   ].map(btn => (
-                    <button key={btn.i18n} className="flex items-center gap-1.5 px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg text-sm transition-colors">
+                    <button key={btn.i18n} className="flex items-center gap-1.5 px-3 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg text-[15px] transition-colors">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={btn.d} />
                       </svg>
@@ -254,7 +254,7 @@ const Feeds = () => {
                     </button>
                   ))}
                 </div>
-                <button className="px-6 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm">
+                <button className="px-6 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 transition-colors shadow-sm">
                   {t('composer.submit')}
                 </button>
               </div>
@@ -267,7 +267,7 @@ const Feeds = () => {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    className={`px-4 py-2 rounded-lg text-[15px] font-medium transition-colors ${
                       activeTab === tab ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'
                     }`}
                   >
@@ -275,7 +275,7 @@ const Feeds = () => {
                   </button>
                 ))}
               </div>
-              <select className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-600 focus:ring-2 focus:ring-indigo-500">
+              <select className="text-[15px] border border-gray-200 rounded-lg px-3 py-1.5 text-gray-600 focus:ring-2 focus:ring-indigo-500">
                 <option>{t('sort.recent')}</option>
                 <option>{t('sort.popular')}</option>
                 <option>{t('sort.relevant')}</option>
@@ -292,20 +292,20 @@ const Feeds = () => {
                       <img src={post.author.avatar} alt={post.author.name} className="w-10 h-10 rounded-full object-cover" />
                       <div>
                         <div className="flex items-center gap-2">
-                          <p className="font-semibold text-gray-900 text-sm">{post.author.name}</p>
+                          <p className="font-semibold text-gray-900 text-[15px]">{post.author.name}</p>
                           {post.author.isGroup && (
                             <svg className="w-4 h-4 text-indigo-600" fill="currentColor" viewBox="0 0 24 24">
                               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                             </svg>
                           )}
                         </div>
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                        <div className="flex items-center gap-2 text-sm text-gray-500">
                           <span>{post.author.handle}</span>
                           <span>•</span>
                           <span>{post.author.time}</span>
                         </div>
                         {post.author.affiliation && (
-                          <p className="text-xs text-gray-500 mt-0.5">{post.author.affiliation}</p>
+                          <p className="text-sm text-gray-500 mt-0.5">{post.author.affiliation}</p>
                         )}
                       </div>
                     </div>
@@ -318,7 +318,7 @@ const Feeds = () => {
 
                   {/* Post Content */}
                   <div className="px-4 pb-3">
-                    <p className="text-sm text-gray-800 whitespace-pre-line">{post.content}</p>
+                    <p className="text-[15px] text-gray-800 whitespace-pre-line">{post.content}</p>
                   </div>
 
                   {/* Article Preview */}
@@ -326,12 +326,12 @@ const Feeds = () => {
                     <div className="mx-4 mb-3 border border-gray-200 rounded-xl overflow-hidden hover:bg-gray-50 transition-colors cursor-pointer">
                       <img src={post.article.image} alt={post.article.title} className="w-full h-48 object-cover" />
                       <div className="p-4">
-                        <h4 className="font-semibold text-gray-900 text-sm mb-1">{post.article.title}</h4>
-                        <p className="text-xs text-gray-600 mb-1">{post.article.journal}</p>
-                        <p className="text-xs text-gray-500 mb-3">{post.article.vol}</p>
+                        <h4 className="font-semibold text-gray-900 text-[15px] mb-1">{post.article.title}</h4>
+                        <p className="text-sm text-gray-600 mb-1">{post.article.journal}</p>
+                        <p className="text-sm text-gray-500 mb-3">{post.article.vol}</p>
                         <div className="flex gap-2">
                           {post.article.sdgs.map(sdg => (
-                            <span key={sdg} className={`px-2 py-1 rounded text-xs font-bold ${getSDGColor(sdg)}`}>SDG {sdg}</span>
+                            <span key={sdg} className={`px-2 py-1 rounded text-sm font-bold ${getSDGColor(sdg)}`}>SDG {sdg}</span>
                           ))}
                         </div>
                       </div>
@@ -343,8 +343,8 @@ const Feeds = () => {
                     <div className="mx-4 mb-3 border border-gray-200 rounded-xl p-4 flex items-center gap-3 hover:bg-gray-50 transition-colors cursor-pointer">
                       <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center text-2xl">{post.file.icon}</div>
                       <div>
-                        <p className="text-sm font-semibold text-gray-900">{post.file.name}</p>
-                        <p className="text-xs text-gray-500">{post.file.size}</p>
+                        <p className="text-[15px] font-semibold text-gray-900">{post.file.name}</p>
+                        <p className="text-sm text-gray-500">{post.file.size}</p>
                       </div>
                     </div>
                   )}
@@ -363,20 +363,20 @@ const Feeds = () => {
                     <div className="flex items-center gap-6">
                       <button
                         onClick={() => toggleLike(post.id)}
-                        className={`flex items-center gap-2 text-sm transition-colors ${likedPosts.has(post.id) ? 'text-red-600' : 'text-gray-600 hover:text-red-600'}`}
+                        className={`flex items-center gap-2 text-[15px] transition-colors ${likedPosts.has(post.id) ? 'text-red-600' : 'text-gray-600 hover:text-red-600'}`}
                       >
                         <svg className="w-5 h-5" fill={likedPosts.has(post.id) ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                         </svg>
                         {post.likes + (likedPosts.has(post.id) ? 1 : 0)}
                       </button>
-                      <button className="flex items-center gap-2 text-sm text-gray-600 hover:text-indigo-600 transition-colors">
+                      <button className="flex items-center gap-2 text-[15px] text-gray-600 hover:text-indigo-600 transition-colors">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                         </svg>
                         {post.comments}
                       </button>
-                      <button className="flex items-center gap-2 text-sm text-gray-600 hover:text-green-600 transition-colors">
+                      <button className="flex items-center gap-2 text-[15px] text-gray-600 hover:text-green-600 transition-colors">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                         </svg>
@@ -398,7 +398,7 @@ const Feeds = () => {
 
             {/* Load More */}
             <div className="text-center py-4">
-              <button className="px-6 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors shadow-sm">
+              <button className="px-6 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl text-[15px] font-medium hover:bg-gray-50 transition-colors shadow-sm">
                 {t('load_more')}
               </button>
             </div>
@@ -408,73 +408,73 @@ const Feeds = () => {
           <aside className="hidden lg:block lg:col-span-1 space-y-6">
             {/* Recent Activity */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-              <h3 className="font-bold text-gray-900 text-sm mb-4 uppercase tracking-wider">{t('sections.activities')}</h3>
+              <h3 className="font-bold text-gray-900 text-[15px] mb-4 uppercase tracking-wider">{t('sections.activities')}</h3>
               <div className="space-y-4">
                 {RECENT_ACTIVITIES.map((activity, idx) => (
                   <div key={idx} className="flex items-start gap-3">
                     <img src={`https://i.pravatar.cc/150?img=${30 + idx}`} alt={activity.name} className="w-8 h-8 rounded-full object-cover mt-0.5" />
                     <div>
-                      <p className="text-sm">
+                      <p className="text-[15px]">
                         <span className="font-semibold text-gray-900">{activity.name}</span>{' '}
                         <span className="text-gray-600">{activity.action}</span>
                       </p>
-                      <p className="text-xs text-gray-500 mt-0.5">{activity.time}</p>
+                      <p className="text-sm text-gray-500 mt-0.5">{activity.time}</p>
                     </div>
                     <span className="ml-auto text-lg">{activity.icon}</span>
                   </div>
                 ))}
               </div>
-              <button className="w-full mt-4 text-sm text-indigo-600 font-medium hover:text-indigo-700">{t('see_all.activities')}</button>
+              <button className="w-full mt-4 text-[15px] text-indigo-600 font-medium hover:text-indigo-700">{t('see_all.activities')}</button>
             </div>
 
             {/* Invitations */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-              <h3 className="font-bold text-gray-900 text-sm mb-4 uppercase tracking-wider">{t('sections.invitations')}</h3>
+              <h3 className="font-bold text-gray-900 text-[15px] mb-4 uppercase tracking-wider">{t('sections.invitations')}</h3>
               <div className="space-y-4">
                 {INVITATIONS.map((inv, idx) => (
                   <div key={idx} className="flex items-start gap-3">
                     <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-lg">{inv.logo}</div>
                     <div className="flex-grow">
-                      <p className="text-sm">
+                      <p className="text-[15px]">
                         <span className="font-semibold text-gray-900">{inv.name}</span>{' '}
                         <span className="text-gray-600">{inv.action}</span>
                       </p>
                       <div className="flex gap-2 mt-2">
-                        <button className="flex-1 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-200 transition-colors">{t('invite.reject')}</button>
-                        <button className="flex-1 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-medium hover:bg-indigo-700 transition-colors">{t('invite.accept')}</button>
+                        <button className="flex-1 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">{t('invite.reject')}</button>
+                        <button className="flex-1 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors">{t('invite.accept')}</button>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-              <button className="w-full mt-4 text-sm text-indigo-600 font-medium hover:text-indigo-700">{t('see_all.invitations')}</button>
+              <button className="w-full mt-4 text-[15px] text-indigo-600 font-medium hover:text-indigo-700">{t('see_all.invitations')}</button>
             </div>
 
             {/* Upcoming Events */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-              <h3 className="font-bold text-gray-900 text-sm mb-4 uppercase tracking-wider">{t('sections.events')}</h3>
+              <h3 className="font-bold text-gray-900 text-[15px] mb-4 uppercase tracking-wider">{t('sections.events')}</h3>
               <div className="space-y-4">
                 {EVENTS.map((event, idx) => (
                   <div key={idx} className="flex gap-3">
                     <div className="w-12 h-12 bg-indigo-50 rounded-lg flex flex-col items-center justify-center text-center shrink-0">
                       <span className="text-lg font-bold text-indigo-600 leading-none">{event.day}</span>
-                      <span className="text-[10px] font-bold text-indigo-600 uppercase">{event.month}</span>
+                      <span className="text-xs font-bold text-indigo-600 uppercase">{event.month}</span>
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-900">{event.title}</p>
-                      <p className="text-xs text-gray-500 mt-1">{event.time}</p>
-                      <p className="text-xs text-gray-500">{event.location}</p>
-                      <button className="mt-2 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-200 transition-colors">{t('event_register')}</button>
+                      <p className="text-[15px] font-semibold text-gray-900">{event.title}</p>
+                      <p className="text-sm text-gray-500 mt-1">{event.time}</p>
+                      <p className="text-sm text-gray-500">{event.location}</p>
+                      <button className="mt-2 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">{t('event_register')}</button>
                     </div>
                   </div>
                 ))}
               </div>
-              <button className="w-full mt-4 text-sm text-indigo-600 font-medium hover:text-indigo-700">{t('see_all.events')}</button>
+              <button className="w-full mt-4 text-[15px] text-indigo-600 font-medium hover:text-indigo-700">{t('see_all.events')}</button>
             </div>
 
             {/* Who's Active */}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-              <h3 className="font-bold text-gray-900 text-sm mb-4 uppercase tracking-wider">{t('sections.active')}</h3>
+              <h3 className="font-bold text-gray-900 text-[15px] mb-4 uppercase tracking-wider">{t('sections.active')}</h3>
               <div className="space-y-3">
                 {ACTIVE_USERS.map((user, idx) => (
                   <Link key={idx} to={`/profile/${idx}`} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
@@ -483,13 +483,13 @@ const Feeds = () => {
                       <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-white ${user.status === 'online' ? 'bg-green-500' : 'bg-amber-500'}`}></span>
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-gray-900">{user.name}</p>
-                      <p className="text-xs text-gray-500 capitalize">{user.status}</p>
+                      <p className="text-[15px] font-semibold text-gray-900">{user.name}</p>
+                      <p className="text-sm text-gray-500 capitalize">{user.status}</p>
                     </div>
                   </Link>
                 ))}
               </div>
-              <button className="w-full mt-4 text-sm text-indigo-600 font-medium hover:text-indigo-700">{t('see_all.users')}</button>
+              <button className="w-full mt-4 text-[15px] text-indigo-600 font-medium hover:text-indigo-700">{t('see_all.users')}</button>
             </div>
           </aside>
         </div>

@@ -142,19 +142,19 @@ const Admin = () => {
   // Helper Components
   const SectionHeader = ({ title, description, action }) => (
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-      <div><h2 className="text-xl font-bold text-gray-900">{title}</h2>{description && <p className="text-sm text-gray-600 mt-1">{description}</p>}</div>
+      <div><h2 className="text-xl font-bold text-gray-900">{title}</h2>{description && <p className="text-[15px] text-gray-600 mt-1">{description}</p>}</div>
       {action}
     </div>
   );
 
   const StatusBadge = ({ status }) => {
     const styles = { active: 'bg-green-100 text-green-700', suspended: 'bg-amber-100 text-amber-700', disabled: 'bg-red-100 text-red-700', revoked: 'bg-gray-100 text-gray-600' };
-    return <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${styles[status] || styles.active}`}>{status.charAt(0).toUpperCase() + status.slice(1)}</span>;
+    return <span className={`px-2.5 py-1 rounded-full text-sm font-medium ${styles[status] || styles.active}`}>{status.charAt(0).toUpperCase() + status.slice(1)}</span>;
   };
 
   const RoleBadge = ({ role }) => {
     const styles = { researcher: 'bg-indigo-100 text-indigo-700', 'co-admin': 'bg-purple-100 text-purple-700', admin: 'bg-gray-900 text-white' };
-    return <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${styles[role] || styles.researcher}`}>{role === 'co-admin' ? 'Co-Admin' : role.charAt(0).toUpperCase() + role.slice(1)}</span>;
+    return <span className={`px-2.5 py-1 rounded-full text-sm font-medium ${styles[role] || styles.researcher}`}>{role === 'co-admin' ? 'Co-Admin' : role.charAt(0).toUpperCase() + role.slice(1)}</span>;
   };
 
   // Render Section Content
@@ -175,7 +175,7 @@ const Admin = () => {
                   <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}>
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={stat.icon} /></svg>
                   </div>
-                  <div><p className="text-2xl font-bold text-gray-900">{stat.value}</p><p className="text-sm text-gray-600">{stat.label}</p></div>
+                  <div><p className="text-2xl font-bold text-gray-900">{stat.value}</p><p className="text-[15px] text-gray-600">{stat.label}</p></div>
                 </div>
               ))}
             </div>
@@ -192,7 +192,7 @@ const Admin = () => {
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${activity.type === 'security' ? 'bg-red-100 text-red-600' : activity.type === 'analysis' ? 'bg-indigo-100 text-indigo-600' : activity.type === 'system' ? 'bg-gray-100 text-gray-600' : 'bg-green-100 text-green-600'}`}>
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={activity.type === 'security' ? 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z' : activity.type === 'analysis' ? 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' : activity.type === 'system' ? 'M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4' : 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'} /></svg>
                     </div>
-                    <div className="flex-grow"><p className="text-sm text-gray-900"><span className="font-medium">{activity.user}</span> {activity.action}</p><p className="text-xs text-gray-500 mt-0.5">{activity.time}</p></div>
+                    <div className="flex-grow"><p className="text-[15px] text-gray-900"><span className="font-medium">{activity.user}</span> {activity.action}</p><p className="text-sm text-gray-500 mt-0.5">{activity.time}</p></div>
                   </div>
                 ))}
               </div>
@@ -203,20 +203,20 @@ const Admin = () => {
       case 'impact-config':
         return (
           <div className="space-y-6">
-            <SectionHeader title="Konfigurasi Wizdam Impact Score" description="Atur bobot komposit untuk perhitungan skor dampak riset. Total harus 100%." action={<button onClick={saveWisWeights} disabled={loading} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>}Simpan Perubahan</button>} />
+            <SectionHeader title="Konfigurasi Wizdam Impact Score" description="Atur bobot komposit untuk perhitungan skor dampak riset. Total harus 100%." action={<button onClick={saveWisWeights} disabled={loading} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>}Simpan Perubahan</button>} />
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {Object.entries(wisWeights).map(([key, value]) => (
                   <div key={key}>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 capitalize">{key} ({Math.round(value * 100)}%)</label>
+                    <label className="block text-[15px] font-medium text-gray-700 mb-2 capitalize">{key} ({Math.round(value * 100)}%)</label>
                     <input type="range" min="0" max="1" step="0.05" value={value} onChange={(e) => setWisWeights(prev => ({ ...prev, [key]: parseFloat(e.target.value) }))} className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
-                    <div className="flex justify-between text-xs text-gray-500 mt-1"><span>0%</span><span>100%</span></div>
+                    <div className="flex justify-between text-sm text-gray-500 mt-1"><span>0%</span><span>100%</span></div>
                   </div>
                 ))}
               </div>
               <div className="mt-6 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
-                <p className="text-sm text-indigo-800"><strong>Formula:</strong> WIS = (Academic × {Math.round(wisWeights.academic * 100)}%) + (Social × {Math.round(wisWeights.social * 100)}%) + (Economic × {Math.round(wisWeights.economic * 100)}%) + (SDG × {Math.round(wisWeights.sdg * 100)}%)</p>
-                <p className="text-xs text-indigo-600 mt-1">{t('wis.total_prefix')} {(Object.values(wisWeights).reduce((a, b) => a + b, 0) * 100).toFixed(1)}%{Math.abs(Object.values(wisWeights).reduce((a, b) => a + b, 0) - 1.0) > 0.01 && <span className="text-red-600 ml-2">{t('wis.must_be_100')}</span>}</p>
+                <p className="text-[15px] text-indigo-800"><strong>Formula:</strong> WIS = (Academic × {Math.round(wisWeights.academic * 100)}%) + (Social × {Math.round(wisWeights.social * 100)}%) + (Economic × {Math.round(wisWeights.economic * 100)}%) + (SDG × {Math.round(wisWeights.sdg * 100)}%)</p>
+                <p className="text-sm text-indigo-600 mt-1">{t('wis.total_prefix')} {(Object.values(wisWeights).reduce((a, b) => a + b, 0) * 100).toFixed(1)}%{Math.abs(Object.values(wisWeights).reduce((a, b) => a + b, 0) - 1.0) > 0.01 && <span className="text-red-600 ml-2">{t('wis.must_be_100')}</span>}</p>
               </div>
             </div>
           </div>
@@ -235,29 +235,29 @@ const Admin = () => {
                   { key: 'sangiaApi', label: 'Sangia API Secret Key', placeholder: 'sk_live_...', helper: t('api_security.helpers.sangiaApi') },
                 ].map((field) => (
                   <div key={field.key}>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
-                    <input type="password" value={apiKeys[field.key]} onChange={(e) => setApiKeys(prev => ({ ...prev, [field.key]: e.target.value }))} placeholder={field.placeholder} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono" />
-                    <p className="text-xs text-gray-500 mt-1">{field.helper}</p>
+                    <label className="block text-[15px] font-medium text-gray-700 mb-1">{field.label}</label>
+                    <input type="password" value={apiKeys[field.key]} onChange={(e) => setApiKeys(prev => ({ ...prev, [field.key]: e.target.value }))} placeholder={field.placeholder} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-[15px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono" />
+                    <p className="text-sm text-gray-500 mt-1">{field.helper}</p>
                   </div>
                 ))}
               </div>
-              <button onClick={saveApiKeys} disabled={loading} className="mt-6 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? 'Menyimpan...' : 'Simpan Kunci API'}</button>
+              <button onClick={saveApiKeys} disabled={loading} className="mt-6 px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? 'Menyimpan...' : 'Simpan Kunci API'}</button>
             </div>
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
               <h3 className="font-bold text-gray-900 mb-4">{t('api_security.user_keys')}</h3>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-[15px]">
                   <thead className="bg-gray-50 text-gray-600">
                     <tr><th className="px-4 py-3 text-left font-medium">{t('api_security.table.user')}</th><th className="px-4 py-3 text-left font-medium">{t('api_security.table.api_key')}</th><th className="px-4 py-3 text-left font-medium">{t('api_security.table.created')}</th><th className="px-4 py-3 text-left font-medium">{t('api_security.table.status')}</th><th className="px-4 py-3 text-right font-medium">{t('api_security.table.actions')}</th></tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {userApiKeys.map((key) => { const user = users.find(u => u.id === key.userId); return (
                       <tr key={key.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3"><p className="font-medium text-gray-900">{user?.name || 'Unknown'}</p><p className="text-xs text-gray-500">{user?.email}</p></td>
-                        <td className="px-4 py-3 font-mono text-xs text-gray-600">{key.key}</td>
+                        <td className="px-4 py-3"><p className="font-medium text-gray-900">{user?.name || 'Unknown'}</p><p className="text-sm text-gray-500">{user?.email}</p></td>
+                        <td className="px-4 py-3 font-mono text-sm text-gray-600">{key.key}</td>
                         <td className="px-4 py-3 text-gray-500">{key.created}</td>
                         <td className="px-4 py-3"><StatusBadge status={key.status} /></td>
-                        <td className="px-4 py-3 text-right">{key.status === 'active' && <button onClick={() => confirmAction('revokeApiKey', key.id)} className="text-red-600 hover:text-red-800 text-xs font-medium hover:underline">{t('api_security.revoke')}</button>}</td>
+                        <td className="px-4 py-3 text-right">{key.status === 'active' && <button onClick={() => confirmAction('revokeApiKey', key.id)} className="text-red-600 hover:text-red-800 text-sm font-medium hover:underline">{t('api_security.revoke')}</button>}</td>
                       </tr>
                     );})}
                   </tbody>
@@ -273,23 +273,23 @@ const Admin = () => {
             <SectionHeader title={t('users.title')} description={t('users.description')} />
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-[15px]">
                   <thead className="bg-gray-50 text-gray-600">
                     <tr><th className="px-4 py-3 text-left font-medium">{t('users.table.name_email')}</th><th className="px-4 py-3 text-left font-medium">{t('users.table.role')}</th><th className="px-4 py-3 text-left font-medium">{t('users.table.status')}</th><th className="px-4 py-3 text-left font-medium">{t('users.table.joined')}</th><th className="px-4 py-3 text-right font-medium">{t('users.table.actions')}</th></tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {users.map((user) => (
                       <tr key={user.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3"><p className="font-medium text-gray-900">{user.name}</p><p className="text-xs text-gray-500">{user.email}</p></td>
+                        <td className="px-4 py-3"><p className="font-medium text-gray-900">{user.name}</p><p className="text-sm text-gray-500">{user.email}</p></td>
                         <td className="px-4 py-3"><RoleBadge role={user.role} /></td>
                         <td className="px-4 py-3"><StatusBadge status={user.status} /></td>
                         <td className="px-4 py-3 text-gray-500">{user.joined}</td>
                         <td className="px-4 py-3 text-right">
                           <div className="flex justify-end gap-2">
-                            {user.role === 'researcher' && <button onClick={() => confirmAction('promoteToCoAdmin', user.id)} className="text-indigo-600 hover:text-indigo-800 text-xs font-medium hover:underline">{t('users.actions.promote')}</button>}
-                            {user.status === 'active' && <><button onClick={() => confirmAction('suspendUser', user.id)} className="text-amber-600 hover:text-amber-800 text-xs font-medium hover:underline">{t('users.actions.suspend')}</button><button onClick={() => confirmAction('disableUser', user.id)} className="text-red-600 hover:text-red-800 text-xs font-medium hover:underline">{t('users.actions.disable')}</button></>}
-                            {(user.status === 'suspended' || user.status === 'disabled') && <button onClick={() => setUsers(prev => prev.map(u => u.id === user.id ? { ...u, status: 'active' } : u))} className="text-green-600 hover:text-green-800 text-xs font-medium hover:underline">{t('users.actions.activate')}</button>}
-                            <button onClick={() => confirmAction('deleteUser', user.id)} className="text-red-700 hover:text-red-900 text-xs font-medium hover:underline">{t('users.actions.delete')}</button>
+                            {user.role === 'researcher' && <button onClick={() => confirmAction('promoteToCoAdmin', user.id)} className="text-indigo-600 hover:text-indigo-800 text-sm font-medium hover:underline">{t('users.actions.promote')}</button>}
+                            {user.status === 'active' && <><button onClick={() => confirmAction('suspendUser', user.id)} className="text-amber-600 hover:text-amber-800 text-sm font-medium hover:underline">{t('users.actions.suspend')}</button><button onClick={() => confirmAction('disableUser', user.id)} className="text-red-600 hover:text-red-800 text-sm font-medium hover:underline">{t('users.actions.disable')}</button></>}
+                            {(user.status === 'suspended' || user.status === 'disabled') && <button onClick={() => setUsers(prev => prev.map(u => u.id === user.id ? { ...u, status: 'active' } : u))} className="text-green-600 hover:text-green-800 text-sm font-medium hover:underline">{t('users.actions.activate')}</button>}
+                            <button onClick={() => confirmAction('deleteUser', user.id)} className="text-red-700 hover:text-red-900 text-sm font-medium hover:underline">{t('users.actions.delete')}</button>
                           </div>
                         </td>
                       </tr>
@@ -304,7 +304,7 @@ const Admin = () => {
       case 'content-moderation':
         return (
           <div className="space-y-6">
-            <SectionHeader title={t('content.title')} description={t('content.description')} action={<button onClick={saveContentSettings} disabled={loading} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? t('content.saving') : t('content.save')}</button>} />
+            <SectionHeader title={t('content.title')} description={t('content.description')} action={<button onClick={saveContentSettings} disabled={loading} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? t('content.saving') : t('content.save')}</button>} />
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
               {[
                 { key: 'showJournalsMain', label: t('content.toggles.showJournalsMain.label'), desc: t('content.toggles.showJournalsMain.desc') },
@@ -312,7 +312,7 @@ const Admin = () => {
                 { key: 'showResearchersMain', label: t('content.toggles.showResearchersMain.label'), desc: t('content.toggles.showResearchersMain.desc') }
               ].map((setting) => (
                 <div key={setting.key} className="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
-                  <div><p className="font-medium text-gray-900 text-sm">{setting.label}</p><p className="text-xs text-gray-500 mt-1">{setting.desc}</p></div>
+                  <div><p className="font-medium text-gray-900 text-[15px]">{setting.label}</p><p className="text-sm text-gray-500 mt-1">{setting.desc}</p></div>
                   <button onClick={() => setContentSettings(prev => ({ ...prev, [setting.key]: !prev[setting.key] }))} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${contentSettings[setting.key] ? 'bg-indigo-600' : 'bg-gray-300'}`}>
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${contentSettings[setting.key] ? 'translate-x-6' : 'translate-x-1'}`} />
                   </button>
@@ -325,37 +325,37 @@ const Admin = () => {
       case 'ui-customization':
         return (
           <div className="space-y-6">
-            <SectionHeader title={t('ui.title')} description={t('ui.description')} action={<button onClick={saveUiSettings} disabled={loading} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? t('ui.applying') : t('ui.apply')}</button>} />
+            <SectionHeader title={t('ui.title')} description={t('ui.description')} action={<button onClick={saveUiSettings} disabled={loading} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? t('ui.applying') : t('ui.apply')}</button>} />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                 <h3 className="font-bold text-gray-900 mb-4">{t('ui.color_theme')}</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('ui.primary')}</label>
+                    <label className="block text-[15px] font-medium text-gray-700 mb-2">{t('ui.primary')}</label>
                     <div className="flex items-center gap-3">
                       <input type="color" value={uiSettings.primaryColor} onChange={(e) => setUiSettings(prev => ({ ...prev, primaryColor: e.target.value }))} className="w-12 h-10 rounded cursor-pointer border border-gray-200" />
-                      <input type="text" value={uiSettings.primaryColor} onChange={(e) => setUiSettings(prev => ({ ...prev, primaryColor: e.target.value }))} className="flex-grow px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-mono" />
+                      <input type="text" value={uiSettings.primaryColor} onChange={(e) => setUiSettings(prev => ({ ...prev, primaryColor: e.target.value }))} className="flex-grow px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[15px] font-mono" />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('ui.secondary')}</label>
+                    <label className="block text-[15px] font-medium text-gray-700 mb-2">{t('ui.secondary')}</label>
                     <div className="flex items-center gap-3">
                       <input type="color" value={uiSettings.secondaryColor} onChange={(e) => setUiSettings(prev => ({ ...prev, secondaryColor: e.target.value }))} className="w-12 h-10 rounded cursor-pointer border border-gray-200" />
-                      <input type="text" value={uiSettings.secondaryColor} onChange={(e) => setUiSettings(prev => ({ ...prev, secondaryColor: e.target.value }))} className="flex-grow px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-mono" />
+                      <input type="text" value={uiSettings.secondaryColor} onChange={(e) => setUiSettings(prev => ({ ...prev, secondaryColor: e.target.value }))} className="flex-grow px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[15px] font-mono" />
                     </div>
                   </div>
                 </div>
               </div>
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('ui.font')}</label>
-                  <select value={uiSettings.fontFamily} onChange={(e) => setUiSettings(prev => ({ ...prev, fontFamily: e.target.value }))} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500">
+                  <label className="block text-[15px] font-medium text-gray-700 mb-2">{t('ui.font')}</label>
+                  <select value={uiSettings.fontFamily} onChange={(e) => setUiSettings(prev => ({ ...prev, fontFamily: e.target.value }))} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-[15px] focus:ring-2 focus:ring-indigo-500">
                     <option value="Inter">Inter (Default)</option><option value="Roboto">Roboto</option><option value="Open Sans">Open Sans</option><option value="Nunito">Nunito</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('ui.chart_type')}</label>
-                  <select value={uiSettings.chartType} onChange={(e) => setUiSettings(prev => ({ ...prev, chartType: e.target.value }))} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500">
+                  <label className="block text-[15px] font-medium text-gray-700 mb-2">{t('ui.chart_type')}</label>
+                  <select value={uiSettings.chartType} onChange={(e) => setUiSettings(prev => ({ ...prev, chartType: e.target.value }))} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-[15px] focus:ring-2 focus:ring-indigo-500">
                     <option value="area">Area Chart</option><option value="line">Line Chart</option><option value="bar">Bar Chart</option><option value="radar">Radar Chart</option>
                   </select>
                 </div>
@@ -367,23 +367,23 @@ const Admin = () => {
       case 'system':
         return (
           <div className="space-y-6">
-            <SectionHeader title={t('system.title')} description={t('system.description')} action={<button onClick={saveSystemSettings} disabled={loading} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? t('content.saving') : t('content.save')}</button>} />
+            <SectionHeader title={t('system.title')} description={t('system.description')} action={<button onClick={saveSystemSettings} disabled={loading} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? t('content.saving') : t('content.save')}</button>} />
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-6">
               <div className="flex items-start justify-between p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                <div><p className="font-medium text-amber-900 text-sm">{t('system.maintenance')}</p><p className="text-xs text-amber-700 mt-1">{t('system.maintenance_desc')}</p></div>
+                <div><p className="font-medium text-amber-900 text-[15px]">{t('system.maintenance')}</p><p className="text-sm text-amber-700 mt-1">{t('system.maintenance_desc')}</p></div>
                 <button onClick={() => setSystemSettings(prev => ({ ...prev, maintenanceMode: !prev.maintenanceMode }))} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${systemSettings.maintenanceMode ? 'bg-amber-600' : 'bg-gray-300'}`}>
                   <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${systemSettings.maintenanceMode ? 'translate-x-6' : 'translate-x-1'}`} />
                 </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div><p className="text-sm font-medium text-gray-900">{t('system.registration')}</p><p className="text-xs text-gray-500">{t('system.registration_desc')}</p></div>
+                  <div><p className="text-[15px] font-medium text-gray-900">{t('system.registration')}</p><p className="text-sm text-gray-500">{t('system.registration_desc')}</p></div>
                   <button onClick={() => setSystemSettings(prev => ({ ...prev, allowNewRegistrations: !prev.allowNewRegistrations }))} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${systemSettings.allowNewRegistrations ? 'bg-indigo-600' : 'bg-gray-300'}`}>
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${systemSettings.allowNewRegistrations ? 'translate-x-6' : 'translate-x-1'}`} />
                   </button>
                 </div>
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div><p className="text-sm font-medium text-gray-900">{t('system.email_verify')}</p><p className="text-xs text-gray-500">{t('system.email_verify_desc')}</p></div>
+                  <div><p className="text-[15px] font-medium text-gray-900">{t('system.email_verify')}</p><p className="text-sm text-gray-500">{t('system.email_verify_desc')}</p></div>
                   <button onClick={() => setSystemSettings(prev => ({ ...prev, requireEmailVerification: !prev.requireEmailVerification }))} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${systemSettings.requireEmailVerification ? 'bg-indigo-600' : 'bg-gray-300'}`}>
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${systemSettings.requireEmailVerification ? 'translate-x-6' : 'translate-x-1'}`} />
                   </button>
@@ -399,7 +399,7 @@ const Admin = () => {
             <SectionHeader title={t('audit.title')} description={t('audit.description')} />
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-[15px]">
                   <thead className="bg-gray-50 text-gray-600">
                     <tr><th className="px-4 py-3 text-left font-medium">{t('audit.table.time')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.admin')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.action')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.target')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.status')}</th></tr>
                   </thead>
@@ -410,11 +410,11 @@ const Admin = () => {
                       { time: '2024-05-24 16:48', admin: 'Admin Utama', action: 'Menangguhkan Akun', target: 'budi@ugm.ac.id', status: 'success' },
                     ].map((log, idx) => (
                       <tr key={idx} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-gray-900 font-mono text-xs">{log.time}</td>
+                        <td className="px-4 py-3 text-gray-900 font-mono text-sm">{log.time}</td>
                         <td className="px-4 py-3 text-gray-900">{log.admin}</td>
-                        <td className="px-4 py-3"><span className={`px-2 py-1 rounded text-xs font-medium ${log.action.includes('Cabut') || log.action.includes('Hapus') ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>{log.action}</span></td>
-                        <td className="px-4 py-3 text-gray-600 font-mono text-xs truncate max-w-[200px]">{log.target}</td>
-                        <td className="px-4 py-3"><span className={`px-2 py-1 rounded-full text-xs font-medium ${log.status === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{log.status}</span></td>
+                        <td className="px-4 py-3"><span className={`px-2 py-1 rounded text-sm font-medium ${log.action.includes('Cabut') || log.action.includes('Hapus') ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>{log.action}</span></td>
+                        <td className="px-4 py-3 text-gray-600 font-mono text-sm truncate max-w-[200px]">{log.target}</td>
+                        <td className="px-4 py-3"><span className={`px-2 py-1 rounded-full text-sm font-medium ${log.status === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{log.status}</span></td>
                       </tr>
                     ))}
                   </tbody>
@@ -448,7 +448,7 @@ const Admin = () => {
                     setCrawlLoading(false);
                   }}
                   disabled={crawlLoading}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2"
                 >
                   {crawlLoading ? <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg> : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>}
                   Refresh Status
@@ -465,7 +465,7 @@ const Admin = () => {
                 ].map((s, i) => (
                   <div key={i} className={`p-4 rounded-xl border ${s.color} border-current/20`}>
                     <p className="text-2xl font-bold">{s.value}</p>
-                    <p className="text-sm mt-1">{s.label}</p>
+                    <p className="text-[15px] mt-1">{s.label}</p>
                   </div>
                 ))}
               </div>
@@ -478,7 +478,7 @@ const Admin = () => {
                   value={crawlInput}
                   onChange={e => setCrawlInput(e.target.value)}
                   placeholder="ORCID (0000-0000-0000-0000) atau DOI (10.xxx/...)"
-                  className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono"
+                  className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-[15px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono"
                 />
                 <button
                   onClick={async () => {
@@ -501,7 +501,7 @@ const Admin = () => {
                     setCrawlLoading(false);
                   }}
                   disabled={crawlLoading || !crawlInput.trim()}
-                  className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors whitespace-nowrap"
+                  className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors whitespace-nowrap"
                 >
                   Tambah
                 </button>
@@ -520,7 +520,7 @@ const Admin = () => {
                   setCrawlLoading(false);
                 }}
                 disabled={crawlLoading}
-                className="w-full py-2.5 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-60 transition-colors flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-green-600 text-white rounded-lg text-[15px] font-medium hover:bg-green-700 disabled:opacity-60 transition-colors flex items-center justify-center gap-2"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 Proses Antrian Sekarang
@@ -530,17 +530,17 @@ const Admin = () => {
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                 <div className="px-6 py-4 border-b border-gray-100"><h3 className="font-bold text-gray-900">Item dalam Antrian</h3></div>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full text-[15px]">
                     <thead className="bg-gray-50 text-gray-600">
                       <tr><th className="px-4 py-3 text-left font-medium">Identifier</th><th className="px-4 py-3 text-left font-medium">Tipe</th><th className="px-4 py-3 text-left font-medium">Status</th><th className="px-4 py-3 text-left font-medium">Ditambahkan</th></tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {crawlQueue.map((item, idx) => (
                         <tr key={idx} className="hover:bg-gray-50">
-                          <td className="px-4 py-3 font-mono text-xs text-gray-700">{item.identifier}</td>
-                          <td className="px-4 py-3"><span className="px-2 py-1 rounded text-xs font-medium bg-indigo-100 text-indigo-700">{item.type || 'unknown'}</span></td>
-                          <td className="px-4 py-3"><span className={`px-2 py-1 rounded-full text-xs font-medium ${item.status === 'done' ? 'bg-green-100 text-green-700' : item.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>{item.status}</span></td>
-                          <td className="px-4 py-3 text-gray-500 text-xs">{item.created_at || '—'}</td>
+                          <td className="px-4 py-3 font-mono text-sm text-gray-700">{item.identifier}</td>
+                          <td className="px-4 py-3"><span className="px-2 py-1 rounded text-sm font-medium bg-indigo-100 text-indigo-700">{item.type || 'unknown'}</span></td>
+                          <td className="px-4 py-3"><span className={`px-2 py-1 rounded-full text-sm font-medium ${item.status === 'done' ? 'bg-green-100 text-green-700' : item.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>{item.status}</span></td>
+                          <td className="px-4 py-3 text-gray-500 text-sm">{item.created_at || '—'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -551,7 +551,7 @@ const Admin = () => {
             {crawlLog.length > 0 && (
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                 <h3 className="font-bold text-gray-900 mb-3">Log Aktivitas</h3>
-                <div className="space-y-2 max-h-48 overflow-y-auto font-mono text-xs">
+                <div className="space-y-2 max-h-48 overflow-y-auto font-mono text-sm">
                   {crawlLog.map((entry, idx) => (
                     <div key={idx} className={`flex gap-3 ${entry.type === 'error' ? 'text-red-600' : entry.type === 'success' ? 'text-green-600' : 'text-gray-600'}`}>
                       <span className="text-gray-400 shrink-0">[{entry.time}]</span>
@@ -585,7 +585,7 @@ const Admin = () => {
                     setCacheLoading(false);
                   }}
                   disabled={cacheLoading}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2"
                 >
                   {cacheLoading ? <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg> : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" /></svg>}
                   Cek Status Cache
@@ -601,14 +601,14 @@ const Admin = () => {
                 ].map((s, i) => (
                   <div key={i} className={`p-4 rounded-xl border ${s.color} border-current/20`}>
                     <p className="text-2xl font-bold">{s.value}</p>
-                    <p className="text-sm mt-1">{s.label}</p>
+                    <p className="text-[15px] mt-1">{s.label}</p>
                   </div>
                 ))}
               </div>
             )}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
               <h3 className="font-bold text-gray-900">Aksi Migrasi</h3>
-              <p className="text-sm text-gray-600">Migrasikan semua cache file legacy ke tabel <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs font-mono">api_cache</code> di database. Proses ini tidak menghapus file asli.</p>
+              <p className="text-[15px] text-gray-600">Migrasikan semua cache file legacy ke tabel <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono">api_cache</code> di database. Proses ini tidak menghapus file asli.</p>
               <div className="flex flex-wrap gap-3">
                 <button
                   onClick={async () => {
@@ -625,7 +625,7 @@ const Admin = () => {
                     setCacheLoading(false);
                   }}
                   disabled={cacheLoading}
-                  className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2"
+                  className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
                   Jalankan Migrasi
@@ -633,7 +633,7 @@ const Admin = () => {
                 <button
                   onClick={() => confirmAction('clearCache', null)}
                   disabled={cacheLoading}
-                  className="px-5 py-2.5 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-60 transition-colors flex items-center gap-2"
+                  className="px-5 py-2.5 bg-red-600 text-white rounded-lg text-[15px] font-medium hover:bg-red-700 disabled:opacity-60 transition-colors flex items-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                   Bersihkan Cache File
@@ -643,7 +643,7 @@ const Admin = () => {
             {cacheLog.length > 0 && (
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                 <h3 className="font-bold text-gray-900 mb-3">Log Migrasi</h3>
-                <div className="space-y-2 max-h-48 overflow-y-auto font-mono text-xs">
+                <div className="space-y-2 max-h-48 overflow-y-auto font-mono text-sm">
                   {cacheLog.map((entry, idx) => (
                     <div key={idx} className={`flex gap-3 ${entry.type === 'error' ? 'text-red-600' : entry.type === 'success' ? 'text-green-600' : 'text-gray-600'}`}>
                       <span className="text-gray-400 shrink-0">[{entry.time}]</span>
@@ -675,7 +675,7 @@ const Admin = () => {
         <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100"><h3 className="text-lg font-bold text-gray-900">{modal.title}</h3></div>
           <div className="p-6">
-            <p className="text-sm text-gray-600 mb-6">{modal.message}</p>
+            <p className="text-[15px] text-gray-600 mb-6">{modal.message}</p>
             <div className="flex gap-3">
               <button onClick={() => setConfirmModal({ show: false, action: null, target: null })} disabled={loading} className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50">Batal</button>
               <button onClick={executeAction} disabled={loading} className={`flex-1 px-4 py-2.5 text-white rounded-lg font-medium transition-colors disabled:opacity-60 flex items-center justify-center gap-2 ${modal.confirmClass}`}>{loading ? <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> : modal.confirmText}</button>
@@ -691,7 +691,7 @@ const Admin = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-6">
         <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
         <span className="text-gray-400">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
@@ -711,7 +711,7 @@ const Admin = () => {
               </div>
               <div>
                 <p className="font-semibold text-gray-900">Admin Panel</p>
-                <p className="text-xs text-red-600 font-medium">Super User</p>
+                <p className="text-sm text-red-600 font-medium">Super User</p>
               </div>
             </div>
             
@@ -720,7 +720,7 @@ const Admin = () => {
                 <button
                   key={item.id}
                   onClick={() => setActiveSection(item.id)}
-                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-left ${
+                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-[15px] font-medium transition-colors text-left ${
                     activeSection === item.id 
                       ? 'bg-indigo-50 text-indigo-700' 
                       : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
@@ -735,19 +735,19 @@ const Admin = () => {
             </nav>
 
             <div className="mt-6 pt-4 border-t border-gray-100 space-y-1">
-              <Link to="/admin/teams" className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 font-medium text-sm">
+              <Link to="/admin/teams" className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 font-medium text-[15px]">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 Manajemen Tim
               </Link>
-              <Link to="/admin/landing-content" className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 font-medium text-sm">
+              <Link to="/admin/landing-content" className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 font-medium text-[15px]">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                 </svg>
                 Konten Landing
               </Link>
-              <Link to="/" className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50 font-medium text-sm">
+              <Link to="/" className="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50 font-medium text-[15px]">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
@@ -769,7 +769,7 @@ const Admin = () => {
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={toast.type === 'success' ? 'M5 13l4 4L19 7' : toast.type === 'error' ? 'M6 18L18 6M6 6l12 12' : 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'} />
           </svg>
-          <span className="text-sm font-medium">{toast.message}</span>
+          <span className="text-[15px] font-medium">{toast.message}</span>
         </div>
       )}
 

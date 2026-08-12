@@ -9,14 +9,14 @@ export default function LoadingSpinner({ size = 'md', text, fullPage }) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
         {spinner}
-        {text && <p className="text-sm text-gray-500">{text}</p>}
+        {text && <p className="text-[15px] text-gray-500">{text}</p>}
       </div>
     );
   }
   return (
     <div className="flex items-center gap-2">
       {spinner}
-      {text && <span className="text-sm text-gray-500">{text}</span>}
+      {text && <span className="text-[15px] text-gray-500">{text}</span>}
     </div>
   );
 }

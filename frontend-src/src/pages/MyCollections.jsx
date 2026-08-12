@@ -157,7 +157,7 @@ const MyCollections = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-6" aria-label="Breadcrumb">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
         <Link to="/dashboard" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.dashboard')}</Link>
@@ -203,7 +203,7 @@ const MyCollections = () => {
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-gray-900">{s.value}</p>
-                  <p className="text-sm text-gray-600">{s.label}</p>
+                  <p className="text-[15px] text-gray-600">{s.label}</p>
                 </div>
               </div>
             ))}
@@ -218,17 +218,17 @@ const MyCollections = () => {
                   placeholder={t('filters.search_placeholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-[15px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
                 />
                 <svg className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
               </div>
               <div className="flex gap-3">
-                <select value={privacyFilter} onChange={(e) => setPrivacyFilter(e.target.value)} className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-indigo-500">
+                <select value={privacyFilter} onChange={(e) => setPrivacyFilter(e.target.value)} className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-[15px] text-gray-700 focus:ring-2 focus:ring-indigo-500">
                   <option value="all">{t('filters.privacy.all')}</option>
                   <option value="public">{t('filters.privacy.public')}</option>
                   <option value="private">{t('filters.privacy.private')}</option>
                 </select>
-                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-indigo-500">
+                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-[15px] text-gray-700 focus:ring-2 focus:ring-indigo-500">
                   <option value="updated">{t('filters.sort.updated')}</option>
                   <option value="name">{t('filters.sort.name')}</option>
                   <option value="items">{t('filters.sort.items')}</option>
@@ -268,11 +268,11 @@ const MyCollections = () => {
                     <div className={viewMode === 'list' ? 'w-full sm:w-48 shrink-0' : 'bg-gray-50 p-4 border-b border-gray-100'}>
                       <div className="grid grid-cols-3 gap-2 h-24">
                         {items.length > 0 ? items.slice(0, 3).map((doi, idx) => (
-                          <div key={idx} className="bg-white border border-gray-200 rounded-lg p-2 flex items-center justify-center text-[10px] text-gray-600 text-center leading-tight line-clamp-3 break-all">
+                          <div key={idx} className="bg-white border border-gray-200 rounded-lg p-2 flex items-center justify-center text-xs text-gray-600 text-center leading-tight line-clamp-3 break-all">
                             {doi}
                           </div>
                         )) : (
-                          <div className="col-span-3 flex flex-col items-center justify-center text-gray-400 text-xs gap-1">
+                          <div className="col-span-3 flex flex-col items-center justify-center text-gray-400 text-sm gap-1">
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-5l-2 3h-2l-2-3H4"/></svg>
                             {t('card.preview_empty')}
                           </div>
@@ -287,12 +287,12 @@ const MyCollections = () => {
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
                             <h3 className="font-bold text-gray-900 text-lg truncate">{col.name}</h3>
                             {col.privacy === 'public' ? (
-                              <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[10px] font-bold">{t('card.badge.public')}</span>
+                              <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs font-bold">{t('card.badge.public')}</span>
                             ) : (
-                              <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-[10px] font-bold">{t('card.badge.private')}</span>
+                              <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs font-bold">{t('card.badge.private')}</span>
                             )}
                           </div>
-                          {col.description && <p className="text-sm text-gray-600 line-clamp-2 mb-3">{col.description}</p>}
+                          {col.description && <p className="text-[15px] text-gray-600 line-clamp-2 mb-3">{col.description}</p>}
                         </div>
                         <div className="flex gap-1 shrink-0 ml-2">
                           <button className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title={t('card.actions.share')} aria-label={t('card.actions.share')}>
@@ -310,13 +310,13 @@ const MyCollections = () => {
                       {tags.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-4">
                           {tags.map((tag, idx) => (
-                            <span key={idx} className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded-md text-xs font-medium">{tag}</span>
+                            <span key={idx} className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded-md text-sm font-medium">{tag}</span>
                           ))}
                         </div>
                       )}
 
                       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                        <div className="flex items-center gap-4 text-xs text-gray-500">
+                        <div className="flex items-center gap-4 text-sm text-gray-500">
                           <span className="flex items-center gap-1">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             {t('card.items_unit', { count: col.itemCount || 0 })}
@@ -326,7 +326,7 @@ const MyCollections = () => {
                             {formatDate(col.updated_at)}
                           </span>
                         </div>
-                        <Link to={`/collections/${col.id}`} className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
+                        <Link to={`/collections/${col.id}`} className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
                           {t('card.open')}
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
                         </Link>
@@ -348,8 +348,8 @@ const MyCollections = () => {
                 </div>
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('empty.no_match.title')}</h3>
-              <p className="text-gray-500 text-sm mb-6 max-w-md mx-auto">{t('empty.no_match.subtitle')}</p>
-              <button onClick={resetAll} className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors">
+              <p className="text-gray-500 text-[15px] mb-6 max-w-md mx-auto">{t('empty.no_match.subtitle')}</p>
+              <button onClick={resetAll} className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-[15px] font-medium hover:bg-indigo-700 transition-colors">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                 {t('empty.no_match.reset')}
               </button>
@@ -363,7 +363,7 @@ const MyCollections = () => {
                 </svg>
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('empty.no_data.title')}</h3>
-              <p className="text-gray-600 text-sm mb-6 max-w-md mx-auto">{t('empty.no_data.subtitle')}</p>
+              <p className="text-gray-600 text-[15px] mb-6 max-w-md mx-auto">{t('empty.no_data.subtitle')}</p>
               <button onClick={() => setIsModalOpen(true)} className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors inline-flex items-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/></svg>
                 {t('empty.no_data.button')}
@@ -383,7 +383,7 @@ const MyCollections = () => {
                 </div>
                 <form onSubmit={handleCreate} className="p-6 space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-[15px] font-medium text-gray-700 mb-1">
                       {t('modal.name_label')} <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -391,40 +391,40 @@ const MyCollections = () => {
                       required
                       value={draft.name}
                       onChange={(e) => setDraft({ ...draft, name: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-[15px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                       placeholder={t('modal.name_placeholder')}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('modal.desc_label')}</label>
+                    <label className="block text-[15px] font-medium text-gray-700 mb-1">{t('modal.desc_label')}</label>
                     <textarea
                       rows={3}
                       value={draft.description}
                       onChange={(e) => setDraft({ ...draft, description: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-[15px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
                       placeholder={t('modal.desc_placeholder')}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('modal.tags_label')}</label>
+                    <label className="block text-[15px] font-medium text-gray-700 mb-1">{t('modal.tags_label')}</label>
                     <input
                       type="text"
                       value={draft.tags}
                       onChange={(e) => setDraft({ ...draft, tags: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-[15px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                       placeholder={t('modal.tags_placeholder')}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('modal.privacy_label')}</label>
+                    <label className="block text-[15px] font-medium text-gray-700 mb-1">{t('modal.privacy_label')}</label>
                     <div className="flex gap-4">
                       <label className="flex items-center gap-2 cursor-pointer">
                         <input type="radio" name="privacy" value="private" checked={draft.privacy === 'private'} onChange={(e) => setDraft({ ...draft, privacy: e.target.value })} className="text-indigo-600 focus:ring-indigo-500"/>
-                        <span className="text-sm text-gray-700">{t('modal.privacy_private')}</span>
+                        <span className="text-[15px] text-gray-700">{t('modal.privacy_private')}</span>
                       </label>
                       <label className="flex items-center gap-2 cursor-pointer">
                         <input type="radio" name="privacy" value="public" checked={draft.privacy === 'public'} onChange={(e) => setDraft({ ...draft, privacy: e.target.value })} className="text-indigo-600 focus:ring-indigo-500"/>
-                        <span className="text-sm text-gray-700">{t('modal.privacy_public')}</span>
+                        <span className="text-[15px] text-gray-700">{t('modal.privacy_public')}</span>
                       </label>
                     </div>
                   </div>
@@ -445,7 +445,7 @@ const MyCollections = () => {
           {toast && (
             <div className="fixed bottom-6 right-6 bg-gray-900 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3 z-50">
               <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"/></svg>
-              <span className="text-sm font-medium">{toast}</span>
+              <span className="text-[15px] font-medium">{toast}</span>
             </div>
           )}
         </>

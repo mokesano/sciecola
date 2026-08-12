@@ -15,7 +15,7 @@ const Section = ({ id, index, section }) => {
   return (
     <section id={id}>
       <h2 className="text-xl font-bold text-gray-900 mb-3 flex items-center gap-2">
-        <span className="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center text-sm">{index}</span>
+        <span className="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center text-[15px]">{index}</span>
         {section.title}
       </h2>
       {(section.paragraphs ?? []).map((p, i) => (
@@ -76,13 +76,13 @@ const Privacy = () => {
         {/* Sidebar */}
         <aside className="hidden lg:block col-span-1">
           <div className="sticky top-24 bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-            <h3 className="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wider">{t('toc')}</h3>
+            <h3 className="font-bold text-gray-900 mb-4 text-[15px] uppercase tracking-wider">{t('toc')}</h3>
             <nav className="space-y-1 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
               {SECTION_KEYS.map((id) => (
                 <button
                   key={id}
                   onClick={() => scrollToSection(id)}
-                  className={`block w-full text-left text-sm px-3 py-2 rounded-lg transition-colors ${
+                  className={`block w-full text-left text-[15px] px-3 py-2 rounded-lg transition-colors ${
                     activeSection === id
                       ? 'bg-indigo-50 text-indigo-700 font-medium'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
@@ -99,7 +99,7 @@ const Privacy = () => {
         <div className="lg:col-span-3 bg-white rounded-xl border border-gray-200 shadow-sm p-6 sm:p-10">
           <div className="mb-8 border-b border-gray-100 pb-6">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
-            <div className="flex items-center gap-4 text-sm text-gray-500">
+            <div className="flex items-center gap-4 text-[15px] text-gray-500">
               <span>{t('updated')}</span>
               <span>•</span>
               <span>{t('read_time')}</span>

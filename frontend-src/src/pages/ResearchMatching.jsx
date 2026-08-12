@@ -133,7 +133,7 @@ const ResearchMatching = () => {
           <div className="text-center max-w-4xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
               <Brain className="w-5 h-5" />
-              <span className="text-sm font-medium">AI-Powered Collaboration</span>
+              <span className="text-[15px] font-medium">AI-Powered Collaboration</span>
             </div>
             
             <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
@@ -160,7 +160,7 @@ const ResearchMatching = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Research Keywords</label>
+                <label className="block text-[15px] font-semibold text-gray-700 mb-2">Research Keywords</label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
@@ -174,7 +174,7 @@ const ResearchMatching = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">SDG Focus Areas</label>
+                <label className="block text-[15px] font-semibold text-gray-700 mb-2">SDG Focus Areas</label>
                 <select className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none">
                   <option>Select SDG goals...</option>
                   {[...Array(17)].map((_, i) => (
@@ -184,7 +184,7 @@ const ResearchMatching = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Institution Type</label>
+                <label className="block text-[15px] font-semibold text-gray-700 mb-2">Institution Type</label>
                 <select className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none">
                   <option>Any institution</option>
                   <option>University</option>
@@ -195,7 +195,7 @@ const ResearchMatching = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Geographic Preference</label>
+                <label className="block text-[15px] font-semibold text-gray-700 mb-2">Geographic Preference</label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
@@ -209,7 +209,7 @@ const ResearchMatching = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Expertise Level</label>
+                <label className="block text-[15px] font-semibold text-gray-700 mb-2">Expertise Level</label>
                 <select className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none">
                   <option>Any level</option>
                   <option>Leading Expert (H-index &gt; 40)</option>
@@ -219,7 +219,7 @@ const ResearchMatching = () => {
               </div>
               
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Collaboration Type</label>
+                <label className="block text-[15px] font-semibold text-gray-700 mb-2">Collaboration Type</label>
                 <select className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none">
                   <option>Any type</option>
                   <option>Joint Research Project</option>
@@ -336,7 +336,7 @@ const ResearchMatching = () => {
                               {match.name}
                             </h3>
                             <p className="text-gray-600 mb-1">{match.title || 'Researcher'}</p>
-                            <div className="flex items-center gap-4 text-sm text-gray-500">
+                            <div className="flex items-center gap-4 text-[15px] text-gray-500">
                               {match.institution && (
                                 <span className="flex items-center gap-1">
                                   <Building2 className="w-4 h-4" />
@@ -355,7 +355,7 @@ const ResearchMatching = () => {
                           {/* Match Score */}
                           <div className={`px-4 py-2 rounded-xl border-2 font-bold ${getMatchScoreColor(match.match_score)}`}>
                             <div className="text-2xl">{match.match_score}%</div>
-                            <div className="text-xs uppercase tracking-wide">Match</div>
+                            <div className="text-sm uppercase tracking-wide">Match</div>
                           </div>
                         </div>
 
@@ -364,7 +364,7 @@ const ResearchMatching = () => {
                           {(match.sdg_focus || []).map(sdg => (
                             <span
                               key={sdg}
-                              className={`w-8 h-8 rounded-full ${sdgColors[sdg]} text-white text-xs font-bold flex items-center justify-center`}
+                              className={`w-8 h-8 rounded-full ${sdgColors[sdg]} text-white text-sm font-bold flex items-center justify-center`}
                               title={`SDG ${sdg}`}
                             >
                               {sdg}
@@ -380,7 +380,7 @@ const ResearchMatching = () => {
                           </div>
                           <ul className="space-y-1">
                             {(match.match_reasons || []).map((reason, idx) => (
-                              <li key={idx} className="text-sm text-purple-800 flex items-start gap-2">
+                              <li key={idx} className="text-[15px] text-purple-800 flex items-start gap-2">
                                 <CheckCircle className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
                                 {reason}
                               </li>
@@ -392,19 +392,19 @@ const ResearchMatching = () => {
                         <div className="grid grid-cols-4 gap-4 mb-4">
                           <div className="text-center">
                             <div className="text-lg font-bold text-indigo-600">{match.h_index}</div>
-                            <div className="text-xs text-gray-500">H-Index</div>
+                            <div className="text-sm text-gray-500">H-Index</div>
                           </div>
                           <div className="text-center">
                             <div className="text-lg font-bold text-indigo-600">{match.publications}</div>
-                            <div className="text-xs text-gray-500">Publications</div>
+                            <div className="text-sm text-gray-500">Publications</div>
                           </div>
                           <div className="text-center">
                             <div className="text-lg font-bold text-indigo-600">{match.collaborations}</div>
-                            <div className="text-xs text-gray-500">Collaborations</div>
+                            <div className="text-sm text-gray-500">Collaborations</div>
                           </div>
                           <div className="text-center">
-                            <div className="text-sm font-semibold text-green-600">{match.availability}</div>
-                            <div className="text-xs text-gray-500">{match.response_time}</div>
+                            <div className="text-[15px] font-semibold text-green-600">{match.availability}</div>
+                            <div className="text-sm text-gray-500">{match.response_time}</div>
                           </div>
                         </div>
 
@@ -462,7 +462,7 @@ const ResearchMatching = () => {
                       {item.step}
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
-                    <p className="text-gray-600 text-sm">{item.desc}</p>
+                    <p className="text-gray-600 text-[15px]">{item.desc}</p>
                   </div>
                   {index < 3 && (
                     <ArrowRight className="hidden md:block absolute top-1/2 -right-8 w-8 h-8 text-purple-300 transform -translate-y-1/2" />

@@ -238,11 +238,11 @@ const Monitoring = () => {
           className="custom-map-tooltip"
         >
           <div className="min-w-[120px]">
-            <p className="font-bold text-gray-900 text-sm mb-0.5">{city}</p>
-            <p className="text-xs text-gray-600 mb-1">{visitors.toLocaleString()} visitors</p>
+            <p className="font-bold text-gray-900 text-[15px] mb-0.5">{city}</p>
+            <p className="text-sm text-gray-600 mb-1">{visitors.toLocaleString()} visitors</p>
             <div className="flex items-center gap-1.5 mt-1">
               <span className="w-2 h-2 rounded-full" style={{ backgroundColor: color }}></span>
-              <p className="text-[11px] font-medium text-gray-700">
+              <p className="text-xs font-medium text-gray-700">
                 {type === 'brute' ? 'Brute Force' : type === 'bot' ? 'Bot Visit' : 'Normal Visit'}
               </p>
             </div>
@@ -265,10 +265,10 @@ const Monitoring = () => {
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-600 mb-1">{title}</p>
+          <p className="text-[15px] text-gray-600 mb-1">{title}</p>
           <p className="text-2xl font-bold text-gray-900">{value}</p>
           {change && (
-            <p className={`text-xs mt-1 ${change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <p className={`text-sm mt-1 ${change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               {change >= 0 ? '↑' : '↓'} {Math.abs(change)}% dari periode sebelumnya
             </p>
           )}
@@ -287,20 +287,20 @@ const Monitoring = () => {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
-              <p className="text-sm text-gray-600 mt-1">Real-time monitoring aktivitas dan trafik aplikasi</p>
+              <p className="text-[15px] text-gray-600 mt-1">Real-time monitoring aktivitas dan trafik aplikasi</p>
             </div>
             <div className="flex items-center gap-3">
               <select 
                 value={selectedTimeRange}
                 onChange={(e) => setSelectedTimeRange(e.target.value)}
-                className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[15px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               >
                 <option value="1h">{t('range.1h')}</option>
                 <option value="24h">{t('range.24h')}</option>
                 <option value="7d">{t('range.7d')}</option>
                 <option value="30d">{t('range.30d')}</option>
               </select>
-              <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors flex items-center gap-2">
+              <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 transition-colors flex items-center gap-2">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
@@ -331,7 +331,7 @@ const Monitoring = () => {
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           <div className="p-5 border-b border-gray-100">
             <h2 className="text-lg font-bold text-gray-900">{t('geo.title')}</h2>
-            <p className="text-sm text-gray-600 mt-1">{t('geo.subtitle')}</p>
+            <p className="text-[15px] text-gray-600 mt-1">{t('geo.subtitle')}</p>
           </div>
           <div className="h-[580px] w-full z-0 relative">
             <MapContainer
@@ -406,13 +406,13 @@ const Monitoring = () => {
             <h3 className="font-bold text-gray-900 mb-4">By Traffic Source</h3>
             <div className="space-y-4">
               <div>
-                <h4 className="text-sm font-semibold text-gray-700 mb-2">{t('sections.sources')}</h4>
+                <h4 className="text-[15px] font-semibold text-gray-700 mb-2">{t('sections.sources')}</h4>
                 <div className="space-y-2">
                   {trafficSources.sources.map((source, idx) => (
                     <div key={idx} className="flex items-center gap-3">
                       <div className={`w-3 h-3 rounded-full ${source.color}`}></div>
                       <div className="flex-1">
-                        <div className="flex justify-between text-sm mb-1">
+                        <div className="flex justify-between text-[15px] mb-1">
                           <span className="text-gray-700">{source.name}</span>
                           <span className="text-gray-900 font-medium">{source.value.toLocaleString()}</span>
                         </div>
@@ -424,10 +424,10 @@ const Monitoring = () => {
               </div>
 
               <div className="pt-4 border-t border-gray-100">
-                <h4 className="text-sm font-semibold text-gray-700 mb-2">UTM Campaigns</h4>
+                <h4 className="text-[15px] font-semibold text-gray-700 mb-2">UTM Campaigns</h4>
                 <div className="space-y-2">
                   {trafficSources.utm.map((utm, idx) => (
-                    <div key={idx} className="flex justify-between items-center text-sm">
+                    <div key={idx} className="flex justify-between items-center text-[15px]">
                       <span className="text-gray-700">{utm.campaign}</span>
                       <span className="text-gray-900 font-medium">{utm.value} ({utm.percentage}%)</span>
                     </div>
@@ -441,26 +441,26 @@ const Monitoring = () => {
             <h3 className="font-bold text-gray-900 mb-4">By Pages</h3>
             <div className="space-y-4">
               <div>
-                <h4 className="text-sm font-semibold text-gray-700 mb-2">{t('sections.top_pages')}</h4>
+                <h4 className="text-[15px] font-semibold text-gray-700 mb-2">{t('sections.top_pages')}</h4>
                 <div className="space-y-2">
                   {pagesData.topPages.slice(0, 4).map((page, idx) => (
-                    <div key={idx} className="flex justify-between items-center text-sm p-2 bg-gray-50 rounded">
+                    <div key={idx} className="flex justify-between items-center text-[15px] p-2 bg-gray-50 rounded">
                       <span className="text-gray-700 truncate flex-1">{page.path}</span>
                       <span className="text-gray-900 font-medium ml-4">{page.views.toLocaleString()}</span>
-                      <span className="text-gray-500 text-xs ml-2">{page.avgTime}</span>
+                      <span className="text-gray-500 text-sm ml-2">{page.avgTime}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               <div className="pt-4 border-t border-gray-100">
-                <h4 className="text-sm font-semibold text-gray-700 mb-2">{t('sections.entry_pages')}</h4>
+                <h4 className="text-[15px] font-semibold text-gray-700 mb-2">{t('sections.entry_pages')}</h4>
                 <div className="space-y-2">
                   {pagesData.entryPages.slice(0, 3).map((page, idx) => (
-                    <div key={idx} className="flex justify-between items-center text-sm">
+                    <div key={idx} className="flex justify-between items-center text-[15px]">
                       <span className="text-gray-700">{page.path}</span>
                       <div className="flex items-center gap-3">
-                        <span className="text-gray-500 text-xs">Bounce: {page.bounceRate}</span>
+                        <span className="text-gray-500 text-sm">Bounce: {page.bounceRate}</span>
                         <span className="text-gray-900 font-medium">{page.views.toLocaleString()}</span>
                       </div>
                     </div>
@@ -478,9 +478,9 @@ const Monitoring = () => {
               {systemData.browsers.map((browser, idx) => (
                 <div key={idx} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-700">{browser.name}</span>
+                    <span className="text-[15px] text-gray-700">{browser.name}</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-900">{browser.percentage}%</span>
+                  <span className="text-[15px] font-medium text-gray-900">{browser.percentage}%</span>
                 </div>
               ))}
             </div>
@@ -492,9 +492,9 @@ const Monitoring = () => {
               {systemData.platforms.map((platform, idx) => (
                 <div key={idx} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-700">{platform.name}</span>
+                    <span className="text-[15px] text-gray-700">{platform.name}</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-900">{platform.percentage}%</span>
+                  <span className="text-[15px] font-medium text-gray-900">{platform.percentage}%</span>
                 </div>
               ))}
             </div>
@@ -506,9 +506,9 @@ const Monitoring = () => {
               {systemData.os.map((os, idx) => (
                 <div key={idx} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-700">{os.name}</span>
+                    <span className="text-[15px] text-gray-700">{os.name}</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-900">{os.percentage}%</span>
+                  <span className="text-[15px] font-medium text-gray-900">{os.percentage}%</span>
                 </div>
               ))}
             </div>
@@ -519,20 +519,20 @@ const Monitoring = () => {
           <div className="p-5 border-b border-gray-100 flex justify-between items-center">
             <div>
               <h2 className="text-lg font-bold text-gray-900">{t('activity.title')}</h2>
-              <p className="text-sm text-gray-600 mt-1">{t('activity.subtitle')}</p>
+              <p className="text-[15px] text-gray-600 mt-1">{t('activity.subtitle')}</p>
             </div>
             <div className="flex gap-2">
-              <button className="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+              <button className="px-3 py-1.5 text-[15px] text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
                 Export CSV
               </button>
-              <button className="px-3 py-1.5 text-sm bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg transition-colors">
+              <button className="px-3 py-1.5 text-[15px] bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg transition-colors">
                 View All
               </button>
             </div>
           </div>
           
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-[15px]">
               <thead className="bg-gray-50 text-gray-600">
                 <tr>
                   <th className="px-4 py-3 text-left font-medium">{t('table.timestamp')}</th>
@@ -546,7 +546,7 @@ const Monitoring = () => {
               <tbody className="divide-y divide-gray-100">
                 {pageViewActivity.map((activity) => (
                   <tr key={activity.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 text-gray-900 font-mono text-sm">{activity.timestamp}</td>
+                    <td className="px-4 py-3 text-gray-900 font-mono text-[15px]">{activity.timestamp}</td>
                     <td className="px-4 py-3">
                       <span className="text-indigo-600 font-medium">{activity.page}</span>
                     </td>
@@ -562,7 +562,7 @@ const Monitoring = () => {
                     </td>
                     <td className="px-4 py-3 text-gray-600">{activity.device}</td>
                     <td className="px-4 py-3">
-                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm font-medium">
+                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-[15px] font-medium">
                         {activity.duration}
                       </span>
                     </td>

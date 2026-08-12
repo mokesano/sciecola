@@ -56,7 +56,7 @@ const StatCards = ({ data: propData }) => {
                 <dd className="text-2xl font-semibold leading-tight tabular-nums tracking-tight text-slate-900">
                   {stat.value}
                 </dd>
-                <dt className="mt-0.5 text-[13px] leading-snug text-slate-500">{stat.label}</dt>
+                <dt className="mt-0.5 text-[15px] leading-snug text-slate-500">{stat.label}</dt>
               </div>
             </div>
           );

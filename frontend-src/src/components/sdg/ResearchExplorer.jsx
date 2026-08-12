@@ -16,7 +16,7 @@ const ResearchExplorer = () => {
      white-on-white border. One shared class keeps them legible on the plain
      surface and lets the browser draw its own control affordance. */
   const selectClass =
-    'rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-700 ' +
+    'rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-[15px] text-slate-700 ' +
     'transition-colors hover:border-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600';
 
   return (
@@ -27,7 +27,7 @@ const ResearchExplorer = () => {
           <h2 className="text-lg font-semibold tracking-tight text-slate-900">
             {t('research_explorer.title')}
           </h2>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-[15px] text-slate-500">
             {t('research_explorer.subtitle')}
           </p>
         </div>
@@ -37,11 +37,11 @@ const ResearchExplorer = () => {
             <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
-              className="block w-full rounded-lg border border-slate-300 bg-white py-3 pl-10 pr-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+              className="block w-full rounded-lg border border-slate-300 bg-white py-3 pl-10 pr-3 text-[15px] text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
               placeholder={t('research_explorer.placeholder')}
             />
           </div>
-          <button className="flex shrink-0 items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700">
+          <button className="flex shrink-0 items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-indigo-700">
             <Search className="h-4 w-4" />
             {t('research_explorer.search')}
           </button>
@@ -59,7 +59,7 @@ const ResearchExplorer = () => {
           ))}
         </div>
 
-        <button className="mt-2 flex shrink-0 items-center gap-2 text-sm font-medium text-indigo-700 underline-offset-4 transition-colors hover:underline lg:mt-0">
+        <button className="mt-2 flex shrink-0 items-center gap-2 text-[15px] font-medium text-indigo-700 underline-offset-4 transition-colors hover:underline lg:mt-0">
           {t('research_explorer.advanced')}
           <SlidersHorizontal className="h-4 w-4" />
         </button>

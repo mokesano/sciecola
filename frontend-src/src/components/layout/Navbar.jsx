@@ -64,7 +64,7 @@ const Navbar = () => {
               <div className="font-serif text-3xl font-semibold tracking-tight text-indigo-600 transition-colors group-hover:text-indigo-700">
                 Sciecola
               </div>
-              <div className="hidden md:block text-[10px] text-gray-500 font-semibold tracking-wider uppercase leading-none mt-1">
+              <div className="hidden md:block text-xs text-gray-500 font-semibold tracking-wider uppercase leading-none mt-1">
                 {t('brand_tagline')}
               </div>
             </div>
@@ -98,7 +98,7 @@ const Navbar = () => {
             <div ref={langRef} className="relative hidden sm:block">
               <button
                 onClick={() => setLangOpen(prev => !prev)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 font-medium transition-all text-sm"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 font-medium transition-all text-[15px]"
                 aria-label="Select language"
                 aria-expanded={langOpen}
               >
@@ -124,7 +124,7 @@ const Navbar = () => {
                       <button
                         key={lang}
                         onClick={() => switchLang(lang)}
-                        className={`w-full flex items-center gap-3 px-4 py-3 text-sm text-left font-medium transition-colors ${
+                        className={`w-full flex items-center gap-3 px-4 py-3 text-[15px] text-left font-medium transition-colors ${
                           isActive
                             ? 'text-indigo-600 bg-indigo-50'
                             : 'text-gray-600 hover:bg-gray-50 hover:text-indigo-600'
@@ -162,7 +162,7 @@ const Navbar = () => {
                     className="w-8 h-8 rounded-full object-cover border border-gray-200"
                     onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
                   />
-                  <span className="hidden md:block text-sm font-medium text-gray-700 hover:text-indigo-600 max-w-[120px] truncate">
+                  <span className="hidden md:block text-[15px] font-medium text-gray-700 hover:text-indigo-600 max-w-[120px] truncate">
                     {user.name || t('auth.profile')}
                   </span>
                 </Link>
@@ -170,7 +170,7 @@ const Navbar = () => {
             ) : (
               <Link
                 to="/login"
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-medium shadow-md shadow-indigo-200 transition-all text-sm"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-medium shadow-md shadow-indigo-200 transition-all text-[15px]"
               >
                 {t('auth.login')}
               </Link>
@@ -209,7 +209,7 @@ const Navbar = () => {
                 to={to}
                 end={to === '/'}
                 className={({ isActive }) =>
-                  `block px-4 py-2.5 text-sm font-medium rounded-lg mx-1 transition-colors ${
+                  `block px-4 py-2.5 text-[15px] font-medium rounded-lg mx-1 transition-colors ${
                     isActive ? 'text-indigo-600 bg-indigo-50' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50'
                   }`
                 }
@@ -226,7 +226,7 @@ const Navbar = () => {
                   <button
                     key={lang}
                     onClick={() => switchLang(lang)}
-                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[15px] font-medium transition-all ${
                       currentLang === lang
                         ? 'bg-indigo-600 text-white'
                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'

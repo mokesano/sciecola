@@ -26,7 +26,7 @@ const TutorialDOI = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-8">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">›</span>
         <Link to="/help" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.help')}</Link>
@@ -44,13 +44,13 @@ const TutorialDOI = () => {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
             <p className="text-lg text-gray-600">{t('subtitle')}</p>
             <div className="flex items-center gap-4 mt-4">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-[15px] font-medium">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 {t('duration')}
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm font-medium">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-[15px] font-medium">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -83,7 +83,7 @@ const TutorialDOI = () => {
               </button>
             </div>
             {copiedExample && (
-              <p className="text-sm mt-2 text-blue-100 flex items-center">
+              <p className="text-[15px] mt-2 text-blue-100 flex items-center">
                 <CheckCircle className="w-4 h-4 mr-1" />
                 {t('example_copied')}
               </p>
@@ -112,8 +112,8 @@ const TutorialDOI = () => {
                     <div className="flex items-start space-x-2">
                       <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-sm font-medium text-amber-800">{t('tips_prefix')}</p>
-                        <p className="text-sm text-amber-700">{step.tips}</p>
+                        <p className="text-[15px] font-medium text-amber-800">{t('tips_prefix')}</p>
+                        <p className="text-[15px] text-amber-700">{step.tips}</p>
                       </div>
                     </div>
                   </div>

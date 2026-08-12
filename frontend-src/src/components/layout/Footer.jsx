@@ -44,17 +44,17 @@ const Footer = () => {
           <div>
             <Link to="/" className="inline-flex items-baseline gap-3">
               <span className="font-serif text-3xl tracking-tight text-white">Sciecola</span>
-              <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
+              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                 {t('brand_tagline')}
               </span>
             </Link>
           </div>
 
           <div className="flex flex-wrap items-center gap-x-7 gap-y-3">
-            <Link to="/about"   className="text-[15px] text-slate-200 underline-offset-4 hover:underline">
+            <Link to="/about"   className="text-base text-slate-200 underline-offset-4 hover:underline">
               {t('links.about')}
             </Link>
-            <Link to="/contact" className="text-[15px] text-slate-200 underline-offset-4 hover:underline">
+            <Link to="/contact" className="text-base text-slate-200 underline-offset-4 hover:underline">
               {t('links.contact', 'Kontak')}
             </Link>
             <div className="flex items-center gap-4">
@@ -89,7 +89,7 @@ const Footer = () => {
             {DATA_SOURCES.map(({ href, label }) => (
               <li key={href}>
                 <a href={href} target="_blank" rel="noopener noreferrer"
-                  className="text-[15px] leading-relaxed text-slate-300 underline-offset-4 transition-colors hover:text-white hover:underline">
+                  className="text-base leading-relaxed text-slate-300 underline-offset-4 transition-colors hover:text-white hover:underline">
                   {label}
                 </a>
               </li>
@@ -116,7 +116,7 @@ const Footer = () => {
 
       {/* ── Row 3: legal bar ───────────────────────────────────────────── */}
       <div className="bg-[#333333]">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-[13px] text-slate-400 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-[15px] text-slate-400 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
           <p>© {new Date().getFullYear()} Sciecola. {t('copyright.rights')}</p>
           <p>
             {t('copyright.developed_by')}{' '}
@@ -143,7 +143,7 @@ const FooterColumn = ({ title, children }) => (
 const FooterLink = ({ to, children }) => (
   <li>
     <Link to={to}
-      className="text-[15px] leading-relaxed text-slate-300 underline-offset-4 transition-colors hover:text-white hover:underline">
+      className="text-base leading-relaxed text-slate-300 underline-offset-4 transition-colors hover:text-white hover:underline">
       {children}
     </Link>
   </li>

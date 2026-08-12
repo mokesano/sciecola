@@ -184,14 +184,14 @@ const AdminTeams = () => {
       {/* Header */}
       <div className="mb-8 flex items-start justify-between flex-wrap gap-4">
         <div>
-          <Link to="/admin" className="text-sm text-indigo-600 hover:text-indigo-700 mb-2 inline-block">
+          <Link to="/admin" className="text-[15px] text-indigo-600 hover:text-indigo-700 mb-2 inline-block">
             {t('back_admin')}
           </Link>
           <h1 className="text-3xl font-bold text-gray-900">{t('title')}</h1>
           <p className="text-gray-600 mt-1 max-w-2xl">{t('subtitle')}</p>
         </div>
         <button onClick={openCreate}
-          className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2">
+          className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-[15px] font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
           </svg>
@@ -212,13 +212,13 @@ const AdminTeams = () => {
         members.length === 0 ? (
           <div className="bg-white border border-gray-200 rounded-2xl py-12 text-center">
             <p className="font-semibold text-gray-800 mb-1">{t('empty.title')}</p>
-            <p className="text-sm text-gray-500">{t('empty.subtitle')}</p>
+            <p className="text-[15px] text-gray-500">{t('empty.subtitle')}</p>
           </div>
         ) : (
           <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-8">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
+              <table className="w-full text-[15px]">
+                <thead className="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider">
                   <tr>
                     <th className="px-4 py-3 text-left font-medium">{t('table.name')}</th>
                     <th className="px-4 py-3 text-left font-medium">{t('table.position')}</th>
@@ -234,7 +234,7 @@ const AdminTeams = () => {
                     <tr key={m.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-4 py-3">
                         <p className="font-semibold text-gray-900">{m.name}</p>
-                        {m.code && <p className="text-xs text-gray-400 font-mono">{m.code}</p>}
+                        {m.code && <p className="text-sm text-gray-400 font-mono">{m.code}</p>}
                       </td>
                       <td className="px-4 py-3 text-gray-700">{m.position}</td>
                       <td className="px-4 py-3 text-gray-700">{m.department ?? '—'}</td>
@@ -254,11 +254,11 @@ const AdminTeams = () => {
                       <td className="px-4 py-3 text-right">
                         <div className="flex justify-end gap-2">
                           <button onClick={() => openEdit(m)}
-                            className="px-3 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+                            className="px-3 py-1.5 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
                             {t('actions.edit')}
                           </button>
                           <button onClick={() => handleDelete(m.id)}
-                            className="px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                            className="px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                             {t('actions.delete')}
                           </button>
                         </div>
@@ -283,13 +283,13 @@ const AdminTeams = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* ORCID */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('form.orcid')}</label>
+              <label className="block text-[15px] font-medium text-gray-700 mb-1.5">{t('form.orcid')}</label>
               {form.id ? (
                 <input name="orcid" value={form.orcid} disabled
-                  className="w-full px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-sm font-mono" />
+                  className="w-full px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-[15px] font-mono" />
               ) : (
                 <select name="orcid" value={form.orcid} onChange={handleField}
-                  className={`w-full px-4 py-2.5 bg-gray-50 border rounded-xl text-sm ${
+                  className={`w-full px-4 py-2.5 bg-gray-50 border rounded-xl text-[15px] ${
                     errors.orcid ? 'border-red-300' : 'border-gray-200'
                   }`}>
                   <option value="">— select researcher —</option>
@@ -298,15 +298,15 @@ const AdminTeams = () => {
                   ))}
                 </select>
               )}
-              <p className="text-xs text-gray-400 mt-1">{t('form.orcid_help')}</p>
-              {errors.orcid && <p className="text-xs text-red-600 mt-1">{errors.orcid}</p>}
+              <p className="text-sm text-gray-400 mt-1">{t('form.orcid_help')}</p>
+              {errors.orcid && <p className="text-sm text-red-600 mt-1">{errors.orcid}</p>}
             </div>
 
             <Field label={t('form.department')} name="department_id"
               error={errors.department_id}
               as={
                 <select name="department_id" value={form.department_id} onChange={handleField}
-                  className={`w-full px-4 py-2.5 bg-gray-50 border rounded-xl text-sm ${
+                  className={`w-full px-4 py-2.5 bg-gray-50 border rounded-xl text-[15px] ${
                     errors.department_id ? 'border-red-300' : 'border-gray-200'
                   }`}>
                   <option value="">—</option>
@@ -335,15 +335,15 @@ const AdminTeams = () => {
               value={form.photo_url} onChange={handleField} />
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('form.bio')}</label>
+              <label className="block text-[15px] font-medium text-gray-700 mb-1.5">{t('form.bio')}</label>
               <input name="bio" value={form.bio} onChange={handleField}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm" />
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[15px]" />
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('form.long_bio')}</label>
+              <label className="block text-[15px] font-medium text-gray-700 mb-1.5">{t('form.long_bio')}</label>
               <textarea name="long_bio" value={form.long_bio} onChange={handleField} rows={4}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm resize-none" />
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-[15px] resize-none" />
             </div>
 
             <Field label={t('form.expertise')} name="expertise"
@@ -359,17 +359,17 @@ const AdminTeams = () => {
               <input type="checkbox" id="is_visible" name="is_visible"
                 checked={form.is_visible} onChange={handleField}
                 className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
-              <label htmlFor="is_visible" className="text-sm text-gray-700">{t('form.is_visible')}</label>
+              <label htmlFor="is_visible" className="text-[15px] text-gray-700">{t('form.is_visible')}</label>
             </div>
           </div>
 
           <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-100">
             <button type="button" onClick={() => { setShowForm(false); setForm(EMPTY_FORM); }}
-              className="px-5 py-2.5 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors">
+              className="px-5 py-2.5 text-gray-700 rounded-xl text-[15px] font-medium hover:bg-gray-100 transition-colors">
               {t('actions.cancel')}
             </button>
             <button type="submit" disabled={saving}
-              className={`px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold transition-colors flex items-center gap-2 ${
+              className={`px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-[15px] font-semibold transition-colors flex items-center gap-2 ${
                 saving ? 'opacity-70 cursor-not-allowed' : 'hover:bg-indigo-700'
               }`}>
               {saving && (
@@ -392,14 +392,14 @@ const AdminTeams = () => {
 
 const Field = ({ label, name, value, onChange, error, type = 'text', placeholder, as }) => (
   <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1.5">{label}</label>
+    <label className="block text-[15px] font-medium text-gray-700 mb-1.5">{label}</label>
     {as ?? (
       <input name={name} value={value} onChange={onChange} type={type} placeholder={placeholder}
-        className={`w-full px-4 py-2.5 bg-gray-50 border rounded-xl text-sm ${
+        className={`w-full px-4 py-2.5 bg-gray-50 border rounded-xl text-[15px] ${
           error ? 'border-red-300' : 'border-gray-200'
         }`} />
     )}
-    {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
+    {error && <p className="text-sm text-red-600 mt-1">{error}</p>}
   </div>
 );
 

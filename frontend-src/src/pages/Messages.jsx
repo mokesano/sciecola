@@ -121,7 +121,7 @@ const Messages = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-6">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400"><Chevron /></span>
         <Link to="/dashboard" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.dashboard')}</Link>
@@ -132,7 +132,7 @@ const Messages = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
-        <button className="lg:hidden px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors">
+        <button className="lg:hidden px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 transition-colors">
           {showMobileChat ? t('back') : t('new_message')}
         </button>
       </div>
@@ -150,7 +150,7 @@ const Messages = () => {
                 placeholder={t('list.search_ph')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-[15px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
               />
               <svg className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -161,7 +161,7 @@ const Messages = () => {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                     activeTab === tab ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
@@ -185,16 +185,16 @@ const Messages = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start mb-1">
-                    <p className={`text-sm font-semibold truncate ${chat.unread > 0 ? 'text-gray-900' : 'text-gray-700'}`}>{chat.name}</p>
-                    <span className="text-xs text-gray-500 shrink-0 ml-2">{chat.time}</span>
+                    <p className={`text-[15px] font-semibold truncate ${chat.unread > 0 ? 'text-gray-900' : 'text-gray-700'}`}>{chat.name}</p>
+                    <span className="text-sm text-gray-500 shrink-0 ml-2">{chat.time}</span>
                   </div>
-                  <p className="text-xs text-gray-500 truncate mb-1">{chat.lastMsg}</p>
+                  <p className="text-sm text-gray-500 truncate mb-1">{chat.lastMsg}</p>
                   <div className="flex justify-between items-center">
-                    <span className="text-[10px] text-gray-400 uppercase tracking-wide">
+                    <span className="text-xs text-gray-400 uppercase tracking-wide">
                       {chat.type === 'group' ? t('list.members', { count: chat.members }) : t('list.direct')}
                     </span>
                     {chat.unread > 0 && (
-                      <span className="bg-indigo-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                      <span className="bg-indigo-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
                         {chat.unread}
                       </span>
                     )}
@@ -206,7 +206,7 @@ const Messages = () => {
                 <svg className="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                 </svg>
-                <p className="text-sm">{t('list.empty')}</p>
+                <p className="text-[15px]">{t('list.empty')}</p>
               </div>
             )}
           </div>
@@ -226,8 +226,8 @@ const Messages = () => {
                   </button>
                   <img src={selectedChat.avatar} alt={selectedChat.name} className="w-10 h-10 rounded-full object-cover" />
                   <div>
-                    <p className="font-semibold text-gray-900 text-sm">{selectedChat.name}</p>
-                    <p className="text-xs text-green-600 flex items-center gap-1">
+                    <p className="font-semibold text-gray-900 text-[15px]">{selectedChat.name}</p>
+                    <p className="text-sm text-green-600 flex items-center gap-1">
                       {selectedChat.online ? (
                         <>{t('chat.online')} <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span></>
                       ) : (
@@ -258,7 +258,7 @@ const Messages = () => {
               {/* Messages Area */}
               <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-gray-50 to-white">
                 <div className="text-center">
-                  <span className="px-3 py-1 bg-gray-200 text-gray-600 text-xs rounded-full">{t('chat.today')}</span>
+                  <span className="px-3 py-1 bg-gray-200 text-gray-600 text-sm rounded-full">{t('chat.today')}</span>
                 </div>
                 {currentMessages.map((msg) => (
                   <div key={msg.id} className={`flex ${msg.sender === 'me' ? 'justify-end' : 'justify-start'}`}>
@@ -267,16 +267,16 @@ const Messages = () => {
                     )}
                     <div className={`max-w-[70%] ${msg.sender === 'me' ? 'order-1' : ''}`}>
                       {msg.sender !== 'me' && msg.name && (
-                        <p className="text-xs text-indigo-600 font-medium mb-1 ml-1">{msg.name}</p>
+                        <p className="text-sm text-indigo-600 font-medium mb-1 ml-1">{msg.name}</p>
                       )}
-                      <div className={`px-4 py-2.5 rounded-2xl text-sm ${
+                      <div className={`px-4 py-2.5 rounded-2xl text-[15px] ${
                         msg.sender === 'me'
                           ? 'bg-indigo-600 text-white rounded-br-none'
                           : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none shadow-sm'
                       }`}>
                         {msg.text}
                       </div>
-                      <div className={`flex items-center gap-1 mt-1 text-[10px] ${msg.sender === 'me' ? 'justify-end text-gray-500' : 'text-gray-400'}`}>
+                      <div className={`flex items-center gap-1 mt-1 text-xs ${msg.sender === 'me' ? 'justify-end text-gray-500' : 'text-gray-400'}`}>
                         <span>{msg.time}</span>
                         {msg.sender === 'me' && (
                           <span className="flex items-center">
@@ -319,7 +319,7 @@ const Messages = () => {
                       onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(e); } }}
                       placeholder={t('chat.type_placeholder')}
                       rows="1"
-                      className="w-full bg-transparent text-sm focus:outline-none resize-none max-h-32"
+                      className="w-full bg-transparent text-[15px] focus:outline-none resize-none max-h-32"
                     />
                     <button type="button" className="p-1 text-gray-400 hover:text-gray-600">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -347,7 +347,7 @@ const Messages = () => {
                 </svg>
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('empty_chat.title')}</h3>
-              <p className="text-sm text-center max-w-xs">{t('empty_chat.subtitle')}</p>
+              <p className="text-[15px] text-center max-w-xs">{t('empty_chat.subtitle')}</p>
             </div>
           )}
         </div>

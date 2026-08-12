@@ -236,7 +236,7 @@ const AdminLandingContent = () => {
           value={value}
           placeholder={placeholder}
           onChange={(e) => handleChange(field.path, e.target.value)}
-          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-[15px] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
         />
       );
     }
@@ -246,7 +246,7 @@ const AdminLandingContent = () => {
         value={value}
         placeholder={placeholder}
         onChange={(e) => handleChange(field.path, e.target.value)}
-        className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+        className="w-full rounded-lg border border-gray-200 px-3 py-2 text-[15px] focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
       />
     );
   };
@@ -259,7 +259,7 @@ const AdminLandingContent = () => {
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Editor Konten Halaman Publik</h1>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-[15px] text-gray-500">
               Kelola teks naratif yang tampil pada halaman beranda untuk pengunjung yang belum login.
               Placeholder pada setiap kolom adalah nilai bawaan dari locale ({lang.toUpperCase()}).
             </p>
@@ -272,7 +272,7 @@ const AdminLandingContent = () => {
               <button
                 key={l}
                 onClick={() => setLang(l)}
-                className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-all ${
+                className={`rounded-lg px-3 py-1.5 text-[15px] font-semibold transition-all ${
                   lang === l ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-50'
                 }`}
               >
@@ -285,7 +285,7 @@ const AdminLandingContent = () => {
         {/* Message banner */}
         {message && (
           <div
-            className={`mb-6 flex items-center gap-2 rounded-lg border px-4 py-3 text-sm ${
+            className={`mb-6 flex items-center gap-2 rounded-lg border px-4 py-3 text-[15px] ${
               message.type === 'success'
                 ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
                 : 'border-red-200 bg-red-50 text-red-700'
@@ -309,9 +309,9 @@ const AdminLandingContent = () => {
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   {section.fields.map((field) => (
                     <div key={field.path} className={field.type === 'textarea' ? 'md:col-span-2' : ''}>
-                      <label className="mb-1 block text-xs font-semibold text-gray-600">
+                      <label className="mb-1 block text-sm font-semibold text-gray-600">
                         {field.label}
-                        <span className="ml-2 font-mono text-[10px] text-gray-400">{field.path}</span>
+                        <span className="ml-2 font-mono text-xs text-gray-400">{field.path}</span>
                       </label>
                       {renderField(field)}
                     </div>
@@ -322,13 +322,13 @@ const AdminLandingContent = () => {
 
             {/* Sticky save bar */}
             <div className="sticky bottom-4 z-10 flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-4 shadow-lg sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-gray-500">
+              <p className="text-[15px] text-gray-500">
                 Kosongkan kolom untuk menggunakan teks bawaan dari locale {lang.toUpperCase()}.
               </p>
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleResetToLocale}
-                  className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-all hover:bg-gray-50"
+                  className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-[15px] font-semibold text-gray-700 transition-all hover:bg-gray-50"
                 >
                   <RotateCcw className="h-4 w-4" />
                   Reset ke locale
@@ -336,7 +336,7 @@ const AdminLandingContent = () => {
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-indigo-700 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-[15px] font-semibold text-white transition-all hover:bg-indigo-700 disabled:opacity-50"
                 >
                   <Save className="h-4 w-4" />
                   {saving ? 'Menyimpan...' : `Simpan (${lang.toUpperCase()})`}

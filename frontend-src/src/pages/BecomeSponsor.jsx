@@ -198,7 +198,7 @@ const BecomeSponsor = () => {
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
 
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-6">
         <Link to="/"         className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">›</span>
         <Link to="/sponsors" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.sponsors')}</Link>
@@ -223,7 +223,7 @@ const BecomeSponsor = () => {
           ].map(s => (
             <div key={s.key} className="bg-white rounded-xl border border-gray-200 p-5 text-center">
               <p className="text-2xl lg:text-3xl font-bold text-indigo-600">{(s.value ?? 0).toLocaleString()}</p>
-              <p className="text-xs text-gray-600 mt-1">{t(`stats.${s.key}`)}</p>
+              <p className="text-sm text-gray-600 mt-1">{t(`stats.${s.key}`)}</p>
             </div>
           ))}
         </section>
@@ -264,7 +264,7 @@ const BecomeSponsor = () => {
                     </svg>
                   </div>
                   <h3 className="font-bold text-gray-900 mb-2">{t(`benefits.${key}.title`)}</h3>
-                  <p className="text-sm text-gray-600">{t(`benefits.${key}.description`)}</p>
+                  <p className="text-[15px] text-gray-600">{t(`benefits.${key}.description`)}</p>
                 </div>
               ))}
             </div>
@@ -298,13 +298,13 @@ const BecomeSponsor = () => {
                         <div className="mb-4">
                           <h3 className="text-xl font-bold text-gray-900 capitalize">{tier.name}</h3>
                           <p className="text-2xl font-bold text-indigo-600 mt-1">{t('tiers.price_custom')}</p>
-                          <p className="text-xs text-gray-500 mt-1">
+                          <p className="text-sm text-gray-500 mt-1">
                             {t('tiers.active_count', { count: tier.sponsor_count })}
                           </p>
                         </div>
                         <ul className="space-y-2 flex-1 mb-4">
                           {Array.isArray(features) && features.map((f, i) => (
-                            <li key={i} className="flex gap-2 text-sm text-gray-700">
+                            <li key={i} className="flex gap-2 text-[15px] text-gray-700">
                               <svg className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                               </svg>
@@ -313,7 +313,7 @@ const BecomeSponsor = () => {
                           ))}
                         </ul>
                         <button type="button" onClick={() => selectTier(tier.id)}
-                          className={`mt-auto px-4 py-2.5 ${style.btn} text-white rounded-xl text-sm font-semibold transition-colors`}>
+                          className={`mt-auto px-4 py-2.5 ${style.btn} text-white rounded-xl text-[15px] font-semibold transition-colors`}>
                           {t('tiers.select', { tier: tier.name })}
                         </button>
                       </div>
@@ -333,7 +333,7 @@ const BecomeSponsor = () => {
                   {[1, 2].map((num, idx) => (
                     <React.Fragment key={num}>
                       <div className="flex items-center gap-2">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[15px] font-bold transition-colors ${
                           activeStep >= num ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-500'
                         }`}>
                           {activeStep > num ? (
@@ -342,7 +342,7 @@ const BecomeSponsor = () => {
                             </svg>
                           ) : num}
                         </div>
-                        <span className={`text-sm font-medium hidden sm:inline ${
+                        <span className={`text-[15px] font-medium hidden sm:inline ${
                           activeStep >= num ? 'text-gray-900' : 'text-gray-500'
                         }`}>
                           {num === 1 ? t('form.step_org') : t('form.step_review')}
@@ -365,11 +365,11 @@ const BecomeSponsor = () => {
                       <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
                         <h2 className="text-xl font-bold text-gray-900">{t('form.section_org')}</h2>
                         <div className="flex items-center gap-2">
-                          <span className={`px-3 py-1 rounded-full text-xs font-bold border capitalize ${TIER_STYLE[formData.tier]?.badge ?? ''}`}>
+                          <span className={`px-3 py-1 rounded-full text-sm font-bold border capitalize ${TIER_STYLE[formData.tier]?.badge ?? ''}`}>
                             {t('form.selected_tier', { tier: selectedTierObj?.name ?? formData.tier })}
                           </span>
                           <button type="button" onClick={() => setFormData(p => ({ ...p, tier: '' }))}
-                            className="text-xs text-indigo-600 hover:text-indigo-700 underline">
+                            className="text-sm text-indigo-600 hover:text-indigo-700 underline">
                             {t('form.change_tier')}
                           </button>
                         </div>
@@ -420,7 +420,7 @@ const BecomeSponsor = () => {
 
                       <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
                         <h3 className="font-semibold text-gray-900 mb-4">{t('form.summary_title')}</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[15px]">
                           <SummaryRow label={t('form.summary_org')}     value={formData.organizationName} />
                           <SummaryRow label={t('form.summary_type')}    value={formData.organizationType ? t(`form.org_type.${formData.organizationType}`) : '-'} />
                           <SummaryRow label={t('form.summary_contact')} value={`${formData.contactName} • ${formData.email}`} />
@@ -429,7 +429,7 @@ const BecomeSponsor = () => {
                       </div>
 
                       <div>
-                        <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1.5">
+                        <label htmlFor="message" className="block text-[15px] font-medium text-gray-700 mb-1.5">
                           {t('form.field.message')}
                         </label>
                         <textarea id="message" name="message" rows={4}
@@ -440,8 +440,8 @@ const BecomeSponsor = () => {
                             errors.message ? 'border-red-300 focus:ring-red-500' : 'border-gray-200'
                           }`} />
                         <div className="flex justify-between items-center mt-1.5">
-                          {errors.message && <p className="text-xs text-red-600">{t(`form.errors.${errors.message === 'message' ? 'message' : 'required'}`)}</p>}
-                          <p className={`text-xs ml-auto ${formData.message.length > 400 ? 'text-orange-600' : 'text-gray-500'}`}>
+                          {errors.message && <p className="text-sm text-red-600">{t(`form.errors.${errors.message === 'message' ? 'message' : 'required'}`)}</p>}
+                          <p className={`text-sm ml-auto ${formData.message.length > 400 ? 'text-orange-600' : 'text-gray-500'}`}>
                             {t('form.char_count', { count: formData.message.length })}
                           </p>
                         </div>
@@ -451,19 +451,19 @@ const BecomeSponsor = () => {
                         <label className="flex items-start gap-3 cursor-pointer">
                           <input type="checkbox" name="newsletter" checked={formData.newsletter} onChange={handleChange}
                             className="w-4 h-4 mt-0.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500" />
-                          <span className="text-sm text-gray-700">{t('form.field.newsletter')}</span>
+                          <span className="text-[15px] text-gray-700">{t('form.field.newsletter')}</span>
                         </label>
 
                         <label className="flex items-start gap-3 cursor-pointer">
                           <input type="checkbox" name="privacy" checked={formData.privacy} onChange={handleChange}
                             className={`w-4 h-4 mt-0.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 ${errors.privacy ? 'border-red-500' : ''}`} />
-                          <span className="text-sm text-gray-700">
+                          <span className="text-[15px] text-gray-700">
                             <Trans t={t} i18nKey="form.field.privacy">
                               I agree to <Link to="/privacy" className="text-indigo-600 hover:underline">Privacy Policy</Link> and <Link to="/terms" className="text-indigo-600 hover:underline">Terms</Link>
                             </Trans>
                           </span>
                         </label>
-                        {errors.privacy && <p className="text-xs text-red-600">{t('form.errors.privacy')}</p>}
+                        {errors.privacy && <p className="text-sm text-red-600">{t('form.errors.privacy')}</p>}
                       </div>
                     </div>
                   )}
@@ -520,7 +520,7 @@ const BecomeSponsor = () => {
                     </button>
                     {open && (
                       <div className="px-6 pb-4 pt-2 border-t border-gray-100">
-                        <p className="text-sm text-gray-600 leading-relaxed">{faq.a}</p>
+                        <p className="text-[15px] text-gray-600 leading-relaxed">{faq.a}</p>
                       </div>
                     )}
                   </div>
@@ -556,12 +556,12 @@ const BecomeSponsor = () => {
                           ) : (ts.organization?.[0] ?? '?')}
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900 text-sm leading-tight">{ts.organization}</p>
-                          {ts.since && <p className="text-xs text-gray-500 mt-0.5">Since {ts.since}</p>}
+                          <p className="font-semibold text-gray-900 text-[15px] leading-tight">{ts.organization}</p>
+                          {ts.since && <p className="text-sm text-gray-500 mt-0.5">Since {ts.since}</p>}
                         </div>
                       </div>
-                      <p className="text-sm text-gray-600 italic mb-3 flex-1">&ldquo;{ts.quote}&rdquo;</p>
-                      <span className={`inline-block w-fit px-2 py-1 rounded text-xs font-medium border capitalize ${style.badge}`}>
+                      <p className="text-[15px] text-gray-600 italic mb-3 flex-1">&ldquo;{ts.quote}&rdquo;</p>
+                      <span className={`inline-block w-fit px-2 py-1 rounded text-sm font-medium border capitalize ${style.badge}`}>
                         {ts.tier} Sponsor
                       </span>
                     </div>
@@ -580,18 +580,18 @@ const BecomeSponsor = () => {
 
 const Field = ({ label, name, type = 'text', value, onChange, placeholder, error, t }) => (
   <div>
-    <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1.5">{label}</label>
+    <label htmlFor={name} className="block text-[15px] font-medium text-gray-700 mb-1.5">{label}</label>
     <input id={name} name={name} type={type} value={value} onChange={onChange} placeholder={placeholder}
       className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all ${
         error ? 'border-red-300 focus:ring-red-500' : 'border-gray-200'
       }`} />
-    {error && <p className="mt-1 text-xs text-red-600">{t(`form.errors.${error === 'email' ? 'email' : 'required'}`)}</p>}
+    {error && <p className="mt-1 text-sm text-red-600">{t(`form.errors.${error === 'email' ? 'email' : 'required'}`)}</p>}
   </div>
 );
 
 const SelectField = ({ label, name, value, onChange, options, error, t }) => (
   <div>
-    <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1.5">{label}</label>
+    <label htmlFor={name} className="block text-[15px] font-medium text-gray-700 mb-1.5">{label}</label>
     <select id={name} name={name} value={value} onChange={onChange}
       className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all appearance-none cursor-pointer ${
         error ? 'border-red-300 focus:ring-red-500' : 'border-gray-200'
@@ -600,7 +600,7 @@ const SelectField = ({ label, name, value, onChange, options, error, t }) => (
         <option key={opt.value} value={opt.value}>{opt.label}</option>
       ))}
     </select>
-    {error && <p className="mt-1 text-xs text-red-600">{t('form.errors.required')}</p>}
+    {error && <p className="mt-1 text-sm text-red-600">{t('form.errors.required')}</p>}
   </div>
 );
 

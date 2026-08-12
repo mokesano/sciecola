@@ -81,7 +81,7 @@ const MyActivity = () => {
 
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-6">
         <Link to="/" className="hover:text-indigo-600">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">›</span>
         <Link to="/dashboard" className="hover:text-indigo-600">{t('breadcrumb.dashboard')}</Link>
@@ -91,7 +91,7 @@ const MyActivity = () => {
 
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
-        <p className="text-gray-600 text-sm mt-1">{t('subtitle')}</p>
+        <p className="text-gray-600 text-[15px] mt-1">{t('subtitle')}</p>
       </div>
 
       {/* Summary Stats */}
@@ -100,7 +100,7 @@ const MyActivity = () => {
           {SUMMARY_KEYS.map(({ key, color }) => (
             <div key={key} className={`bg-${color}-50 border border-${color}-200 rounded-lg p-3 text-center`}>
               <p className={`text-2xl font-bold text-${color}-700`}>{summary[key] ?? 0}</p>
-              <p className={`text-xs text-${color}-600`}>{t(`summary.${key}`)}</p>
+              <p className={`text-sm text-${color}-600`}>{t(`summary.${key}`)}</p>
             </div>
           ))}
         </div>
@@ -109,14 +109,14 @@ const MyActivity = () => {
       {/* Filters */}
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 mb-6 flex flex-wrap gap-3">
         <select value={dateRange} onChange={e => { setDateRange(e.target.value); setPage(1); }}
-          className="px-3 py-2 border border-gray-200 rounded-lg text-sm">
+          className="px-3 py-2 border border-gray-200 rounded-lg text-[15px]">
           <option value="today">{t('filter.date.today')}</option>
           <option value="7days">{t('filter.date.7days')}</option>
           <option value="30days">{t('filter.date.30days')}</option>
           <option value="all">{t('filter.date.all')}</option>
         </select>
         <select value={activeFilter} onChange={e => { setActiveFilter(e.target.value); setPage(1); }}
-          className="px-3 py-2 border border-gray-200 rounded-lg text-sm">
+          className="px-3 py-2 border border-gray-200 rounded-lg text-[15px]">
           <option value="all">{t('filter.type.all')}</option>
           <option value="viewed">{t('filter.type.viewed')}</option>
           <option value="saved">{t('filter.type.saved')}</option>
@@ -146,10 +146,10 @@ const MyActivity = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={getIcon(act.type)} />
                 </svg>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 text-sm">{act.title}</p>
-                  <p className="text-sm text-gray-700 mt-0.5 truncate">{act.target}</p>
-                  {act.detail && <p className="text-xs text-gray-600 mt-1">{act.detail}</p>}
-                  <p className="text-xs text-gray-500 mt-2">
+                  <p className="font-medium text-gray-900 text-[15px]">{act.title}</p>
+                  <p className="text-[15px] text-gray-700 mt-0.5 truncate">{act.target}</p>
+                  {act.detail && <p className="text-sm text-gray-600 mt-1">{act.detail}</p>}
+                  <p className="text-sm text-gray-500 mt-2">
                     {new Date(act.timestamp).toLocaleString(locale)}
                   </p>
                 </div>
@@ -163,10 +163,10 @@ const MyActivity = () => {
       {!loading && !error && activities.length > 0 && (
         <div className="flex items-center justify-center gap-2 mt-6">
           <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-            className="px-3 py-1.5 text-sm border rounded-lg disabled:opacity-40 hover:bg-gray-50">‹</button>
-          <span className="px-3 py-1.5 text-sm text-gray-700">{page}</span>
+            className="px-3 py-1.5 text-[15px] border rounded-lg disabled:opacity-40 hover:bg-gray-50">‹</button>
+          <span className="px-3 py-1.5 text-[15px] text-gray-700">{page}</span>
           <button onClick={() => setPage(p => p + 1)} disabled={activities.length < limit}
-            className="px-3 py-1.5 text-sm border rounded-lg disabled:opacity-40 hover:bg-gray-50">›</button>
+            className="px-3 py-1.5 text-[15px] border rounded-lg disabled:opacity-40 hover:bg-gray-50">›</button>
         </div>
       )}
     </main>

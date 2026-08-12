@@ -194,7 +194,7 @@ const ProjectManagement = () => {
             <div>
               <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-4">
                 <FolderOpen className="w-5 h-5" />
-                <span className="text-sm font-medium">Research Collaboration Platform</span>
+                <span className="text-[15px] font-medium">Research Collaboration Platform</span>
               </div>
               <h1 className="text-4xl md:text-5xl font-bold mb-4">Project Management</h1>
               <p className="text-xl text-white/90 max-w-2xl">
@@ -229,7 +229,7 @@ const ProjectManagement = () => {
                   <stat.icon className="w-6 h-6 text-white" />
                 </div>
                 <div className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</div>
-                <div className="text-sm text-gray-600">{stat.label}</div>
+                <div className="text-[15px] text-gray-600">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -258,7 +258,7 @@ const ProjectManagement = () => {
                     }`}
                   >
                     {tab.label}
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                    <span className={`text-sm px-2 py-0.5 rounded-full ${
                       activeTab === tab.id ? 'bg-white/20' : 'bg-gray-200'
                     }`}>
                       {tab.count}
@@ -315,14 +315,14 @@ const ProjectManagement = () => {
                         <h3 className="text-xl font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">
                           {project.title}
                         </h3>
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(project.status)} flex items-center gap-1`}>
+                        <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${getStatusColor(project.status)} flex items-center gap-1`}>
                           <StatusIcon className="w-3 h-3" />
                           {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
                         </span>
                       </div>
-                      <p className="text-gray-600 text-sm mb-3 line-clamp-2">{project.description}</p>
+                      <p className="text-gray-600 text-[15px] mb-3 line-clamp-2">{project.description}</p>
                       
-                      <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                      <div className="flex items-center gap-4 text-[15px] text-gray-500 mb-3">
                         <span className="flex items-center gap-1">
                           <Calendar className="w-4 h-4" />
                           {new Date(project.start_date).toLocaleDateString()} - {new Date(project.end_date).toLocaleDateString()}
@@ -341,7 +341,7 @@ const ProjectManagement = () => {
                         {(project.sdg_focus || []).map(sdg => (
                           <span
                             key={sdg}
-                            className={`w-8 h-8 rounded-full ${sdgColors[sdg]} text-white text-xs font-bold flex items-center justify-center`}
+                            className={`w-8 h-8 rounded-full ${sdgColors[sdg]} text-white text-sm font-bold flex items-center justify-center`}
                             title={`SDG ${sdg}`}
                           >
                             {sdg}
@@ -357,7 +357,7 @@ const ProjectManagement = () => {
                   
                   {/* Progress Bar */}
                   <div className="mb-4">
-                    <div className="flex justify-between text-sm mb-2">
+                    <div className="flex justify-between text-[15px] mb-2">
                       <span className="text-gray-600">Progress</span>
                       <span className="font-semibold text-indigo-600">{project.progress}%</span>
                     </div>
@@ -375,7 +375,7 @@ const ProjectManagement = () => {
                       {[...Array(Math.min(4, 3))].map((_, idx) => (
                         <div
                           key={idx}
-                          className="w-8 h-8 rounded-full border-2 border-white bg-indigo-400 flex items-center justify-center text-white text-xs font-bold"
+                          className="w-8 h-8 rounded-full border-2 border-white bg-indigo-400 flex items-center justify-center text-white text-sm font-bold"
                           title="Team member"
                         >
                           {String.fromCharCode(65 + idx)}
@@ -385,13 +385,13 @@ const ProjectManagement = () => {
                     
                     <div className="flex items-center gap-6">
                       <div className="text-right">
-                        <div className="text-sm text-gray-500">Budget Used</div>
+                        <div className="text-[15px] text-gray-500">Budget Used</div>
                         <div className="font-semibold text-gray-900">
                           ${(project.spent / 1000).toFixed(0)}K / ${(project.budget / 1000).toFixed(0)}K
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-sm text-gray-500">Institution</div>
+                        <div className="text-[15px] text-gray-500">Institution</div>
                         <div className="font-semibold text-gray-900">{project.institution}</div>
                       </div>
                       <div className="flex gap-2">
@@ -408,7 +408,7 @@ const ProjectManagement = () => {
                     </div>
                   </div>
                   
-                  <div className="text-xs text-gray-400 mt-3 text-right">
+                  <div className="text-sm text-gray-400 mt-3 text-right">
                     Updated {project.updated_at ? new Date(project.updated_at).toLocaleDateString() : 'recently'}
                   </div>
                 </div>
@@ -437,7 +437,7 @@ const ProjectManagement = () => {
                   <action.icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-2">{action.title}</h3>
-                <p className="text-gray-600 text-sm">{action.desc}</p>
+                <p className="text-gray-600 text-[15px]">{action.desc}</p>
               </button>
             ))}
           </div>

@@ -63,9 +63,9 @@ const SciecoDashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               {SUMMARY_TILES.map(tile => (
                 <div key={tile.key} className={`${tile.bg} p-4 rounded-lg text-center`}>
-                  <p className="text-sm text-gray-500">{t(`summary.${tile.key}`)}</p>
+                  <p className="text-[15px] text-gray-500">{t(`summary.${tile.key}`)}</p>
                   <p className={`text-2xl font-bold ${tile.text}`}>{tile.value}</p>
-                  <p className="text-xs text-green-600">{t('summary_yoy', { pct: tile.yoy })}</p>
+                  <p className="text-sm text-green-600">{t('summary_yoy', { pct: tile.yoy })}</p>
                 </div>
               ))}
             </div>
@@ -76,7 +76,7 @@ const SciecoDashboard = () => {
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">{t('impact_by_field_title')}</h2>
               <select
-                className="text-sm border rounded p-1"
+                className="text-[15px] border rounded p-1"
                 value={timeRange}
                 onChange={(e) => setTimeRange(e.target.value)}
               >
@@ -125,7 +125,7 @@ const SciecoDashboard = () => {
             </ResponsiveContainer>
             <div className="mt-2 text-center">
               <button
-                className="text-blue-600 text-sm hover:text-blue-800"
+                className="text-blue-600 text-[15px] hover:text-blue-800"
                 onClick={() => setActiveTab('researcherMap')}
               >
                 {t('view_full_map')}
@@ -138,7 +138,7 @@ const SciecoDashboard = () => {
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">{t('top_researchers_title')}</h2>
               <button
-                className="text-blue-600 text-sm hover:text-blue-800"
+                className="text-blue-600 text-[15px] hover:text-blue-800"
                 onClick={() => setActiveTab('researcherImpact')}
               >
                 {t('view_all')}
@@ -148,32 +148,32 @@ const SciecoDashboard = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('table.researcher')}</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('table.affiliation')}</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('table.hindex')}</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('table.citations')}</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('table.impact')}</th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">{t('table.researcher')}</th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">{t('table.affiliation')}</th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">{t('table.hindex')}</th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">{t('table.citations')}</th>
+                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">{t('table.impact')}</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {topResearchersData.map(researcher => (
                     <tr key={researcher.id} className="hover:bg-gray-50">
                       <td className="px-4 py-2 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{researcher.name}</div>
-                        <div className="text-xs text-gray-500">{researcher.field}</div>
+                        <div className="text-[15px] font-medium text-gray-900">{researcher.name}</div>
+                        <div className="text-sm text-gray-500">{researcher.field}</div>
                       </td>
                       <td className="px-4 py-2 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{researcher.affiliation}</div>
-                        <div className="text-xs text-gray-500">{researcher.location}</div>
+                        <div className="text-[15px] text-gray-900">{researcher.affiliation}</div>
+                        <div className="text-sm text-gray-500">{researcher.location}</div>
                       </td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{researcher.hIndex}</td>
-                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{researcher.citations.toLocaleString()}</td>
+                      <td className="px-4 py-2 whitespace-nowrap text-[15px] text-gray-900">{researcher.hIndex}</td>
+                      <td className="px-4 py-2 whitespace-nowrap text-[15px] text-gray-900">{researcher.citations.toLocaleString()}</td>
                       <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="w-full bg-gray-200 rounded-full h-2.5">
                             <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${researcher.impactScore}%` }}></div>
                           </div>
-                          <span className="ml-2 text-sm font-medium text-gray-900">{researcher.impactScore}</span>
+                          <span className="ml-2 text-[15px] font-medium text-gray-900">{researcher.impactScore}</span>
                         </div>
                       </td>
                     </tr>
@@ -188,7 +188,7 @@ const SciecoDashboard = () => {
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">{t('top_articles_title')}</h2>
               <button
-                className="text-blue-600 text-sm hover:text-blue-800"
+                className="text-blue-600 text-[15px] hover:text-blue-800"
                 onClick={() => setActiveTab('articleImpact')}
               >
                 {t('view_all')}
@@ -197,11 +197,11 @@ const SciecoDashboard = () => {
             <ul className="space-y-3">
               {topArticlesData.slice(0, 3).map(article => (
                 <li key={article.id} className="border-b pb-3">
-                  <h3 className="text-sm font-medium text-gray-900 line-clamp-2">{article.title}</h3>
-                  <p className="text-xs text-gray-600 mt-1">{article.authors}</p>
+                  <h3 className="text-[15px] font-medium text-gray-900 line-clamp-2">{article.title}</h3>
+                  <p className="text-sm text-gray-600 mt-1">{article.authors}</p>
                   <div className="flex justify-between mt-1">
-                    <span className="text-xs text-gray-500">{article.journal} ({article.year})</span>
-                    <span className="text-xs font-medium bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
+                    <span className="text-sm text-gray-500">{article.journal} ({article.year})</span>
+                    <span className="text-sm font-medium bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
                       {article.impactScore}
                     </span>
                   </div>

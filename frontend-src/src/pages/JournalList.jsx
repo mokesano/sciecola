@@ -74,7 +74,7 @@ const JournalList = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+      <div className="flex items-center gap-2 text-[15px] text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600">{t('breadcrumb.home')}</Link>
         <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
@@ -96,7 +96,7 @@ const JournalList = () => {
             placeholder={t('filters.search_placeholder')}
             value={searchQuery}
             onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
-            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 transition-all"
+            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-none rounded-xl text-[15px] focus:ring-2 focus:ring-indigo-500 transition-all"
           />
           <svg className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -105,7 +105,7 @@ const JournalList = () => {
         <select
           value={sortBy}
           onChange={(e) => { setSortBy(e.target.value); setPage(1); }}
-          className="bg-gray-50 border-none rounded-xl py-2.5 px-4 text-sm font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+          className="bg-gray-50 border-none rounded-xl py-2.5 px-4 text-[15px] font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
         >
           <option value="citescore">{t('filters.sort.citescore')}</option>
           <option value="quartile">{t('filters.sort.quartile')}</option>
@@ -124,7 +124,7 @@ const JournalList = () => {
       {!loading && journals.length > 0 && (
         <>
           <div className="mb-6 flex justify-between items-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-[15px] text-gray-600">
               <Trans
                 i18nKey="results.count"
                 ns="journals"
@@ -160,20 +160,20 @@ const JournalList = () => {
                 >
                   <div className="flex gap-5 items-start">
                     <div className="w-16 h-20 bg-indigo-50 rounded-lg flex flex-col items-center justify-center text-indigo-400 border border-indigo-100 shrink-0">
-                      <span className="text-[10px] font-bold">JOURNAL</span>
+                      <span className="text-xs font-bold">JOURNAL</span>
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                       </svg>
                     </div>
                     <div>
                       <h3 className="font-bold text-gray-900 group-hover:text-indigo-600 text-lg transition-colors leading-tight mb-1">{journal.name}</h3>
-                      <p className="text-gray-500 text-sm mb-3">
+                      <p className="text-gray-500 text-[15px] mb-3">
                         {t('results.issn_publisher', { issn: journal.issn || '—', publisher: journal.publisher || '—' })}
                       </p>
                       {journal.sdgFocus.length > 0 && (
                         <div className="flex gap-2 flex-wrap">
                           {journal.sdgFocus.map((sdg) => (
-                            <span key={sdg} className="px-2 py-0.5 text-white rounded text-[10px] font-bold" style={{ backgroundColor: SDG_COLORS[sdg] || '#6b7280' }}>
+                            <span key={sdg} className="px-2 py-0.5 text-white rounded text-xs font-bold" style={{ backgroundColor: SDG_COLORS[sdg] || '#6b7280' }}>
                               SDG {sdg}
                             </span>
                           ))}
@@ -184,15 +184,15 @@ const JournalList = () => {
 
                   <div className="flex items-center gap-8 w-full md:w-auto pt-4 md:pt-0 border-t md:border-0 border-gray-50">
                     <div className="text-center">
-                      <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.quartile')}</p>
+                      <p className="text-xs text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.quartile')}</p>
                       <span className="text-lg font-black text-emerald-600">{journal.quartile}</span>
                     </div>
                     <div className="text-center">
-                      <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.sjr')}</p>
+                      <p className="text-xs text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.sjr')}</p>
                       <span className="text-lg font-black text-gray-900">{journal.sjr}</span>
                     </div>
                     <div className="text-center">
-                      <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.hindex')}</p>
+                      <p className="text-xs text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.hindex')}</p>
                       <span className="text-lg font-black text-gray-900">{journal.hIndex}</span>
                     </div>
                     <div className="ml-4">
@@ -220,7 +220,7 @@ const JournalList = () => {
                     </div>
                     <div className="min-w-0 flex-grow">
                       <h3 className="font-bold text-gray-900 group-hover:text-indigo-600 text-base transition-colors leading-tight line-clamp-2 mb-1">{journal.name}</h3>
-                      <p className="text-xs text-gray-500 truncate">
+                      <p className="text-sm text-gray-500 truncate">
                         {t('results.issn_publisher', { issn: journal.issn || '—', publisher: journal.publisher || '—' })}
                       </p>
                     </div>
@@ -229,7 +229,7 @@ const JournalList = () => {
                   {journal.sdgFocus.length > 0 && (
                     <div className="flex gap-1.5 flex-wrap mb-4">
                       {journal.sdgFocus.slice(0, 4).map((sdg) => (
-                        <span key={sdg} className="px-2 py-0.5 text-white rounded text-[10px] font-bold" style={{ backgroundColor: SDG_COLORS[sdg] || '#6b7280' }}>
+                        <span key={sdg} className="px-2 py-0.5 text-white rounded text-xs font-bold" style={{ backgroundColor: SDG_COLORS[sdg] || '#6b7280' }}>
                           SDG {sdg}
                         </span>
                       ))}
@@ -238,16 +238,16 @@ const JournalList = () => {
 
                   <div className="grid grid-cols-3 gap-2 mt-auto pt-3 border-t border-gray-100">
                     <div className="text-center">
-                      <p className="text-[9px] text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.quartile')}</p>
-                      <span className="text-sm font-black text-emerald-600">{journal.quartile}</span>
+                      <p className="text-xs text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.quartile')}</p>
+                      <span className="text-[15px] font-black text-emerald-600">{journal.quartile}</span>
                     </div>
                     <div className="text-center">
-                      <p className="text-[9px] text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.sjr')}</p>
-                      <span className="text-sm font-black text-gray-900">{journal.sjr}</span>
+                      <p className="text-xs text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.sjr')}</p>
+                      <span className="text-[15px] font-black text-gray-900">{journal.sjr}</span>
                     </div>
                     <div className="text-center">
-                      <p className="text-[9px] text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.hindex')}</p>
-                      <span className="text-sm font-black text-gray-900">{journal.hIndex}</span>
+                      <p className="text-xs text-gray-400 uppercase font-bold tracking-wider">{t('results.metrics.hindex')}</p>
+                      <span className="text-[15px] font-black text-gray-900">{journal.hIndex}</span>
                     </div>
                   </div>
                 </Link>
@@ -272,10 +272,10 @@ const JournalList = () => {
             </div>
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('empty.no_match.title')}</h3>
-          <p className="text-gray-500 text-sm mb-6 max-w-md mx-auto">{t('empty.no_match.subtitle')}</p>
+          <p className="text-gray-500 text-[15px] mb-6 max-w-md mx-auto">{t('empty.no_match.subtitle')}</p>
           <button
             onClick={resetAll}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-[15px] font-medium hover:bg-indigo-700 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -295,7 +295,7 @@ const JournalList = () => {
             </svg>
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('empty.no_data.title')}</h3>
-          <p className="text-gray-500 text-sm max-w-md mx-auto">{t('empty.no_data.subtitle')}</p>
+          <p className="text-gray-500 text-[15px] max-w-md mx-auto">{t('empty.no_data.subtitle')}</p>
         </div>
       )}
 

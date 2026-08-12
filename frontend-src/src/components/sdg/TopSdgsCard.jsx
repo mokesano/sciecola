@@ -68,14 +68,14 @@ const TopSdgsCard = () => {
         <h2 className="text-lg md:text-xl font-bold text-gray-900">
           {t('top_sdgs.title')}
         </h2>
-        <Link to="/sdgs" className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors pb-0.5">
+        <Link to="/sdgs" className="text-[15px] font-semibold text-blue-600 hover:text-blue-800 transition-colors pb-0.5">
           {t('top_sdgs.view_all')}
         </Link>
       </div>
 
       {/* Container Cards */}
       {sdgsData.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-white py-12 text-center text-sm text-slate-500">
+        <div className="rounded-xl border border-dashed border-slate-300 bg-white py-12 text-center text-[15px] text-slate-500">
           {t('top_sdgs.empty')}
         </div>
       ) : (
@@ -118,17 +118,17 @@ const TopSdgsCard = () => {
               </div>
 
               <div className="p-3.5 flex flex-col justify-between flex-1">
-                <h3 className="text-[13px] font-bold text-gray-800 leading-snug line-clamp-2">
+                <h3 className="text-[15px] font-bold text-gray-800 leading-snug line-clamp-2">
                   {sdg.name}
                 </h3>
                 
                 <div className="mt-3">
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-xl font-extrabold text-gray-900 leading-none">{sdg.count}</span>
-                    <span className="text-[11px] font-medium text-gray-500">{t('top_sdgs.unit')}</span>
+                    <span className="text-xs font-medium text-gray-500">{t('top_sdgs.unit')}</span>
                   </div>
                   
-                  <div className="text-[11px] font-bold text-[#2E9F40] mt-1 flex items-center gap-1">
+                  <div className="text-xs font-bold text-[#2E9F40] mt-1 flex items-center gap-1">
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                     </svg>

@@ -32,11 +32,11 @@ const MDX_COMPONENTS = {
   code: ({ className, children, ...props }) => {
     const isBlock = className?.includes('language-');
     return isBlock ? (
-      <code className={`block bg-gray-900 text-gray-100 rounded-lg p-4 text-sm font-mono overflow-x-auto mb-4 ${className}`} {...props}>
+      <code className={`block bg-gray-900 text-gray-100 rounded-lg p-4 text-[15px] font-mono overflow-x-auto mb-4 ${className}`} {...props}>
         {children}
       </code>
     ) : (
-      <code className="bg-gray-100 text-indigo-700 px-1.5 py-0.5 rounded text-sm font-mono" {...props}>
+      <code className="bg-gray-100 text-indigo-700 px-1.5 py-0.5 rounded text-[15px] font-mono" {...props}>
         {children}
       </code>
     );
@@ -44,7 +44,7 @@ const MDX_COMPONENTS = {
   pre: (props) => <pre className="bg-gray-900 rounded-lg overflow-x-auto mb-4" {...props} />,
   table: (props) => (
     <div className="overflow-x-auto mb-6">
-      <table className="w-full text-sm text-left border-collapse border border-gray-200 rounded-lg overflow-hidden" {...props} />
+      <table className="w-full text-[15px] text-left border-collapse border border-gray-200 rounded-lg overflow-hidden" {...props} />
     </div>
   ),
   thead: (props) => <thead className="bg-indigo-50 text-indigo-700" {...props} />,
@@ -68,7 +68,7 @@ export default function DocsPage() {
   return (
     <main className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-8">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
@@ -88,7 +88,7 @@ export default function DocsPage() {
               <Link
                 key={key}
                 to={`/docs/${key}`}
-                className={`block px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`block px-3 py-2 rounded-lg text-[15px] font-medium transition-colors ${
                   key === slug
                     ? 'bg-indigo-50 text-indigo-700'
                     : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'

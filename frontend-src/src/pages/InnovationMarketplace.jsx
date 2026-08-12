@@ -167,7 +167,7 @@ const InnovationMarketplace = () => {
           <div className="text-center max-w-4xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
               <Handshake className="w-5 h-5" />
-              <span className="text-sm font-medium">Industry-Academia Bridge</span>
+              <span className="text-[15px] font-medium">Industry-Academia Bridge</span>
             </div>
             
             <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
@@ -188,7 +188,7 @@ const InnovationMarketplace = () => {
                 <div key={index} className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
                   <stat.icon className="w-6 h-6 mx-auto mb-2 opacity-80" />
                   <div className="text-2xl font-bold">{stat.value}</div>
-                  <div className="text-sm opacity-80">{stat.label}</div>
+                  <div className="text-[15px] opacity-80">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -232,7 +232,7 @@ const InnovationMarketplace = () => {
                 >
                   <category.icon className="w-5 h-5" />
                   {category.name}
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${
+                  <span className={`text-sm px-2 py-0.5 rounded-full ${
                     activeCategory === category.id ? 'bg-white/20' : 'bg-gray-200'
                   }`}>
                     {category.count}
@@ -243,11 +243,11 @@ const InnovationMarketplace = () => {
             
             {/* Type Filter */}
             <div className="flex gap-2 mt-6 flex-wrap">
-              <span className="text-sm font-semibold text-gray-700 py-2">Organization Type:</span>
+              <span className="text-[15px] font-semibold text-gray-700 py-2">Organization Type:</span>
               {types.map(type => (
                 <button
                   key={type.id}
-                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all text-sm font-medium"
+                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all text-[15px] font-medium"
                 >
                   {type.name}
                 </button>
@@ -288,16 +288,16 @@ const InnovationMarketplace = () => {
                         </div>
                       )}
                       <div>
-                        <div className="text-sm opacity-90">{opp.organization}</div>
+                        <div className="text-[15px] opacity-90">{opp.organization}</div>
                         <div className="font-bold text-lg">{opp.title}</div>
                       </div>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold border bg-white/20 backdrop-blur-sm`}>
+                    <span className={`px-3 py-1 rounded-full text-sm font-semibold border bg-white/20 backdrop-blur-sm`}>
                       {(opp.type || 'other').charAt(0).toUpperCase() + (opp.type || 'other').slice(1)}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-4 text-sm opacity-90">
+                  <div className="flex items-center gap-4 text-[15px] opacity-90">
                     <span className="flex items-center gap-1">
                       <DollarSign className="w-4 h-4" />
                       {opp.budget_range || 'TBD'}
@@ -318,19 +318,19 @@ const InnovationMarketplace = () => {
                     {(opp.sdg_focus || []).map(sdg => (
                       <span
                         key={sdg}
-                        className={`w-8 h-8 rounded-full ${sdgColors[sdg]} text-white text-xs font-bold flex items-center justify-center`}
+                        className={`w-8 h-8 rounded-full ${sdgColors[sdg]} text-white text-sm font-bold flex items-center justify-center`}
                         title={`SDG ${sdg}`}
                       >
                         {sdg}
                       </span>
                     ))}
-                    <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">
+                    <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
                       {opp.category}
                     </span>
                   </div>
 
                   {/* Key Details */}
-                  <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                  <div className="grid grid-cols-2 gap-4 mb-4 text-[15px]">
                     <div className="flex items-center gap-2 text-gray-600">
                       <Calendar className="w-4 h-4 text-orange-500" />
                       <span>{opp.deadline ? new Date(opp.deadline).toLocaleDateString() : 'TBD'}</span>
@@ -339,15 +339,15 @@ const InnovationMarketplace = () => {
 
                   {/* Requirements Preview */}
                   <div className="mb-4">
-                    <div className="text-xs font-semibold text-gray-500 mb-2">KEY REQUIREMENTS</div>
+                    <div className="text-sm font-semibold text-gray-500 mb-2">KEY REQUIREMENTS</div>
                     <div className="flex flex-wrap gap-2">
                       {(opp.required_skills || []).slice(0, 2).map((req, idx) => (
-                        <span key={idx} className="px-2 py-1 bg-orange-50 text-orange-700 rounded text-xs">
+                        <span key={idx} className="px-2 py-1 bg-orange-50 text-orange-700 rounded text-sm">
                           {req}
                         </span>
                       ))}
                       {(opp.required_skills || []).length > 2 && (
-                        <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
+                        <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-sm">
                           +{(opp.required_skills || []).length - 2} more
                         </span>
                       )}
@@ -370,7 +370,7 @@ const InnovationMarketplace = () => {
 
                   {/* Status Badge */}
                   <div className="mt-3 text-center">
-                    <span className="text-xs text-gray-500">
+                    <span className="text-sm text-gray-500">
                       Status: {opp.status || 'open'}
                     </span>
                   </div>
@@ -407,7 +407,7 @@ const InnovationMarketplace = () => {
                     {item.step}
                   </div>
                   <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
-                  <p className="text-gray-600 text-sm">{item.desc}</p>
+                  <p className="text-gray-600 text-[15px]">{item.desc}</p>
                 </div>
               </div>
             ))}

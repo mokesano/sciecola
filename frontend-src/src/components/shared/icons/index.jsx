@@ -71,7 +71,7 @@ export const IconClose       = IconX;
 // SDG-specific colored icon wrappers (number badge style)
 export const SdgIcon = ({ number, color, className = 'w-8 h-8' }) => (
   <div
-    className={`flex items-center justify-center rounded-lg font-bold text-white text-sm ${className}`}
+    className={`flex items-center justify-center rounded-lg font-bold text-white text-[15px] ${className}`}
     style={{ backgroundColor: color }}
   >
     {number}

@@ -28,7 +28,7 @@ const LatestArticles = () => {
     <div className="flex h-full flex-col rounded-xl border border-slate-200 bg-white p-6 font-sans">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-bold text-gray-800">{t('latest_articles.title')}</h3>
-        <Link to="/articles" className="text-sm text-indigo-600 hover:text-indigo-800 font-medium transition-colors">
+        <Link to="/articles" className="text-[15px] text-indigo-600 hover:text-indigo-800 font-medium transition-colors">
           {t('latest_articles.view_all')}
         </Link>
       </div>
@@ -39,7 +39,7 @@ const LatestArticles = () => {
         </div>
       )}
       {loaded && articles.length === 0 && (
-        <div className="flex items-center justify-center flex-grow py-8 text-sm text-gray-500 text-center px-6">
+        <div className="flex items-center justify-center flex-grow py-8 text-[15px] text-gray-500 text-center px-6">
           {t('latest_articles.empty')}
         </div>
       )}
@@ -62,11 +62,11 @@ const LatestArticles = () => {
               <div>
                 <Link
                   to={`/doi/${encodeURIComponent(article.doi || article.id)}`}
-                  className="font-bold text-gray-800 hover:text-indigo-600 transition-colors line-clamp-2 leading-tight text-sm"
+                  className="font-bold text-gray-800 hover:text-indigo-600 transition-colors line-clamp-2 leading-tight text-[15px]"
                 >
                   {article.title}
                 </Link>
-                <div className="text-xs text-gray-500 mt-1.5">
+                <div className="text-sm text-gray-500 mt-1.5">
                   {article.journal} • {article.published_date?.substring(0, 4)}
                 </div>
               </div>
@@ -77,7 +77,7 @@ const LatestArticles = () => {
                 {(article.sdgs || []).slice(0, 3).map((sdgId) => (
                   <div
                     key={sdgId}
-                    className="w-6 h-6 rounded text-[10px] font-bold text-white flex items-center justify-center shadow-sm"
+                    className="w-6 h-6 rounded text-xs font-bold text-white flex items-center justify-center shadow-sm"
                     style={{ backgroundColor: SDG_COLORS[sdgId] || '#6b7280' }}
                     title={`SDG ${sdgId}`}
                   >
@@ -86,7 +86,7 @@ const LatestArticles = () => {
                 ))}
               </div>
 
-              <div className="flex items-center gap-4 p-4 text-xs text-gray-500 font-medium">
+              <div className="flex items-center gap-4 p-4 text-sm text-gray-500 font-medium">
                 <div className="flex items-center gap-1.5" title={t('latest_articles.views_tip')}>
                   <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>

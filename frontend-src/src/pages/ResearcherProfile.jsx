@@ -21,8 +21,8 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-      <p className="text-sm font-semibold text-gray-900">{label}</p>
-      <p className="text-sm text-indigo-600">{payload[0].name}: {payload[0].value}</p>
+      <p className="text-[15px] font-semibold text-gray-900">{label}</p>
+      <p className="text-[15px] text-indigo-600">{payload[0].name}: {payload[0].value}</p>
     </div>
   );
 };
@@ -34,7 +34,7 @@ const LoadingState = () => {
       <div className="flex flex-col items-center justify-center py-32 gap-4">
         <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
         <p className="text-gray-600 font-medium">{t('loading.title')}</p>
-        <p className="text-sm text-gray-400">{t('loading.subtitle')}</p>
+        <p className="text-[15px] text-gray-400">{t('loading.subtitle')}</p>
       </div>
     </main>
   );
@@ -52,7 +52,7 @@ const ErrorState = ({ orcid, message, onRetry }) => {
         </div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('error.title')}</h2>
         <p className="text-gray-600 mb-2">{t('error.message', { orcid })}</p>
-        {message && <p className="text-sm text-red-500 mb-6">{message}</p>}
+        {message && <p className="text-[15px] text-red-500 mb-6">{message}</p>}
         <div className="flex gap-3 justify-center">
           <button onClick={onRetry} className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700">
             {t('error.retry')}
@@ -118,7 +118,7 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
           Lookup {sourceType.toUpperCase()} belum aktif
         </h2>
         <p className="text-gray-600 mb-6">{unsupported.message}</p>
-        <p className="text-sm text-gray-500 font-mono mb-6">{sourceType}: {idValue}</p>
+        <p className="text-[15px] text-gray-500 font-mono mb-6">{sourceType}: {idValue}</p>
         <div className="flex gap-3 justify-center">
           <Link to="/researchers" className="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50">
             {t('error.back')}
@@ -209,7 +209,7 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
               <h1 className="text-2xl font-bold text-gray-900 mb-1">{r.name}</h1>
               {r.title && <p className="text-indigo-600 font-medium mb-4">{r.title}</p>}
 
-              <div className="w-full space-y-2 text-sm">
+              <div className="w-full space-y-2 text-[15px]">
                 {r.univ && (
                   <div className="flex items-center gap-2 text-gray-600 justify-center">
                     <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -247,10 +247,10 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
                   <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
                   </svg>
-                  <span className="font-mono text-xs">{r.orcid}</span>
+                  <span className="font-mono text-sm">{r.orcid}</span>
                 </div>
-                {r.scopusId    && <div className="text-xs text-gray-500">Scopus ID: {r.scopusId}</div>}
-                {r.researcherId && <div className="text-xs text-gray-500">Researcher ID: {r.researcherId}</div>}
+                {r.scopusId    && <div className="text-sm text-gray-500">Scopus ID: {r.scopusId}</div>}
+                {r.researcherId && <div className="text-sm text-gray-500">Researcher ID: {r.researcherId}</div>}
               </div>
 
               {/* Social links */}
@@ -283,8 +283,8 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
           <div className="grid grid-cols-3 gap-4 mb-4">
             {HEADER_STATS.map((stat) => (
               <div key={stat.key} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-                <p className="text-sm text-gray-600 mb-1">{t(`stats.${stat.key}`)}</p>
-                <p className={`font-bold text-gray-900 ${stat.small ? 'text-sm' : 'text-2xl'}`}>{stat.value}</p>
+                <p className="text-[15px] text-gray-600 mb-1">{t(`stats.${stat.key}`)}</p>
+                <p className={`font-bold text-gray-900 ${stat.small ? 'text-[15px]' : 'text-2xl'}`}>{stat.value}</p>
               </div>
             ))}
           </div>
@@ -313,7 +313,7 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
         <nav className="flex gap-6 overflow-x-auto">
           {TABS.map((tab) => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-3 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
+              className={`flex items-center gap-2 px-4 py-3 border-b-2 font-medium text-[15px] whitespace-nowrap transition-colors ${
                 activeTab === tab.id
                   ? 'border-indigo-600 text-indigo-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -349,7 +349,7 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
                   <p className="text-lg font-bold text-gray-900">
                     {typeof stat.value === 'number' ? stat.value.toLocaleString() : (stat.value ?? '—')}
                   </p>
-                  <p className="text-xs text-gray-600">{t(`stats.${stat.key}`)}</p>
+                  <p className="text-sm text-gray-600">{t(`stats.${stat.key}`)}</p>
                 </div>
               </div>
             ))}
@@ -370,7 +370,7 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="h-48 flex items-center justify-center text-gray-400 text-sm">
+                <div className="h-48 flex items-center justify-center text-gray-400 text-[15px]">
                   {t('ringkasan.no_trend')}
                 </div>
               )}
@@ -391,8 +391,8 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
                   </ResponsiveContainer>
                   <div className="flex-grow space-y-2">
                     {r.sdgFocus.slice(0, 6).map((sdg, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-sm">
-                        <div className="w-6 h-6 rounded flex items-center justify-center text-white text-xs font-bold shrink-0"
+                      <div key={idx} className="flex items-center gap-2 text-[15px]">
+                        <div className="w-6 h-6 rounded flex items-center justify-center text-white text-sm font-bold shrink-0"
                           style={{ backgroundColor: sdg.color }}>{sdg.sdg}</div>
                         <span className="text-gray-600 truncate">{sdg.name}</span>
                         <span className="font-semibold text-gray-900 ml-auto">{sdg.percentage}%</span>
@@ -401,10 +401,10 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
                   </div>
                 </div>
               ) : (
-                <div className="h-48 flex items-center justify-center text-gray-400 text-sm">
+                <div className="h-48 flex items-center justify-center text-gray-400 text-[15px]">
                   <div className="text-center">
                     <p>{t('ringkasan.sdg_unclassified')}</p>
-                    <p className="text-xs mt-1">{t('ringkasan.sdg_run_analysis')}</p>
+                    <p className="text-sm mt-1">{t('ringkasan.sdg_run_analysis')}</p>
                   </div>
                 </div>
               )}
@@ -420,30 +420,30 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
                   <div key={pub.id} className="p-3 rounded-xl hover:bg-gray-50 transition-colors">
                     {pub.doi ? (
                       <Link to={`/doi/${encodeURIComponent(pub.doi)}`}
-                        className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2 hover:text-indigo-600 block">
+                        className="font-semibold text-gray-900 text-[15px] mb-1 line-clamp-2 hover:text-indigo-600 block">
                         {pub.title}
                       </Link>
                     ) : (
-                      <p className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{pub.title}</p>
+                      <p className="font-semibold text-gray-900 text-[15px] mb-1 line-clamp-2">{pub.title}</p>
                     )}
-                    <p className="text-xs text-gray-500 mb-2">{pub.journal}{pub.year ? ` • ${pub.year}` : ''}</p>
+                    <p className="text-sm text-gray-500 mb-2">{pub.journal}{pub.year ? ` • ${pub.year}` : ''}</p>
                     <div className="flex gap-1 flex-wrap">
                       {pub.sdgs.slice(0, 4).map(sdg => (
-                        <span key={sdg} className="px-1.5 py-0.5 rounded text-[10px] font-bold text-white"
+                        <span key={sdg} className="px-1.5 py-0.5 rounded text-xs font-bold text-white"
                           style={{ backgroundColor: SDG_COLORS[sdg] || '#6b7280' }}>SDG {sdg}</span>
                       ))}
                       {pub.sdgs.length === 0 && (
-                        <span className="text-xs text-gray-400">{t('ringkasan.sdg_not_analyzed')}</span>
+                        <span className="text-sm text-gray-400">{t('ringkasan.sdg_not_analyzed')}</span>
                       )}
                     </div>
                   </div>
                 ))}
                 {r.recentPublications.length === 0 && (
-                  <p className="text-sm text-gray-400 text-center py-8">{t('ringkasan.no_publications')}</p>
+                  <p className="text-[15px] text-gray-400 text-center py-8">{t('ringkasan.no_publications')}</p>
                 )}
               </div>
               <button onClick={() => setActiveTab('publikasi')}
-                className="text-sm text-indigo-600 font-medium mt-4 inline-flex items-center gap-1 hover:text-indigo-700">
+                className="text-[15px] text-indigo-600 font-medium mt-4 inline-flex items-center gap-1 hover:text-indigo-700">
                 {t('ringkasan.view_all')}
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
@@ -461,16 +461,16 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
                       className="w-10 h-10 rounded-full object-cover shrink-0"
                       onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }} />
                     <div className="flex-grow min-w-0">
-                      <h4 className="font-semibold text-gray-900 text-sm mb-0.5">{collab.name}</h4>
-                      {collab.univ && <p className="text-xs text-gray-500 truncate">{collab.univ}</p>}
+                      <h4 className="font-semibold text-gray-900 text-[15px] mb-0.5">{collab.name}</h4>
+                      {collab.univ && <p className="text-sm text-gray-500 truncate">{collab.univ}</p>}
                     </div>
-                    <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-xs font-semibold shrink-0">
+                    <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-sm font-semibold shrink-0">
                       {collab.collaborations} {t('ringkasan.collaborations_unit')}
                     </span>
                   </div>
                 ))}
                 {r.collaborators.length === 0 && (
-                  <p className="text-sm text-gray-400 text-center py-8">{t('ringkasan.no_collaborators')}</p>
+                  <p className="text-[15px] text-gray-400 text-center py-8">{t('ringkasan.no_collaborators')}</p>
                 )}
               </div>
             </div>
@@ -495,21 +495,21 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
                 ) : (
                   <p className="font-bold text-gray-900 text-base leading-snug mb-2">{pub.title}</p>
                 )}
-                <p className="text-sm text-gray-600 mb-2">{pub.journal}{pub.year ? ` • ${pub.year}` : ''}</p>
+                <p className="text-[15px] text-gray-600 mb-2">{pub.journal}{pub.year ? ` • ${pub.year}` : ''}</p>
                 {pub.authors?.length > 0 && (
-                  <p className="text-xs text-gray-500 mb-3">{pub.authors.join(', ')}</p>
+                  <p className="text-sm text-gray-500 mb-3">{pub.authors.join(', ')}</p>
                 )}
                 <div className="flex items-center gap-3 flex-wrap">
                   <div className="flex gap-1 flex-wrap">
                     {pub.sdgs.slice(0, 5).map(sdg => (
-                      <span key={sdg} className="px-2 py-0.5 rounded text-xs font-bold text-white"
+                      <span key={sdg} className="px-2 py-0.5 rounded text-sm font-bold text-white"
                         style={{ backgroundColor: SDG_COLORS[sdg] || '#6b7280' }}>SDG {sdg}</span>
                     ))}
                     {pub.sdgs.length === 0 && (
-                      <span className="text-xs text-gray-400 italic">{t('publikasi.sdg_not_analyzed')}</span>
+                      <span className="text-sm text-gray-400 italic">{t('publikasi.sdg_not_analyzed')}</span>
                     )}
                   </div>
-                  {pub.doi && <span className="text-xs text-gray-400 font-mono ml-auto">{pub.doi}</span>}
+                  {pub.doi && <span className="text-sm text-gray-400 font-mono ml-auto">{pub.doi}</span>}
                 </div>
               </div>
             ))}
@@ -536,20 +536,20 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
                   <div className="flex-grow min-w-0">
                     {collab.orcid ? (
                       <Link to={`/orcid/${collab.orcid}`}
-                        className="font-semibold text-gray-900 text-sm hover:text-indigo-600 block">{collab.name}</Link>
+                        className="font-semibold text-gray-900 text-[15px] hover:text-indigo-600 block">{collab.name}</Link>
                     ) : (
-                      <h4 className="font-semibold text-gray-900 text-sm">{collab.name}</h4>
+                      <h4 className="font-semibold text-gray-900 text-[15px]">{collab.name}</h4>
                     )}
-                    {collab.univ && <p className="text-xs text-gray-500 truncate">{collab.univ}</p>}
+                    {collab.univ && <p className="text-sm text-gray-500 truncate">{collab.univ}</p>}
                   </div>
                   <div className="text-right shrink-0">
                     <p className="text-lg font-bold text-indigo-600">{collab.collaborations}</p>
-                    <p className="text-xs text-gray-400">{t('kolaborasi.collaborations_unit')}</p>
+                    <p className="text-sm text-gray-400">{t('kolaborasi.collaborations_unit')}</p>
                   </div>
                 </div>
               ))}
               {r.collaborators.length === 0 && (
-                <p className="text-sm text-gray-400 text-center py-8">{t('kolaborasi.empty')}</p>
+                <p className="text-[15px] text-gray-400 text-center py-8">{t('kolaborasi.empty')}</p>
               )}
             </div>
           </div>
@@ -565,11 +565,11 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
                         className="w-10 h-10 rounded-lg object-cover shrink-0"
                         onError={(e) => { e.target.src = '/assets/img/institution-default.svg'; }} />
                       <div className="flex-grow">
-                        <h4 className="font-semibold text-gray-900 text-sm mb-0.5">{aff.name}</h4>
-                        {aff.department && <p className="text-xs text-gray-500">{aff.department}</p>}
-                        {aff.role       && <p className="text-xs text-indigo-600">{aff.role}</p>}
+                        <h4 className="font-semibold text-gray-900 text-[15px] mb-0.5">{aff.name}</h4>
+                        {aff.department && <p className="text-sm text-gray-500">{aff.department}</p>}
+                        {aff.role       && <p className="text-sm text-indigo-600">{aff.role}</p>}
                         {aff.is_current && (
-                          <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                          <span className="text-sm bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
                             {t('kolaborasi.active')}
                           </span>
                         )}
@@ -587,8 +587,8 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
                   <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <p className="text-sm">{t('kolaborasi.map_placeholder')}</p>
-                  <p className="text-xs mt-1">{t('kolaborasi.active_collaborators', { count: r.collaborators.length })}</p>
+                  <p className="text-[15px]">{t('kolaborasi.map_placeholder')}</p>
+                  <p className="text-sm mt-1">{t('kolaborasi.active_collaborators', { count: r.collaborators.length })}</p>
                 </div>
               </div>
             </div>
@@ -603,17 +603,17 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm text-center">
               <p className="text-4xl font-bold text-indigo-600 mb-2">{r.hIndex}</p>
               <p className="text-lg font-semibold text-gray-900 mb-1">{t('dampak.h_index_label')}</p>
-              <p className="text-sm text-gray-500">{t('dampak.h_index_desc')}</p>
+              <p className="text-[15px] text-gray-500">{t('dampak.h_index_desc')}</p>
             </div>
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm text-center">
               <p className="text-4xl font-bold text-purple-600 mb-2">{r.i10Index}</p>
               <p className="text-lg font-semibold text-gray-900 mb-1">{t('dampak.i10_label')}</p>
-              <p className="text-sm text-gray-500">{t('dampak.i10_desc')}</p>
+              <p className="text-[15px] text-gray-500">{t('dampak.i10_desc')}</p>
             </div>
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm text-center">
               <p className="text-4xl font-bold text-green-600 mb-2">{r.citations.toLocaleString()}</p>
               <p className="text-lg font-semibold text-gray-900 mb-1">{t('dampak.citations_label')}</p>
-              <p className="text-sm text-gray-500">{t('dampak.citations_desc')}</p>
+              <p className="text-[15px] text-gray-500">{t('dampak.citations_desc')}</p>
             </div>
           </div>
 
@@ -631,10 +631,10 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
                   </AreaChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="h-64 flex items-center justify-center text-gray-400 text-sm">
+                <div className="h-64 flex items-center justify-center text-gray-400 text-[15px]">
                   <div className="text-center">
                     <p>{t('dampak.no_citation_trend')}</p>
-                    <p className="text-xs mt-1">{t('dampak.citation_trend_note')}</p>
+                    <p className="text-sm mt-1">{t('dampak.citation_trend_note')}</p>
                   </div>
                 </div>
               )}
@@ -652,7 +652,7 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="h-64 flex items-center justify-center text-gray-400 text-sm">
+                <div className="h-64 flex items-center justify-center text-gray-400 text-[15px]">
                   {t('dampak.no_data')}
                 </div>
               )}
@@ -670,7 +670,7 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
               ].map((item) => (
                 <div key={item.key} className="bg-gray-50 rounded-xl p-4 text-center">
                   <p className="text-2xl font-bold text-gray-900 mb-1">{item.value}</p>
-                  <p className="text-sm text-gray-600">{t(`dampak.${item.key}`)}</p>
+                  <p className="text-[15px] text-gray-600">{t(`dampak.${item.key}`)}</p>
                 </div>
               ))}
             </div>
@@ -684,7 +684,7 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
               <h3 className="text-lg font-bold text-gray-900 mb-4">{t('tentang.biography')}</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">{r.bio}</p>
+              <p className="text-gray-600 text-[15px] leading-relaxed">{r.bio}</p>
             </div>
 
             {r.researchInterests.length > 0 && (
@@ -692,7 +692,7 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
                 <h3 className="text-lg font-bold text-gray-900 mb-4">{t('tentang.research_interests')}</h3>
                 <div className="flex flex-wrap gap-3">
                   {r.researchInterests.map((interest, idx) => (
-                    <span key={idx} className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl text-sm font-medium border border-indigo-100">
+                    <span key={idx} className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl text-[15px] font-medium border border-indigo-100">
                       {interest}
                     </span>
                   ))}
@@ -718,7 +718,7 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
               <h3 className="text-lg font-bold text-gray-900 mb-4">{t('tentang.academic_info')}</h3>
-              <div className="space-y-3 text-sm">
+              <div className="space-y-3 text-[15px]">
                 {[
                   { label: 'ORCID',                       value: r.orcid,         mono: true },
                   r.scopusId     && { label: 'Scopus ID', value: r.scopusId },
@@ -729,8 +729,8 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
                   { label: t('stats.country'),       value: r.country },
                 ].filter(Boolean).map((item, idx) => (
                   <div key={idx}>
-                    <p className="text-xs text-gray-500 mb-1">{item.label}</p>
-                    <p className={`font-semibold text-gray-900 ${item.mono ? 'font-mono text-xs' : ''}`}>{item.value}</p>
+                    <p className="text-sm text-gray-500 mb-1">{item.label}</p>
+                    <p className={`font-semibold text-gray-900 ${item.mono ? 'font-mono text-sm' : ''}`}>{item.value}</p>
                   </div>
                 ))}
               </div>
@@ -742,10 +742,10 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
                 <div className="space-y-3">
                   {r.sdgFocus.slice(0, 7).map((sdg, idx) => (
                     <div key={idx} className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0"
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold shrink-0"
                         style={{ backgroundColor: sdg.color }}>{sdg.sdg}</div>
                       <div className="flex-grow min-w-0">
-                        <div className="flex justify-between text-xs mb-1">
+                        <div className="flex justify-between text-sm mb-1">
                           <span className="text-gray-700 truncate">{sdg.name}</span>
                           <span className="font-semibold ml-2">{sdg.percentage}%</span>
                         </div>

@@ -204,7 +204,7 @@ const CollaborationHub = () => {
           <div className="text-center px-8 max-w-7xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
               <Network className="w-5 h-5" />
-              <span className="text-sm font-medium">Global Research Network</span>
+              <span className="text-[15px] font-medium">Global Research Network</span>
             </div>
             
             <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
@@ -246,7 +246,7 @@ const CollaborationHub = () => {
                   <stat.icon className="w-6 h-6 text-indigo-600" />
                 </div>
                 <div className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">{stat.value}</div>
-                <div className="text-sm text-gray-600">{stat.label}</div>
+                <div className="text-[15px] text-gray-600">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -344,7 +344,7 @@ const CollaborationHub = () => {
                 >
                   <div className="relative h-32 bg-gradient-to-br from-indigo-500 to-purple-600">
                     <div className="absolute top-4 right-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(researcher.status)}`}>
+                      <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(researcher.status)}`}>
                         {researcher.status === 'open' ? 'Open to Collaborate' : 
                          researcher.status === 'busy' ? 'Limited Availability' : 'Selective'}
                       </span>
@@ -362,14 +362,14 @@ const CollaborationHub = () => {
                     <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-indigo-600 transition-colors">
                       {researcher.name}
                     </h3>
-                    <p className="text-gray-600 text-sm mb-2">{researcher.title || researcher.bio || 'Researcher'}</p>
+                    <p className="text-gray-600 text-[15px] mb-2">{researcher.title || researcher.bio || 'Researcher'}</p>
                     
-                    <div className="flex items-center gap-2 text-gray-500 text-sm mb-4">
+                    <div className="flex items-center gap-2 text-gray-500 text-[15px] mb-4">
                       <Building2 className="w-4 h-4" />
                       {researcher.institution}
                     </div>
                     
-                    <div className="flex items-center gap-2 text-gray-500 text-sm mb-4">
+                    <div className="flex items-center gap-2 text-gray-500 text-[15px] mb-4">
                       <MapPin className="w-4 h-4" />
                       {researcher.location}
                     </div>
@@ -378,7 +378,7 @@ const CollaborationHub = () => {
                       {researcher.sdgFocus.map(sdg => (
                         <span
                           key={sdg}
-                          className={`w-8 h-8 rounded-full ${sdgColors[sdg]} text-white text-xs font-bold flex items-center justify-center`}
+                          className={`w-8 h-8 rounded-full ${sdgColors[sdg]} text-white text-sm font-bold flex items-center justify-center`}
                           title={`SDG ${sdg}`}
                         >
                           {sdg}
@@ -389,24 +389,24 @@ const CollaborationHub = () => {
                     <div className="grid grid-cols-3 gap-4 py-4 border-t border-gray-100">
                       <div className="text-center">
                         <div className="text-lg font-bold text-indigo-600">{researcher.collaborations}</div>
-                        <div className="text-xs text-gray-500">Collabs</div>
+                        <div className="text-sm text-gray-500">Collabs</div>
                       </div>
                       <div className="text-center">
                         <div className="text-lg font-bold text-indigo-600">{researcher.hIndex}</div>
-                        <div className="text-xs text-gray-500">H-Index</div>
+                        <div className="text-sm text-gray-500">H-Index</div>
                       </div>
                       <div className="text-center">
                         <div className="text-lg font-bold text-indigo-600">{researcher.publications ?? researcher.citations ?? 0}</div>
-                        <div className="text-xs text-gray-500">Publications</div>
+                        <div className="text-sm text-gray-500">Publications</div>
                       </div>
                     </div>
                     
                     <div className="flex gap-2 mt-4">
-                      <button className="flex-1 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                      <button className="flex-1 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition-colors text-[15px] font-medium flex items-center justify-center gap-2">
                         <Mail className="w-4 h-4" />
                         Contact
                       </button>
-                      <button className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                      <button className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors text-[15px] font-medium flex items-center justify-center gap-2">
                         <ExternalLink className="w-4 h-4" />
                         Profile
                       </button>
@@ -440,8 +440,8 @@ const CollaborationHub = () => {
                     <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-indigo-600 transition-colors">
                       {researcher.name}
                     </h3>
-                    <p className="text-gray-600 text-sm mb-2">{researcher.title || researcher.bio || 'Researcher'}</p>
-                    <div className="flex items-center gap-4 text-gray-500 text-sm">
+                    <p className="text-gray-600 text-[15px] mb-2">{researcher.title || researcher.bio || 'Researcher'}</p>
+                    <div className="flex items-center gap-4 text-gray-500 text-[15px]">
                       <span className="flex items-center gap-1">
                         <Building2 className="w-4 h-4" />
                         {researcher.institution}
@@ -458,7 +458,7 @@ const CollaborationHub = () => {
                       {researcher.sdgFocus.map(sdg => (
                         <span
                           key={sdg}
-                          className={`w-8 h-8 rounded-full ${sdgColors[sdg]} text-white text-xs font-bold flex items-center justify-center`}
+                          className={`w-8 h-8 rounded-full ${sdgColors[sdg]} text-white text-sm font-bold flex items-center justify-center`}
                         >
                           {sdg}
                         </span>
@@ -467,7 +467,7 @@ const CollaborationHub = () => {
                     
                     <div className="text-right">
                       <div className="text-lg font-bold text-indigo-600">{researcher.collaborations}</div>
-                      <div className="text-xs text-gray-500">Collaborations</div>
+                      <div className="text-sm text-gray-500">Collaborations</div>
                     </div>
                     
                     <button className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium">

@@ -115,12 +115,12 @@ const HeroSearch = () => {
           </div>
 
           <div className="flex justify-between items-center mt-3 px-2 gap-4 flex-wrap">
-            <div className="text-left text-xs text-gray-500 max-w-md">
+            <div className="text-left text-sm text-gray-500 max-w-md">
               <i className="fas fa-info-circle mr-1"></i>
               Contoh: 0000-0002-5152-9727 · 7005075676 (Scopus) · 6009471 (SINTA) · A-1234-2020 (Publons) · 10.1038/nature12373
             </div>
             {statusMsg && (
-              <div className="text-right text-sm font-bold text-indigo-600 animate-pulse">
+              <div className="text-right text-[15px] font-bold text-indigo-600 animate-pulse">
                 {statusMsg}
               </div>
             )}
@@ -130,21 +130,21 @@ const HeroSearch = () => {
         {/* Disambiguation picker: numeric IDs could be Scopus or SINTA */}
         {ambiguousId && (
           <div className="mt-6 mx-auto max-w-xl bg-amber-50 border border-amber-200 rounded-2xl p-5 text-left">
-            <p className="text-sm text-amber-900 font-medium mb-3">
+            <p className="text-[15px] text-amber-900 font-medium mb-3">
               ID <span className="font-mono">{ambiguousId}</span> berbentuk numerik.
               Pilih sumber untuk lookup:
             </p>
             <div className="flex flex-wrap gap-2">
               <button type="button" onClick={() => chooseType('scopus')}
-                className="px-4 py-2 bg-white border border-amber-300 text-amber-900 rounded-lg text-sm font-semibold hover:bg-amber-100 transition-colors">
+                className="px-4 py-2 bg-white border border-amber-300 text-amber-900 rounded-lg text-[15px] font-semibold hover:bg-amber-100 transition-colors">
                 Scopus Author ID
               </button>
               <button type="button" onClick={() => chooseType('sinta')}
-                className="px-4 py-2 bg-white border border-amber-300 text-amber-900 rounded-lg text-sm font-semibold hover:bg-amber-100 transition-colors">
+                className="px-4 py-2 bg-white border border-amber-300 text-amber-900 rounded-lg text-[15px] font-semibold hover:bg-amber-100 transition-colors">
                 SINTA ID
               </button>
               <button type="button" onClick={() => setAmbiguousId(null)}
-                className="px-4 py-2 text-amber-700 rounded-lg text-sm font-medium hover:bg-amber-100 transition-colors">
+                className="px-4 py-2 text-amber-700 rounded-lg text-[15px] font-medium hover:bg-amber-100 transition-colors">
                 Batal
               </button>
             </div>

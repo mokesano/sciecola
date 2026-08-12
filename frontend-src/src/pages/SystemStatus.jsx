@@ -52,7 +52,7 @@ const SystemStatus = () => {
             <h1 className="text-3xl font-extrabold text-gray-900">{t('title')}</h1>
             <p className="text-gray-600 mt-2">{t('subtitle')}</p>
           </div>
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 text-sm font-semibold w-fit">
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 text-[15px] font-semibold w-fit">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
             {t('core_up')}
           </span>
@@ -66,7 +66,7 @@ const SystemStatus = () => {
           { key: 'maintenance', value: '0' },
         ].map(s => (
           <div key={s.key} className="bg-white rounded-xl border border-gray-100 p-5">
-            <p className="text-sm text-gray-500">{t(`stats.${s.key}`)}</p>
+            <p className="text-[15px] text-gray-500">{t(`stats.${s.key}`)}</p>
             <p className="text-2xl font-bold text-gray-900 mt-1">{s.value}</p>
           </div>
         ))}
@@ -75,7 +75,7 @@ const SystemStatus = () => {
       <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 mb-6">
         <h2 className="text-xl font-bold text-gray-900 mb-4">{t('services_title')}</h2>
         <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
+          <table className="min-w-full text-[15px]">
             <thead>
               <tr className="text-left text-gray-500 border-b border-gray-200">
                 <th className="pb-3 font-semibold">{t('table.service')}</th>
@@ -91,7 +91,7 @@ const SystemStatus = () => {
                   <td className="py-3 text-gray-700">{service.uptime}</td>
                   <td className="py-3 text-gray-700">{service.latency}</td>
                   <td className="py-3">
-                    <span className={`px-2.5 py-1 rounded-full border text-xs font-semibold ${badgeStyle[service.status]}`}>
+                    <span className={`px-2.5 py-1 rounded-full border text-sm font-semibold ${badgeStyle[service.status]}`}>
                       {service.status}
                     </span>
                   </td>
@@ -109,12 +109,12 @@ const SystemStatus = () => {
             <article key={incident.id} className={`rounded-xl border p-4 ${incidentStyle[incident.color]}`}>
               <div className="flex flex-wrap items-center gap-2 mb-1">
                 <h3 className="font-semibold text-gray-900">{incident.title}</h3>
-                <span className="text-xs font-semibold px-2 py-0.5 rounded-full border border-gray-300 bg-white text-gray-700">
+                <span className="text-sm font-semibold px-2 py-0.5 rounded-full border border-gray-300 bg-white text-gray-700">
                   {incident.status}
                 </span>
               </div>
-              <p className="text-xs text-gray-500 mb-1">{incident.time}</p>
-              <p className="text-sm text-gray-700">{incident.detail}</p>
+              <p className="text-sm text-gray-500 mb-1">{incident.time}</p>
+              <p className="text-[15px] text-gray-700">{incident.detail}</p>
             </article>
           ))}
         </div>

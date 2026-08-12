@@ -86,8 +86,8 @@ const Dashboard = () => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-          <p className="text-sm font-semibold text-gray-900">{label}</p>
-          <p className="text-sm text-indigo-600">{payload[0].name}: {payload[0].value}</p>
+          <p className="text-[15px] font-semibold text-gray-900">{label}</p>
+          <p className="text-[15px] text-indigo-600">{payload[0].name}: {payload[0].value}</p>
         </div>
       );
     }
@@ -119,7 +119,7 @@ const Dashboard = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-6">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400"><Chevron /></span>
         <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
@@ -137,7 +137,7 @@ const Dashboard = () => {
               </div>
               <div>
                 <p className="font-semibold text-gray-900">{t('sidebar.profile')}</p>
-                <p className="text-xs text-gray-500">{t('sidebar.profile_role')}</p>
+                <p className="text-sm text-gray-500">{t('sidebar.profile_role')}</p>
               </div>
             </div>
 
@@ -150,7 +150,7 @@ const Dashboard = () => {
                   label={t(`sidebar.${item.i18n}`)}
                   active={item.active}
                   extra={item.badge && (
-                    <span className="px-1.5 py-0.5 bg-red-100 text-red-700 text-[10px] font-bold rounded uppercase">
+                    <span className="px-1.5 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded uppercase">
                       {t('sidebar.admin_badge')}
                     </span>
                   )}
@@ -168,7 +168,7 @@ const Dashboard = () => {
             <select
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value)}
-              className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-[15px] font-medium text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="current">{t('range.current')}</option>
               <option value="prev">{t('range.prev')}</option>
@@ -185,10 +185,10 @@ const Dashboard = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={s.icon} />
                     </svg>
                   </div>
-                  <span className="text-sm text-gray-600">{t(`stats.${s.key}`)}</span>
+                  <span className="text-[15px] text-gray-600">{t(`stats.${s.key}`)}</span>
                 </div>
                 <p className="text-2xl font-bold text-gray-900">{s.value}</p>
-                <p className="text-xs font-medium text-green-600 mt-1">{t('stats.growth', { pct: s.growth })}</p>
+                <p className="text-sm font-medium text-green-600 mt-1">{t('stats.growth', { pct: s.growth })}</p>
               </div>
             ))}
           </div>
@@ -222,14 +222,14 @@ const Dashboard = () => {
                     <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" className="text-2xl font-bold fill-gray-900">
                       {stats.articles}
                     </text>
-                    <text x="50%" y="60%" textAnchor="middle" dominantBaseline="middle" className="text-xs fill-gray-500">
+                    <text x="50%" y="60%" textAnchor="middle" dominantBaseline="middle" className="text-sm fill-gray-500">
                       {t('sections.articles')}
                     </text>
                   </PieChart>
                 </ResponsiveContainer>
                 <div className="flex-grow space-y-2">
                   {sdgContribution.map((sdg, idx) => (
-                    <div key={idx} className="flex items-center gap-2 text-sm">
+                    <div key={idx} className="flex items-center gap-2 text-[15px]">
                       <div className="w-3 h-3 rounded-full" style={{ backgroundColor: sdg.color }} />
                       <span className="text-gray-600">{sdg.name}</span>
                       <span className="font-semibold text-gray-900">({sdg.value}%)</span>
@@ -247,16 +247,16 @@ const Dashboard = () => {
               <div className="space-y-4">
                 {popularArticles.map((article, idx) => (
                   <div key={idx} className="pb-4 border-b border-gray-100 last:border-0 last:pb-0">
-                    <h4 className="font-semibold text-gray-900 text-sm mb-1">{article.title}</h4>
-                    <p className="text-xs text-gray-500 mb-2">{article.journal}</p>
-                    <div className="flex gap-4 text-sm">
+                    <h4 className="font-semibold text-gray-900 text-[15px] mb-1">{article.title}</h4>
+                    <p className="text-sm text-gray-500 mb-2">{article.journal}</p>
+                    <div className="flex gap-4 text-[15px]">
                       <span className="text-gray-600">{t('article_meta.citations')}: <span className="font-semibold text-gray-900">{article.citations}</span></span>
                       <span className="text-gray-600">{t('article_meta.downloads')}: <span className="font-semibold text-gray-900">{article.downloads}</span></span>
                     </div>
                   </div>
                 ))}
               </div>
-              <Link to="/my-articles" className="inline-flex items-center gap-1 text-sm text-indigo-600 font-medium hover:text-indigo-700 mt-4">
+              <Link to="/my-articles" className="inline-flex items-center gap-1 text-[15px] text-indigo-600 font-medium hover:text-indigo-700 mt-4">
                 {t('sections.see_all')} <Chevron />
               </Link>
             </div>
@@ -268,13 +268,13 @@ const Dashboard = () => {
                   <div key={idx} className="flex gap-3">
                     <img src={activity.avatar} alt="" className="w-8 h-8 rounded-full object-cover" />
                     <div className="flex-grow">
-                      <p className="text-sm text-gray-900">{activity.text}</p>
-                      <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
+                      <p className="text-[15px] text-gray-900">{activity.text}</p>
+                      <p className="text-sm text-gray-500 mt-1">{activity.time}</p>
                     </div>
                   </div>
                 ))}
               </div>
-              <Link to="/my-activity" className="inline-flex items-center gap-1 text-sm text-indigo-600 font-medium hover:text-indigo-700 mt-4">
+              <Link to="/my-activity" className="inline-flex items-center gap-1 text-[15px] text-indigo-600 font-medium hover:text-indigo-700 mt-4">
                 {t('sections.see_all_activity')} <Chevron />
               </Link>
             </div>
@@ -289,10 +289,10 @@ const Dashboard = () => {
                   <svg className="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <p className="text-sm">{t('sections.map_placeholder')}</p>
+                  <p className="text-[15px]">{t('sections.map_placeholder')}</p>
                 </div>
               </div>
-              <div className="flex items-center justify-center gap-4 mt-4 text-xs">
+              <div className="flex items-center justify-center gap-4 mt-4 text-sm">
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-indigo-200 rounded"></div>
                   <span className="text-gray-600">{t('sections.map_high')}</span>
@@ -309,7 +309,7 @@ const Dashboard = () => {
               <div className="space-y-3">
                 {articleDistribution.map((item, idx) => (
                   <div key={idx}>
-                    <div className="flex justify-between text-sm mb-1">
+                    <div className="flex justify-between text-[15px] mb-1">
                       <span className="text-gray-600">{item.sdg}</span>
                       <span className="text-gray-900 font-medium">{item.count} ({item.percentage}%)</span>
                     </div>
@@ -319,7 +319,7 @@ const Dashboard = () => {
                   </div>
                 ))}
               </div>
-              <Link to="/sdgs" className="inline-flex items-center gap-1 text-sm text-indigo-600 font-medium hover:text-indigo-700 mt-4">
+              <Link to="/sdgs" className="inline-flex items-center gap-1 text-[15px] text-indigo-600 font-medium hover:text-indigo-700 mt-4">
                 {t('sections.see_all_sdgs')} <Chevron />
               </Link>
             </div>
@@ -330,7 +330,7 @@ const Dashboard = () => {
             <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-bold text-gray-900">{t('sections.citation_trend')}</h3>
-                <select className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                <select className="text-[15px] border border-gray-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                   <option>{t('trend_range.all')}</option>
                   <option>{t('trend_range.5y')}</option>
                 </select>
@@ -361,9 +361,9 @@ const Dashboard = () => {
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={row.icon} />
                       </svg>
-                      <span className="text-sm text-gray-600">{t(`journal.${row.key}`)}</span>
+                      <span className="text-[15px] text-gray-600">{t(`journal.${row.key}`)}</span>
                     </div>
-                    <span className="text-sm font-bold text-indigo-600">{row.value}</span>
+                    <span className="text-[15px] font-bold text-indigo-600">{row.value}</span>
                   </div>
                 ))}
               </div>
@@ -374,15 +374,15 @@ const Dashboard = () => {
           <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-6 text-white shadow-lg flex flex-col lg:flex-row items-center justify-between gap-6">
             <div>
               <h3 className="text-xl font-bold mb-2">{t('cta.title')}</h3>
-              <p className="text-indigo-100 text-sm">{t('cta.subtitle')}</p>
+              <p className="text-indigo-100 text-[15px]">{t('cta.subtitle')}</p>
             </div>
             <div className="flex gap-3 w-full lg:w-auto">
               <input
                 type="text"
                 placeholder={t('cta.input_ph')}
-                className="flex-grow lg:w-80 px-4 py-2.5 rounded-xl text-gray-900 focus:ring-2 focus:ring-white focus:outline-none text-sm"
+                className="flex-grow lg:w-80 px-4 py-2.5 rounded-xl text-gray-900 focus:ring-2 focus:ring-white focus:outline-none text-[15px]"
               />
-              <button className="px-6 py-2.5 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition-colors whitespace-nowrap flex items-center gap-2 text-sm">
+              <button className="px-6 py-2.5 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition-colors whitespace-nowrap flex items-center gap-2 text-[15px]">
                 {t('cta.button')}
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />

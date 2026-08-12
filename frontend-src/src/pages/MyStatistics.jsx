@@ -89,9 +89,9 @@ const MyStatistics = () => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-          <p className="text-sm font-semibold text-gray-900">{label}</p>
+          <p className="text-[15px] font-semibold text-gray-900">{label}</p>
           {payload.map((entry, index) => (
-            <p key={index} className="text-sm" style={{ color: entry.color }}>
+            <p key={index} className="text-[15px]" style={{ color: entry.color }}>
               {entry.name}: {entry.value?.toLocaleString()}
             </p>
           ))}
@@ -111,7 +111,7 @@ const MyStatistics = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-6">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400"><Chevron /></span>
         <Link to="/dashboard" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.dashboard')}</Link>
@@ -129,7 +129,7 @@ const MyStatistics = () => {
           <select
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value)}
-            className="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+            className="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-[15px] font-medium text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
           >
             <option value="12">{t('range.12')}</option>
             <option value="6">{t('range.6')}</option>
@@ -155,11 +155,11 @@ const MyStatistics = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={stat.icon} />
                 </svg>
               </div>
-              <span className="text-sm text-gray-600 font-medium">{t(`cards.${stat.key}`)}</span>
+              <span className="text-[15px] text-gray-600 font-medium">{t(`cards.${stat.key}`)}</span>
             </div>
             <div className="flex items-end gap-2">
               <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-              <span className="text-xs flex items-end gap-1 font-bold text-green-600">
+              <span className="text-sm flex items-end gap-1 font-bold text-green-600">
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
@@ -175,10 +175,10 @@ const MyStatistics = () => {
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-lg font-bold text-gray-900">{t('sections.impact_trend')}</h3>
           <div className="flex gap-2">
-            <span className="flex items-center gap-1.5 text-xs text-gray-600">
+            <span className="flex items-center gap-1.5 text-sm text-gray-600">
               <span className="w-3 h-3 rounded-full bg-indigo-500"></span> {t('chart.views')}
             </span>
-            <span className="flex items-center gap-1.5 text-xs text-gray-600">
+            <span className="flex items-center gap-1.5 text-sm text-gray-600">
               <span className="w-3 h-3 rounded-full bg-purple-500"></span> {t('chart.citations')}
             </span>
           </div>
@@ -221,7 +221,7 @@ const MyStatistics = () => {
               </RadarChart>
             </ResponsiveContainer>
           </div>
-          <p className="text-center text-xs text-gray-500 mt-2">{t('sections.sdg_footnote')}</p>
+          <p className="text-center text-sm text-gray-500 mt-2">{t('sections.sdg_footnote')}</p>
         </div>
 
         {/* Audience Demographics */}
@@ -259,7 +259,7 @@ const MyStatistics = () => {
         <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
           <h3 className="text-lg font-bold text-gray-900 mb-4">{t('sections.top_articles')}</h3>
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+            <table className="w-full text-left text-[15px]">
               <thead className="bg-gray-50 text-gray-600">
                 <tr>
                   <th className="px-4 py-3 font-medium rounded-tl-lg">{t('table.title')}</th>
@@ -275,7 +275,7 @@ const MyStatistics = () => {
                     <td className="px-4 py-3 text-center text-gray-600">{(article.views || 0).toLocaleString()}</td>
                     <td className="px-4 py-3 text-center text-gray-600">{(article.citations || 0).toLocaleString()}</td>
                     <td className="px-4 py-3 text-center">
-                      <span className={`px-2 py-1 rounded text-xs font-bold ${(article.impactScore || 0) >= 85 ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                      <span className={`px-2 py-1 rounded text-sm font-bold ${(article.impactScore || 0) >= 85 ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
                         {(article.impactScore || 0).toFixed(1)}
                       </span>
                     </td>
@@ -284,7 +284,7 @@ const MyStatistics = () => {
               </tbody>
             </table>
           </div>
-          <Link to="/my-articles" className="block text-center text-sm text-indigo-600 font-medium hover:text-indigo-700 mt-4">
+          <Link to="/my-articles" className="block text-center text-[15px] text-indigo-600 font-medium hover:text-indigo-700 mt-4">
             {t('sections.see_all_articles')}
           </Link>
         </div>

@@ -23,8 +23,8 @@ const EmptySection = ({ title, subtitle, compact = false }) => (
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"
         d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
     </svg>
-    <p className="font-semibold text-gray-700 text-sm">{title}</p>
-    {subtitle && <p className="text-xs text-gray-500 mt-1 max-w-sm">{subtitle}</p>}
+    <p className="font-semibold text-gray-700 text-[15px]">{title}</p>
+    {subtitle && <p className="text-sm text-gray-500 mt-1 max-w-sm">{subtitle}</p>}
   </div>
 );
 
@@ -42,7 +42,7 @@ const ScoreBar = ({ value, total = 100 }) => (
         style={{ width: `${Math.max(0, Math.min(100, (value / total) * 100))}%` }}
       />
     </div>
-    <span className="text-xs font-semibold text-gray-900 shrink-0">{value}</span>
+    <span className="text-sm font-semibold text-gray-900 shrink-0">{value}</span>
   </div>
 );
 
@@ -169,7 +169,7 @@ const TopResearchers = () => {
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
 
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400"><ChevronRight /></span>
         <Link to="/analytics" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.analytics')}</Link>
@@ -190,7 +190,7 @@ const TopResearchers = () => {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder={t('filter.search_placeholder')}
-              className="border border-gray-200 rounded-lg pl-9 pr-3 py-2 text-sm bg-white shadow-sm w-64 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="border border-gray-200 rounded-lg pl-9 pr-3 py-2 text-[15px] bg-white shadow-sm w-64 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
             <svg className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -199,7 +199,7 @@ const TopResearchers = () => {
           <select
             value={sdg}
             onChange={e => setSdg(Number(e.target.value))}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="border border-gray-200 rounded-lg px-3 py-2 text-[15px] bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value={0}>{t('filter.sdg_all')}</option>
             {Array.from({ length: 17 }, (_, i) => i + 1).map(n => (
@@ -209,7 +209,7 @@ const TopResearchers = () => {
           <select
             value={countryFilter}
             onChange={e => setCountryFilter(e.target.value)}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="border border-gray-200 rounded-lg px-3 py-2 text-[15px] bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value="">{t('filter.country_all')}</option>
             {countries.map(c => (
@@ -219,7 +219,7 @@ const TopResearchers = () => {
           <select
             value={sort}
             onChange={e => setSort(e.target.value)}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="border border-gray-200 rounded-lg px-3 py-2 text-[15px] bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
             {SORT_OPTIONS.map(s => (
               <option key={s} value={s}>{t(`filter.sort.${s}`)}</option>
@@ -228,7 +228,7 @@ const TopResearchers = () => {
           {hasActiveFilters && (
             <button
               onClick={resetFilters}
-              className="px-3 py-2 text-sm text-indigo-600 font-medium hover:bg-indigo-50 rounded-lg transition-colors"
+              className="px-3 py-2 text-[15px] text-indigo-600 font-medium hover:bg-indigo-50 rounded-lg transition-colors"
             >
               {t('filter.reset')}
             </button>
@@ -250,8 +250,8 @@ const TopResearchers = () => {
           <svg className="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
-          <span className="text-red-700 text-sm flex-grow">{error}</span>
-          <button onClick={fetchData} className="text-sm text-red-600 underline shrink-0">{t('retry')}</button>
+          <span className="text-red-700 text-[15px] flex-grow">{error}</span>
+          <button onClick={fetchData} className="text-[15px] text-red-600 underline shrink-0">{t('retry')}</button>
         </div>
       )}
 
@@ -262,7 +262,7 @@ const TopResearchers = () => {
             <div className="bg-indigo-50 border border-indigo-200 p-5 rounded-xl mb-6">
               <div className="flex justify-between items-start gap-4 mb-4">
                 <div>
-                  <p className="text-xs font-semibold text-indigo-600 mb-1 uppercase tracking-wide">{t('detail.title')}</p>
+                  <p className="text-sm font-semibold text-indigo-600 mb-1 uppercase tracking-wide">{t('detail.title')}</p>
                   <h3 className="font-bold text-gray-900 text-lg leading-snug">{selectedResearcher.name}</h3>
                 </div>
                 <button
@@ -284,42 +284,42 @@ const TopResearchers = () => {
                       <span className="text-2xl font-bold text-indigo-700">{getInitials(selectedResearcher.name)}</span>
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm text-gray-700"><b>{t('detail.affiliation')}:</b> {selectedResearcher.affiliation || '—'}</p>
-                      <p className="text-sm text-gray-700"><b>{t('detail.country')}:</b> {selectedResearcher.country || '—'}</p>
-                      <p className="text-sm text-indigo-600 font-semibold mt-1">
+                      <p className="text-[15px] text-gray-700"><b>{t('detail.affiliation')}:</b> {selectedResearcher.affiliation || '—'}</p>
+                      <p className="text-[15px] text-gray-700"><b>{t('detail.country')}:</b> {selectedResearcher.country || '—'}</p>
+                      <p className="text-[15px] text-indigo-600 font-semibold mt-1">
                         {t('detail.impact_score')}: {selectedResearcher.impact_score}
                       </p>
                     </div>
                   </div>
 
-                  <h4 className="font-semibold text-gray-800 mb-2 text-sm">{t('detail.metrics')}</h4>
+                  <h4 className="font-semibold text-gray-800 mb-2 text-[15px]">{t('detail.metrics')}</h4>
                   <div className="grid grid-cols-3 gap-2 mb-4">
                     <div className="bg-white rounded-lg p-3 text-center">
-                      <p className="text-xs text-gray-500">{t('detail.hindex')}</p>
+                      <p className="text-sm text-gray-500">{t('detail.hindex')}</p>
                       <p className="text-xl font-bold text-gray-900">{selectedResearcher.h_index}</p>
                     </div>
                     <div className="bg-white rounded-lg p-3 text-center">
-                      <p className="text-xs text-gray-500">{t('detail.citations')}</p>
+                      <p className="text-sm text-gray-500">{t('detail.citations')}</p>
                       <p className="text-xl font-bold text-gray-900">{selectedResearcher.citations.toLocaleString()}</p>
                     </div>
                     <div className="bg-white rounded-lg p-3 text-center">
-                      <p className="text-xs text-gray-500">{t('detail.publications')}</p>
+                      <p className="text-sm text-gray-500">{t('detail.publications')}</p>
                       <p className="text-xl font-bold text-gray-900">{selectedResearcher.publications}</p>
                     </div>
                   </div>
 
-                  <h4 className="font-semibold text-gray-800 mb-2 text-sm">{t('detail.top_pubs')}</h4>
+                  <h4 className="font-semibold text-gray-800 mb-2 text-[15px]">{t('detail.top_pubs')}</h4>
                   {selectedResearcher.top_publications?.length > 0 ? (
                     <ul className="space-y-2">
                       {selectedResearcher.top_publications.map((pub, i) => (
-                        <li key={pub.doi || i} className="bg-white rounded-lg p-2.5 text-sm">
+                        <li key={pub.doi || i} className="bg-white rounded-lg p-2.5 text-[15px]">
                           <Link
                             to={pub.doi ? `/doi/${encodeURIComponent(pub.doi)}` : '#'}
                             className="font-medium text-gray-900 hover:text-indigo-600 line-clamp-2 leading-tight"
                           >
                             {pub.title}
                           </Link>
-                          <div className="text-xs text-gray-500 mt-1 flex justify-between">
+                          <div className="text-sm text-gray-500 mt-1 flex justify-between">
                             <span className="truncate">{pub.journal} ({pub.year})</span>
                             <span className="ml-2 shrink-0 font-semibold text-gray-700">
                               {pub.citations.toLocaleString()} cit
@@ -329,13 +329,13 @@ const TopResearchers = () => {
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-xs text-gray-500 italic">{t('detail.no_top_pubs')}</p>
+                    <p className="text-sm text-gray-500 italic">{t('detail.no_top_pubs')}</p>
                   )}
 
                   {selectedResearcher.orcid && (
                     <Link
                       to={`/orcid/${encodeURIComponent(selectedResearcher.orcid)}`}
-                      className="inline-flex items-center gap-1 mt-3 text-sm text-indigo-600 font-medium hover:text-indigo-700"
+                      className="inline-flex items-center gap-1 mt-3 text-[15px] text-indigo-600 font-medium hover:text-indigo-700"
                     >
                       {t('detail.open_profile')} →
                     </Link>
@@ -344,7 +344,7 @@ const TopResearchers = () => {
 
                 {/* Right column: radar + collab */}
                 <div>
-                  <h4 className="font-semibold text-gray-800 mb-2 text-sm">{t('detail.profile_radar')}</h4>
+                  <h4 className="font-semibold text-gray-800 mb-2 text-[15px]">{t('detail.profile_radar')}</h4>
                   <div className="bg-white rounded-lg p-2">
                     <ResponsiveContainer width="100%" height={240}>
                       <RadarChart cx="50%" cy="50%" outerRadius="75%" data={radarData}>
@@ -357,22 +357,22 @@ const TopResearchers = () => {
                     </ResponsiveContainer>
                   </div>
 
-                  <h4 className="font-semibold text-gray-800 mt-4 mb-2 text-sm">{t('detail.collab_network')}</h4>
+                  <h4 className="font-semibold text-gray-800 mt-4 mb-2 text-[15px]">{t('detail.collab_network')}</h4>
                   {selectedResearcher.total_collabs > 0 ? (
                     <div className="bg-white rounded-lg p-3">
                       <div className="flex justify-around items-center mb-3">
                         <div className="text-center">
-                          <p className="text-xs text-gray-500">{t('detail.collab_total')}</p>
+                          <p className="text-sm text-gray-500">{t('detail.collab_total')}</p>
                           <p className="text-lg font-bold text-indigo-700">{selectedResearcher.total_collabs}</p>
                         </div>
                         <div className="h-10 border-l border-gray-200"></div>
                         <div className="text-center">
-                          <p className="text-xs text-gray-500">{t('detail.collab_domestic')}</p>
+                          <p className="text-sm text-gray-500">{t('detail.collab_domestic')}</p>
                           <p className="text-lg font-bold text-blue-600">{selectedResearcher.domestic_collabs}</p>
                         </div>
                         <div className="h-10 border-l border-gray-200"></div>
                         <div className="text-center">
-                          <p className="text-xs text-gray-500">{t('detail.collab_intl')}</p>
+                          <p className="text-sm text-gray-500">{t('detail.collab_intl')}</p>
                           <p className="text-lg font-bold text-green-600">{selectedResearcher.international_collabs}</p>
                         </div>
                       </div>
@@ -395,7 +395,7 @@ const TopResearchers = () => {
                       </ResponsiveContainer>
                     </div>
                   ) : (
-                    <p className="text-xs text-gray-500 italic">{t('detail.no_collab')}</p>
+                    <p className="text-sm text-gray-500 italic">{t('detail.no_collab')}</p>
                   )}
                 </div>
               </div>
@@ -407,7 +407,7 @@ const TopResearchers = () => {
             <div className="p-5 border-b border-gray-100 flex justify-between items-center flex-wrap gap-2">
               <h3 className="text-lg font-semibold text-gray-900">{t('table.title')}</h3>
               {total > 0 && (
-                <span className="text-xs text-gray-500">
+                <span className="text-sm text-gray-500">
                   {t('pagination.showing', { from: fromIdx, to: toIdx, total: total.toLocaleString() })}
                 </span>
               )}
@@ -415,8 +415,8 @@ const TopResearchers = () => {
 
             {researchers.length > 0 ? (
               <div className="overflow-x-auto">
-                <table className="min-w-full text-sm">
-                  <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
+                <table className="min-w-full text-[15px]">
+                  <thead className="bg-gray-50 text-sm text-gray-500 uppercase tracking-wider">
                     <tr>
                       <th className="px-4 py-3 text-left font-medium">{t('table.columns.researcher')}</th>
                       <th className="px-4 py-3 text-left font-medium">{t('table.columns.affiliation')}</th>
@@ -439,27 +439,27 @@ const TopResearchers = () => {
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
-                              <span className="text-xs font-bold text-indigo-700">{getInitials(r.name)}</span>
+                              <span className="text-sm font-bold text-indigo-700">{getInitials(r.name)}</span>
                             </div>
                             <div className="min-w-0">
-                              <div className="text-sm font-medium text-gray-900 truncate">{r.name}</div>
-                              <div className="text-[10px] text-gray-500 truncate font-mono">{r.orcid}</div>
+                              <div className="text-[15px] font-medium text-gray-900 truncate">{r.name}</div>
+                              <div className="text-xs text-gray-500 truncate font-mono">{r.orcid}</div>
                             </div>
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          <div className="text-sm text-gray-700 truncate max-w-[200px]">{r.affiliation || '—'}</div>
-                          <div className="text-xs text-gray-500">{r.country || '—'}</div>
+                          <div className="text-[15px] text-gray-700 truncate max-w-[200px]">{r.affiliation || '—'}</div>
+                          <div className="text-sm text-gray-500">{r.country || '—'}</div>
                         </td>
-                        <td className="px-4 py-3 text-right text-sm font-semibold text-gray-900">{r.h_index}</td>
-                        <td className="px-4 py-3 text-right text-sm text-gray-700">{r.publications}</td>
-                        <td className="px-4 py-3 text-right text-sm text-gray-700">{r.citations.toLocaleString()}</td>
+                        <td className="px-4 py-3 text-right text-[15px] font-semibold text-gray-900">{r.h_index}</td>
+                        <td className="px-4 py-3 text-right text-[15px] text-gray-700">{r.publications}</td>
+                        <td className="px-4 py-3 text-right text-[15px] text-gray-700">{r.citations.toLocaleString()}</td>
                         <td className="px-4 py-3">
                           <div className="flex flex-wrap gap-1">
-                            <span className="text-[10px] px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full">
+                            <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full">
                               {t('table.collab_domestic', { n: r.domestic_collabs })}
                             </span>
-                            <span className="text-[10px] px-2 py-0.5 bg-green-100 text-green-800 rounded-full">
+                            <span className="text-xs px-2 py-0.5 bg-green-100 text-green-800 rounded-full">
                               {t('table.collab_intl', { n: r.international_collabs })}
                             </span>
                           </div>
@@ -485,7 +485,7 @@ const TopResearchers = () => {
                 <button
                   onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page <= 1}
-                  className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="text-[15px] px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {t('pagination.prev')}
                 </button>
@@ -494,7 +494,7 @@ const TopResearchers = () => {
                     <button
                       key={p}
                       onClick={() => setPage(p)}
-                      className={`text-sm px-3 py-1.5 rounded-lg ${
+                      className={`text-[15px] px-3 py-1.5 rounded-lg ${
                         page === p
                           ? 'bg-indigo-600 text-white'
                           : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
@@ -507,7 +507,7 @@ const TopResearchers = () => {
                 <button
                   onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                   disabled={page >= totalPages}
-                  className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="text-[15px] px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {t('pagination.next')}
                 </button>
@@ -518,7 +518,7 @@ const TopResearchers = () => {
           {/* Impact score explanation */}
           <div className="bg-blue-50 p-5 rounded-xl border border-blue-100 mb-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('explanation.title')}</h3>
-            <p className="text-sm text-gray-600 mb-4">{t('explanation.subtitle')}</p>
+            <p className="text-[15px] text-gray-600 mb-4">{t('explanation.subtitle')}</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {['academic', 'citation', 'productivity', 'collab'].map(c => {
                 const s = DIM_STYLE[c];
@@ -528,11 +528,11 @@ const TopResearchers = () => {
                       <div className={`h-8 w-8 rounded-full flex items-center justify-center ${s.bg} ${s.icon}`}>
                         <ComponentIcon comp={c} />
                       </div>
-                      <h4 className={`font-semibold text-xs ${s.text}`}>
+                      <h4 className={`font-semibold text-sm ${s.text}`}>
                         {t(`explanation.components.${c}.title`)} ({t(`explanation.components.${c}.weight`)})
                       </h4>
                     </div>
-                    <p className="text-xs text-gray-600 leading-relaxed">
+                    <p className="text-sm text-gray-600 leading-relaxed">
                       {t(`explanation.components.${c}.desc`)}
                     </p>
                   </div>
@@ -544,7 +544,7 @@ const TopResearchers = () => {
           {/* Distribution by SDG */}
           <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
             <h3 className="font-semibold text-gray-900 mb-1">{t('distribution.title')}</h3>
-            <p className="text-xs text-gray-500 mb-4">{t('distribution.subtitle')}</p>
+            <p className="text-sm text-gray-500 mb-4">{t('distribution.subtitle')}</p>
             {distribution.length > 0 ? (
               <ResponsiveContainer width="100%" height={280}>
                 <BarChart data={distribution} margin={{ top: 5, right: 20, left: 0, bottom: 30 }}>
