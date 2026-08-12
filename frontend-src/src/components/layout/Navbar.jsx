@@ -13,7 +13,6 @@ const Navbar = () => {
 
   const [langOpen, setLangOpen]   = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
-  const [scrolled, setScrolled]   = useState(false);
   const langRef = useRef(null);
 
   // Sync state lokal dengan nilai i18n saat ini
@@ -39,43 +38,13 @@ const Navbar = () => {
   // Tutup menu mobile saat navigasi
   useEffect(() => { setMenuOpen(false); }, [location]);
 
-  /* Navbar menyatu dengan hero selama halaman belum digulir, lalu memakai
-     permukaannya sendiri begitu hero terlewati. Nilainya dibaca lewat rAF —
-     event scroll menyala puluhan kali per detik, dan yang kita butuhkan hanya
-     satu ambang boolean. */
-  useEffect(() => {
-    let ticking = false;
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        setScrolled(window.scrollY > window.innerHeight * 0.6);
-        ticking = false;
-      });
-    };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   // Helpers active state
   const isResearchersActive = location.pathname === '/researchers' || location.pathname.startsWith('/orcid/');
   const isArticlesActive    = location.pathname === '/articles'    || location.pathname.startsWith('/doi/');
 
-  /* Di landing publik, navbar menyatu dengan hero selama masih di puncak
-     halaman: tanpa permukaan sendiri, tanpa garis batas, teks putih. Begitu
-     hero terlewati ia mengambil permukaannya kembali. Halaman lain tidak
-     terpengaruh. */
-  const onLanding = !user && location.pathname === '/';
-  const onHero    = onLanding && !scrolled;
-  const onDark    = onHero;
-
-  const activeClass = onDark
-    ? 'text-white font-bold border-b-[4px] border-indigo-400 pb-7 transition-all'
-    : 'text-indigo-600 font-bold border-b-[4px] border-indigo-600 pb-7 transition-all';
-  const inactiveClass = onDark
-    ? 'text-slate-400 group-hover:text-white font-medium border-b-[4px] border-transparent group-hover:border-indigo-400 pb-7 transition-all'
-    : 'text-gray-500 group-hover:text-indigo-600 font-medium border-b-[4px] border-transparent group-hover:border-indigo-600 pb-7 transition-all';
+  const activeClass   = 'text-indigo-600 font-bold border-b-[4px] border-indigo-600 pb-7 transition-all';
+  const inactiveClass = 'text-gray-500 group-hover:text-indigo-600 font-medium border-b-[4px] border-transparent group-hover:border-indigo-600 pb-7 transition-all';
 
   // Data bahasa dari locale — fallback inline jika namespace belum muat
   const langData = {
@@ -85,20 +54,14 @@ const Navbar = () => {
   const activeLang = langData[currentLang] || { flag: '🌐', code: currentLang.toUpperCase(), country: currentLang };
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-      onHero
-        ? 'bg-transparent'
-        : 'bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm'
-    }`}>
+    <nav className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
 
           {/* ── Logo ── */}
           <NavLink to="/" className="flex items-center gap-3 cursor-pointer group">
             <div className="flex flex-col">
-              <div className={`text-3xl font-black transition-colors ${
-                onDark ? 'text-white group-hover:text-indigo-300' : 'text-indigo-600 group-hover:text-indigo-700'
-              }`}>
+              <div className="text-3xl font-black text-indigo-600 group-hover:text-indigo-700">
                 SCIECOLA
               </div>
             </div>
@@ -132,9 +95,7 @@ const Navbar = () => {
             <div ref={langRef} className="relative hidden sm:block">
               <button
                 onClick={() => setLangOpen(prev => !prev)}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg font-medium transition-all text-[15px] ${
-                  onDark ? 'text-slate-300 hover:text-white hover:bg-white/10' : 'text-gray-600 hover:text-indigo-600 hover:bg-indigo-50'
-                }`}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg font-medium transition-all text-[15px] text-gray-600 hover:text-indigo-600 hover:bg-indigo-50"
                 aria-label="Select language"
                 aria-expanded={langOpen}
               >
@@ -206,11 +167,7 @@ const Navbar = () => {
             ) : (
               <Link
                 to="/login"
-                className={`px-5 py-2 rounded-xl font-medium transition-all text-[15px] ${
-                  onDark
-                    ? 'bg-indigo-500 hover:bg-indigo-400 text-white shadow-lg shadow-indigo-500/30'
-                    : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200'
-                }`}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-medium shadow-md shadow-indigo-200 transition-all text-[15px]"
               >
                 {t('auth.login')}
               </Link>
@@ -218,9 +175,7 @@ const Navbar = () => {
 
             {/* ── Mobile hamburger ── */}
             <button
-              className={`lg:hidden p-2 transition-colors ${
-                onDark ? 'text-slate-300 hover:text-white' : 'text-gray-500 hover:text-indigo-600'
-              }`}
+              className="lg:hidden p-2 text-gray-500 hover:text-indigo-600"
               onClick={() => setMenuOpen(prev => !prev)}
               aria-label="Toggle menu"
             >
@@ -236,9 +191,7 @@ const Navbar = () => {
 
         {/* ── Mobile Menu ── */}
         {menuOpen && (
-          <div className={`lg:hidden py-3 ${
-            onHero ? 'mt-2 rounded-xl border border-white/15 bg-[#7C2D12]/95 backdrop-blur-md' : 'border-t border-gray-100'
-          }`}>
+          <div className="lg:hidden py-3 border-t border-gray-100">
             {[
               { to: '/',            label: t('nav.home') },
               { to: '/researchers', label: t('nav.researchers') },
@@ -254,9 +207,7 @@ const Navbar = () => {
                 end={to === '/'}
                 className={({ isActive }) =>
                   `block px-4 py-2.5 text-[15px] font-medium rounded-lg mx-1 transition-colors ${
-                    isActive
-                      ? (onDark ? 'text-white bg-white/10' : 'text-indigo-600 bg-indigo-50')
-                      : (onDark ? 'text-slate-400 hover:text-white hover:bg-white/5' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50')
+                    isActive ? 'text-indigo-600 bg-indigo-50' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50'
                   }`
                 }
               >
