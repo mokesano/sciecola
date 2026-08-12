@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice">
+<circle cx="60" cy="300" r="34" fill="none" stroke="#818cf8" stroke-width="2" opacity="0.35"/>
+<circle cx="60" cy="300" r="7" fill="#a5b4fc" opacity="0.5"/>
+<line x1="100" y1="300" x2="214" y2="300" stroke="#6366f1" stroke-width="2" stroke-dasharray="7 9" opacity="0.35"/>
+<circle cx="260" cy="300" r="34" fill="none" stroke="#818cf8" stroke-width="2" opacity="0.35"/>
+<circle cx="260" cy="300" r="7" fill="#a5b4fc" opacity="0.5"/>
+<line x1="300" y1="300" x2="414" y2="300" stroke="#6366f1" stroke-width="2" stroke-dasharray="7 9" opacity="0.35"/>
+<circle cx="460" cy="300" r="34" fill="none" stroke="#818cf8" stroke-width="2" opacity="0.35"/>
+<circle cx="460" cy="300" r="7" fill="#a5b4fc" opacity="0.5"/>
+<line x1="500" y1="300" x2="614" y2="300" stroke="#6366f1" stroke-width="2" stroke-dasharray="7 9" opacity="0.35"/>
+<circle cx="660" cy="300" r="34" fill="none" stroke="#818cf8" stroke-width="2" opacity="0.35"/>
+<circle cx="660" cy="300" r="7" fill="#a5b4fc" opacity="0.5"/>
+<line x1="700" y1="300" x2="814" y2="300" stroke="#6366f1" stroke-width="2" stroke-dasharray="7 9" opacity="0.35"/>
+<circle cx="860" cy="300" r="34" fill="none" stroke="#818cf8" stroke-width="2" opacity="0.35"/>
+<circle cx="860" cy="300" r="7" fill="#a5b4fc" opacity="0.5"/>
+<line x1="900" y1="300" x2="1014" y2="300" stroke="#6366f1" stroke-width="2" stroke-dasharray="7 9" opacity="0.35"/>
+<circle cx="1060" cy="300" r="34" fill="none" stroke="#818cf8" stroke-width="2" opacity="0.35"/>
+<circle cx="1060" cy="300" r="7" fill="#a5b4fc" opacity="0.5"/>
+</svg>
