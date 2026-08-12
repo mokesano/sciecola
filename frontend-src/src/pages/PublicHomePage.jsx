@@ -11,42 +11,47 @@ import HeroDataField from '../components/shared/HeroDataField';
 import SvgCarousel from '../components/shared/SvgCarousel';
 
 // =====================================================================
-// TANGGA WARNA HALAMAN
+// GRADASI HALAMAN
 //
-// Warna latar tidak berselang-seling. Ia menurun satu arah, dari oranye tua
-// mendekati merah di hero sampai putih di seksi terakhir sebelum footer —
-// jadi menggulir halaman terasa seperti bergerak menuju terang, bukan
-// melompat-lompat antar warna.
+// Sebelumnya tiap seksi punya warna latarnya sendiri, menurun satu arah.
+// Itu bukan gradasi — itu tetap zebra, hanya searah: batas antar seksi masih
+// terlihat sebagai garis warna yang berpindah.
 //
-// Yang membedakan tiap seksi adalah gambar latar SVG-nya dan cahaya sekitarnya,
-// bukan lompatan warna. Satu seksi sengaja keluar dari tangga ini — AI Insights
-// memakai bidang pekat sebagai tanda baca di tengah halaman.
+// Gradasi yang sebenarnya adalah satu peralihan menyatu. Jadi warnanya kini
+// hidup di satu tempat saja: sebuah linear-gradient pada wadah halaman, dari
+// oranye tua mendekati merah di puncak sampai putih tepat sebelum footer.
+// Seluruh seksi transparan di atasnya, sehingga tidak ada satu pun batas
+// warna yang bisa ditunjuk.
+//
+// Satu seksi sengaja menembus gradien itu — AI Insights memakai bidang pekat
+// sebagai tanda baca. Karena gradiennya milik wadah, ia tetap berjalan di
+// bawah bidang pekat tadi, dan seksi sesudahnya melanjutkan persis pada
+// warna yang seharusnya.
 // =====================================================================
 
-const STEP = {
-  hero:      { bg: '#7C2D12', dark: true  },
-  search:    { bg: '#8E3616', dark: true  },
-  features:  { bg: '#A64020', dark: true  },
-  sdg:       { bg: '#BE5433', dark: true  },
-  flow:      { bg: '#E8A183', dark: false },
-  insights:  { bg: '#16100E', dark: true  },   // tanda baca: bidang pekat
-  sources:   { bg: '#F5C9B2', dark: false },
-  audience:  { bg: '#FBE3D6', dark: false },
-  partners:  { bg: '#FEF4EE', dark: false },
-  closing:   { bg: '#FFFFFF', dark: false },
-};
+const PAGE_GRADIENT =
+  'linear-gradient(180deg,' +
+  ' #7C2D12 0%,'   +
+  ' #8C3617 8%,'   +
+  ' #A04424 18%,'  +
+  ' #B85A38 29%,'  +
+  ' #CE7854 40%,'  +
+  ' #DF9A78 51%,'  +
+  ' #EBB89D 62%,'  +
+  ' #F4D2BF 72%,'  +
+  ' #FAE6DA 82%,'  +
+  ' #FDF5F0 91%,'  +
+  ' #FFFFFF 100%)';
 
-/* Artwork diberi warna kontras terhadap anak tangganya sendiri, bukan warna
-   tetap — di bidang tua ia lebih terang, di bidang muda ia lebih pekat. */
-const ART_ON_DARK  = { art: '#FFD9C2', lit: 'rgba(255,255,255,0.95)', blob: 'rgba(255,170,120,0.16)' };
-const ART_ON_LIGHT = { art: '#B45309', lit: 'rgba(180,83,9,0.85)',    blob: 'rgba(234,88,12,0.10)'  };
-const artFor = (step) => (step.dark ? ART_ON_DARK : ART_ON_LIGHT);
+/* Ambang tempat tinta berganti. Di bagian atas gradien teks putih, di bagian
+   bawah teks slate pekat — dipilih dari posisinya pada gradien, bukan dari
+   warna latar seksi, karena seksinya sendiri sudah tidak berwarna. */
+const ON_DARK  = { art: '#FFD9C2', lit: 'rgba(255,255,255,0.95)' };
+const ON_LIGHT = { art: '#9A3412', lit: 'rgba(154,52,18,0.85)'  };
 
-/* Kelas teks per anak tangga. Kontras dijaga tegas: di bidang tua teks putih,
-   di bidang muda teks slate pekat. Tidak ada teks abu-abu di atas gambar. */
-const ink = (step) => (step.dark
-  ? { head: 'text-white',      body: 'text-white/80',  soft: 'text-white/60',  eyebrow: 'text-amber-300' }
-  : { head: 'text-slate-900',  body: 'text-slate-700',  soft: 'text-slate-600', eyebrow: 'text-orange-700' });
+const ink = (dark) => (dark
+  ? { head: 'text-white',     body: 'text-white/85',  eyebrow: 'text-amber-300' }
+  : { head: 'text-slate-900', body: 'text-slate-700', eyebrow: 'text-orange-800' });
 
 const FEATURE_ICONS  = [FlaskConical, Search, BarChart2, Users, Brain, Handshake];
 const STEP_ICONS     = [Search, Brain, BarChart2];
@@ -128,8 +133,8 @@ const PublicSearch = ({ t }) => {
 
 const text = (override, t, key, options) => override ?? t(key, options);
 
-const SectionHead = ({ eyebrow, title, subtitle, step, align = 'center', className = 'mb-14' }) => {
-  const c = ink(step);
+const SectionHead = ({ eyebrow, title, subtitle, dark = true, align = 'center', className = 'mb-14' }) => {
+  const c = ink(dark);
   return (
     <div className={`${className} ${align === 'center' ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl'}`}>
       {eyebrow && <p className={`text-xs font-bold uppercase tracking-[0.2em] ${c.eyebrow}`}>{eyebrow}</p>}
@@ -221,11 +226,11 @@ const PublicHomePage = () => {
   ];
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen" style={{ background: PAGE_GRADIENT }}>
 
       {/* ══ 1 · HERO — rata kiri, korsel di kanan, statistik platform ══ */}
-      <AmbientSection surfaceColor={STEP.hero.bg} {...artFor(STEP.hero)}
-        art={ART.hero} artOpacity={0.35} artPosition="right" blob={false}>
+      <AmbientSection surfaceColor="transparent" {...ON_DARK} blob={false}
+        art={ART.hero} artOpacity={0.35} artPosition="right">
         {/* Penanda data dikurung di paruh kanan, di ruang yang sama dengan
             korsel. Dibiarkan menutupi seluruh hero, penandanya akan duduk di
             atas judul dan menghalangi teks — dan penanda itu bisa diklik,
@@ -310,10 +315,10 @@ const PublicHomePage = () => {
       </AmbientSection>
 
       {/* ══ 2 · PENELUSURAN — ajakan tindakan pindah ke seksinya sendiri ══ */}
-      <AmbientSection surfaceColor={STEP.search.bg} {...artFor(STEP.search)}
+      <AmbientSection surfaceColor="transparent" {...ON_DARK} blob={false}
         art={ART.coverage} artOpacity={0.25} className="py-24">
         <div className="mx-auto max-w-4xl px-6 lg:px-8">
-          <SectionHead step={STEP.search} className="mb-10"
+          <SectionHead dark className="mb-10"
             eyebrow={t('search_section.eyebrow')}
             title={t('search_section.title')}
             subtitle={t('search_section.subtitle')} />
@@ -322,10 +327,10 @@ const PublicHomePage = () => {
       </AmbientSection>
 
       {/* ══ 3 · KEMAMPUAN ══════════════════════════════════════════════ */}
-      <AmbientSection surfaceColor={STEP.features.bg} {...artFor(STEP.features)}
+      <AmbientSection surfaceColor="transparent" {...ON_DARK} blob={false}
         art={ART.network} artOpacity={0.22} className="py-24">
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
-          <SectionHead step={STEP.features}
+          <SectionHead dark
             eyebrow={t('features_section.eyebrow')}
             title={text(pick('features_section.title'), t, 'features_section.title')}
             subtitle={text(pick('features_section.subtitle'), t, 'features_section.subtitle')} />
@@ -353,10 +358,10 @@ const PublicHomePage = () => {
 
       {/* ══ 4 · 17 SDG ═════════════════════════════════════════════════ */}
       {sdgList.length > 0 && (
-        <AmbientSection surfaceColor={STEP.sdg.bg} {...artFor(STEP.sdg)}
+        <AmbientSection surfaceColor="transparent" {...ON_DARK} blob={false}
           art={ART.hero} artOpacity={0.18} artPosition="bottom" className="py-24">
           <div className="mx-auto max-w-6xl px-6 lg:px-8">
-            <SectionHead step={STEP.sdg}
+            <SectionHead dark
               eyebrow={t('sdg_section.eyebrow')}
               title={text(pick('sdg_section.title'), t, 'sdg_section.title')}
               subtitle={text(pick('sdg_section.subtitle'), t, 'sdg_section.subtitle')} />
@@ -392,10 +397,10 @@ const PublicHomePage = () => {
       )}
 
       {/* ══ 5 · ALUR KERJA ═════════════════════════════════════════════ */}
-      <AmbientSection surfaceColor={STEP.flow.bg} {...artFor(STEP.flow)}
-        art={ART.flow} artOpacity={0.3} className="py-24">
+      <AmbientSection surfaceColor="transparent" {...ON_LIGHT} blob={false}
+        art={ART.flow} artOpacity={0.28} className="py-24">
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
-          <SectionHead step={STEP.flow}
+          <SectionHead dark={false}
             eyebrow={t('how_it_works_section.eyebrow')}
             title={text(pick('how_it_works_section.title'), t, 'how_it_works_section.title')}
             subtitle={text(pick('how_it_works_section.subtitle'), t, 'how_it_works_section.subtitle')} />
@@ -420,11 +425,11 @@ const PublicHomePage = () => {
 
       {/* ══ 6 · AI INSIGHTS — satu-satunya bidang pekat ════════════════ */}
       {insights.length > 0 && (
-        <AmbientSection surfaceColor={STEP.insights.bg} {...artFor(STEP.insights)}
+        <AmbientSection surfaceColor="#16100E" {...ON_DARK} blob={false}
           art={ART.waves} artOpacity={0.4} artPosition="bottom" fade={false} className="py-24">
           <div className="mx-auto max-w-6xl px-6 lg:px-8">
             <div className="mb-14 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-              <SectionHead align="left" className="" step={STEP.insights}
+              <SectionHead align="left" className="" dark
                 eyebrow={t('insights_section.eyebrow')}
                 title={text(pick('insights_section.title'), t, 'insights_section.title')}
                 subtitle={text(pick('insights_section.subtitle'), t, 'insights_section.subtitle')} />
@@ -482,10 +487,10 @@ const PublicHomePage = () => {
       )}
 
       {/* ══ 7 · SUMBER DATA — seksi baru ═══════════════════════════════ */}
-      <AmbientSection surfaceColor={STEP.sources.bg} {...artFor(STEP.sources)}
-        art={ART.world} artOpacity={0.16} className="py-24">
+      <AmbientSection surfaceColor="transparent" {...ON_LIGHT} blob={false}
+        art={ART.world} artOpacity={0.14} className="py-24">
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
-          <SectionHead step={STEP.sources}
+          <SectionHead dark={false}
             eyebrow={t('sources_section.eyebrow')}
             title={t('sources_section.title')}
             subtitle={t('sources_section.subtitle')} />
@@ -501,10 +506,10 @@ const PublicHomePage = () => {
       </AmbientSection>
 
       {/* ══ 8 · UNTUK SIAPA — seksi baru ═══════════════════════════════ */}
-      <AmbientSection surfaceColor={STEP.audience.bg} {...artFor(STEP.audience)}
-        art={ART.about} artOpacity={0.18} className="py-24">
+      <AmbientSection surfaceColor="transparent" {...ON_LIGHT} blob={false}
+        art={ART.about} artOpacity={0.16} className="py-24">
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
-          <SectionHead step={STEP.audience}
+          <SectionHead dark={false}
             eyebrow={t('audience_section.eyebrow')}
             title={t('audience_section.title')}
             subtitle={t('audience_section.subtitle')} />
@@ -525,10 +530,10 @@ const PublicHomePage = () => {
 
       {/* ══ 9 · MITRA ══════════════════════════════════════════════════ */}
       {partners.length > 0 && (
-        <AmbientSection surfaceColor={STEP.partners.bg} {...artFor(STEP.partners)}
-          art={ART.network} artOpacity={0.14} artPosition="top" className="py-20">
+        <AmbientSection surfaceColor="transparent" {...ON_LIGHT} blob={false}
+          art={ART.network} artOpacity={0.12} artPosition="top" className="py-20">
           <div className="mx-auto max-w-6xl px-6 lg:px-8">
-            <SectionHead step={STEP.partners}
+            <SectionHead dark={false}
               eyebrow={t('partners_section.eyebrow')}
               title={text(pick('partners_section.title'), t, 'partners_section.title')}
               subtitle={text(pick('partners_section.subtitle'), t, 'partners_section.subtitle')} />
@@ -552,7 +557,7 @@ const PublicHomePage = () => {
       )}
 
       {/* ══ 10 · PENUTUP — putih, artwork diberi ruang sendiri ═════════ */}
-      <section className="relative bg-white py-24">
+      <section className="relative py-24">
         <div className="mx-auto max-w-5xl px-6 text-center lg:px-8">
           <span className="inline-flex items-center gap-2 rounded-full bg-orange-50 px-4 py-1.5 text-[15px] font-semibold text-orange-800 ring-1 ring-orange-200">
             {text(pick('cta_section.badge'), t, 'cta_section.badge')}
