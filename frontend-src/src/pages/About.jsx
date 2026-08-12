@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { AmbientSection, ACCENTS, ART, CARD } from '../components/shared/Ambient';
+import { AmbientSection, LIGHT, ART, PANEL } from '../components/shared/Ambient';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
@@ -50,34 +50,34 @@ const About = () => {
 
   return (
     <>
-      <main className="min-h-screen bg-[#08080C] pt-20">
-      <AmbientSection accent="blue" art={ART.network} artOpacity={0.4}>
+      <main className="min-h-screen bg-white pt-20">
+      <AmbientSection tone="light" accent="blue" art={ART.about} artOpacity={0.5}>
         <div className="mx-auto w-full max-w-7xl px-4 pb-16 pt-12 sm:px-6 lg:px-8">
 
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-[15px] text-slate-400 mb-10">
-          <Link to="/" className="hover:text-indigo-300 transition-colors">{t('breadcrumb.home')}</Link>
+        <nav className="flex items-center gap-2 text-[15px] text-slate-600 mb-10">
+          <Link to="/" className="hover:text-indigo-700 transition-colors">{t('breadcrumb.home')}</Link>
           <span className="text-slate-500">›</span>
-          <span className="text-white font-medium">{t('breadcrumb.current')}</span>
+          <span className="text-slate-900 font-medium">{t('breadcrumb.current')}</span>
         </nav>
 
         {/* Header */}
         <div className="mb-12">
           <div className="flex items-center gap-3 mb-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/15 ring-1 ring-indigo-400/30">
-              <svg className="w-6 h-6 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 ring-1 ring-indigo-200">
+              <svg className="w-6 h-6 text-indigo-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h1 className="text-3xl font-bold text-white">{t('header.title')}</h1>
+            <h1 className="text-3xl font-bold text-slate-900">{t('header.title')}</h1>
           </div>
-          <p className="text-lg text-slate-300 max-w-3xl">{t('header.subtitle')}</p>
+          <p className="text-lg text-slate-700 max-w-3xl">{t('header.subtitle')}</p>
         </div>
 
         {/* Mission */}
         <section className="mb-16">
           <SectionTitle iconPath="M13 10V3L4 14h7v7l9-11h-7z">{t('mission.title')}</SectionTitle>
-          <p className="text-base text-slate-300 mb-8 leading-relaxed max-w-4xl">{t('mission.paragraph')}</p>
+          <p className="text-base text-slate-700 mb-8 leading-relaxed max-w-4xl">{t('mission.paragraph')}</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {missionKeys.map(key => (
               <Card key={key} iconPath={MISSION_ICONS[key]}
@@ -92,28 +92,28 @@ const About = () => {
           <SectionTitle iconPath="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
             {t('tech.title')}
           </SectionTitle>
-          <p className="text-slate-300 mb-8 max-w-3xl">{t('tech.subtitle')}</p>
+          <p className="text-slate-700 mb-8 max-w-3xl">{t('tech.subtitle')}</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {techItems.map(key => {
               const cfg    = TECH_CFG[key];
               const weight = t(`tech.items.${key}.weight`);
               return (
-                <div key={key} className="rounded-xl bg-white/[0.035] p-6 ring-1 ring-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.07)] transition-colors hover:ring-white/25">
+                <div key={key} className="rounded-xl bg-white p-6 ring-1 ring-slate-200 shadow-[0_1px_3px_0_rgba(15,23,42,0.08)] transition-all hover:-translate-y-0.5 hover:shadow-md hover:ring-indigo-300">
                   <div className="flex items-start gap-4">
-                    <div className={`w-12 h-12 ${cfg.color} rounded-xl flex items-center justify-center text-white shrink-0`}>
+                    <div className={`w-12 h-12 ${cfg.color} rounded-xl flex items-center justify-center text-slate-900 shrink-0`}>
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={cfg.icon} />
                       </svg>
                     </div>
                     <div className="flex-grow">
-                      <h4 className="font-bold text-white mb-2">{t(`tech.items.${key}.title`)}</h4>
-                      <p className="text-[15px] text-slate-400 mb-4 leading-relaxed">{t(`tech.items.${key}.description`)}</p>
+                      <h4 className="font-bold text-slate-900 mb-2">{t(`tech.items.${key}.title`)}</h4>
+                      <p className="text-[15px] text-slate-600 mb-4 leading-relaxed">{t(`tech.items.${key}.description`)}</p>
                       <div className="flex items-center gap-3">
-                        <div className="flex-grow h-2 bg-white/10 rounded-full overflow-hidden">
+                        <div className="flex-grow h-2 bg-slate-200 rounded-full overflow-hidden">
                           <div className={`h-full ${cfg.color} rounded-full transition-all duration-500`}
                             style={{ width: `${weight}%` }} />
                         </div>
-                        <span className="text-[15px] font-semibold text-slate-300 w-12 text-right">{weight}%</span>
+                        <span className="text-[15px] font-semibold text-slate-700 w-12 text-right">{weight}%</span>
                       </div>
                     </div>
                   </div>
@@ -128,7 +128,7 @@ const About = () => {
           <SectionTitle iconPath="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
             {t('stats.title')}
           </SectionTitle>
-          <p className="text-slate-400 mb-6">{t('stats.subtitle')}</p>
+          <p className="text-slate-600 mb-6">{t('stats.subtitle')}</p>
 
           {statsLoading ? (
             <div className="flex items-center gap-3 py-10 text-slate-500">
@@ -136,15 +136,15 @@ const About = () => {
               {t('stats.loading')}
             </div>
           ) : stats.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-white/15 py-10 text-center text-slate-500">
+            <div className="rounded-xl border border-dashed border-slate-300 py-10 text-center text-slate-500">
               {t('stats.empty')}
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
               {stats.map((s, idx) => (
-                <div key={idx} className="rounded-xl bg-white/[0.035] p-5 text-center ring-1 ring-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.07)] transition-colors hover:ring-white/25">
-                  <p className="text-2xl lg:text-3xl font-bold text-indigo-300 mb-1">{s.value}</p>
-                  <p className="text-sm text-slate-400">{s.label}</p>
+                <div key={idx} className="rounded-xl bg-white p-5 text-center ring-1 ring-slate-200 shadow-[0_1px_3px_0_rgba(15,23,42,0.08)] transition-all hover:-translate-y-0.5 hover:shadow-md hover:ring-indigo-300">
+                  <p className="text-2xl lg:text-3xl font-bold text-indigo-700 mb-1">{s.value}</p>
+                  <p className="text-sm text-slate-600">{s.label}</p>
                 </div>
               ))}
             </div>
@@ -158,16 +158,16 @@ const About = () => {
           </SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {valueKeys.map(key => (
-              <div key={key} className="rounded-xl bg-white/[0.035] p-6 ring-1 ring-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.07)] transition-colors hover:ring-white/25">
+              <div key={key} className="rounded-xl bg-white p-6 ring-1 ring-slate-200 shadow-[0_1px_3px_0_rgba(15,23,42,0.08)] transition-all hover:-translate-y-0.5 hover:shadow-md hover:ring-indigo-300">
                 <div className="flex items-start gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-300 ring-1 ring-indigo-400/30">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={VALUE_ICONS[key]} />
                     </svg>
                   </div>
                   <div>
-                    <h4 className="font-bold text-white mb-2">{t(`values.items.${key}.title`)}</h4>
-                    <p className="text-[15px] text-slate-400 leading-relaxed">{t(`values.items.${key}.description`)}</p>
+                    <h4 className="font-bold text-slate-900 mb-2">{t(`values.items.${key}.title`)}</h4>
+                    <p className="text-[15px] text-slate-600 leading-relaxed">{t(`values.items.${key}.description`)}</p>
                   </div>
                 </div>
               </div>
@@ -177,37 +177,37 @@ const About = () => {
 
         {/* See also — split into History / Team without duplicating content */}
         <section className="mb-16">
-          <h2 className="text-xl font-bold text-white mb-6">{t('see_also.title')}</h2>
+          <h2 className="text-xl font-bold text-slate-900 mb-6">{t('see_also.title')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <Link to="/history"
-              className="group flex items-center gap-4 rounded-xl bg-white/[0.035] p-6 ring-1 ring-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.07)] transition-all hover:-translate-y-0.5 hover:ring-orange-400/45">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-500/15 text-orange-300 ring-1 ring-orange-400/30">
+              className="group flex items-center gap-4 rounded-xl bg-white p-6 ring-1 ring-slate-200 shadow-[0_1px_3px_0_rgba(15,23,42,0.08)] transition-all hover:-translate-y-0.5 hover:shadow-md hover:ring-orange-300">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-orange-700 ring-1 ring-orange-200">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <div>
-                <h3 className="font-bold text-white group-hover:text-orange-300 transition-colors">{t('see_also.history.title')}</h3>
-                <p className="text-[15px] text-slate-400">{t('see_also.history.subtitle')}</p>
+                <h3 className="font-bold text-slate-900 group-hover:text-orange-700 transition-colors">{t('see_also.history.title')}</h3>
+                <p className="text-[15px] text-slate-600">{t('see_also.history.subtitle')}</p>
               </div>
             </Link>
             <Link to="/teams"
-              className="group flex items-center gap-4 rounded-xl bg-white/[0.035] p-6 ring-1 ring-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.07)] transition-all hover:-translate-y-0.5 hover:ring-indigo-400/45">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-300 ring-1 ring-indigo-400/30">
+              className="group flex items-center gap-4 rounded-xl bg-white p-6 ring-1 ring-slate-200 shadow-[0_1px_3px_0_rgba(15,23,42,0.08)] transition-all hover:-translate-y-0.5 hover:shadow-md hover:ring-indigo-300">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </div>
               <div>
-                <h3 className="font-bold text-white group-hover:text-indigo-300 transition-colors">{t('see_also.team.title')}</h3>
-                <p className="text-[15px] text-slate-400">{t('see_also.team.subtitle')}</p>
+                <h3 className="font-bold text-slate-900 group-hover:text-indigo-700 transition-colors">{t('see_also.team.title')}</h3>
+                <p className="text-[15px] text-slate-600">{t('see_also.team.subtitle')}</p>
               </div>
             </Link>
           </div>
         </section>
 
         {/* CTA */}
-        <section className="rounded-xl bg-white/[0.035] p-8 text-white ring-1 ring-red-400/25 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.07)]">
+        <section className="rounded-xl bg-slate-900 p-8 text-white shadow-lg">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             <div>
               <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
@@ -222,10 +222,10 @@ const About = () => {
               <Link to="/" className="rounded-lg bg-red-500 px-6 py-3 font-semibold text-white shadow-lg shadow-red-500/30 transition-colors hover:bg-red-400">
                 {t('cta.analyze')}
               </Link>
-              <Link to="/contact" className="rounded-lg bg-white/[0.06] px-6 py-3 font-semibold text-white ring-1 ring-white/15 transition-colors hover:bg-white/[0.12]">
+              <Link to="/contact" className="rounded-lg bg-white/10 px-6 py-3 font-semibold text-white ring-1 ring-white/20 transition-colors hover:bg-white/20">
                 {t('cta.contact')}
               </Link>
-              <Link to="/docs/documentation" className="rounded-lg bg-white/[0.06] px-6 py-3 font-semibold text-white ring-1 ring-white/15 transition-colors hover:bg-white/[0.12]">
+              <Link to="/docs/documentation" className="rounded-lg bg-white/10 px-6 py-3 font-semibold text-white ring-1 ring-white/20 transition-colors hover:bg-white/20">
                 {t('cta.learn')}
               </Link>
             </div>
@@ -243,8 +243,8 @@ const About = () => {
 
 const SectionTitle = ({ iconPath, children }) => (
   <div className="flex items-center gap-3 mb-6">
-    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-500/15 ring-1 ring-indigo-400/30">
-      <svg className="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 ring-1 ring-indigo-200">
+      <svg className="w-5 h-5 text-indigo-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={iconPath} />
       </svg>
     </div>
@@ -253,14 +253,14 @@ const SectionTitle = ({ iconPath, children }) => (
 );
 
 const Card = ({ iconPath, title, description }) => (
-  <div className="rounded-xl bg-white/[0.035] p-6 ring-1 ring-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.07)] transition-colors hover:ring-white/25">
-    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-300 ring-1 ring-indigo-400/30">
+  <div className="rounded-xl bg-white p-6 ring-1 ring-slate-200 shadow-[0_1px_3px_0_rgba(15,23,42,0.08)] transition-all hover:-translate-y-0.5 hover:shadow-md hover:ring-indigo-300">
+    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200">
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={iconPath} />
       </svg>
     </div>
     <h4 className="font-bold text-white mb-2">{title}</h4>
-    <p className="text-[15px] text-slate-400 leading-relaxed">{description}</p>
+    <p className="text-[15px] text-slate-600 leading-relaxed">{description}</p>
   </div>
 );
 

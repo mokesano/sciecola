@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { AmbientSection, ACCENTS, ART, CARD } from '../components/shared/Ambient';
+import { AmbientSection, LIGHT, ART, PANEL } from '../components/shared/Ambient';
 
 /* ─── constants ─────────────────────────────────────────────────────────── */
 
@@ -49,7 +49,7 @@ function collectIdentifiers(m) {
 /* ─── small components ───────────────────────────────────────────────────── */
 
 const SdgBadge = ({ sdg }) => (
-  <span className="inline-flex items-center gap-2 rounded border border-white/10 bg-white/[0.05] py-1.5 pl-2 pr-3 text-sm text-slate-300">
+  <span className="inline-flex items-center gap-2 rounded border border-slate-200 bg-white py-1.5 pl-2 pr-3 text-sm text-slate-700">
     <span aria-hidden className="h-3 w-3 shrink-0 rounded-[2px]" style={{ backgroundColor: SDG_COLORS[sdg] }} />
     <span className="font-mono text-xs tabular-nums text-slate-500">
       {String(sdg).padStart(2, '0')}
@@ -62,7 +62,7 @@ const ProfilePhoto = ({ photo, name, size = 'h-36 w-36' }) => {
   const [err, setErr] = useState(false);
   const showImage = photo && !err;
   return (
-    <div className={`${size} shrink-0 overflow-hidden rounded-full border-4 border-white/20 bg-white/[0.06] shadow-lg`}>
+    <div className={`${size} shrink-0 overflow-hidden rounded-full border-4 border-white bg-slate-100 shadow-lg ring-1 ring-slate-200`}>
       {showImage ? (
         <img src={photo} alt={name} onError={() => setErr(true)} className="h-full w-full object-cover" />
       ) : (
@@ -80,9 +80,9 @@ const ProfilePhoto = ({ photo, name, size = 'h-36 w-36' }) => {
  * page stays structured without turning into a colour chart.
  */
 const Panel = ({ title, accent = 'blue', children }) => (
-  <section className={`overflow-hidden ${CARD}`}>
+  <section className={`overflow-hidden ${PANEL}`}>
     <h2 className={`px-5 py-3.5 text-base font-semibold tracking-tight text-white ${
-      accent === 'blue' ? 'bg-indigo-600/90' : accent === 'orange' ? 'bg-orange-600/90' : 'bg-red-600/90'
+      accent === 'blue' ? 'bg-indigo-600' : accent === 'orange' ? 'bg-orange-600' : 'bg-red-600'
     }`}>
       {title}
     </h2>
@@ -93,7 +93,7 @@ const Panel = ({ title, accent = 'blue', children }) => (
 /* Sub-heading inside a panel — a short accent bar to the left of the label,
    the device the Sangia author pages use to open each block. */
 const RuleHeading = ({ children }) => (
-  <h3 className="mb-3 border-l-[3px] border-orange-500 pl-3 text-[15px] font-semibold uppercase tracking-[0.1em] text-white">
+  <h3 className="mb-3 border-l-[3px] border-orange-500 pl-3 text-[15px] font-semibold uppercase tracking-[0.1em] text-slate-900">
     {children}
   </h3>
 );
@@ -101,21 +101,21 @@ const RuleHeading = ({ children }) => (
 const Fact = ({ label, children, mono = false }) => (
   <div className="flex items-baseline justify-between gap-4 py-2.5">
     <dt className="shrink-0 text-sm text-slate-500">{label}</dt>
-    <dd className={`text-right text-[15px] font-medium text-white ${mono ? 'font-mono' : ''}`}>
+    <dd className={`text-right text-[15px] font-medium text-slate-900 ${mono ? 'font-mono' : ''}`}>
       {children}
     </dd>
   </div>
 );
 
 const NotFound = ({ slug, t }) => (
-  <main className="min-h-screen bg-[#08080C] px-4 pb-24 pt-32 sm:px-6 lg:px-8">
-    <div className="mx-auto max-w-3xl rounded-lg border border-white/10 bg-white/[0.04] px-6 py-16 text-center">
-      <h2 className="text-2xl font-semibold tracking-tight text-white">{t('not_found.title')}</h2>
+  <main className="min-h-screen bg-white px-4 pb-24 pt-32 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-3xl rounded-xl border border-slate-200 bg-white px-6 py-16 text-center shadow-sm">
+      <h2 className="text-2xl font-semibold tracking-tight text-slate-900">{t('not_found.title')}</h2>
       <p className="mt-2 text-[15px] text-slate-500">
-        {t('not_found.subtitle')} <span className="font-mono text-white">{slug}</span>.
+        {t('not_found.subtitle')} <span className="font-mono text-slate-900">{slug}</span>.
       </p>
       <Link to="/teams"
-        className="mt-6 inline-flex items-center rounded-lg bg-indigo-500 px-5 py-2.5 text-[15px] font-medium text-white transition-colors hover:bg-indigo-400">
+        className="mt-6 inline-flex items-center rounded-lg bg-indigo-600 px-5 py-2.5 text-[15px] font-medium text-white transition-colors hover:bg-indigo-700">
         {t('not_found.button')}
       </Link>
     </div>
@@ -148,9 +148,9 @@ const TeamMemberProfile = () => {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#08080C] px-4 pb-24 pt-32 sm:px-6 lg:px-8">
+      <main className="min-h-screen bg-white px-4 pb-24 pt-32 sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-3xl items-center justify-center gap-3 py-16 text-[15px] text-slate-500">
-          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-indigo-400" />
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-indigo-500" />
           {t('loading')}
         </div>
       </main>
@@ -178,20 +178,20 @@ const TeamMemberProfile = () => {
   const aboutText = m.long_bio || shortBio;
 
   return (
-    <main className="min-h-screen bg-[#08080C] pb-24 pt-20">
+    <main className="min-h-screen bg-white pb-24 pt-20">
 
       {/* ============================================================ */}
       {/* Identity band — full-bleed, portrait beside the name and a    */}
       {/* short bio, as on the OpenAIRE board profiles.                 */}
       {/* ============================================================ */}
-      <AmbientSection accent="blue" art={ART.network} artOpacity={0.45}>
+      <AmbientSection tone="light" accent="blue" art={ART.team} artOpacity={0.45}>
         <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-          <nav className="mb-8 flex items-center gap-2 text-[15px] text-slate-300">
-            <Link to="/"      className="hover:text-white hover:underline">{t('breadcrumb.home')}</Link>
+          <nav className="mb-8 flex items-center gap-2 text-[15px] text-slate-700">
+            <Link to="/"      className="hover:text-indigo-700 hover:underline">{t('breadcrumb.home')}</Link>
             <span className="text-slate-500">/</span>
-            <Link to="/teams" className="hover:text-white hover:underline">{t('breadcrumb.teams')}</Link>
+            <Link to="/teams" className="hover:text-indigo-700 hover:underline">{t('breadcrumb.teams')}</Link>
             <span className="text-slate-500">/</span>
-            <span className="max-w-[220px] truncate text-white">{m.name}</span>
+            <span className="max-w-[220px] truncate text-slate-900">{m.name}</span>
           </nav>
 
           <div className="flex flex-col items-center gap-7 text-center sm:flex-row sm:items-start sm:text-left">
@@ -205,12 +205,12 @@ const TeamMemberProfile = () => {
                 {m.name}
               </h1>
               {m.position && (
-                <p className="mt-2 text-[15px] font-semibold text-slate-300">{m.position}</p>
+                <p className="mt-2 text-[15px] font-semibold text-slate-700">{m.position}</p>
               )}
               {shortBio && (
-                <p className="mt-4 max-w-3xl text-lg leading-relaxed text-slate-300">{shortBio}</p>
+                <p className="mt-4 max-w-3xl text-lg leading-relaxed text-slate-700">{shortBio}</p>
               )}
-              <div className="mt-4 space-y-0.5 text-[15px] text-slate-300">
+              <div className="mt-4 space-y-0.5 text-[15px] text-slate-700">
                 {m.department && <p>{m.department}</p>}
                 {m.location   && <p>{m.location}</p>}
               </div>
@@ -223,21 +223,21 @@ const TeamMemberProfile = () => {
 
         {/* Identifier strip — each source keyed by its own brand colour. */}
         {(identifiers.length > 0 || m.email || social.length > 0) && (
-          <div className="-mt-6 rounded-lg border border-white/10 bg-white px-5 py-4 shadow-sm">
+          <div className="-mt-6 rounded-lg border border-slate-200 bg-white px-5 py-4 shadow-sm">
             <ul className="flex flex-wrap items-center gap-x-7 gap-y-3">
               {identifiers.map(id => (
                 <li key={id.key} className="flex items-center gap-2 text-[15px]">
                   <span aria-hidden className="h-2.5 w-2.5 shrink-0 rounded-full"
                     style={{ backgroundColor: id.color }} />
-                  <span className="font-semibold text-slate-300">{id.key}</span>
+                  <span className="font-semibold text-slate-700">{id.key}</span>
                   {id.external ? (
                     <a href={id.href} target="_blank" rel="noopener noreferrer"
-                      className="font-mono text-slate-500 underline-offset-4 hover:text-white hover:underline">
+                      className="font-mono text-slate-500 underline-offset-4 hover:text-indigo-700 hover:underline">
                       {id.value}
                     </a>
                   ) : (
                     <Link to={id.href}
-                      className="font-mono text-slate-500 underline-offset-4 hover:text-white hover:underline">
+                      className="font-mono text-slate-500 underline-offset-4 hover:text-indigo-700 hover:underline">
                       {id.value}
                     </Link>
                   )}
@@ -247,7 +247,7 @@ const TeamMemberProfile = () => {
               {m.email && (
                 <li className="text-[15px]">
                   <a href={`mailto:${m.email}`}
-                    className="text-slate-500 underline-offset-4 hover:text-white hover:underline">
+                    className="text-slate-500 underline-offset-4 hover:text-indigo-700 hover:underline">
                     {m.email}
                   </a>
                 </li>
@@ -256,7 +256,7 @@ const TeamMemberProfile = () => {
               {social.map(([k, v]) => (
                 <li key={k} className="text-[15px]">
                   <a href={v} target="_blank" rel="noopener noreferrer"
-                    className="capitalize text-slate-500 underline-offset-4 hover:text-white hover:underline">
+                    className="capitalize text-slate-500 underline-offset-4 hover:text-indigo-700 hover:underline">
                     {k}
                   </a>
                 </li>
@@ -272,7 +272,7 @@ const TeamMemberProfile = () => {
 
             {aboutText && (
               <Panel accent="blue"   title={t('section.about')}>
-                <p className="whitespace-pre-line text-base leading-[1.75] text-slate-300">
+                <p className="whitespace-pre-line text-base leading-[1.75] text-slate-700">
                   {aboutText}
                 </p>
               </Panel>
@@ -284,7 +284,7 @@ const TeamMemberProfile = () => {
                 {expertise.length > 0 && (
                   <ul className="flex flex-wrap gap-2">
                     {expertise.map((e, i) => (
-                      <li key={i} className="rounded border border-white/10 bg-white/[0.05] px-2.5 py-1.5 text-sm text-slate-300">
+                      <li key={i} className="rounded border border-slate-200 bg-white px-2.5 py-1.5 text-sm text-slate-700">
                         {e}
                       </li>
                     ))}
@@ -307,12 +307,12 @@ const TeamMemberProfile = () => {
               <Panel accent="ember"  title={t('section.education')}>
                 <ol className="space-y-5">
                   {education.map((edu, i) => (
-                    <li key={i} className="grid grid-cols-[3.5rem_1fr] gap-4 border-b border-white/10 pb-5 last:border-0 last:pb-0">
+                    <li key={i} className="grid grid-cols-[3.5rem_1fr] gap-4 border-b border-slate-200 pb-5 last:border-0 last:pb-0">
                       <span className="pt-0.5 font-mono text-sm tabular-nums text-slate-500">
                         {edu.graduation > 0 ? edu.graduation : '—'}
                       </span>
                       <div className="min-w-0">
-                        <p className="text-[15px] font-semibold leading-snug text-white">
+                        <p className="text-[15px] font-semibold leading-snug text-slate-900">
                           {edu.degree}{edu.field ? ` — ${edu.field}` : ''}
                         </p>
                         {edu.institution && <p className="mt-0.5 text-[15px] text-slate-500">{edu.institution}</p>}
@@ -328,12 +328,12 @@ const TeamMemberProfile = () => {
               <Panel accent="blue"   title={t('section.achievements')}>
                 <ol className="space-y-5">
                   {achievements.map((a, i) => (
-                    <li key={i} className="grid grid-cols-[3.5rem_1fr] gap-4 border-b border-white/10 pb-5 last:border-0 last:pb-0">
+                    <li key={i} className="grid grid-cols-[3.5rem_1fr] gap-4 border-b border-slate-200 pb-5 last:border-0 last:pb-0">
                       <span className="pt-0.5 font-mono text-sm tabular-nums text-slate-500">
                         {a.year > 0 ? a.year : '—'}
                       </span>
                       <div className="min-w-0">
-                        <p className="text-[15px] font-semibold leading-snug text-white">{a.title}</p>
+                        <p className="text-[15px] font-semibold leading-snug text-slate-900">{a.title}</p>
                         {a.issuer && <p className="mt-0.5 text-[15px] text-slate-500">{a.issuer}</p>}
                         {a.description && (
                           <p className="mt-1 text-[15px] leading-relaxed text-slate-500">{a.description}</p>
@@ -356,7 +356,7 @@ const TeamMemberProfile = () => {
           <aside className="lg:col-span-1">
             <div className="lg:sticky lg:top-24">
               <Panel accent="orange" title={t('section.membership')}>
-                <dl className="divide-y divide-white/10">
+                <dl className="divide-y divide-slate-100">
                   {m.code       && <Fact label={t('meta.code')} mono>{m.code}</Fact>}
                   {m.department && <Fact label={t('meta.department')}>{m.department}</Fact>}
                   {m.position   && <Fact label={t('meta.role')}>{m.position}</Fact>}
@@ -370,7 +370,7 @@ const TeamMemberProfile = () => {
               </Panel>
 
               <Link to="/teams"
-                className="mt-5 inline-flex items-center gap-2 text-[15px] font-medium text-slate-500 underline-offset-4 hover:text-white hover:underline">
+                className="mt-5 inline-flex items-center gap-2 text-[15px] font-medium text-slate-500 underline-offset-4 hover:text-indigo-700 hover:underline">
                 <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                 </svg>

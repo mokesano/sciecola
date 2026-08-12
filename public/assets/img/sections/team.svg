@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+<line x1="170" y1="250" x2="400" y2="170" stroke="#4F46E5" stroke-width="1.5" opacity="0.22"/>
+<line x1="170" y1="250" x2="280" y2="470" stroke="#4F46E5" stroke-width="1.5" opacity="0.22"/>
+<line x1="400" y1="170" x2="640" y2="240" stroke="#4F46E5" stroke-width="1.5" opacity="0.22"/>
+<line x1="400" y1="170" x2="530" y2="420" stroke="#4F46E5" stroke-width="1.5" opacity="0.22"/>
+<line x1="640" y1="240" x2="880" y2="165" stroke="#4F46E5" stroke-width="1.5" opacity="0.22"/>
+<line x1="640" y1="240" x2="530" y2="420" stroke="#4F46E5" stroke-width="1.5" opacity="0.22"/>
+<line x1="640" y1="240" x2="790" y2="470" stroke="#4F46E5" stroke-width="1.5" opacity="0.22"/>
+<line x1="880" y1="165" x2="1080" y2="260" stroke="#4F46E5" stroke-width="1.5" opacity="0.22"/>
+<line x1="880" y1="165" x2="790" y2="470" stroke="#4F46E5" stroke-width="1.5" opacity="0.22"/>
+<line x1="880" y1="165" x2="1010" y2="430" stroke="#4F46E5" stroke-width="1.5" opacity="0.22"/>
+<line x1="1080" y1="260" x2="1010" y2="430" stroke="#4F46E5" stroke-width="1.5" opacity="0.22"/>
+<line x1="280" y1="470" x2="530" y2="420" stroke="#4F46E5" stroke-width="1.5" opacity="0.22"/>
+<line x1="530" y1="420" x2="790" y2="470" stroke="#4F46E5" stroke-width="1.5" opacity="0.22"/>
+<line x1="790" y1="470" x2="1010" y2="430" stroke="#4F46E5" stroke-width="1.5" opacity="0.22"/>
+<circle cx="170" cy="250" r="26" fill="none" stroke="#4F46E5" stroke-width="2.5" opacity="0.5"/>
+<path d="M 128 332 a 42 44 0 0 1 84 0" fill="none" stroke="#4F46E5" stroke-width="2.5" opacity="0.5"/>
+<circle cx="170" cy="250" r="46" fill="none" stroke="#4F46E5" stroke-width="1" opacity="0.18"/>
+<circle cx="400" cy="170" r="26" fill="none" stroke="#4F46E5" stroke-width="2.5" opacity="0.5"/>
+<path d="M 358 252 a 42 44 0 0 1 84 0" fill="none" stroke="#4F46E5" stroke-width="2.5" opacity="0.5"/>
+<circle cx="400" cy="170" r="46" fill="none" stroke="#4F46E5" stroke-width="1" opacity="0.18"/>
+<circle cx="640" cy="240" r="26" fill="none" stroke="#4F46E5" stroke-width="2.5" opacity="0.5"/>
+<path d="M 598 322 a 42 44 0 0 1 84 0" fill="none" stroke="#4F46E5" stroke-width="2.5" opacity="0.5"/>
+<circle cx="640" cy="240" r="46" fill="none" stroke="#4F46E5" stroke-width="1" opacity="0.18"/>
+<circle cx="880" cy="165" r="26" fill="none" stroke="#4F46E5" stroke-width="2.5" opacity="0.5"/>
+<path d="M 838 247 a 42 44 0 0 1 84 0" fill="none" stroke="#4F46E5" stroke-width="2.5" opacity="0.5"/>
+<circle cx="880" cy="165" r="46" fill="none" stroke="#4F46E5" stroke-width="1" opacity="0.18"/>
+<circle cx="1080" cy="260" r="26" fill="none" stroke="#4F46E5" stroke-width="2.5" opacity="0.5"/>
+<path d="M 1038 342 a 42 44 0 0 1 84 0" fill="none" stroke="#4F46E5" stroke-width="2.5" opacity="0.5"/>
+<circle cx="1080" cy="260" r="46" fill="none" stroke="#4F46E5" stroke-width="1" opacity="0.18"/>
+<circle cx="280" cy="470" r="26" fill="none" stroke="#4F46E5" stroke-width="2.5" opacity="0.5"/>
+<path d="M 238 552 a 42 44 0 0 1 84 0" fill="none" stroke="#4F46E5" stroke-width="2.5" opacity="0.5"/>
+<circle cx="280" cy="470" r="46" fill="none" stroke="#4F46E5" stroke-width="1" opacity="0.18"/>
+<circle cx="530" cy="420" r="26" fill="none" stroke="#4F46E5" stroke-width="2.5" opacity="0.5"/>
+<path d="M 488 502 a 42 44 0 0 1 84 0" fill="none" stroke="#4F46E5" stroke-width="2.5" opacity="0.5"/>
+<circle cx="530" cy="420" r="46" fill="none" stroke="#4F46E5" stroke-width="1" opacity="0.18"/>
+<circle cx="790" cy="470" r="26" fill="none" stroke="#4F46E5" stroke-width="2.5" opacity="0.5"/>
+<path d="M 748 552 a 42 44 0 0 1 84 0" fill="none" stroke="#4F46E5" stroke-width="2.5" opacity="0.5"/>
+<circle cx="790" cy="470" r="46" fill="none" stroke="#4F46E5" stroke-width="1" opacity="0.18"/>
+<circle cx="1010" cy="430" r="26" fill="none" stroke="#4F46E5" stroke-width="2.5" opacity="0.5"/>
+<path d="M 968 512 a 42 44 0 0 1 84 0" fill="none" stroke="#4F46E5" stroke-width="2.5" opacity="0.5"/>
+<circle cx="1010" cy="430" r="46" fill="none" stroke="#4F46E5" stroke-width="1" opacity="0.18"/>
+</svg>

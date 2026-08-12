@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+<circle cx="290" cy="350" r="90" fill="none" stroke="#4F46E5" stroke-width="1.5" opacity="0.36"/>
+<circle cx="290" cy="350" r="152" fill="none" stroke="#4F46E5" stroke-width="1.5" opacity="0.32"/>
+<circle cx="290" cy="350" r="214" fill="none" stroke="#4F46E5" stroke-width="1.5" opacity="0.28"/>
+<circle cx="290" cy="350" r="276" fill="none" stroke="#4F46E5" stroke-width="1.5" opacity="0.24"/>
+<circle cx="290" cy="350" r="338" fill="none" stroke="#4F46E5" stroke-width="1.5" opacity="0.19"/>
+<circle cx="290" cy="350" r="400" fill="none" stroke="#4F46E5" stroke-width="1.5" opacity="0.15"/>
+<rect x="720" y="190" width="230" height="300" rx="10" fill="none" stroke="#4F46E5" stroke-width="1.5" opacity="0.50"/>
+<rect x="734" y="208" width="230" height="300" rx="10" fill="none" stroke="#4F46E5" stroke-width="1.5" opacity="0.41"/>
+<rect x="748" y="226" width="230" height="300" rx="10" fill="none" stroke="#4F46E5" stroke-width="1.5" opacity="0.32"/>
+<rect x="762" y="244" width="230" height="300" rx="10" fill="none" stroke="#4F46E5" stroke-width="1.5" opacity="0.23"/>
+<line x1="770" y1="300" x2="865" y2="300" stroke="#4F46E5" stroke-width="3" opacity="0.3"/>
+<line x1="770" y1="326" x2="926" y2="326" stroke="#4F46E5" stroke-width="3" opacity="0.3"/>
+<line x1="770" y1="352" x2="875" y2="352" stroke="#4F46E5" stroke-width="3" opacity="0.3"/>
+<line x1="770" y1="378" x2="925" y2="378" stroke="#4F46E5" stroke-width="3" opacity="0.3"/>
+<line x1="770" y1="404" x2="885" y2="404" stroke="#4F46E5" stroke-width="3" opacity="0.3"/>
+<line x1="770" y1="430" x2="910" y2="430" stroke="#4F46E5" stroke-width="3" opacity="0.3"/>
+<line x1="770" y1="456" x2="904" y2="456" stroke="#4F46E5" stroke-width="3" opacity="0.3"/>
+<path d="M 1060 560 C 1060 470 1120 430 1160 420 C 1150 500 1110 545 1060 560 Z" fill="none" stroke="#4F46E5" stroke-width="2" opacity="0.4"/>
+<line x1="1060" y1="620" x2="1060" y2="520" stroke="#4F46E5" stroke-width="2" opacity="0.4"/>
+<circle cx="1143" cy="356" r="3" fill="#4F46E5" opacity="0.35"/>
+<circle cx="363" cy="327" r="3" fill="#4F46E5" opacity="0.35"/>
+<circle cx="280" cy="326" r="3" fill="#4F46E5" opacity="0.35"/>
+<circle cx="903" cy="395" r="3" fill="#4F46E5" opacity="0.35"/>
+<circle cx="608" cy="170" r="3" fill="#4F46E5" opacity="0.35"/>
+<circle cx="726" cy="378" r="3" fill="#4F46E5" opacity="0.35"/>
+<circle cx="106" cy="642" r="3" fill="#4F46E5" opacity="0.35"/>
+<circle cx="472" cy="132" r="3" fill="#4F46E5" opacity="0.35"/>
+<circle cx="474" cy="176" r="3" fill="#4F46E5" opacity="0.35"/>
+<circle cx="993" cy="457" r="3" fill="#4F46E5" opacity="0.35"/>
+<circle cx="210" cy="160" r="3" fill="#4F46E5" opacity="0.35"/>
+<circle cx="908" cy="77" r="3" fill="#4F46E5" opacity="0.35"/>
+<circle cx="263" cy="493" r="3" fill="#4F46E5" opacity="0.35"/>
+<circle cx="871" cy="510" r="3" fill="#4F46E5" opacity="0.35"/>
+<circle cx="672" cy="644" r="3" fill="#4F46E5" opacity="0.35"/>
+<circle cx="1088" cy="222" r="3" fill="#4F46E5" opacity="0.35"/>
+<circle cx="892" cy="298" r="3" fill="#4F46E5" opacity="0.35"/>
+<circle cx="280" cy="272" r="3" fill="#4F46E5" opacity="0.35"/>
+</svg>
