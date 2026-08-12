@@ -13,7 +13,12 @@
       "Coverage across ORCID, Scopus, SINTA and Crossref",
       "A Wizdam Impact Score you can trace to its sources",
       "Profile lookup with no sign-in required"
-    ]
+    ],
+    "field": {
+      "publications": "publications",
+      "share": "of total",
+      "hint": "Hover a marker to see its data"
+    }
   },
   "search": {
     "placeholder": "ORCID · Scopus · SINTA · ResearcherID · DOI",

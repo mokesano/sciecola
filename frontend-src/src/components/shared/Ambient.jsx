@@ -64,19 +64,77 @@ export const ACCENTS = {
   },
 };
 
+/*
+ * Varian terang dari tiap aksen. Halaman About, Teams, dan profil anggota
+ * berlatar putih dengan gambar latar; warnanya harus dinaikkan kontrasnya
+ * supaya tetap terbaca di atas bidang terang.
+ */
+export const LIGHT = {
+  blue: {
+    surface: 'bg-white', art: '#4F46E5', lit: 'rgba(79,70,229,0.85)',
+    blob: 'rgba(99,102,241,0.10)', spot: 'rgba(99,102,241,0.10)',
+    rule: 'bg-indigo-600', eyebrow: 'text-indigo-700', numeral: 'text-indigo-700',
+    ring: 'hover:ring-indigo-300 hover:shadow-md',
+    tile: 'bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200',
+    chip: 'text-indigo-700', link: 'text-indigo-700 hover:text-indigo-800',
+    button: 'bg-indigo-600 hover:bg-indigo-700 shadow-sm',
+    bar: 'bg-indigo-600',
+  },
+  orange: {
+    surface: 'bg-orange-50/40', art: '#EA580C', lit: 'rgba(234,88,12,0.85)',
+    blob: 'rgba(249,115,22,0.10)', spot: 'rgba(249,115,22,0.10)',
+    rule: 'bg-orange-600', eyebrow: 'text-orange-700', numeral: 'text-orange-700',
+    ring: 'hover:ring-orange-300 hover:shadow-md',
+    tile: 'bg-orange-50 text-orange-700 ring-1 ring-orange-200',
+    chip: 'text-orange-700', link: 'text-orange-700 hover:text-orange-800',
+    button: 'bg-orange-600 hover:bg-orange-700 shadow-sm',
+    bar: 'bg-orange-600',
+  },
+  ember: {
+    surface: 'bg-red-50/40', art: '#DC2626', lit: 'rgba(220,38,38,0.85)',
+    blob: 'rgba(239,68,68,0.10)', spot: 'rgba(239,68,68,0.10)',
+    rule: 'bg-red-600', eyebrow: 'text-red-700', numeral: 'text-red-700',
+    ring: 'hover:ring-red-300 hover:shadow-md',
+    tile: 'bg-red-50 text-red-700 ring-1 ring-red-200',
+    chip: 'text-red-700', link: 'text-red-700 hover:text-red-800',
+    button: 'bg-red-600 hover:bg-red-700 shadow-sm',
+    bar: 'bg-red-600',
+  },
+};
+
 export const ART = {
   hero:     '/assets/img/sections/hero-grid.svg',
   coverage: '/assets/img/sections/globe.svg',
   network:  '/assets/img/sections/network.svg',
   flow:     '/assets/img/sections/flow.svg',
   waves:    '/assets/img/sections/waves.svg',
+  // Aset peta yang sudah ada di aplikasi. Path-nya tidak membawa fill="none",
+  // jadi ia terender pekat dan bekerja sebagai mask — cakupan global memang
+  // paling jujur digambarkan peta sungguhan, bukan bola buatan.
+  world:    '/assets/img/world.svg',
+  about:    '/assets/img/sections/about.svg',
+  team:     '/assets/img/sections/team.svg',
 };
 
-/* Kartu bergaris rambut dengan sorot dalam di tepi atas — permukaannya
-   terbaca terangkat dari bidang gelap, bukan tercetak rata di atasnya. */
+/*
+ * Kartu memakai permukaan pekat, bukan sapuan transparan. Kartu transparan
+ * ikut menampilkan artwork latar di baliknya, sehingga teks di atasnya duduk
+ * pada bidang yang berubah-ubah dan kontrasnya tidak pernah pasti.
+ *
+ * CARD  — kartu pekat untuk halaman gelap
+ * PANEL — kartu pekat untuk halaman terang
+ * Keduanya membawa sorot dalam setipis rambut di tepi atas, supaya
+ * permukaannya terbaca terangkat dari bidang di belakangnya.
+ */
 export const CARD =
-  'rounded-xl bg-white/[0.035] ring-1 ring-white/10 ' +
-  'shadow-[inset_0_1px_0_0_rgba(255,255,255,0.07)] transition-colors duration-300';
+  'rounded-xl bg-[#13131B] ring-1 ring-white/10 ' +
+  'shadow-[inset_0_1px_0_0_rgba(255,255,255,0.07),0_1px_2px_0_rgba(0,0,0,0.4)] ' +
+  'transition-colors duration-300';
+
+export const PANEL =
+  'rounded-xl bg-white ring-1 ring-slate-200 ' +
+  'shadow-[inset_0_1px_0_0_rgba(255,255,255,0.9),0_1px_3px_0_rgba(15,23,42,0.08)] ' +
+  'transition-all duration-300';
 
 /* Menulis posisi pointer ke custom property pada node DOM lewat ref.
    Menyimpannya di state akan memicu render ulang puluhan kali per detik untuk
@@ -104,16 +162,20 @@ function usePointer() {
  */
 export const AmbientSection = ({
   accent = 'blue',
+  tone = 'dark',
   art,
   artOpacity = 0.55,
   artPosition = 'center',
   fade = true,
   blob = true,
+  photo,          // aset raster yang sudah ada, dipakai sebagai foto latar
+  photoOpacity = 0.28,
   className = '',
   children,
   ...rest
 }) => {
-  const a = ACCENTS[accent] ?? ACCENTS.blue;
+  const set = tone === 'light' ? LIGHT : ACCENTS;
+  const a = set[accent] ?? set.blue;
   const { ref, onPointerMove } = usePointer();
 
   /* Dua lapis mask: bentuk artwork-nya sendiri, lalu — bila fade aktif —
@@ -139,6 +201,16 @@ export const AmbientSection = ({
       className={`relative overflow-hidden ${a.surface} ${className}`}
       {...rest}
     >
+      {photo && (
+        <>
+          <span aria-hidden className="pointer-events-none absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url('${photo}')`, opacity: photoOpacity }} />
+          {/* Tirai supaya teks tetap terbaca di atas foto apa pun */}
+          <span aria-hidden className="pointer-events-none absolute inset-0"
+            style={{ backgroundColor: tone === 'light' ? 'rgba(255,255,255,0.72)' : 'rgba(8,8,12,0.72)' }} />
+        </>
+      )}
+
       {art && (
         <>
           {/* Artwork dasar, diwarnai aksen seksi */}
@@ -170,13 +242,14 @@ export const AmbientSection = ({
 export const SpotlightCard = ({
   as: Tag = 'div',
   accent = 'blue',
+  tone = 'dark',
   glow,
   radius = 300,
   className = '',
   children,
   ...rest
 }) => {
-  const a = ACCENTS[accent] ?? ACCENTS.blue;
+  const a = (tone === 'light' ? LIGHT : ACCENTS)[accent] ?? ACCENTS.blue;
   const { ref, onPointerMove } = usePointer();
 
   return (

@@ -13,7 +13,12 @@
       "Cakupan ORCID, Scopus, SINTA, dan Crossref",
       "Wizdam Impact Score yang dapat ditelusuri sumbernya",
       "Penelusuran profil tanpa perlu login"
-    ]
+    ],
+    "field": {
+      "publications": "publikasi",
+      "share": "dari total",
+      "hint": "Sorot penanda untuk melihat datanya"
+    }
   },
   "search": {
     "placeholder": "ORCID · Scopus · SINTA · ResearcherID · DOI",

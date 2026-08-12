@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import Sparkline, { readDirection } from '../components/shared/Sparkline';
 import { AmbientSection, SpotlightCard, ACCENTS, ART, CARD } from '../components/shared/Ambient';
+import HeroDataField from '../components/shared/HeroDataField';
 
 // =====================================================================
 // VISUAL CONFIG
@@ -76,7 +77,7 @@ const PublicSearch = ({ t }) => {
       {err && <p className="mt-3 text-[15px] text-rose-400">{err}</p>}
 
       {ambiguousId && (
-        <div className="mt-3 rounded-lg bg-white/[0.05] p-4 text-left ring-1 ring-white/10">
+        <div className="mt-3 rounded-lg bg-[#13131B] p-4 text-left ring-1 ring-white/10">
           <p className="mb-2.5 text-[15px] text-slate-300">
             {t('search.ambiguous', { id: ambiguousId })}
           </p>
@@ -209,7 +210,12 @@ const PublicHomePage = () => {
 
       {/* ══ HERO — biru, kisi data ══════════════════════════════════ */}
       <AmbientSection accent="blue" art={ART.hero} artOpacity={0.5}>
-        <div className="mx-auto max-w-5xl px-6 py-28 text-center lg:px-8">
+        {/* Penanda data nyata di atas artwork. Selama sdgList kosong,
+            komponen ini tidak menggambar apa pun dan yang tampak hanya
+            SVG-nya. */}
+        <HeroDataField items={sdgList} labels={t('hero.field', { returnObjects: true })} />
+
+        <div className="relative mx-auto max-w-5xl px-6 py-28 text-center lg:px-8">
           <span className="inline-flex items-center gap-2.5 rounded-full bg-white/[0.06] px-4 py-1.5 text-[15px] font-medium text-slate-300 ring-1 ring-white/15">
             <span className={`h-1.5 w-1.5 rounded-full ${ACCENTS.blue.dot}`} />
             {text(pick('hero.badge'), t, 'hero.badge')}
@@ -253,6 +259,10 @@ const PublicHomePage = () => {
             </Link>
           </div>
 
+          {sdgList.length > 0 && (
+            <p className="mt-8 text-sm text-slate-600">{t('hero.field.hint')}</p>
+          )}
+
           <p className="mt-6 text-[15px] text-slate-500">
             {text(pick('hero.orcid_hint_prefix'), t, 'hero.orcid_hint_prefix')}{' '}
             <Link to="/tutorial-orcid" className={`font-medium underline-offset-4 hover:underline ${ACCENTS.blue.link}`}>
@@ -264,7 +274,7 @@ const PublicHomePage = () => {
 
       {/* ══ CAKUPAN — oranye, bola meridian ═════════════════════════ */}
       {stats.length > 0 && (
-        <AmbientSection accent="orange" art={ART.coverage} artOpacity={0.45}
+        <AmbientSection accent="orange" art={ART.world} artOpacity={0.32}
           className="border-y border-white/10">
           <div className="mx-auto max-w-6xl px-6 py-20 lg:px-8">
             <p className={`text-center text-xs font-semibold uppercase tracking-[0.2em] ${ACCENTS.orange.eyebrow}`}>
@@ -478,7 +488,7 @@ const PublicHomePage = () => {
             <div className="flex flex-wrap items-center justify-center gap-3">
               {partners.map((p) => (
                 <SpotlightCard key={p.id ?? p.name} as="span" accent="blue" radius={160}
-                  className="rounded-lg bg-white/[0.04] px-5 py-3 text-[15px] font-medium text-slate-300 ring-1 ring-white/10 transition-colors hover:text-white">
+                  className="rounded-lg bg-[#13131B] px-5 py-3 text-[15px] font-medium text-slate-300 ring-1 ring-white/10 transition-colors hover:text-white">
                   {p.name}
                 </SpotlightCard>
               ))}
@@ -496,7 +506,8 @@ const PublicHomePage = () => {
       )}
 
       {/* ══ PENUTUP — oranye ════════════════════════════════════════ */}
-      <AmbientSection accent="orange" art={ART.coverage} artOpacity={0.4}
+      <AmbientSection accent="orange" art={ART.coverage} artOpacity={0.35}
+        photo="/assets/img/cta.jpg" photoOpacity={0.3}
         className="border-t border-white/10 py-28">
         <div className="mx-auto max-w-4xl px-6 text-center lg:px-8">
           <span className="inline-flex items-center gap-2 rounded-full bg-white/[0.06] px-4 py-1.5 text-[15px] font-medium text-slate-300 ring-1 ring-white/15">
