@@ -63,7 +63,8 @@ function fetchMember(int $memberId, string $slug): array
                     tm.long_bio, tm.photo_url, tm.location, tm.joined_year,
                     tm.expertise, tm.social_links, tm.sdg_focus, tm.is_visible,
                     td.name AS department,
-                    r.name AS researcher_name, r.email_address
+                    r.name AS researcher_name, r.email_address,
+                    r.scopus_id, r.sinta_id, r.researcher_id
              FROM team_members tm
              LEFT JOIN team_departments td ON td.id = tm.department_id
              LEFT JOIN researchers r        ON r.orcid = tm.orcid
@@ -116,6 +117,15 @@ function fetchMember(int $memberId, string $slug): array
             'member' => [
                 'id'          => (int)$row['id'],
                 'orcid'       => $row['orcid'],
+                // Identifier peneliti lain, diambil dari tabel researchers lewat
+                // FK orcid. Dikirim null bila kosong supaya frontend cukup
+                // melewatinya tanpa perlu memeriksa string kosong.
+                // Catatan: kolom DB bernama researcher_id, sedangkan key
+                // response memakai `researcherid` agar sama dengan segmen route
+                // /researcherid/:id dan penamaan di halaman lookup.
+                'scopus_id'    => $row['scopus_id']     ?: null,
+                'sinta_id'     => $row['sinta_id']      ?: null,
+                'researcherid' => $row['researcher_id'] ?: null,
                 'slug'        => $row['slug'] ?: 'tm-' . $row['id'],
                 'code'        => $row['code'],
                 'name'        => $row['researcher_name'] ?? 'Team Member',
@@ -145,6 +155,7 @@ function sampleProfile(): array
         'status' => 'success',
         'member' => [
             'id'=>1,'orcid'=>'0000-0001-0000-0001','slug'=>'budi-santoso','code'=>'TM-L001',
+            'scopus_id'=>'57204244163','sinta_id'=>'6032151','researcherid'=>'S-9066-2016',
             'name'=>'Dr. Budi Santoso','position'=>'Director, SDG Research & Analytics',
             'bio'=>'Director, SDG Research & Analytics',
             'long_bio'=>'PhD in Computer Science. 15+ years experience in research analytics and SDG classification.',

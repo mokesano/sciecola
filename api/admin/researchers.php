@@ -69,8 +69,9 @@ function createResearcher(PDO $pdo): array {
     try {
         $stmt = $pdo->prepare(
             "INSERT INTO researchers (orcid, name, h_index, citation_count, country,
-                collaboration_status, bio, profile_photo_url, research_keywords, institution_id)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                collaboration_status, bio, profile_photo_url, research_keywords, institution_id,
+                scopus_id, sinta_id, researcher_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         );
 
         $stmt->execute([
@@ -83,7 +84,13 @@ function createResearcher(PDO $pdo): array {
             $input['bio'] ?? null,
             $input['profile_photo_url'] ?? null,
             $input['research_keywords'] ?? null,
-            $input['institution_id'] ?? null
+            $input['institution_id'] ?? null,
+            // Identifier peneliti selain ORCID. Kolomnya sudah lama ada di
+            // skema tetapi belum pernah bisa diisi lewat admin, sehingga
+            // profil hanya pernah menampilkan ORCID.
+            ($input['scopus_id']     ?? '') ?: null,
+            ($input['sinta_id']      ?? '') ?: null,
+            ($input['researcher_id'] ?? '') ?: null,
         ]);
 
         logAdminAction($pdo, 'CREATE', 'researchers', $input['orcid'], null, $input);
@@ -111,7 +118,10 @@ function updateResearcher(PDO $pdo): array {
     $updates = [];
     $params = [];
 
-    foreach (['name', 'collaboration_status', 'bio', 'profile_photo_url', 'research_keywords', 'institution_id'] as $field) {
+    foreach ([
+        'name', 'collaboration_status', 'bio', 'profile_photo_url', 'research_keywords',
+        'institution_id', 'scopus_id', 'sinta_id', 'researcher_id',
+    ] as $field) {
         if (isset($input[$field])) {
             $updates[] = "$field = ?";
             $params[] = $input[$field];
