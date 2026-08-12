@@ -75,11 +75,6 @@ const Navbar = () => {
               }`}>
                 SCIECOLA
               </div>
-              <div className={`hidden md:block text-xs font-semibold tracking-wider uppercase leading-none mt-1 ${
-                onDark ? 'text-slate-500' : 'text-gray-500'
-              }`}>
-                {t('brand_tagline')}
-              </div>
             </div>
           </NavLink>
 

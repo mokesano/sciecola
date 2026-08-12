@@ -50,9 +50,6 @@ const Footer = () => {
           <div>
             <Link to="/" className="group inline-flex items-baseline gap-3">
               <span className="text-3xl font-black tracking-tight text-white transition-colors group-hover:text-indigo-300">SCIECOLA</span>
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-indigo-400">
-                {t('brand_tagline')}
-              </span>
             </Link>
           </div>
 
