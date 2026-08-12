@@ -61,42 +61,42 @@ const PublicSearch = ({ t }) => {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder={t('search.placeholder')}
-            className="w-full rounded-lg border border-slate-300 bg-white py-3 pl-10 pr-3 text-[15px] text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+            className="w-full rounded-lg border border-slate-300 bg-white py-3 pl-10 pr-3 text-base text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
           />
         </div>
         <button
           type="submit"
-          className="shrink-0 rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-700"
+          className="shrink-0 rounded-lg bg-indigo-600 px-6 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-indigo-700"
         >
           {t('search.submit')}
         </button>
       </form>
 
-      {err && <p className="mt-3 text-sm text-red-600">{err}</p>}
+      {err && <p className="mt-3 text-[15px] text-red-600">{err}</p>}
 
       {ambiguousId && (
         <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-left">
-          <p className="mb-2.5 text-[13px] text-slate-600">
+          <p className="mb-2.5 text-[15px] text-slate-600">
             {t('search.ambiguous', { id: ambiguousId })}
           </p>
           <div className="flex flex-wrap gap-2">
             <button type="button" onClick={() => go(`/scopus/${ambiguousId}`)}
-              className="rounded border border-slate-300 bg-white px-3 py-1.5 text-[13px] font-medium text-slate-700 hover:border-slate-400 hover:bg-slate-50">
+              className="rounded border border-slate-300 bg-white px-3 py-1.5 text-[15px] font-medium text-slate-700 hover:border-slate-400 hover:bg-slate-50">
               Scopus
             </button>
             <button type="button" onClick={() => go(`/sinta/${ambiguousId}`)}
-              className="rounded border border-slate-300 bg-white px-3 py-1.5 text-[13px] font-medium text-slate-700 hover:border-slate-400 hover:bg-slate-50">
+              className="rounded border border-slate-300 bg-white px-3 py-1.5 text-[15px] font-medium text-slate-700 hover:border-slate-400 hover:bg-slate-50">
               SINTA
             </button>
             <button type="button" onClick={() => setAmbiguousId(null)}
-              className="rounded px-3 py-1.5 text-[13px] font-medium text-slate-500 hover:text-slate-900">
+              className="rounded px-3 py-1.5 text-[15px] font-medium text-slate-500 hover:text-slate-900">
               {t('search.cancel')}
             </button>
           </div>
         </div>
       )}
 
-      <p className="mt-3 text-[13px] text-slate-500">{t('search.no_login')}</p>
+      <p className="mt-3 text-[15px] text-slate-500">{t('search.no_login')}</p>
     </div>
   );
 };
@@ -111,10 +111,10 @@ const text = (override, t, key, options) => override ?? t(key, options);
 const SectionHead = ({ eyebrow, title, subtitle, align = 'center', className = 'mb-12', children }) => (
   <div className={`${className} ${align === 'center' ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl'}`}>
     {eyebrow && (
-      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-indigo-700">{eyebrow}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-700">{eyebrow}</p>
     )}
     <h2 className="mt-3 font-serif text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">{title}</h2>
-    {subtitle && <p className="mt-4 text-[15px] leading-relaxed text-slate-600">{subtitle}</p>}
+    {subtitle && <p className="mt-4 text-base leading-relaxed text-slate-600">{subtitle}</p>}
     {children}
   </div>
 );
@@ -233,7 +233,7 @@ const PublicHomePage = () => {
         />
 
         <div className="relative mx-auto max-w-5xl px-6 py-24 text-center lg:px-8">
-          <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-[13px] font-medium text-slate-600 shadow-sm">
+          <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-[15px] font-medium text-slate-600 shadow-sm">
             <span className="h-1.5 w-1.5 rounded-full bg-indigo-600" />
             {text(pick('hero.badge'), t, 'hero.badge')}
           </span>
@@ -254,7 +254,7 @@ const PublicHomePage = () => {
           {Array.isArray(heroHighlights) && heroHighlights.length > 0 && (
             <ul className="mx-auto mt-8 grid max-w-2xl gap-x-8 gap-y-2.5 text-left sm:grid-cols-2">
               {heroHighlights.map((item, i) => (
-                <li key={i} className="flex items-start gap-2.5 text-sm leading-snug text-slate-700">
+                <li key={i} className="flex items-start gap-2.5 text-[15px] leading-snug text-slate-700">
                   <Check className="mt-0.5 h-4 w-4 shrink-0 text-indigo-600" />
                   {item}
                 </li>
@@ -266,17 +266,17 @@ const PublicHomePage = () => {
 
           <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link to="/login"
-              className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-slate-800">
+              className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-6 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-slate-800">
               {text(pick('hero.cta_primary'), t, 'hero.cta_primary')}
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link to="/register"
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-400 hover:bg-slate-50">
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-3 text-[15px] font-semibold text-slate-700 transition-colors hover:border-slate-400 hover:bg-slate-50">
               {text(pick('hero.cta_secondary'), t, 'hero.cta_secondary')}
             </Link>
           </div>
 
-          <p className="mt-6 text-[13px] text-slate-500">
+          <p className="mt-6 text-[15px] text-slate-500">
             {text(pick('hero.orcid_hint_prefix'), t, 'hero.orcid_hint_prefix')}{' '}
             <Link to="/tutorial-orcid"
               className="font-medium text-indigo-700 underline-offset-4 hover:underline">
@@ -292,7 +292,7 @@ const PublicHomePage = () => {
       {stats.length > 0 && (
         <section className="bg-slate-900 py-16 text-white">
           <div className="mx-auto max-w-6xl px-6 lg:px-8">
-            <p className="text-center text-[11px] font-semibold uppercase tracking-[0.16em] text-indigo-400">
+            <p className="text-center text-xs font-semibold uppercase tracking-[0.16em] text-indigo-400">
               {t('stats_section.eyebrow')}
             </p>
             <dl className="mt-10 grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-4">
@@ -302,7 +302,7 @@ const PublicHomePage = () => {
                     {s.value}
                   </dd>
                   <div aria-hidden className="mx-auto mt-4 h-px w-10 bg-indigo-500" />
-                  <dt className="mt-4 text-[13px] leading-snug text-slate-400">{s.label}</dt>
+                  <dt className="mt-4 text-[15px] leading-snug text-slate-400">{s.label}</dt>
                 </div>
               ))}
             </dl>
@@ -326,14 +326,14 @@ const PublicHomePage = () => {
                 className="group rounded-xl border border-slate-200 bg-white p-6 transition-colors hover:border-slate-300">
                 <div className="flex items-start justify-between gap-3">
                   {f.label && (
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-indigo-700">
+                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-indigo-700">
                       {f.label}
                     </span>
                   )}
                   <f.Icon className="h-4 w-4 shrink-0 text-slate-300 transition-colors group-hover:text-indigo-600" />
                 </div>
                 <h3 className="mt-5 font-serif text-lg font-semibold tracking-tight text-slate-900">{f.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">{f.desc}</p>
+                <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -371,7 +371,7 @@ const PublicHomePage = () => {
                       }}
                     />
                   </div>
-                  <span className="mt-2 text-center text-[10px] font-medium leading-tight text-slate-500 group-hover:text-slate-900">
+                  <span className="mt-2 text-center text-xs font-medium leading-tight text-slate-500 group-hover:text-slate-900">
                     {sdg.name}
                   </span>
                 </Link>
@@ -380,7 +380,7 @@ const PublicHomePage = () => {
 
             <div className="mt-12 text-center">
               <Link to="/sdgs"
-                className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-400">
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-[15px] font-semibold text-slate-700 transition-colors hover:border-slate-400">
                 {text(pick('sdg_section.cta_label'), t, 'sdg_section.cta_label')}
                 <ChevronRight className="h-4 w-4" />
               </Link>
@@ -404,13 +404,13 @@ const PublicHomePage = () => {
             {steps.map((item) => (
               <li key={item.step} className="border-t-2 border-slate-900 pt-5">
                 <div className="flex items-center gap-3">
-                  <span className="font-mono text-xs tabular-nums text-slate-400">
+                  <span className="font-mono text-sm tabular-nums text-slate-400">
                     {String(item.step).padStart(2, '0')}
                   </span>
                   <item.Icon className="h-4 w-4 text-indigo-600" />
                 </div>
                 <h3 className="mt-3 text-lg font-semibold tracking-tight text-slate-900">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.desc}</p>
+                <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{item.desc}</p>
               </li>
             ))}
           </ol>
@@ -433,7 +433,7 @@ const PublicHomePage = () => {
                 subtitle={text(pick('insights_section.subtitle'), t, 'insights_section.subtitle')}
               />
               <Link to="/insights"
-                className="inline-flex shrink-0 items-center gap-2 pb-1 text-sm font-medium text-indigo-700 underline-offset-4 hover:underline">
+                className="inline-flex shrink-0 items-center gap-2 pb-1 text-[15px] font-medium text-indigo-700 underline-offset-4 hover:underline">
                 {text(pick('insights_section.cta_label'), t, 'insights_section.cta_label')}
                 <ArrowRight className="h-4 w-4" />
               </Link>
@@ -451,18 +451,18 @@ const PublicHomePage = () => {
                   <article key={ins.id} className="flex flex-col rounded-xl border border-slate-200 bg-white p-6">
                     <div className="flex items-center gap-2.5">
                       <span aria-hidden className="h-3 w-3 rounded-[3px]" style={{ backgroundColor: color }} />
-                      <span className="font-mono text-[11px] tabular-nums text-slate-400">
+                      <span className="font-mono text-xs tabular-nums text-slate-400">
                         SDG {String(ins.sdg).padStart(2, '0')}
                       </span>
                       {ins.category && (
-                        <span className="ml-auto rounded-full border border-slate-200 px-2 py-0.5 text-[11px] font-medium text-slate-500">
+                        <span className="ml-auto rounded-full border border-slate-200 px-2 py-0.5 text-xs font-medium text-slate-500">
                           {ins.category}
                         </span>
                       )}
                     </div>
 
-                    <h3 className="mt-4 text-[15px] font-semibold leading-snug text-slate-900">{ins.title}</h3>
-                    <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{ins.text}</p>
+                    <h3 className="mt-4 text-base font-semibold leading-snug text-slate-900">{ins.title}</h3>
+                    <p className="mt-2 flex-1 text-[15px] leading-relaxed text-slate-600">{ins.text}</p>
 
                     <div className="mt-5 flex items-end justify-between border-t border-slate-100 pt-4">
                       <div>
@@ -475,7 +475,7 @@ const PublicHomePage = () => {
                           </p>
                         )}
                         {start && end && (
-                          <p className="font-mono text-[10px] tabular-nums text-slate-400">{start}–{end}</p>
+                          <p className="font-mono text-xs tabular-nums text-slate-400">{start}–{end}</p>
                         )}
                       </div>
                       {series.length > 1 && (
@@ -505,7 +505,7 @@ const PublicHomePage = () => {
             <div className="flex flex-wrap items-center justify-center gap-3">
               {partners.map((p) => (
                 <span key={p.id ?? p.name}
-                  className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600">
+                  className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-[15px] font-medium text-slate-600">
                   {p.name}
                 </span>
               ))}
@@ -513,7 +513,7 @@ const PublicHomePage = () => {
 
             <div className="mt-8 text-center">
               <Link to="/partners"
-                className="inline-flex items-center gap-1 text-sm font-medium text-indigo-700 underline-offset-4 hover:underline">
+                className="inline-flex items-center gap-1 text-[15px] font-medium text-indigo-700 underline-offset-4 hover:underline">
                 {text(pick('partners_section.cta_label'), t, 'partners_section.cta_label')}
                 <ChevronRight className="h-4 w-4" />
               </Link>
@@ -527,30 +527,30 @@ const PublicHomePage = () => {
       {/* ============================================================ */}
       <section className="bg-slate-900 py-24 text-white">
         <div className="mx-auto max-w-4xl px-6 text-center lg:px-8">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-[13px] font-medium text-slate-300">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-[15px] font-medium text-slate-300">
             {text(pick('cta_section.badge'), t, 'cta_section.badge')}
           </span>
 
           <h2 className="mt-6 font-serif text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
             {text(pick('cta_section.title'), t, 'cta_section.title')}
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-relaxed text-slate-300">
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-300">
             {text(pick('cta_section.subtitle'), t, 'cta_section.subtitle')}
           </p>
 
           <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link to="/register"
-              className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition-colors hover:bg-slate-100">
+              className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-[15px] font-semibold text-slate-900 transition-colors hover:bg-slate-100">
               {text(pick('cta_section.cta_primary'), t, 'cta_section.cta_primary')}
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link to="/login"
-              className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10">
+              className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-6 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-white/10">
               {text(pick('cta_section.cta_secondary'), t, 'cta_section.cta_secondary')}
             </Link>
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[13px] text-slate-400">
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[15px] text-slate-400">
             {(Array.isArray(trustSignals) ? trustSignals : []).map((label, i) => (
               <span key={i} className="flex items-center gap-1.5">
                 <Check className="h-3.5 w-3.5 text-indigo-400" />

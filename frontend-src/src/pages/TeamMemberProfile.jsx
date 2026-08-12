@@ -48,9 +48,9 @@ function collectIdentifiers(m) {
 /* ─── small components ───────────────────────────────────────────────────── */
 
 const SdgBadge = ({ sdg }) => (
-  <span className="inline-flex items-center gap-2 rounded border border-slate-200 bg-white py-1.5 pl-2 pr-3 text-xs text-slate-700">
+  <span className="inline-flex items-center gap-2 rounded border border-slate-200 bg-white py-1.5 pl-2 pr-3 text-sm text-slate-700">
     <span aria-hidden className="h-3 w-3 shrink-0 rounded-[2px]" style={{ backgroundColor: SDG_COLORS[sdg] }} />
-    <span className="font-mono text-[11px] tabular-nums text-slate-400">
+    <span className="font-mono text-xs tabular-nums text-slate-400">
       {String(sdg).padStart(2, '0')}
     </span>
     {SDG_LABELS[sdg]}
@@ -80,7 +80,7 @@ const ProfilePhoto = ({ photo, name, size = 'h-36 w-36' }) => {
  */
 const Panel = ({ title, tone = 'accent', children }) => (
   <section className="overflow-hidden rounded-lg border border-slate-200 bg-white">
-    <h2 className={`px-5 py-3 text-[15px] font-semibold tracking-tight text-white ${
+    <h2 className={`px-5 py-3 text-base font-semibold tracking-tight text-white ${
       tone === 'accent' ? 'bg-indigo-700' : 'bg-slate-700'
     }`}>
       {title}
@@ -92,15 +92,15 @@ const Panel = ({ title, tone = 'accent', children }) => (
 /* Sub-heading inside a panel — a short accent bar to the left of the label,
    the device the Sangia author pages use to open each block. */
 const RuleHeading = ({ children }) => (
-  <h3 className="mb-3 border-l-[3px] border-indigo-600 pl-3 text-[13px] font-semibold uppercase tracking-[0.1em] text-slate-900">
+  <h3 className="mb-3 border-l-[3px] border-indigo-600 pl-3 text-[15px] font-semibold uppercase tracking-[0.1em] text-slate-900">
     {children}
   </h3>
 );
 
 const Fact = ({ label, children, mono = false }) => (
   <div className="flex items-baseline justify-between gap-4 py-2.5">
-    <dt className="shrink-0 text-xs text-slate-500">{label}</dt>
-    <dd className={`text-right text-[13px] font-medium text-slate-900 ${mono ? 'font-mono' : ''}`}>
+    <dt className="shrink-0 text-sm text-slate-500">{label}</dt>
+    <dd className={`text-right text-[15px] font-medium text-slate-900 ${mono ? 'font-mono' : ''}`}>
       {children}
     </dd>
   </div>
@@ -110,11 +110,11 @@ const NotFound = ({ slug, t }) => (
   <main className="mx-auto max-w-3xl px-4 pb-24 pt-32 sm:px-6 lg:px-8">
     <div className="rounded-lg border border-slate-200 bg-slate-50 px-6 py-16 text-center">
       <h2 className="font-serif text-2xl font-semibold tracking-tight text-slate-900">{t('not_found.title')}</h2>
-      <p className="mt-2 text-sm text-slate-600">
+      <p className="mt-2 text-[15px] text-slate-600">
         {t('not_found.subtitle')} <span className="font-mono text-slate-900">{slug}</span>.
       </p>
       <Link to="/teams"
-        className="mt-6 inline-flex items-center rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-800">
+        className="mt-6 inline-flex items-center rounded-lg bg-slate-900 px-5 py-2.5 text-[15px] font-medium text-white transition-colors hover:bg-slate-800">
         {t('not_found.button')}
       </Link>
     </div>
@@ -148,7 +148,7 @@ const TeamMemberProfile = () => {
   if (loading) {
     return (
       <main className="mx-auto max-w-3xl px-4 pb-24 pt-32 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-center gap-3 py-16 text-sm text-slate-500">
+        <div className="flex items-center justify-center gap-3 py-16 text-[15px] text-slate-500">
           <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600" />
           {t('loading')}
         </div>
@@ -166,6 +166,16 @@ const TeamMemberProfile = () => {
   const social       = Object.entries(m.social ?? {}).filter(([, v]) => v);
   const identifiers  = collectIdentifiers(m);
 
+  /*
+   * `bio` is often filled in with the same sentence as `position` — the sample
+   * record does exactly that. Printing both put the job title on screen twice,
+   * once as the role and once as the biography. Treat a bio that merely repeats
+   * the role as absent, on the band and in the About panel alike.
+   */
+  const norm      = (s) => (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  const shortBio  = norm(m.bio) && norm(m.bio) !== norm(m.position) ? m.bio : null;
+  const aboutText = m.long_bio || shortBio;
+
   return (
     <main className="w-full pb-24 pt-20">
 
@@ -175,7 +185,7 @@ const TeamMemberProfile = () => {
       {/* ============================================================ */}
       <section className="bg-indigo-900 text-white">
         <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-          <nav className="mb-8 flex items-center gap-2 text-[13px] text-indigo-200">
+          <nav className="mb-8 flex items-center gap-2 text-[15px] text-indigo-200">
             <Link to="/"      className="hover:text-white hover:underline">{t('breadcrumb.home')}</Link>
             <span className="text-indigo-400">/</span>
             <Link to="/teams" className="hover:text-white hover:underline">{t('breadcrumb.teams')}</Link>
@@ -188,18 +198,18 @@ const TeamMemberProfile = () => {
 
             <div className="min-w-0 flex-1 sm:pt-2">
               {m.code && (
-                <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-indigo-300">{m.code}</p>
+                <p className="font-mono text-xs uppercase tracking-[0.14em] text-indigo-300">{m.code}</p>
               )}
               <h1 className="mt-1.5 font-serif text-3xl font-semibold leading-tight tracking-tight sm:text-[2.5rem]">
                 {m.name}
               </h1>
               {m.position && (
-                <p className="mt-2 text-sm font-semibold text-indigo-200">{m.position}</p>
+                <p className="mt-2 text-[15px] font-semibold text-indigo-200">{m.position}</p>
               )}
-              {m.bio && (
-                <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-indigo-100">{m.bio}</p>
+              {shortBio && (
+                <p className="mt-4 max-w-3xl text-lg leading-relaxed text-indigo-100">{shortBio}</p>
               )}
-              <div className="mt-4 space-y-0.5 text-[13px] text-indigo-200">
+              <div className="mt-4 space-y-0.5 text-[15px] text-indigo-200">
                 {m.department && <p>{m.department}</p>}
                 {m.location   && <p>{m.location}</p>}
               </div>
@@ -215,7 +225,7 @@ const TeamMemberProfile = () => {
           <div className="-mt-6 rounded-lg border border-slate-200 bg-white px-5 py-4 shadow-sm">
             <ul className="flex flex-wrap items-center gap-x-7 gap-y-3">
               {identifiers.map(id => (
-                <li key={id.key} className="flex items-center gap-2 text-[13px]">
+                <li key={id.key} className="flex items-center gap-2 text-[15px]">
                   <span aria-hidden className="h-2.5 w-2.5 shrink-0 rounded-full"
                     style={{ backgroundColor: id.color }} />
                   <span className="font-semibold text-slate-700">{id.key}</span>
@@ -234,7 +244,7 @@ const TeamMemberProfile = () => {
               ))}
 
               {m.email && (
-                <li className="text-[13px]">
+                <li className="text-[15px]">
                   <a href={`mailto:${m.email}`}
                     className="text-slate-600 underline-offset-4 hover:text-indigo-700 hover:underline">
                     {m.email}
@@ -243,7 +253,7 @@ const TeamMemberProfile = () => {
               )}
 
               {social.map(([k, v]) => (
-                <li key={k} className="text-[13px]">
+                <li key={k} className="text-[15px]">
                   <a href={v} target="_blank" rel="noopener noreferrer"
                     className="capitalize text-slate-600 underline-offset-4 hover:text-indigo-700 hover:underline">
                     {k}
@@ -259,10 +269,10 @@ const TeamMemberProfile = () => {
 
           <div className="space-y-6 lg:col-span-2">
 
-            {(m.long_bio || m.bio) && (
+            {aboutText && (
               <Panel title={t('section.about')}>
-                <p className="whitespace-pre-line text-[15px] leading-[1.75] text-slate-700">
-                  {m.long_bio || m.bio}
+                <p className="whitespace-pre-line text-base leading-[1.75] text-slate-700">
+                  {aboutText}
                 </p>
               </Panel>
             )}
@@ -273,7 +283,7 @@ const TeamMemberProfile = () => {
                 {expertise.length > 0 && (
                   <ul className="flex flex-wrap gap-2">
                     {expertise.map((e, i) => (
-                      <li key={i} className="rounded border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-slate-700">
+                      <li key={i} className="rounded border border-slate-200 bg-white px-2.5 py-1.5 text-sm text-slate-700">
                         {e}
                       </li>
                     ))}
@@ -297,15 +307,15 @@ const TeamMemberProfile = () => {
                 <ol className="space-y-5">
                   {education.map((edu, i) => (
                     <li key={i} className="grid grid-cols-[3.5rem_1fr] gap-4 border-b border-slate-100 pb-5 last:border-0 last:pb-0">
-                      <span className="pt-0.5 font-mono text-xs tabular-nums text-slate-400">
+                      <span className="pt-0.5 font-mono text-sm tabular-nums text-slate-400">
                         {edu.graduation > 0 ? edu.graduation : '—'}
                       </span>
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold leading-snug text-slate-900">
+                        <p className="text-[15px] font-semibold leading-snug text-slate-900">
                           {edu.degree}{edu.field ? ` — ${edu.field}` : ''}
                         </p>
-                        {edu.institution && <p className="mt-0.5 text-sm text-slate-600">{edu.institution}</p>}
-                        {edu.honors && <p className="mt-1 text-xs italic text-slate-500">{edu.honors}</p>}
+                        {edu.institution && <p className="mt-0.5 text-[15px] text-slate-600">{edu.institution}</p>}
+                        {edu.honors && <p className="mt-1 text-sm italic text-slate-500">{edu.honors}</p>}
                       </div>
                     </li>
                   ))}
@@ -318,18 +328,18 @@ const TeamMemberProfile = () => {
                 <ol className="space-y-5">
                   {achievements.map((a, i) => (
                     <li key={i} className="grid grid-cols-[3.5rem_1fr] gap-4 border-b border-slate-100 pb-5 last:border-0 last:pb-0">
-                      <span className="pt-0.5 font-mono text-xs tabular-nums text-slate-400">
+                      <span className="pt-0.5 font-mono text-sm tabular-nums text-slate-400">
                         {a.year > 0 ? a.year : '—'}
                       </span>
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold leading-snug text-slate-900">{a.title}</p>
-                        {a.issuer && <p className="mt-0.5 text-sm text-slate-600">{a.issuer}</p>}
+                        <p className="text-[15px] font-semibold leading-snug text-slate-900">{a.title}</p>
+                        {a.issuer && <p className="mt-0.5 text-[15px] text-slate-600">{a.issuer}</p>}
                         {a.description && (
-                          <p className="mt-1 text-[13px] leading-relaxed text-slate-500">{a.description}</p>
+                          <p className="mt-1 text-[15px] leading-relaxed text-slate-500">{a.description}</p>
                         )}
                         {a.proof_url && (
                           <a href={a.proof_url} target="_blank" rel="noopener noreferrer"
-                            className="mt-1.5 inline-block text-xs text-indigo-700 underline-offset-4 hover:underline">
+                            className="mt-1.5 inline-block text-sm text-indigo-700 underline-offset-4 hover:underline">
                             {t('achievement.proof')}
                           </a>
                         )}
@@ -359,7 +369,7 @@ const TeamMemberProfile = () => {
               </Panel>
 
               <Link to="/teams"
-                className="mt-5 inline-flex items-center gap-2 text-[13px] font-medium text-slate-600 underline-offset-4 hover:text-indigo-700 hover:underline">
+                className="mt-5 inline-flex items-center gap-2 text-[15px] font-medium text-slate-600 underline-offset-4 hover:text-indigo-700 hover:underline">
                 <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                 </svg>

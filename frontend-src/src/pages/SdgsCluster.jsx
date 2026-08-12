@@ -77,7 +77,7 @@ const StatCard = ({ label, value, color }) => {
             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
       </div>
-      <p className="text-sm text-gray-600 mb-1">{label}</p>
+      <p className="text-[15px] text-gray-600 mb-1">{label}</p>
       <p className="text-2xl font-bold text-gray-900">{value}</p>
     </div>
   );
@@ -89,7 +89,7 @@ const EmptyChartState = ({ label }) => (
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"
         d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
     </svg>
-    <p className="text-sm text-center max-w-xs">{label}</p>
+    <p className="text-[15px] text-center max-w-xs">{label}</p>
   </div>
 );
 
@@ -246,7 +246,7 @@ const SdgsCluster = () => {
   const CustomBarTooltip = ({ active, payload }) => {
     if (!active || !payload?.length) return null;
     return (
-      <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg text-sm">
+      <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg text-[15px]">
         <p className="font-semibold text-gray-900">SDG {payload[0].payload.id}: {payload[0].payload.name}</p>
         <p className="text-indigo-600">{payload[0].value?.toLocaleString()} {t('charts.publications_label')}</p>
       </div>
@@ -268,8 +268,8 @@ const SdgsCluster = () => {
       <Marker position={position} icon={icon}>
         <MapTooltip direction="auto" opacity={1} className="sdg-tip">
           <div className="min-w-[120px]">
-            <p className="font-bold text-gray-900 text-sm mb-0.5">{city}</p>
-            <p className="text-xs text-gray-600">{pubs.toLocaleString()} {t('map.publications')}</p>
+            <p className="font-bold text-gray-900 text-[15px] mb-0.5">{city}</p>
+            <p className="text-sm text-gray-600">{pubs.toLocaleString()} {t('map.publications')}</p>
           </div>
         </MapTooltip>
       </Marker>
@@ -280,7 +280,7 @@ const SdgsCluster = () => {
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
 
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+      <div className="flex items-center gap-2 text-[15px] text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600">{t('breadcrumb.home')}</Link>
         <span>›</span>
         <span className="text-gray-900">{t('breadcrumb.current')}</span>
@@ -306,8 +306,8 @@ const SdgsCluster = () => {
           <svg className="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
-          <span className="text-red-700 text-sm flex-grow">{error}</span>
-          <button onClick={fetchAll} className="text-sm text-red-600 underline shrink-0">{t('retry')}</button>
+          <span className="text-red-700 text-[15px] flex-grow">{error}</span>
+          <button onClick={fetchAll} className="text-[15px] text-red-600 underline shrink-0">{t('retry')}</button>
         </div>
       )}
 
@@ -330,7 +330,7 @@ const SdgsCluster = () => {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-colors ${
+                  className={`px-4 py-2 rounded-lg font-medium text-[15px] whitespace-nowrap transition-colors ${
                     activeTab === tab
                       ? 'bg-indigo-600 text-white'
                       : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
@@ -343,7 +343,7 @@ const SdgsCluster = () => {
             <select
               value={selectedYear}
               onChange={e => setSelectedYear(e.target.value)}
-              className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-[15px] font-medium text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             >
               {years.map(y => (
                 <option key={y} value={y}>{t('year_label', { year: y })}</option>
@@ -399,12 +399,12 @@ const SdgsCluster = () => {
                         </ResponsiveContainer>
                         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                           <p className="text-2xl font-bold text-gray-900">{totalPubs.toLocaleString()}</p>
-                          <p className="text-xs text-gray-500 mt-0.5">{t('charts.publications_label')}</p>
+                          <p className="text-sm text-gray-500 mt-0.5">{t('charts.publications_label')}</p>
                         </div>
                       </div>
                       <div className="flex flex-wrap justify-center gap-x-4 gap-y-2">
                         {categoryPie.map(e => (
-                          <div key={e.name} className="flex items-center gap-1.5 text-xs text-gray-600">
+                          <div key={e.name} className="flex items-center gap-1.5 text-sm text-gray-600">
                             <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: e.color }} />
                             {t(`categories.${e.name}`)} ({e.value.toLocaleString()})
                           </div>
@@ -430,16 +430,16 @@ const SdgsCluster = () => {
                       >
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex items-center gap-2">
-                            <span className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-700">
+                            <span className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-[15px] font-bold text-gray-700">
                               {sdg.rank}
                             </span>
                             <img src={`/assets/sdgs/logos/Arthboard_SDG${sdg.sdg}.svg`} alt={`SDG ${sdg.sdg}`} className="w-8 h-8 rounded" />
                           </div>
-                          <span className="text-xs font-bold text-gray-400">SDG {sdg.sdg}</span>
+                          <span className="text-sm font-bold text-gray-400">SDG {sdg.sdg}</span>
                         </div>
-                        <h4 className="font-bold text-gray-900 text-sm mb-3 line-clamp-2">{sdg.name}</h4>
+                        <h4 className="font-bold text-gray-900 text-[15px] mb-3 line-clamp-2">{sdg.name}</h4>
                         <p className="text-2xl font-bold text-gray-900">{sdg.count.toLocaleString()}</p>
-                        <p className="text-xs text-gray-500">{t('sdg_cards.publications')}</p>
+                        <p className="text-sm text-gray-500">{t('sdg_cards.publications')}</p>
                       </div>
                     ))}
                   </div>
@@ -476,18 +476,18 @@ const SdgsCluster = () => {
                         >
                           {sdg.count > 0 ? (
                             <>
-                              <p className="text-white text-xs font-bold leading-none">{sdg.count.toLocaleString()}</p>
-                              <p className="text-white/75 text-[9px]">{t('sdg_cards.publications')}</p>
+                              <p className="text-white text-sm font-bold leading-none">{sdg.count.toLocaleString()}</p>
+                              <p className="text-white/75 text-xs">{t('sdg_cards.publications')}</p>
                             </>
                           ) : (
-                            <p className="text-white/75 text-[9px]">{t('sdg_cards.empty.title')}</p>
+                            <p className="text-white/75 text-xs">{t('sdg_cards.empty.title')}</p>
                           )}
                         </div>
                       </div>
                     </button>
                   ))}
                 </div>
-                <p className="text-xs text-gray-400 mt-3 text-center">{t('sdg_cards.click_hint')}</p>
+                <p className="text-sm text-gray-400 mt-3 text-center">{t('sdg_cards.click_hint')}</p>
               </div>
 
               {/* Selected SDG Articles Panel */}
@@ -511,7 +511,7 @@ const SdgsCluster = () => {
                         <h3 className="font-bold text-gray-900">
                           {t('articles.title', { sdg: `SDG ${selectedSdg}` })}
                         </h3>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-sm text-gray-500">
                           {allSdgs.find(s => s.sdg === selectedSdg)?.name}
                         </p>
                       </div>
@@ -519,7 +519,7 @@ const SdgsCluster = () => {
                     <div className="flex items-center gap-3">
                       <Link
                         to={`/articles?sdg=${selectedSdg}`}
-                        className="text-sm text-indigo-600 font-medium hover:text-indigo-700"
+                        className="text-[15px] text-indigo-600 font-medium hover:text-indigo-700"
                       >
                         {t('articles.view_all')}
                       </Link>
@@ -542,7 +542,7 @@ const SdgsCluster = () => {
                       return (
                         <div className="flex items-center justify-center gap-3 py-12 text-gray-500">
                           <div className="animate-spin rounded-full h-5 w-5 border-2 border-indigo-600 border-t-transparent" />
-                          <span className="text-sm">{t('loading')}</span>
+                          <span className="text-[15px]">{t('loading')}</span>
                         </div>
                       );
                     }
@@ -556,7 +556,7 @@ const SdgsCluster = () => {
                             onError={e => { e.target.style.display = 'none'; }}
                           />
                           <p className="font-semibold text-gray-700">{t('articles.no_articles.title')}</p>
-                          <p className="text-sm text-gray-500 mt-1 max-w-md">{t('articles.no_articles.subtitle')}</p>
+                          <p className="text-[15px] text-gray-500 mt-1 max-w-md">{t('articles.no_articles.subtitle')}</p>
                         </div>
                       );
                     }
@@ -569,27 +569,27 @@ const SdgsCluster = () => {
                             className="flex gap-4 p-5 hover:bg-gray-50 transition-colors group"
                           >
                             <div
-                              className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm"
+                              className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-[15px]"
                               style={{ backgroundColor: SDG_COLORS[selectedSdg] }}
                             >
                               {i + 1}
                             </div>
                             <div className="flex-grow min-w-0">
-                              <h4 className="font-semibold text-gray-900 text-sm line-clamp-2 group-hover:text-indigo-600 transition-colors">
+                              <h4 className="font-semibold text-gray-900 text-[15px] line-clamp-2 group-hover:text-indigo-600 transition-colors">
                                 {article.title}
                               </h4>
-                              <p className="text-xs text-gray-500 mt-1 truncate">
+                              <p className="text-sm text-gray-500 mt-1 truncate">
                                 {Array.isArray(article.authors)
                                   ? article.authors.slice(0, 3).join(', ')
                                   : article.authors}
                               </p>
-                              <p className="text-xs text-gray-400 mt-0.5">
+                              <p className="text-sm text-gray-400 mt-0.5">
                                 {[article.journal, article.year].filter(Boolean).join(' · ')}
                               </p>
                             </div>
                             <div className="shrink-0 text-right ml-2">
-                              <p className="text-sm font-bold text-gray-900">{(article.citations || 0).toLocaleString()}</p>
-                              <p className="text-[10px] text-gray-400">{t('articles.citations')}</p>
+                              <p className="text-[15px] font-bold text-gray-900">{(article.citations || 0).toLocaleString()}</p>
+                              <p className="text-xs text-gray-400">{t('articles.citations')}</p>
                             </div>
                           </Link>
                         ))}
@@ -609,7 +609,7 @@ const SdgsCluster = () => {
                 <div className="space-y-3">
                   {[...allSdgs].sort((a, b) => b.count - a.count).map((sdg, i) => (
                     <div key={sdg.sdg} className="flex items-center gap-3">
-                      <span className="w-5 text-xs font-bold text-gray-400 shrink-0 text-right">{i + 1}</span>
+                      <span className="w-5 text-sm font-bold text-gray-400 shrink-0 text-right">{i + 1}</span>
                       <img
                         src={`/assets/sdgs/icons/sdg-${sdg.sdg}.svg`}
                         alt={`SDG ${sdg.sdg}`}
@@ -617,10 +617,10 @@ const SdgsCluster = () => {
                       />
                       <div className="flex-grow min-w-0">
                         <div className="flex justify-between items-center mb-1">
-                          <span className="text-xs font-semibold text-gray-700 truncate">
+                          <span className="text-sm font-semibold text-gray-700 truncate">
                             SDG {sdg.sdg}: {sdg.name}
                           </span>
-                          <span className="text-xs text-gray-500 shrink-0 ml-2">
+                          <span className="text-sm text-gray-500 shrink-0 ml-2">
                             {sdg.count.toLocaleString()} · {sdg.percentage}%
                           </span>
                         </div>
@@ -641,7 +641,7 @@ const SdgsCluster = () => {
                       d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
                   <p className="font-semibold text-gray-700">{t('comparison.no_data.title')}</p>
-                  <p className="text-sm text-gray-500 mt-1 max-w-sm">{t('comparison.no_data.subtitle')}</p>
+                  <p className="text-[15px] text-gray-500 mt-1 max-w-sm">{t('comparison.no_data.subtitle')}</p>
                 </div>
               )}
             </div>
@@ -677,7 +677,7 @@ const SdgsCluster = () => {
                   ))}
                 </MapContainer>
               </div>
-              <div className="p-4 flex items-center justify-center gap-6 text-xs border-t border-gray-100">
+              <div className="p-4 flex items-center justify-center gap-6 text-sm border-t border-gray-100">
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-green-700 shrink-0" />
                   <span className="text-gray-600">{t('map.legend_high')}</span>
@@ -694,7 +694,7 @@ const SdgsCluster = () => {
           {activeTab === 'tren' && (
             <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mb-8">
               <h3 className="text-lg font-bold text-gray-900 mb-1">{t('trends.title')}</h3>
-              <p className="text-sm text-gray-500 mb-6">{t('trends.subtitle')}</p>
+              <p className="text-[15px] text-gray-500 mb-6">{t('trends.subtitle')}</p>
               {trendsData?.timeline?.length > 0 ? (
                 <>
                   <ResponsiveContainer width="100%" height={360}>
@@ -719,7 +719,7 @@ const SdgsCluster = () => {
                   </ResponsiveContainer>
                   <div className="mt-4 flex flex-wrap gap-2 justify-center">
                     {(trendsData.top_sdgs || []).map(n => (
-                      <div key={n} className="flex items-center gap-1.5 text-xs text-gray-600">
+                      <div key={n} className="flex items-center gap-1.5 text-sm text-gray-600">
                         <span className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: SDG_COLORS[n] }} />
                         SDG {n}: {allSdgs.find(s => s.sdg === n)?.name}
                       </div>
@@ -733,7 +733,7 @@ const SdgsCluster = () => {
                       d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
                   </svg>
                   <p className="font-semibold text-gray-700">{t('trends.no_data.title')}</p>
-                  <p className="text-sm text-gray-500 mt-1 max-w-sm">{t('trends.no_data.subtitle')}</p>
+                  <p className="text-[15px] text-gray-500 mt-1 max-w-sm">{t('trends.no_data.subtitle')}</p>
                 </div>
               )}
             </div>

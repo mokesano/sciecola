@@ -39,8 +39,8 @@ const EmptyState = ({
       </div>
       
       {/* Teks Keterangan */}
-      <h4 className="text-sm font-semibold text-gray-800 mb-1">{title}</h4>
-      <p className="text-xs text-gray-500 max-w-[250px] leading-relaxed">
+      <h4 className="text-[15px] font-semibold text-gray-800 mb-1">{title}</h4>
+      <p className="text-sm text-gray-500 max-w-[250px] leading-relaxed">
         {message}
       </p>
     </div>

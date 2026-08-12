@@ -52,7 +52,7 @@ const About = () => {
       <main className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
 
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-gray-600 mb-10">
+        <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-10">
           <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
           <span className="text-gray-400">›</span>
           <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
@@ -104,13 +104,13 @@ const About = () => {
                     </div>
                     <div className="flex-grow">
                       <h4 className="font-bold text-gray-900 mb-2">{t(`tech.items.${key}.title`)}</h4>
-                      <p className="text-sm text-gray-600 mb-4 leading-relaxed">{t(`tech.items.${key}.description`)}</p>
+                      <p className="text-[15px] text-gray-600 mb-4 leading-relaxed">{t(`tech.items.${key}.description`)}</p>
                       <div className="flex items-center gap-3">
                         <div className="flex-grow h-2 bg-gray-200 rounded-full overflow-hidden">
                           <div className={`h-full ${cfg.color} rounded-full transition-all duration-500`}
                             style={{ width: `${weight}%` }} />
                         </div>
-                        <span className="text-sm font-semibold text-gray-700 w-12 text-right">{weight}%</span>
+                        <span className="text-[15px] font-semibold text-gray-700 w-12 text-right">{weight}%</span>
                       </div>
                     </div>
                   </div>
@@ -141,7 +141,7 @@ const About = () => {
               {stats.map((s, idx) => (
                 <div key={idx} className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm text-center hover:shadow-md transition-all">
                   <p className="text-2xl lg:text-3xl font-bold text-indigo-600 mb-1">{s.value}</p>
-                  <p className="text-xs text-gray-600">{s.label}</p>
+                  <p className="text-sm text-gray-600">{s.label}</p>
                 </div>
               ))}
             </div>
@@ -164,7 +164,7 @@ const About = () => {
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-900 mb-2">{t(`values.items.${key}.title`)}</h4>
-                    <p className="text-sm text-gray-600 leading-relaxed">{t(`values.items.${key}.description`)}</p>
+                    <p className="text-[15px] text-gray-600 leading-relaxed">{t(`values.items.${key}.description`)}</p>
                   </div>
                 </div>
               </div>
@@ -185,7 +185,7 @@ const About = () => {
               </div>
               <div>
                 <h3 className="font-bold text-gray-900 group-hover:text-orange-600 transition-colors">{t('see_also.history.title')}</h3>
-                <p className="text-sm text-gray-600">{t('see_also.history.subtitle')}</p>
+                <p className="text-[15px] text-gray-600">{t('see_also.history.subtitle')}</p>
               </div>
             </Link>
             <Link to="/teams"
@@ -197,7 +197,7 @@ const About = () => {
               </div>
               <div>
                 <h3 className="font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">{t('see_also.team.title')}</h3>
-                <p className="text-sm text-gray-600">{t('see_also.team.subtitle')}</p>
+                <p className="text-[15px] text-gray-600">{t('see_also.team.subtitle')}</p>
               </div>
             </Link>
           </div>
@@ -255,7 +255,7 @@ const Card = ({ iconPath, title, description }) => (
       </svg>
     </div>
     <h4 className="font-bold text-gray-900 mb-2">{title}</h4>
-    <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
+    <p className="text-[15px] text-gray-600 leading-relaxed">{description}</p>
   </div>
 );
 

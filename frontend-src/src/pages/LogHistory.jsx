@@ -162,7 +162,7 @@ const LogHistory = () => {
       {!loading && !error && (
       <>
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-4">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
@@ -187,13 +187,13 @@ const LogHistory = () => {
               placeholder={t('search_ph')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full md:w-72 pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+              className="w-full md:w-72 pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-[15px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
             />
             <svg className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
-          <button className="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2 shrink-0">
+          <button className="px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-[15px] font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2 shrink-0">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
             </svg>
@@ -212,10 +212,10 @@ const LogHistory = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={meta.icon} />
                 </svg>
               </div>
-              <span className="text-sm text-gray-600 font-medium">{t(`stats.${meta.key}`)}</span>
+              <span className="text-[15px] text-gray-600 font-medium">{t(`stats.${meta.key}`)}</span>
             </div>
             <p className="text-2xl font-bold text-gray-900">{statValues[meta.key]}</p>
-            <p className="text-xs font-medium text-green-600 mt-1">
+            <p className="text-sm font-medium text-green-600 mt-1">
               {statChanges[meta.key]} {t('stats.change_suffix')}
             </p>
           </div>
@@ -239,7 +239,7 @@ const LogHistory = () => {
                     onChange={() => setTimeRange(id)}
                     className="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500"
                   />
-                  <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">{t(`time_range.${id}`)}</span>
+                  <span className="text-[15px] text-gray-700 group-hover:text-gray-900 transition-colors">{t(`time_range.${id}`)}</span>
                 </label>
               ))}
             </div>
@@ -257,7 +257,7 @@ const LogHistory = () => {
                     onChange={() => handleActivityToggle(id)}
                     className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                   />
-                  <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">{t(`activity_types.${id}`)}</span>
+                  <span className="text-[15px] text-gray-700 group-hover:text-gray-900 transition-colors">{t(`activity_types.${id}`)}</span>
                 </label>
               ))}
             </div>
@@ -275,13 +275,13 @@ const LogHistory = () => {
                     onChange={() => setContentTypes(contentTypes.includes(type) ? contentTypes.filter(x => x !== type) : [...contentTypes, type])}
                     className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                   />
-                  <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">{t(`content_types.${type}`)}</span>
+                  <span className="text-[15px] text-gray-700 group-hover:text-gray-900 transition-colors">{t(`content_types.${type}`)}</span>
                 </label>
               ))}
             </div>
           </div>
 
-          <button className="w-full py-2.5 text-sm text-indigo-600 font-medium border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-colors flex items-center justify-center gap-2">
+          <button className="w-full py-2.5 text-[15px] text-indigo-600 font-medium border border-indigo-200 rounded-xl hover:bg-indigo-50 transition-colors flex items-center justify-center gap-2">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
             </svg>
@@ -296,7 +296,7 @@ const LogHistory = () => {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer"
+              className="px-3 py-2 bg-white border border-gray-200 rounded-lg text-[15px] font-medium text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer"
             >
               <option value="newest">{t('sort.newest')}</option>
               <option value="oldest">{t('sort.oldest')}</option>
@@ -308,7 +308,7 @@ const LogHistory = () => {
             {logHistory.length > 0 ? logHistory.map((group, gIdx) => (
               <div key={gIdx} className={gIdx > 0 ? 'border-t border-gray-100' : ''}>
                 <div className="px-6 py-3 bg-gray-50 border-b border-gray-100">
-                  <h3 className="text-sm font-bold text-indigo-600">{group.date}</h3>
+                  <h3 className="text-[15px] font-bold text-indigo-600">{group.date}</h3>
                 </div>
                 <div className="divide-y divide-gray-100">
                   {group.items.map((item, iIdx) => (
@@ -316,7 +316,7 @@ const LogHistory = () => {
                       <div className="flex flex-col sm:flex-row gap-4">
                         {/* Time */}
                         <div className="shrink-0 w-full sm:w-16 text-left sm:text-right">
-                          <span className="text-sm font-medium text-gray-500">{item.time}</span>
+                          <span className="text-[15px] font-medium text-gray-500">{item.time}</span>
                         </div>
                         
                         {/* Icon */}
@@ -330,11 +330,11 @@ const LogHistory = () => {
                         
                         {/* Content */}
                         <div className="flex-grow min-w-0">
-                          <p className="text-sm text-gray-600 mb-0.5">{item.desc}</p>
-                          <p className="text-sm font-semibold text-gray-900 mb-0.5 truncate">{item.title}</p>
-                          {item.sub && <p className="text-xs text-gray-500">{item.sub}</p>}
+                          <p className="text-[15px] text-gray-600 mb-0.5">{item.desc}</p>
+                          <p className="text-[15px] font-semibold text-gray-900 mb-0.5 truncate">{item.title}</p>
+                          {item.sub && <p className="text-sm text-gray-500">{item.sub}</p>}
                           {item.collection && (
-                            <span className="inline-block mt-1.5 px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded text-[10px] font-bold tracking-wide uppercase">
+                            <span className="inline-block mt-1.5 px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded text-xs font-bold tracking-wide uppercase">
                               {item.collection}
                             </span>
                           )}
@@ -343,7 +343,7 @@ const LogHistory = () => {
                         {/* Actions */}
                         <div className="shrink-0 flex items-center gap-2 sm:justify-end">
                           {item.action && (
-                            <button className="px-3 py-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors whitespace-nowrap">
+                            <button className="px-3 py-1.5 text-sm font-semibold text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors whitespace-nowrap">
                               {item.action}
                             </button>
                           )}
@@ -367,7 +367,7 @@ const LogHistory = () => {
 
           {logHistory.length > 0 && (
           <div className="mt-6 text-center">
-            <button className="px-6 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 hover:border-gray-300 transition-all inline-flex items-center gap-2 shadow-sm">
+            <button className="px-6 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl text-[15px] font-medium hover:bg-gray-50 hover:border-gray-300 transition-all inline-flex items-center gap-2 shadow-sm">
               {t('load_more')}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />

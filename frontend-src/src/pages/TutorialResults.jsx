@@ -33,7 +33,7 @@ const TutorialResults = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-8">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">›</span>
         <Link to="/help" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.help')}</Link>
@@ -51,13 +51,13 @@ const TutorialResults = () => {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
             <p className="text-lg text-gray-600">{t('subtitle')}</p>
             <div className="flex items-center gap-4 mt-4">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-[15px] font-medium">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 {t('duration')}
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm font-medium">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-[15px] font-medium">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -90,7 +90,7 @@ const TutorialResults = () => {
               <p className="text-gray-600 mb-4">{step.description}</p>
               <ul className="space-y-2">
                 {(step.details ?? []).map((detail, i) => (
-                  <li key={i} className="flex items-start space-x-2 text-sm">
+                  <li key={i} className="flex items-start space-x-2 text-[15px]">
                     <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                     <span className="text-gray-700">{detail}</span>
                   </li>
@@ -117,12 +117,12 @@ const TutorialResults = () => {
             {sdgs.map((sdg) => (
               <div key={sdg.goal} className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-semibold text-blue-600">SDG {sdg.goal}</span>
-                  <span className={`text-sm font-bold px-2 py-1 rounded ${scoreBadge(sdg.score)}`}>
+                  <span className="text-sm font-semibold text-blue-600">SDG {sdg.goal}</span>
+                  <span className={`text-[15px] font-bold px-2 py-1 rounded ${scoreBadge(sdg.score)}`}>
                     {sdg.score}%
                   </span>
                 </div>
-                <p className="text-sm text-gray-700">{sdg.name}</p>
+                <p className="text-[15px] text-gray-700">{sdg.name}</p>
               </div>
             ))}
           </div>
@@ -132,10 +132,10 @@ const TutorialResults = () => {
               <BookOpen className="w-4 h-4 mr-2" />
               {example.interpretation_label}
             </h3>
-            <p className="text-gray-700 text-sm mb-3">{example.interpretation}</p>
+            <p className="text-gray-700 text-[15px] mb-3">{example.interpretation}</p>
             <button
               onClick={copyExample}
-              className="flex items-center space-x-2 text-sm text-blue-600 hover:text-blue-700 transition-colors"
+              className="flex items-center space-x-2 text-[15px] text-blue-600 hover:text-blue-700 transition-colors"
             >
               <Copy className="w-4 h-4" />
               <span>{example.copy}</span>
@@ -157,7 +157,7 @@ const TutorialResults = () => {
                 <AlertCircle className="w-5 h-5 text-orange-500 mr-2" />
                 {item.mistake}
               </h3>
-              <p className="text-gray-600 text-sm">{item.solution}</p>
+              <p className="text-gray-600 text-[15px]">{item.solution}</p>
             </div>
           ))}
         </div>
@@ -181,7 +181,7 @@ const TutorialResults = () => {
                 </h3>
                 <ExternalLink className="w-5 h-5 text-green-600" />
               </div>
-              <p className="text-sm text-gray-600">{resource.description}</p>
+              <p className="text-[15px] text-gray-600">{resource.description}</p>
             </a>
           ))}
         </div>

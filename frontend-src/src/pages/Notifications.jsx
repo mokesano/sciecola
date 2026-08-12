@@ -83,7 +83,7 @@ const Notification = () => {
   return (
     <main className="pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-6">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400"><Chevron /></span>
         <Link to="/dashboard" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.dashboard')}</Link>
@@ -105,7 +105,7 @@ const Notification = () => {
           <button
             onClick={markAllAsRead}
             disabled={unreadCount === 0 || loadingAction === 'markAll'}
-            className="px-4 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 shadow-sm"
+            className="px-4 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl text-[15px] font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 shadow-sm"
           >
             {loadingAction === 'markAll' ? (
               <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
@@ -122,7 +122,7 @@ const Notification = () => {
           <button
             onClick={clearAll}
             disabled={notifications.length === 0 || loadingAction === 'clear'}
-            className="px-4 py-2.5 bg-white border border-gray-200 text-red-600 rounded-xl text-sm font-medium hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 shadow-sm"
+            className="px-4 py-2.5 bg-white border border-gray-200 text-red-600 rounded-xl text-[15px] font-medium hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2 shadow-sm"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -138,14 +138,14 @@ const Notification = () => {
           <button
             key={f}
             onClick={() => setActiveFilter(f)}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-full text-[15px] font-medium whitespace-nowrap transition-colors flex items-center gap-2 ${
               activeFilter === f
                 ? 'bg-indigo-600 text-white shadow-md'
                 : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
             }`}
           >
             {t(`filter.${f}`)}
-            <span className={`px-2 py-0.5 rounded-full text-xs ${
+            <span className={`px-2 py-0.5 rounded-full text-sm ${
               activeFilter === f ? 'bg-indigo-500' : 'bg-gray-100 text-gray-600'
             }`}>
               {counts[f]}
@@ -176,13 +176,13 @@ const Notification = () => {
                       <div className="flex justify-between items-start gap-4">
                         <div>
                           <div className="flex items-center gap-2 mb-1">
-                            <h3 className={`font-semibold text-sm ${!notif.read ? 'text-gray-900' : 'text-gray-700'}`}>
+                            <h3 className={`font-semibold text-[15px] ${!notif.read ? 'text-gray-900' : 'text-gray-700'}`}>
                               {notif.title}
                             </h3>
                             {!notif.read && <span className="w-2 h-2 bg-indigo-600 rounded-full animate-pulse"></span>}
                           </div>
-                          <p className="text-sm text-gray-600 line-clamp-2 mb-2">{notif.message}</p>
-                          <p className="text-xs text-gray-500">{notif.time}</p>
+                          <p className="text-[15px] text-gray-600 line-clamp-2 mb-2">{notif.message}</p>
+                          <p className="text-sm text-gray-500">{notif.time}</p>
                         </div>
 
                         <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
@@ -216,7 +216,7 @@ const Notification = () => {
           </div>
 
           <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 text-center">
-            <button className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
+            <button className="text-[15px] font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
               {t('actions.load_more')}
             </button>
           </div>
@@ -237,7 +237,7 @@ const Notification = () => {
           {activeFilter !== 'all' && (
             <button
               onClick={() => setActiveFilter('all')}
-              className="mt-6 px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+              className="mt-6 px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-[15px] font-medium hover:bg-indigo-700 transition-colors"
             >
               {t('empty.cta')}
             </button>
@@ -251,7 +251,7 @@ const Notification = () => {
           <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
           </svg>
-          <span className="text-sm font-medium">{toast.message}</span>
+          <span className="text-[15px] font-medium">{toast.message}</span>
         </div>
       )}
     </main>

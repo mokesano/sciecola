@@ -57,7 +57,7 @@ const MaintenanceMode = () => {
             <div className="bg-gradient-to-r from-indigo-600 to-purple-600 h-4 rounded-full animate-pulse w-3/4"></div>
           </div>
 
-          <p className="text-sm text-gray-600">
+          <p className="text-[15px] text-gray-600">
             {t('error.expectedCompletion', 'Perkiraan selesai:')}{' '}
             <span className="font-semibold text-indigo-600">
               {t('error.soon', 'Segera')}
@@ -74,7 +74,7 @@ const MaintenanceMode = () => {
               </svg>
               {t('error.whatsBeingDone', 'Apa yang Dikerjakan?')}
             </h3>
-            <ul className="text-sm text-blue-700 text-left space-y-1">
+            <ul className="text-[15px] text-blue-700 text-left space-y-1">
               <li>• {t('error.upgradeServer', 'Peningkatan kapasitas server')}</li>
               <li>• {t('error.improveSecurity', 'Peningkatan keamanan sistem')}</li>
               <li>• {t('error.optimizePerformance', 'Optimasi performa')}</li>
@@ -88,7 +88,7 @@ const MaintenanceMode = () => {
               </svg>
               {t('error.willBeAvailable', 'Akan Tersedia')}
             </h3>
-            <ul className="text-sm text-green-700 text-left space-y-1">
+            <ul className="text-[15px] text-green-700 text-left space-y-1">
               <li>• {t('error.fasterLoading', 'Waktu muat lebih cepat')}</li>
               <li>• {t('error.betterFeatures', 'Fitur yang lebih baik')}</li>
               <li>• {t('error.enhancedSecurity', 'Keamanan yang ditingkatkan')}</li>
@@ -125,7 +125,7 @@ const MaintenanceMode = () => {
 
         {/* Emergency Contact */}
         <div className="mt-8 pt-8 border-t border-gray-200">
-          <p className="text-sm text-gray-600 mb-2">
+          <p className="text-[15px] text-gray-600 mb-2">
             {t('error.needUrgentHelp', 'Butuh bantuan mendesak?')}
           </p>
           <a
@@ -137,7 +137,7 @@ const MaintenanceMode = () => {
         </div>
 
         {/* Auto Refresh Notice */}
-        <div className="mt-6 flex items-center justify-center space-x-2 text-sm text-gray-500">
+        <div className="mt-6 flex items-center justify-center space-x-2 text-[15px] text-gray-500">
           <div className="animate-pulse w-2 h-2 bg-green-500 rounded-full"></div>
           <span>{t('error.autoRefresh', 'Halaman akan refresh otomatis ketika selesai')}</span>
         </div>

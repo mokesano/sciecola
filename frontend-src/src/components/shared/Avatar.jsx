@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SIZES = { xs: 'w-6 h-6 text-xs', sm: 'w-8 h-8 text-sm', md: 'w-10 h-10 text-base', lg: 'w-12 h-12 text-lg', xl: 'w-16 h-16 text-xl' };
+const SIZES = { xs: 'w-6 h-6 text-sm', sm: 'w-8 h-8 text-[15px]', md: 'w-10 h-10 text-base', lg: 'w-12 h-12 text-lg', xl: 'w-16 h-16 text-xl' };
 
 const initials = (name = '') =>
   name.split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || '?';

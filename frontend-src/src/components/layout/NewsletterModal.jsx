@@ -103,7 +103,7 @@ const NewsletterModal = () => {
         </button>
 
         <div className="relative p-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-indigo-300">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-300">
             {t('newsletter.title', 'Berlangganan')}{' '}
             <span className="text-indigo-400">{t('newsletter.highlight', 'Newsletter')}</span>
           </p>
@@ -119,12 +119,12 @@ const NewsletterModal = () => {
               placeholder={t('newsletter.placeholder', 'Masukkan email Anda')}
               required
               disabled={submitting || status === 'ok'}
-              className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition-all disabled:opacity-60"
+              className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-[15px] text-white placeholder-slate-500 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition-all disabled:opacity-60"
             />
             <button
               type="submit"
               disabled={submitting || status === 'ok'}
-              className={`rounded-xl px-4 py-3 text-sm font-semibold shadow-lg shadow-indigo-900/40 transition-all flex items-center justify-center gap-2 ${
+              className={`rounded-xl px-4 py-3 text-[15px] font-semibold shadow-lg shadow-indigo-900/40 transition-all flex items-center justify-center gap-2 ${
                 status === 'ok'
                   ? 'bg-green-600 text-white cursor-default'
                   : 'bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-70'
@@ -145,7 +145,7 @@ const NewsletterModal = () => {
           <button
             type="button"
             onClick={dismiss}
-            className="mt-4 w-full text-xs text-slate-400 hover:text-slate-200 transition-colors"
+            className="mt-4 w-full text-sm text-slate-400 hover:text-slate-200 transition-colors"
           >
             {t('newsletter.dismiss', 'Lain kali saja')}
           </button>

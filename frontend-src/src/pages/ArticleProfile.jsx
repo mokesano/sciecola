@@ -19,9 +19,9 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-      <p className="text-sm font-semibold text-gray-900">{label}</p>
+      <p className="text-[15px] font-semibold text-gray-900">{label}</p>
       {payload.map((entry, i) => (
-        <p key={i} className="text-sm" style={{ color: entry.color }}>
+        <p key={i} className="text-[15px]" style={{ color: entry.color }}>
           {entry.name}: {entry.value?.toLocaleString?.() ?? entry.value}
         </p>
       ))}
@@ -135,7 +135,7 @@ const ArticleProfile = () => {
       <svg className="w-10 h-10 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d={icon} />
       </svg>
-      <p className="text-sm">{message}</p>
+      <p className="text-[15px]">{message}</p>
     </div>
   );
 
@@ -157,14 +157,14 @@ const ArticleProfile = () => {
                 className="w-full sm:w-48 h-64 object-cover rounded-xl shadow-lg"
                 onError={(e) => { e.target.src = '/assets/img/article-default.svg'; }}
               />
-              <div className="mt-2 flex items-center gap-2 text-xs text-gray-600">
+              <div className="mt-2 flex items-center gap-2 text-sm text-gray-600">
                 <span className="px-2 py-1 bg-green-50 text-green-700 rounded font-medium">{t('header.open_access')}</span>
               </div>
             </div>
 
             <div className="flex-grow">
               <div className="mb-2">
-                <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-bold uppercase tracking-wide">
+                <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-bold uppercase tracking-wide">
                   {t('header.badge_classified')}
                 </span>
               </div>
@@ -175,13 +175,13 @@ const ArticleProfile = () => {
                   <>
                     {authors.map((author, idx) => (
                       <div key={author.id ?? idx} className="flex items-start gap-2 mb-1">
-                        <span className="font-semibold text-gray-900 text-sm">{author.name}</span>
-                        <span className="text-xs text-gray-500">{idx + 1}</span>
+                        <span className="font-semibold text-gray-900 text-[15px]">{author.name}</span>
+                        <span className="text-sm text-gray-500">{idx + 1}</span>
                       </div>
                     ))}
                   </>
                 ) : (
-                  <p className="text-gray-500 text-sm">{t('header.no_authors')}</p>
+                  <p className="text-gray-500 text-[15px]">{t('header.no_authors')}</p>
                 )}
               </div>
 
@@ -215,22 +215,22 @@ const ArticleProfile = () => {
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-[15px]">
                 <div>
-                  <p className="text-gray-500 text-xs mb-1">{t('header.meta.type')}</p>
+                  <p className="text-gray-500 text-sm mb-1">{t('header.meta.type')}</p>
                   <p className="font-semibold text-gray-900">{a.articleType || '—'}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500 text-xs mb-1">{t('header.meta.language')}</p>
+                  <p className="text-gray-500 text-sm mb-1">{t('header.meta.language')}</p>
                   <p className="font-semibold text-gray-900">{a.language || '—'}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500 text-xs mb-1">{t('header.meta.published')}</p>
+                  <p className="text-gray-500 text-sm mb-1">{t('header.meta.published')}</p>
                   <p className="font-semibold text-gray-900">{a.publishedDate || a.year || '—'}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500 text-xs mb-1">{t('header.meta.publisher')}</p>
-                  <p className="font-semibold text-gray-900 text-xs">{a.publisher || '—'}</p>
+                  <p className="text-gray-500 text-sm mb-1">{t('header.meta.publisher')}</p>
+                  <p className="font-semibold text-gray-900 text-sm">{a.publisher || '—'}</p>
                 </div>
               </div>
             </div>
@@ -257,7 +257,7 @@ const ArticleProfile = () => {
                   </svg>
                   <p className="text-2xl font-bold text-gray-900">{s.value}</p>
                 </div>
-                <p className="text-xs text-gray-600">{t(`stats.${s.key}`)}</p>
+                <p className="text-sm text-gray-600">{t(`stats.${s.key}`)}</p>
               </div>
             ))}
           </div>
@@ -266,7 +266,7 @@ const ArticleProfile = () => {
             <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
               <div className="flex justify-between items-center mb-3">
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">{t('stats.altmetric')}</p>
+                  <p className="text-sm text-gray-500 mb-1">{t('stats.altmetric')}</p>
                   <p className="text-2xl font-bold text-gray-900">{a.altmetricScore ?? 0}</p>
                 </div>
                 <div className="w-12 h-12 rounded-full border-4 border-indigo-200 border-t-indigo-600 transform rotate-45"></div>
@@ -275,7 +275,7 @@ const ArticleProfile = () => {
           )}
           {a.impactScore !== undefined && (
             <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-              <p className="text-xs text-gray-500 mb-1">{t('stats.impact')}</p>
+              <p className="text-sm text-gray-500 mb-1">{t('stats.impact')}</p>
               <p className="text-2xl font-bold text-gray-900">{a.impactScore}</p>
             </div>
           )}
@@ -308,7 +308,7 @@ const ArticleProfile = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-1.5 px-3 py-3 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
+              className={`flex items-center gap-1.5 px-3 py-3 border-b-2 font-medium text-[15px] whitespace-nowrap transition-colors ${
                 activeTab === tab.id
                   ? 'border-indigo-600 text-indigo-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -330,16 +330,16 @@ const ArticleProfile = () => {
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
               <h3 className="text-lg font-bold text-gray-900 mb-4">{t('ringkasan.abstract')}</h3>
               {a.abstract ? (
-                <p className="text-gray-600 text-sm leading-relaxed mb-4">{a.abstract}</p>
+                <p className="text-gray-600 text-[15px] leading-relaxed mb-4">{a.abstract}</p>
               ) : (
-                <p className="text-sm text-gray-400 italic mb-4">{t('ringkasan.no_abstract')}</p>
+                <p className="text-[15px] text-gray-400 italic mb-4">{t('ringkasan.no_abstract')}</p>
               )}
               {keywords.length > 0 && (
                 <div className="mt-6">
-                  <h4 className="font-semibold text-gray-900 mb-3 text-sm">{t('ringkasan.keywords')}</h4>
+                  <h4 className="font-semibold text-gray-900 mb-3 text-[15px]">{t('ringkasan.keywords')}</h4>
                   <div className="flex flex-wrap gap-2">
                     {keywords.map((kw, idx) => (
-                      <span key={idx} className="px-3 py-1.5 bg-gray-50 text-gray-700 rounded-lg text-xs font-medium border border-gray-200">
+                      <span key={idx} className="px-3 py-1.5 bg-gray-50 text-gray-700 rounded-lg text-sm font-medium border border-gray-200">
                         {kw}
                       </span>
                     ))}
@@ -352,7 +352,7 @@ const ArticleProfile = () => {
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-bold text-gray-900">{t('ringkasan.sdg_title')}</h3>
                 {sdgDistribution.length > 0 && (
-                  <button onClick={() => setActiveTab('sdgs')} className="text-sm text-indigo-600 font-medium hover:text-indigo-700">
+                  <button onClick={() => setActiveTab('sdgs')} className="text-[15px] text-indigo-600 font-medium hover:text-indigo-700">
                     {t('ringkasan.sdg_details')}
                   </button>
                 )}
@@ -369,8 +369,8 @@ const ArticleProfile = () => {
                   </ResponsiveContainer>
                   <div className="flex-grow space-y-2">
                     {sdgDistribution.slice(0, 6).map((sdg, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-sm">
-                        <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0"
+                      <div key={idx} className="flex items-center gap-2 text-[15px]">
+                        <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-sm font-bold shrink-0"
                           style={{ backgroundColor: sdgPalette(sdg) }}>{sdg.sdg}</div>
                         <span className="text-gray-600 flex-grow truncate">{sdg.name}</span>
                         <span className="font-semibold text-gray-900">{sdg.value}%</span>
@@ -395,20 +395,20 @@ const ArticleProfile = () => {
                   onError={(e) => { e.target.src = '/assets/img/journal-default.svg'; }}
                 />
                 <div>
-                  <h4 className="font-bold text-gray-900 text-sm mb-1">{journal.name || '—'}</h4>
-                  {journal.issn && <p className="text-xs text-gray-600 mb-1">{t('ringkasan.issn', { value: journal.issn })}</p>}
-                  {a.publisher && <p className="text-xs text-gray-600">{t('ringkasan.publisher_label', { value: a.publisher })}</p>}
+                  <h4 className="font-bold text-gray-900 text-[15px] mb-1">{journal.name || '—'}</h4>
+                  {journal.issn && <p className="text-sm text-gray-600 mb-1">{t('ringkasan.issn', { value: journal.issn })}</p>}
+                  {a.publisher && <p className="text-sm text-gray-600">{t('ringkasan.publisher_label', { value: a.publisher })}</p>}
                 </div>
               </div>
               {journal.quartile && (
-                <p className="text-xs text-gray-600 pt-4 border-t border-gray-100">
+                <p className="text-sm text-gray-600 pt-4 border-t border-gray-100">
                   {t('ringkasan.quartile', { value: journal.quartile })}
                 </p>
               )}
               {journal.issn && (
                 <Link
                   to={`/journals/${journal.issn}`}
-                  className="mt-4 w-full py-2.5 border-2 border-indigo-600 text-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition-colors text-sm text-center block"
+                  className="mt-4 w-full py-2.5 border-2 border-indigo-600 text-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition-colors text-[15px] text-center block"
                 >
                   {t('ringkasan.view_journal')}
                 </Link>
@@ -417,7 +417,7 @@ const ArticleProfile = () => {
 
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
               <h3 className="text-lg font-bold text-gray-900 mb-4">{t('ringkasan.article_info')}</h3>
-              <div className="space-y-3 text-sm">
+              <div className="space-y-3 text-[15px]">
                 {[
                   { label: 'doi',       value: a.doi },
                   { label: 'eissn',     value: journal.eissn },
@@ -430,7 +430,7 @@ const ArticleProfile = () => {
                 ].filter((f) => f.value).map((f) => (
                   <div key={f.label} className="flex justify-between">
                     <span className="text-gray-600">{t(`fields.${f.label}`)}</span>
-                    <span className="font-semibold text-gray-900 text-xs ml-2 text-right">{f.value}</span>
+                    <span className="font-semibold text-gray-900 text-sm ml-2 text-right">{f.value}</span>
                   </div>
                 ))}
               </div>
@@ -440,7 +440,7 @@ const ArticleProfile = () => {
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-bold text-gray-900">{t('ringkasan.preprint')}</h3>
                 {preprintLinks.length > 0 && (
-                  <button onClick={() => setActiveTab('versi')} className="text-sm text-indigo-600 font-medium hover:text-indigo-700">
+                  <button onClick={() => setActiveTab('versi')} className="text-[15px] text-indigo-600 font-medium hover:text-indigo-700">
                     {t('ringkasan.view_all')}
                   </button>
                 )}
@@ -450,12 +450,12 @@ const ArticleProfile = () => {
                   {preprintLinks.slice(0, 3).map((pp, idx) => (
                     <a key={idx} href={pp.preprint_url} target="_blank" rel="noopener noreferrer"
                       className="flex gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors block">
-                      <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs font-bold">
+                      <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 text-sm font-bold">
                         {(pp.preprint_server || '').slice(0, 2).toUpperCase()}
                       </div>
                       <div className="flex-grow min-w-0">
-                        <p className="text-sm font-medium text-gray-900 line-clamp-1">{pp.preprint_server}</p>
-                        <p className="text-xs text-gray-500">{pp.publication_date}</p>
+                        <p className="text-[15px] font-medium text-gray-900 line-clamp-1">{pp.preprint_server}</p>
+                        <p className="text-sm text-gray-500">{pp.publication_date}</p>
                       </div>
                     </a>
                   ))}
@@ -474,16 +474,16 @@ const ArticleProfile = () => {
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
             <h3 className="text-lg font-bold text-gray-900 mb-4">{t('teks_kutipan.abstract_full')}</h3>
             {a.abstract ? (
-              <p className="text-gray-700 leading-relaxed text-sm">{a.abstract}</p>
+              <p className="text-gray-700 leading-relaxed text-[15px]">{a.abstract}</p>
             ) : (
-              <p className="text-sm text-gray-400 italic">{t('ringkasan.no_abstract')}</p>
+              <p className="text-[15px] text-gray-400 italic">{t('ringkasan.no_abstract')}</p>
             )}
             {keywords.length > 0 && (
               <div className="mt-6 pt-4 border-t border-gray-100">
                 <h4 className="font-semibold text-gray-900 mb-3">{t('ringkasan.keywords')}</h4>
                 <div className="flex flex-wrap gap-2">
                   {keywords.map((kw, i) => (
-                    <span key={i} className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm">{kw}</span>
+                    <span key={i} className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-[15px]">{kw}</span>
                   ))}
                 </div>
               </div>
@@ -493,19 +493,19 @@ const ArticleProfile = () => {
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-lg font-bold text-gray-900">{t('teks_kutipan.top_citations')}</h3>
-              <span className="text-sm text-gray-500">{t('teks_kutipan.total_citations', { count: a.citations ?? 0 })}</span>
+              <span className="text-[15px] text-gray-500">{t('teks_kutipan.total_citations', { count: a.citations ?? 0 })}</span>
             </div>
             {topCitations.length > 0 ? (
               <div className="space-y-4">
                 {topCitations.map((c, idx) => (
                   <div key={idx} className="flex gap-4 p-4 rounded-xl border border-gray-100">
                     <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center shrink-0">
-                      <span className="text-indigo-700 font-bold text-sm">#{idx + 1}</span>
+                      <span className="text-indigo-700 font-bold text-[15px]">#{idx + 1}</span>
                     </div>
                     <div className="flex-grow">
-                      <h4 className="font-semibold text-gray-900 text-sm mb-1">{c.title}</h4>
-                      <p className="text-xs text-gray-500 mb-2">{c.journal}</p>
-                      <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded text-xs font-semibold">
+                      <h4 className="font-semibold text-gray-900 text-[15px] mb-1">{c.title}</h4>
+                      <p className="text-sm text-gray-500 mb-2">{c.journal}</p>
+                      <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded text-sm font-semibold">
                         {t('teks_kutipan.citations_label', { count: c.citations })}
                       </span>
                     </div>
@@ -561,9 +561,9 @@ const ArticleProfile = () => {
                         <div className="flex items-center justify-between mb-1.5">
                           <div className="flex items-center gap-2">
                             <span className="w-3 h-3 rounded-full shrink-0" style={{ background: sdgPalette(sdg) }} />
-                            <span className="text-sm font-medium text-gray-800">SDG {sdg.sdg} — {sdg.name}</span>
+                            <span className="text-[15px] font-medium text-gray-800">SDG {sdg.sdg} — {sdg.name}</span>
                           </div>
-                          <span className="text-sm font-bold text-gray-700">{sdg.value}%</span>
+                          <span className="text-[15px] font-bold text-gray-700">{sdg.value}%</span>
                         </div>
                         <div className="w-full h-2 bg-gray-100 rounded-full">
                           <div className="h-2 rounded-full transition-all" style={{ width: `${sdg.value}%`, background: sdgPalette(sdg) }} />
@@ -575,7 +575,7 @@ const ArticleProfile = () => {
               </div>
               <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-6">
                 <h3 className="font-bold text-indigo-900 mb-2">{t('sdgs_tab.about_title')}</h3>
-                <p className="text-sm text-indigo-700 leading-relaxed">{t('sdgs_tab.about_text')}</p>
+                <p className="text-[15px] text-indigo-700 leading-relaxed">{t('sdgs_tab.about_text')}</p>
               </div>
             </>
           ) : (
@@ -607,7 +607,7 @@ const ArticleProfile = () => {
                   </svg>
                 </div>
                 <p className="text-2xl font-bold text-gray-900 mb-1">{m.value}</p>
-                <p className="text-sm text-gray-600">{t(`metrik.${m.key}`)}</p>
+                <p className="text-[15px] text-gray-600">{t(`metrik.${m.key}`)}</p>
               </div>
             ))}
           </div>
@@ -660,11 +660,11 @@ const ArticleProfile = () => {
                 {authors.map((author, idx) => (
                   <div key={idx} className="flex items-start gap-4 p-4 rounded-xl border border-gray-100">
                     <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center shrink-0">
-                      <span className="text-indigo-700 font-bold text-sm">{idx + 1}</span>
+                      <span className="text-indigo-700 font-bold text-[15px]">{idx + 1}</span>
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900">{author.name}</p>
-                      {author.affiliation && <p className="text-sm text-gray-500 mt-0.5">{author.affiliation}</p>}
+                      {author.affiliation && <p className="text-[15px] text-gray-500 mt-0.5">{author.affiliation}</p>}
                     </div>
                   </div>
                 ))}
@@ -682,12 +682,12 @@ const ArticleProfile = () => {
                     className="block p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:shadow-md transition-all group">
                     <div className="flex gap-2 mb-2 flex-wrap">
                       {(r.sdgs || []).map((s) => (
-                        <span key={s} className="px-2 py-0.5 text-xs font-bold rounded text-white"
+                        <span key={s} className="px-2 py-0.5 text-sm font-bold rounded text-white"
                           style={{ backgroundColor: SDG_COLORS[s] || '#6b7280' }}>SDG {s}</span>
                       ))}
                     </div>
-                    <h4 className="font-semibold text-gray-900 text-sm group-hover:text-indigo-600 transition-colors line-clamp-2">{r.title}</h4>
-                    <p className="text-xs text-gray-500 mt-1">{r.journal}</p>
+                    <h4 className="font-semibold text-gray-900 text-[15px] group-hover:text-indigo-600 transition-colors line-clamp-2">{r.title}</h4>
+                    <p className="text-sm text-gray-500 mt-1">{r.journal}</p>
                   </Link>
                 ))}
               </div>
@@ -717,10 +717,10 @@ const ArticleProfile = () => {
                       <h4 className="font-semibold text-gray-900">
                         {(pp.preprint_server || '').charAt(0).toUpperCase() + (pp.preprint_server || '').slice(1)}
                       </h4>
-                      <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded text-xs font-medium">{t('versi.preprint')}</span>
+                      <span className="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded text-sm font-medium">{t('versi.preprint')}</span>
                     </div>
-                    <p className="text-sm text-gray-600 line-clamp-1">{pp.preprint_doi || pp.preprint_url}</p>
-                    <p className="text-xs text-gray-500 mt-1">{t('versi.source', { source: pp.source || 'CrossRef', date: pp.publication_date || '—' })}</p>
+                    <p className="text-[15px] text-gray-600 line-clamp-1">{pp.preprint_doi || pp.preprint_url}</p>
+                    <p className="text-sm text-gray-500 mt-1">{t('versi.source', { source: pp.source || 'CrossRef', date: pp.publication_date || '—' })}</p>
                   </div>
                 </a>
               ))}
@@ -733,7 +733,7 @@ const ArticleProfile = () => {
                 </svg>
               </div>
               <p className="text-gray-500 font-medium">{t('versi.no_title')}</p>
-              <p className="text-sm text-gray-400 mt-1 max-w-md mx-auto">{t('versi.no_subtitle')}</p>
+              <p className="text-[15px] text-gray-400 mt-1 max-w-md mx-auto">{t('versi.no_subtitle')}</p>
             </div>
           )}
         </div>
@@ -744,7 +744,7 @@ const ArticleProfile = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
             <h3 className="text-lg font-bold text-gray-900 mb-5">{t('informasi.article_info')}</h3>
-            <dl className="space-y-3 text-sm">
+            <dl className="space-y-3 text-[15px]">
               {[
                 { label: 'doi',       value: a.doi },
                 { label: 'eissn',     value: journal.eissn },
@@ -779,19 +779,19 @@ const ArticleProfile = () => {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-semibold text-gray-900 group-hover:text-indigo-600 text-sm">{journal.name}</p>
+                    <p className="font-semibold text-gray-900 group-hover:text-indigo-600 text-[15px]">{journal.name}</p>
                     {(journal.eissn || journal.pissn) && (
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-sm text-gray-500 mt-1">
                         {journal.eissn && `EISSN: ${journal.eissn}`}
                         {journal.eissn && journal.pissn && ' | '}
                         {journal.pissn && `PISSN: ${journal.pissn}`}
                       </p>
                     )}
                     {(a.publisher || journal.country) && (
-                      <p className="text-xs text-gray-500">{a.publisher || ''}{a.publisher && journal.country ? ' · ' : ''}{journal.country || ''}</p>
+                      <p className="text-sm text-gray-500">{a.publisher || ''}{a.publisher && journal.country ? ' · ' : ''}{journal.country || ''}</p>
                     )}
                     {journal.quartile && (
-                      <span className="inline-block mt-1.5 px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-xs font-medium">{journal.quartile}</span>
+                      <span className="inline-block mt-1.5 px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-sm font-medium">{journal.quartile}</span>
                     )}
                   </div>
                 </Link>
@@ -800,7 +800,7 @@ const ArticleProfile = () => {
 
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
               <h3 className="text-lg font-bold text-gray-900 mb-4">{t('informasi.copyright')}</h3>
-              <div className="space-y-2 text-sm">
+              <div className="space-y-2 text-[15px]">
                 <div className="flex gap-3">
                   <span className="text-gray-500 w-24 shrink-0">{t('informasi.copyright_label')}</span>
                   <span className="font-medium text-gray-800">{t('informasi.copyright_value', { year: new Date().getFullYear() })}</span>

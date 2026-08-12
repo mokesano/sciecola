@@ -27,7 +27,7 @@ const TutorialExport = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-8">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">›</span>
         <Link to="/help" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.help')}</Link>
@@ -45,13 +45,13 @@ const TutorialExport = () => {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
             <p className="text-lg text-gray-600">{t('subtitle')}</p>
             <div className="flex items-center gap-4 mt-4">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-[15px] font-medium">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 {t('duration')}
               </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm font-medium">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-[15px] font-medium">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -81,7 +81,7 @@ const TutorialExport = () => {
                 <div className="text-blue-600">{STEP_ICONS[idx] || STEP_ICONS[0]}</div>
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">{step.title}</h3>
-              <p className="text-gray-600 text-sm">{step.description}</p>
+              <p className="text-gray-600 text-[15px]">{step.description}</p>
             </div>
           ))}
         </div>
@@ -99,12 +99,12 @@ const TutorialExport = () => {
                   <h3 className="font-semibold text-gray-900 mb-2">{format.title}</h3>
                   <p className="text-gray-600 mb-3">{format.description}</p>
                   <div className="mb-3">
-                    <p className="text-sm font-medium text-gray-700 mb-1">{t('formats_use_label')}</p>
-                    <p className="text-sm text-gray-600">{format.useCase}</p>
+                    <p className="text-[15px] font-medium text-gray-700 mb-1">{t('formats_use_label')}</p>
+                    <p className="text-[15px] text-gray-600">{format.useCase}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {(format.features ?? []).map((feature, idx) => (
-                      <span key={idx} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                      <span key={idx} className="px-2 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
                         {feature}
                       </span>
                     ))}

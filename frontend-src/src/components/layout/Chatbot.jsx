@@ -197,8 +197,8 @@ const Chatbot = () => {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-gray-900">Status: Semua Sistem Berjalan Normal</p>
-                    <p className="text-xs text-gray-500 mt-0.5">
+                    <p className="text-[15px] font-semibold text-gray-900">Status: Semua Sistem Berjalan Normal</p>
+                    <p className="text-sm text-gray-500 mt-0.5">
                       Diperbarui: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </p>
                   </div>
@@ -210,8 +210,8 @@ const Chatbot = () => {
                   className="bg-white rounded-xl px-4 py-3.5 flex items-center justify-between w-full shadow-sm border border-gray-100 hover:border-indigo-300 hover:shadow-md transition-all group text-left"
                 >
                   <div>
-                    <p className="text-sm font-semibold text-gray-900">Kirim pesan</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Kami biasanya membalas dalam beberapa menit</p>
+                    <p className="text-[15px] font-semibold text-gray-900">Kirim pesan</p>
+                    <p className="text-sm text-gray-500 mt-0.5">Kami biasanya membalas dalam beberapa menit</p>
                   </div>
                   <svg className="w-5 h-5 text-indigo-500 group-hover:translate-x-0.5 transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
@@ -226,7 +226,7 @@ const Chatbot = () => {
                     value={helpSearch}
                     onChange={e => setHelpSearch(e.target.value)}
                     onFocus={() => setActiveTab('help')}
-                    className="w-full bg-white border border-gray-200 rounded-xl pl-4 pr-10 py-3 text-sm focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 shadow-sm"
+                    className="w-full bg-white border border-gray-200 rounded-xl pl-4 pr-10 py-3 text-[15px] focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 shadow-sm"
                   />
                   <svg className="w-4 h-4 text-indigo-400 absolute right-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -241,7 +241,7 @@ const Chatbot = () => {
                       onClick={() => setActiveTab('help')}
                       className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 transition-colors text-left group"
                     >
-                      <span className="text-sm text-gray-700 group-hover:text-gray-900">{item.label}</span>
+                      <span className="text-[15px] text-gray-700 group-hover:text-gray-900">{item.label}</span>
                       <svg className="w-4 h-4 text-indigo-400 shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                       </svg>
@@ -269,8 +269,8 @@ const Chatbot = () => {
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-white font-semibold text-sm leading-none">Asisten Sciecola</p>
-                  <p className="text-indigo-300 text-xs mt-0.5">Didukung pencarian cerdas</p>
+                  <p className="text-white font-semibold text-[15px] leading-none">Asisten Sciecola</p>
+                  <p className="text-indigo-300 text-sm mt-0.5">Didukung pencarian cerdas</p>
                 </div>
                 <button onClick={() => setIsOpen(false)} aria-label="Tutup" className="text-indigo-300 hover:text-white transition-colors">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -288,13 +288,13 @@ const Chatbot = () => {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                         </svg>
                       </div>
-                      <div className="max-w-[78%] bg-gray-100 text-gray-800 text-sm rounded-2xl rounded-bl-sm px-4 py-3 leading-relaxed">
+                      <div className="max-w-[78%] bg-gray-100 text-gray-800 text-[15px] rounded-2xl rounded-bl-sm px-4 py-3 leading-relaxed">
                         {msg.text}
                       </div>
                     </div>
                   ) : (
                     <div key={msg.id} className="flex items-end gap-2 justify-end">
-                      <div className="max-w-[78%] bg-indigo-600 text-white text-sm rounded-2xl rounded-br-sm px-4 py-3 leading-relaxed">
+                      <div className="max-w-[78%] bg-indigo-600 text-white text-[15px] rounded-2xl rounded-br-sm px-4 py-3 leading-relaxed">
                         {msg.text}
                       </div>
                     </div>
@@ -312,7 +312,7 @@ const Chatbot = () => {
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Ketik pesan..."
-                  className="flex-1 text-sm bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all placeholder-gray-400 text-gray-800"
+                  className="flex-1 text-[15px] bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition-all placeholder-gray-400 text-gray-800"
                 />
                 <button
                   onClick={sendMessage}
@@ -333,8 +333,8 @@ const Chatbot = () => {
             <>
               <div className="bg-[#1e1b4b] px-4 py-3.5 flex items-center gap-3 shrink-0">
                 <div className="flex-1">
-                  <p className="text-white font-semibold text-sm">Pusat Bantuan</p>
-                  <p className="text-indigo-300 text-xs mt-0.5">Cari jawaban dari knowledge base</p>
+                  <p className="text-white font-semibold text-[15px]">Pusat Bantuan</p>
+                  <p className="text-indigo-300 text-sm mt-0.5">Cari jawaban dari knowledge base</p>
                 </div>
                 <button onClick={() => setIsOpen(false)} aria-label="Tutup" className="text-indigo-300 hover:text-white transition-colors">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -350,7 +350,7 @@ const Chatbot = () => {
                     placeholder="Cari bantuan..."
                     value={helpSearch}
                     onChange={e => setHelpSearch(e.target.value)}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-4 pr-10 py-2.5 text-sm focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-4 pr-10 py-2.5 text-[15px] focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
                     autoFocus
                   />
                   <svg className="w-4 h-4 text-indigo-400 absolute right-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -361,19 +361,19 @@ const Chatbot = () => {
 
               <div className="flex-1 overflow-y-auto bg-white divide-y divide-gray-100">
                 {helpResults.length === 0 ? (
-                  <p className="text-sm text-gray-400 text-center py-10">Tidak ada hasil untuk "{helpSearch}"</p>
+                  <p className="text-[15px] text-gray-400 text-center py-10">Tidak ada hasil untuk "{helpSearch}"</p>
                 ) : (
                   helpResults.map((item, idx) => (
                     <details key={idx} className="group px-4 py-3.5 cursor-pointer">
                       <summary className="flex items-center justify-between list-none gap-2">
-                        <span className="text-sm text-gray-800 font-medium group-open:text-indigo-700 leading-snug">
+                        <span className="text-[15px] text-gray-800 font-medium group-open:text-indigo-700 leading-snug">
                           {item.q.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ').substring(0, 60)}
                         </span>
                         <svg className="w-4 h-4 text-indigo-400 shrink-0 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                         </svg>
                       </summary>
-                      <p className="text-sm text-gray-600 mt-2 leading-relaxed">{item.a}</p>
+                      <p className="text-[15px] text-gray-600 mt-2 leading-relaxed">{item.a}</p>
                     </details>
                   ))
                 )}
@@ -391,7 +391,7 @@ const Chatbot = () => {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex-1 flex flex-col items-center justify-center py-3 gap-1 text-xs font-medium transition-colors ${
+                className={`flex-1 flex flex-col items-center justify-center py-3 gap-1 text-sm font-medium transition-colors ${
                   activeTab === tab.key ? 'text-indigo-600' : 'text-gray-400 hover:text-gray-600'
                 }`}
               >

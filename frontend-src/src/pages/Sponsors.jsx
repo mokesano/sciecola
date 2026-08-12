@@ -60,11 +60,11 @@ const SponsorCard = ({ sponsor, t, large = false }) => {
     <div className={`bg-white rounded-2xl shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col ${cfg.ring}`}>
       {/* tier strip */}
       <div className={`px-5 py-2.5 flex items-center justify-between ${cfg.header}`}>
-        <span className={`text-[11px] font-bold uppercase tracking-widest ${cfg.label}`}>
+        <span className={`text-xs font-bold uppercase tracking-widest ${cfg.label}`}>
           {t('tier_label', { tier: sponsor.tier.charAt(0).toUpperCase() + sponsor.tier.slice(1) })}
         </span>
         {sponsor.since > 0 && (
-          <span className="text-[11px] text-gray-400">{t('card.since', { year: sponsor.since })}</span>
+          <span className="text-xs text-gray-400">{t('card.since', { year: sponsor.since })}</span>
         )}
       </div>
 
@@ -86,7 +86,7 @@ const SponsorCard = ({ sponsor, t, large = false }) => {
         </div>
 
         {sponsor.description && (
-          <p className="text-sm text-gray-600 leading-relaxed flex-1 line-clamp-3">
+          <p className="text-[15px] text-gray-600 leading-relaxed flex-1 line-clamp-3">
             {sponsor.description}
           </p>
         )}
@@ -94,7 +94,7 @@ const SponsorCard = ({ sponsor, t, large = false }) => {
         {sponsor.focus_areas?.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {sponsor.focus_areas.slice(0, 4).map((area, i) => (
-              <span key={i} className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${cfg.badge}`}>
+              <span key={i} className={`px-2 py-0.5 rounded-full text-xs font-medium ${cfg.badge}`}>
                 {area}
               </span>
             ))}
@@ -103,7 +103,7 @@ const SponsorCard = ({ sponsor, t, large = false }) => {
 
         {sponsor.website && (
           <a href={sponsor.website} target="_blank" rel="noopener noreferrer"
-            className="mt-auto inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
+            className="mt-auto inline-flex items-center gap-1.5 text-[15px] font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
             {t('card.website')}
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
@@ -171,7 +171,7 @@ const Sponsors = () => {
       <main className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
 
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+        <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-8">
           <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
           <span className="text-gray-400">›</span>
           <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
@@ -203,7 +203,7 @@ const Sponsors = () => {
           <div className="relative flex-1 max-w-sm">
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder={t('filter.search')}
-              className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
+              className="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-[15px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
             <svg className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
@@ -216,13 +216,13 @@ const Sponsors = () => {
                 : (tierCounts[tier] ?? 0);
               return (
                 <button key={tier} onClick={() => setActiveTier(tier)}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                  className={`px-4 py-2 rounded-xl text-[15px] font-medium transition-colors flex items-center gap-1.5 ${
                     activeTier === tier
                       ? 'bg-indigo-600 text-white shadow-sm'
                       : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
                   }`}>
                   {t(`filter.${tier}`)}
-                  <span className={`text-xs px-1.5 py-0.5 rounded-full ${activeTier === tier ? 'bg-white/25' : 'bg-gray-100 text-gray-500'}`}>
+                  <span className={`text-sm px-1.5 py-0.5 rounded-full ${activeTier === tier ? 'bg-white/25' : 'bg-gray-100 text-gray-500'}`}>
                     {count}
                   </span>
                 </button>
@@ -244,7 +244,7 @@ const Sponsors = () => {
           <div className="flex flex-col items-center gap-3 py-16">
             <p className="text-red-600 font-medium">{t('error')}</p>
             <button onClick={fetchData}
-              className="px-5 py-2 bg-red-600 text-white rounded-xl text-sm font-medium hover:bg-red-700 transition-colors">
+              className="px-5 py-2 bg-red-600 text-white rounded-xl text-[15px] font-medium hover:bg-red-700 transition-colors">
               {t('retry')}
             </button>
           </div>
@@ -291,7 +291,7 @@ const Sponsors = () => {
               <p className="text-indigo-100 max-w-xl">{t('cta.subtitle')}</p>
             </div>
             <Link to="/become-sponsor"
-              className="px-8 py-3.5 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition-colors whitespace-nowrap flex items-center gap-2 text-sm">
+              className="px-8 py-3.5 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition-colors whitespace-nowrap flex items-center gap-2 text-[15px]">
               {t('cta.button')}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
@@ -314,7 +314,7 @@ const TierSection = ({ tier, sponsors, t, gridCols, large = false }) => {
         <h2 className="text-lg font-bold text-gray-900 capitalize">
           {tier.charAt(0).toUpperCase() + tier.slice(1)} Sponsors
         </h2>
-        <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${cfg.badge}`}>
+        <span className={`text-sm px-2.5 py-0.5 rounded-full font-medium ${cfg.badge}`}>
           {sponsors.length}
         </span>
       </div>
@@ -338,7 +338,7 @@ const StatChip = ({ icon, value, label, color, accent }) => (
       <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: accent }} />
     )}
     <span className="text-lg font-bold text-gray-900">{value}</span>
-    <span className="text-xs text-gray-500">{label}</span>
+    <span className="text-sm text-gray-500">{label}</span>
   </div>
 );
 
@@ -354,16 +354,16 @@ const EmptyState = ({ hasFilter, onReset, t }) => {
         </svg>
       </div>
       <p className="font-semibold text-gray-800">{t(`empty.${variant}.title`)}</p>
-      <p className="text-sm text-gray-500 text-center max-w-sm">{t(`empty.${variant}.subtitle`)}</p>
+      <p className="text-[15px] text-gray-500 text-center max-w-sm">{t(`empty.${variant}.subtitle`)}</p>
       {hasFilter && (
         <button onClick={onReset}
-          className="mt-1 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors">
+          className="mt-1 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-[15px] font-medium hover:bg-indigo-700 transition-colors">
           Reset
         </button>
       )}
       {!hasFilter && (
         <Link to="/become-sponsor"
-          className="mt-1 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors">
+          className="mt-1 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-[15px] font-medium hover:bg-indigo-700 transition-colors">
           {t('cta.button')}
         </Link>
       )}

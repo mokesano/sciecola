@@ -104,14 +104,14 @@ const SponsorshipTiers = ({ onSelectTier, selectedTier }) => {
           >
             {/* Most Popular Badge */}
             {tier.highlight && selectedTier !== tier.id && (
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-indigo-600 text-white text-xs font-bold rounded-full shadow">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-indigo-600 text-white text-sm font-bold rounded-full shadow">
                 Most Popular
               </span>
             )}
             
             {/* Selected Badge */}
             {selectedTier === tier.id && (
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-green-600 text-white text-xs font-bold rounded-full shadow flex items-center gap-1">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-green-600 text-white text-sm font-bold rounded-full shadow flex items-center gap-1">
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
                 </svg>
@@ -131,12 +131,12 @@ const SponsorshipTiers = ({ onSelectTier, selectedTier }) => {
               {tier.name}
             </h3>
             <p className="text-2xl font-bold text-gray-900 mb-2">{tier.price}</p>
-            <p className="text-sm text-gray-600 mb-4 flex-grow">{tier.description}</p>
+            <p className="text-[15px] text-gray-600 mb-4 flex-grow">{tier.description}</p>
             
             {/* Features List */}
             <ul className="space-y-2 mb-6">
               {tier.features.slice(0, 4).map((feature, idx) => (
-                <li key={idx} className="flex items-start gap-2 text-xs text-gray-600">
+                <li key={idx} className="flex items-start gap-2 text-sm text-gray-600">
                   <svg className="w-4 h-4 text-green-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                   </svg>
@@ -144,7 +144,7 @@ const SponsorshipTiers = ({ onSelectTier, selectedTier }) => {
                 </li>
               ))}
               {tier.features.length > 4 && (
-                <li className="text-xs text-indigo-600 font-medium">
+                <li className="text-sm text-indigo-600 font-medium">
                   +{tier.features.length - 4} manfaat lainnya
                 </li>
               )}
@@ -154,7 +154,7 @@ const SponsorshipTiers = ({ onSelectTier, selectedTier }) => {
             <button
               onClick={() => onSelectTier(tier.id)}
               disabled={selectedTier === tier.id}
-              className={`w-full py-2.5 rounded-xl font-medium text-sm text-white transition-colors flex items-center justify-center gap-2 ${
+              className={`w-full py-2.5 rounded-xl font-medium text-[15px] text-white transition-colors flex items-center justify-center gap-2 ${
                 selectedTier === tier.id 
                   ? 'bg-green-600 cursor-default' 
                   : tier.buttonColor
@@ -181,7 +181,7 @@ const SponsorshipTiers = ({ onSelectTier, selectedTier }) => {
       </div>
       
       {/* Helper Text */}
-      <p className="text-center text-sm text-gray-500 mt-6">
+      <p className="text-center text-[15px] text-gray-500 mt-6">
         Butuh paket custom? <a href="/contact" className="text-indigo-600 hover:underline font-medium">Hubungi tim kami</a> untuk diskusi lebih lanjut.
       </p>
     </section>

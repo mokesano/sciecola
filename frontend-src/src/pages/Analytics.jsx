@@ -22,9 +22,9 @@ const ChartTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-      <p className="text-sm font-semibold text-gray-900 mb-1">{label}</p>
+      <p className="text-[15px] font-semibold text-gray-900 mb-1">{label}</p>
       {payload.map((p, i) => (
-        <p key={i} className="text-xs" style={{ color: p.color || p.stroke }}>
+        <p key={i} className="text-sm" style={{ color: p.color || p.stroke }}>
           {p.name}: <span className="font-semibold">{p.value?.toLocaleString()}</span>
         </p>
       ))}
@@ -39,14 +39,14 @@ const EmptySection = ({ title, subtitle }) => (
         d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
     </svg>
     <p className="font-semibold text-gray-700">{title}</p>
-    {subtitle && <p className="text-sm text-gray-500 mt-1 max-w-sm">{subtitle}</p>}
+    {subtitle && <p className="text-[15px] text-gray-500 mt-1 max-w-sm">{subtitle}</p>}
   </div>
 );
 
 const QuartileChip = ({ q }) => {
-  if (!q) return <span className="text-xs text-gray-400">—</span>;
+  if (!q) return <span className="text-sm text-gray-400">—</span>;
   const colors = { Q1:'bg-green-100 text-green-700', Q2:'bg-blue-100 text-blue-700', Q3:'bg-yellow-100 text-yellow-700', Q4:'bg-gray-100 text-gray-600' };
-  return <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${colors[q] || colors.Q4}`}>{q}</span>;
+  return <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${colors[q] || colors.Q4}`}>{q}</span>;
 };
 
 // ─── Main component ───────────────────────────────────────────────────────────
@@ -124,7 +124,7 @@ const Analytics = () => {
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
 
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+      <div className="flex items-center gap-2 text-[15px] text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600">{t('breadcrumb.home')}</Link>
         <span>›</span>
         <span className="text-gray-900">{t('breadcrumb.current')}</span>
@@ -146,7 +146,7 @@ const Analytics = () => {
             <select
               value={years}
               onChange={e => setYears(Number(e.target.value))}
-              className="text-sm text-gray-700 bg-transparent border-none focus:ring-0 focus:outline-none pr-2"
+              className="text-[15px] text-gray-700 bg-transparent border-none focus:ring-0 focus:outline-none pr-2"
             >
               {PERIOD_OPTIONS.map(opt => (
                 <option key={opt.value} value={opt.value}>{t(`period.${opt.key}`)}</option>
@@ -156,7 +156,7 @@ const Analytics = () => {
           {/* Export button */}
           <button
             onClick={() => window.print()}
-            className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-4 py-2 text-[15px] font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
@@ -181,8 +181,8 @@ const Analytics = () => {
           <svg className="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
-          <span className="text-red-700 text-sm flex-grow">{error}</span>
-          <button onClick={() => fetchData(years)} className="text-sm text-red-600 underline shrink-0">{t('retry')}</button>
+          <span className="text-red-700 text-[15px] flex-grow">{error}</span>
+          <button onClick={() => fetchData(years)} className="text-[15px] text-red-600 underline shrink-0">{t('retry')}</button>
         </div>
       )}
 
@@ -193,10 +193,10 @@ const Analytics = () => {
             {summary.length > 0
               ? summary.map((stat, i) => (
                   <div key={i} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-                    <p className="text-xs text-gray-500 font-medium mb-1 truncate">{t(`summary.${stat.key}`)}</p>
+                    <p className="text-sm text-gray-500 font-medium mb-1 truncate">{t(`summary.${stat.key}`)}</p>
                     <p className="text-xl font-bold text-gray-900">{stat.value}</p>
                     {stat.change && (
-                      <p className={`text-[10px] font-medium mt-1 ${stat.change.startsWith('+') ? 'text-green-600' : 'text-red-500'}`}>
+                      <p className={`text-xs font-medium mt-1 ${stat.change.startsWith('+') ? 'text-green-600' : 'text-red-500'}`}>
                         {stat.change} {t('summary.change_suffix')}
                       </p>
                     )}
@@ -214,7 +214,7 @@ const Analytics = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ${
+                className={`px-4 py-2.5 text-[15px] font-medium whitespace-nowrap transition-colors border-b-2 -mb-px ${
                   activeTab === tab
                     ? 'border-indigo-600 text-indigo-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -264,7 +264,7 @@ const Analytics = () => {
                       </ResponsiveContainer>
                       <div className="flex-grow space-y-1.5 overflow-y-auto max-h-[220px]">
                         {sdgWithPct.map((sdg, i) => (
-                          <div key={i} className="flex items-center gap-2 text-xs">
+                          <div key={i} className="flex items-center gap-2 text-sm">
                             <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: sdg.color }} />
                             <span className="text-gray-600 truncate flex-grow">{sdg.name}</span>
                             <span className="font-semibold text-gray-900 shrink-0">{sdg.pct}%</span>
@@ -282,15 +282,15 @@ const Analytics = () => {
               <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm mb-8">
                 <div className="flex justify-between items-center mb-5">
                   <h3 className="text-lg font-bold text-gray-900">{t('top_journals.title')}</h3>
-                  <Link to="/journals" className="text-sm text-indigo-600 font-medium hover:text-indigo-700">
+                  <Link to="/journals" className="text-[15px] text-indigo-600 font-medium hover:text-indigo-700">
                     {t('top_journals.view_all')} →
                   </Link>
                 </div>
                 {topJournals.length > 0 ? (
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                    <table className="w-full text-[15px]">
                       <thead>
-                        <tr className="border-b border-gray-100 text-xs text-gray-500 font-medium">
+                        <tr className="border-b border-gray-100 text-sm text-gray-500 font-medium">
                           <th className="pb-3 text-left w-8">#</th>
                           <th className="pb-3 text-left">{/* Journal name */}</th>
                           <th className="pb-3 text-right">{t('top_journals.articles')}</th>
@@ -301,7 +301,7 @@ const Analytics = () => {
                       <tbody className="divide-y divide-gray-50">
                         {topJournals.slice(0, 5).map(j => (
                           <tr key={j.rank} className="hover:bg-gray-50 transition-colors">
-                            <td className="py-3 text-xs font-bold text-gray-400">{j.rank}</td>
+                            <td className="py-3 text-sm font-bold text-gray-400">{j.rank}</td>
                             <td className="py-3 font-medium text-gray-900 max-w-[240px] truncate pr-4">{j.name}</td>
                             <td className="py-3 text-right font-semibold text-gray-900">{j.articles.toLocaleString()}</td>
                             <td className="py-3 text-right text-gray-600">{j.citescore ?? '—'}</td>
@@ -360,7 +360,7 @@ const Analytics = () => {
                       </ResponsiveContainer>
                       <div className="flex-grow space-y-2 mt-4">
                         {docTypes.map((d, i) => (
-                          <div key={i} className="flex items-center justify-between gap-2 text-xs">
+                          <div key={i} className="flex items-center justify-between gap-2 text-sm">
                             <div className="flex items-center gap-1.5 min-w-0">
                               <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: d.color }} />
                               <span className="text-gray-600 truncate">{t(`doc_types.${d.type}`, { defaultValue: d.type })}</span>
@@ -379,7 +379,7 @@ const Analytics = () => {
                 <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                   <div className="flex justify-between items-center mb-5">
                     <h3 className="text-lg font-bold text-gray-900">{t('top_journals.title')}</h3>
-                    <Link to="/journals" className="text-sm text-indigo-600 font-medium hover:text-indigo-700">
+                    <Link to="/journals" className="text-[15px] text-indigo-600 font-medium hover:text-indigo-700">
                       {t('top_journals.view_all')} →
                     </Link>
                   </div>
@@ -388,16 +388,16 @@ const Analytics = () => {
                       {topJournals.map(j => (
                         <div key={j.rank} className="flex items-center justify-between gap-3 p-2 rounded-lg hover:bg-gray-50">
                           <div className="flex items-center gap-2 min-w-0">
-                            <span className="text-xs font-bold text-gray-400 w-4 shrink-0">{j.rank}</span>
+                            <span className="text-sm font-bold text-gray-400 w-4 shrink-0">{j.rank}</span>
                             <div className="min-w-0">
-                              <p className="text-sm font-medium text-gray-900 truncate">{j.name}</p>
+                              <p className="text-[15px] font-medium text-gray-900 truncate">{j.name}</p>
                               <div className="flex items-center gap-2 mt-0.5">
                                 <QuartileChip q={j.quartile} />
-                                {j.citescore > 0 && <span className="text-[10px] text-gray-400">CS {j.citescore}</span>}
+                                {j.citescore > 0 && <span className="text-xs text-gray-400">CS {j.citescore}</span>}
                               </div>
                             </div>
                           </div>
-                          <span className="text-sm font-bold text-gray-700 shrink-0">{j.articles.toLocaleString()}</span>
+                          <span className="text-[15px] font-bold text-gray-700 shrink-0">{j.articles.toLocaleString()}</span>
                         </div>
                       ))}
                     </div>
@@ -424,8 +424,8 @@ const Analytics = () => {
                             className="w-7 h-7 rounded shrink-0" />
                           <div className="flex-grow min-w-0">
                             <div className="flex justify-between items-center mb-1">
-                              <span className="text-xs font-semibold text-gray-700 truncate">{sdg.name}</span>
-                              <span className="text-xs text-gray-500 ml-2 shrink-0">
+                              <span className="text-sm font-semibold text-gray-700 truncate">{sdg.name}</span>
+                              <span className="text-sm text-gray-500 ml-2 shrink-0">
                                 {sdg.value.toLocaleString()} · {sdg.pct}%
                               </span>
                             </div>
@@ -458,12 +458,12 @@ const Analytics = () => {
                         </ResponsiveContainer>
                         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                           <p className="text-2xl font-bold text-gray-900">{sdgTotal.toLocaleString()}</p>
-                          <p className="text-xs text-gray-500">{t('sdg_dist.publications')}</p>
+                          <p className="text-sm text-gray-500">{t('sdg_dist.publications')}</p>
                         </div>
                       </div>
                       <div className="flex flex-wrap gap-2 mt-2 justify-center">
                         {sdgWithPct.map((sdg, i) => (
-                          <div key={i} className="flex items-center gap-1 text-[10px] text-gray-600">
+                          <div key={i} className="flex items-center gap-1 text-xs text-gray-600">
                             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: sdg.color }} />
                             SDG {sdg.sdg}
                           </div>
@@ -478,7 +478,7 @@ const Analytics = () => {
 
               {/* Link to SDGs cluster page */}
               <div className="flex justify-center">
-                <Link to="/sdgs" className="text-sm text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
+                <Link to="/sdgs" className="text-[15px] text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
                   {t('sdg_dist.view_all')}
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
@@ -497,12 +497,12 @@ const Analytics = () => {
                   <select
                     value={sortBy}
                     onChange={e => setSortBy(e.target.value)}
-                    className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="text-[15px] border border-gray-200 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   >
                     <option value="citations">{t('top_researchers.by_citations')}</option>
                     <option value="hindex">{t('top_researchers.by_hindex')}</option>
                   </select>
-                  <Link to="/researchers" className="text-sm text-indigo-600 font-medium hover:text-indigo-700">
+                  <Link to="/researchers" className="text-[15px] text-indigo-600 font-medium hover:text-indigo-700">
                     {t('top_researchers.view_all')} →
                   </Link>
                 </div>
@@ -516,28 +516,28 @@ const Analytics = () => {
                       to={r.orcid ? `/orcid/${encodeURIComponent(r.orcid)}` : '#'}
                       className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors group"
                     >
-                      <span className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600 shrink-0">
+                      <span className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-600 shrink-0">
                         {r.rank}
                       </span>
-                      <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-[15px] shrink-0">
                         {r.name?.charAt(0) ?? '?'}
                       </div>
                       <div className="flex-grow min-w-0">
-                        <h4 className="font-semibold text-gray-900 text-sm truncate group-hover:text-indigo-600 transition-colors">{r.name}</h4>
-                        <p className="text-xs text-gray-500 truncate">{r.institution || '—'}</p>
+                        <h4 className="font-semibold text-gray-900 text-[15px] truncate group-hover:text-indigo-600 transition-colors">{r.name}</h4>
+                        <p className="text-sm text-gray-500 truncate">{r.institution || '—'}</p>
                       </div>
                       <div className="shrink-0 flex gap-5 text-right">
                         <div>
-                          <p className="text-sm font-bold text-gray-900">{(r.citation_count ?? 0).toLocaleString()}</p>
-                          <p className="text-[10px] text-gray-400">{t('top_researchers.citations')}</p>
+                          <p className="text-[15px] font-bold text-gray-900">{(r.citation_count ?? 0).toLocaleString()}</p>
+                          <p className="text-xs text-gray-400">{t('top_researchers.citations')}</p>
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-gray-900">{r.h_index ?? '—'}</p>
-                          <p className="text-[10px] text-gray-400">{t('top_researchers.hindex')}</p>
+                          <p className="text-[15px] font-bold text-gray-900">{r.h_index ?? '—'}</p>
+                          <p className="text-xs text-gray-400">{t('top_researchers.hindex')}</p>
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-gray-900">{(r.pub_count ?? 0).toLocaleString()}</p>
-                          <p className="text-[10px] text-gray-400">{t('top_researchers.publications')}</p>
+                          <p className="text-[15px] font-bold text-gray-900">{(r.pub_count ?? 0).toLocaleString()}</p>
+                          <p className="text-xs text-gray-400">{t('top_researchers.publications')}</p>
                         </div>
                       </div>
                     </Link>
@@ -557,7 +557,7 @@ const Analytics = () => {
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm mb-6">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-bold text-gray-900">{t('top_institutions.title')}</h3>
-                <Link to="/institutions" className="text-sm text-indigo-600 font-medium hover:text-indigo-700">
+                <Link to="/institutions" className="text-[15px] text-indigo-600 font-medium hover:text-indigo-700">
                   {t('top_institutions.view_all')} →
                 </Link>
               </div>
@@ -566,21 +566,21 @@ const Analytics = () => {
                 <div className="divide-y divide-gray-50">
                   {topInsts.map(inst => (
                     <div key={inst.rank} className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors">
-                      <span className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600 shrink-0">
+                      <span className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-600 shrink-0">
                         {inst.rank}
                       </span>
                       <div className="flex-grow min-w-0">
-                        <h4 className="font-semibold text-gray-900 text-sm truncate">{inst.name}</h4>
-                        <p className="text-xs text-gray-500">{inst.country || '—'}</p>
+                        <h4 className="font-semibold text-gray-900 text-[15px] truncate">{inst.name}</h4>
+                        <p className="text-sm text-gray-500">{inst.country || '—'}</p>
                       </div>
                       <div className="shrink-0 flex gap-5 text-right">
                         <div>
-                          <p className="text-sm font-bold text-gray-900">{(inst.researchers_count ?? 0).toLocaleString()}</p>
-                          <p className="text-[10px] text-gray-400">{t('top_institutions.researchers')}</p>
+                          <p className="text-[15px] font-bold text-gray-900">{(inst.researchers_count ?? 0).toLocaleString()}</p>
+                          <p className="text-xs text-gray-400">{t('top_institutions.researchers')}</p>
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-gray-900">{(inst.total_citations ?? 0).toLocaleString()}</p>
-                          <p className="text-[10px] text-gray-400">{t('top_institutions.citations')}</p>
+                          <p className="text-[15px] font-bold text-gray-900">{(inst.total_citations ?? 0).toLocaleString()}</p>
+                          <p className="text-xs text-gray-400">{t('top_institutions.citations')}</p>
                         </div>
                       </div>
                     </div>
@@ -647,7 +647,7 @@ const Analytics = () => {
               {comparisonData.length > 0 ? (
                 <>
                   {/* Year labels */}
-                  <div className="flex items-center justify-end gap-4 mb-4 text-xs text-gray-600">
+                  <div className="flex items-center justify-end gap-4 mb-4 text-sm text-gray-600">
                     <div className="flex items-center gap-1.5">
                       <span className="w-3 h-3 rounded bg-indigo-200" />
                       {comparisonData[0]?.prevYear ?? '—'} ({t('comparison.prev_period')})
@@ -679,9 +679,9 @@ const Analytics = () => {
                       const up    = delta >= 0;
                       return (
                         <div key={i} className="bg-gray-50 rounded-xl p-4">
-                          <p className="text-xs text-gray-500 mb-1">{item.label}</p>
+                          <p className="text-sm text-gray-500 mb-1">{item.label}</p>
                           <p className="text-2xl font-bold text-gray-900">{item.current.toLocaleString()}</p>
-                          <p className={`text-xs font-medium mt-1 ${up ? 'text-green-600' : 'text-red-500'}`}>
+                          <p className={`text-sm font-medium mt-1 ${up ? 'text-green-600' : 'text-red-500'}`}>
                             {up ? '+' : ''}{delta.toLocaleString()} ({up ? '+' : ''}{pct}%)
                           </p>
                         </div>

@@ -33,7 +33,7 @@ const PasswordField = ({ id, name, label, placeholder, value, onChange, error, t
   const [visible, setVisible] = useState(false);
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1.5">{label}</label>
+      <label htmlFor={id} className="block text-[15px] font-medium text-gray-700 mb-1.5">{label}</label>
       <div className="relative">
         <input
           id={id}
@@ -68,7 +68,7 @@ const PasswordField = ({ id, name, label, placeholder, value, onChange, error, t
           )}
         </button>
       </div>
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
     </div>
   );
 };
@@ -76,7 +76,7 @@ const PasswordField = ({ id, name, label, placeholder, value, onChange, error, t
 /* ─── requirement checklist row ─────────────────────────────────────────── */
 
 const ReqRow = ({ ok, label }) => (
-  <li className={`flex items-center gap-2 text-sm ${ok ? 'text-green-600' : 'text-gray-500'}`}>
+  <li className={`flex items-center gap-2 text-[15px] ${ok ? 'text-green-600' : 'text-gray-500'}`}>
     <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       {ok ? (
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
@@ -171,7 +171,7 @@ const ChangePassword = () => {
     return (
       <main className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-lg mx-auto text-center">
         <p className="text-gray-600 mb-4">{t('errors.not_authenticated')}</p>
-        <Link to="/login" className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors">
+        <Link to="/login" className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-[15px] font-semibold hover:bg-indigo-700 transition-colors">
           {t('breadcrumb.home')}
         </Link>
       </main>
@@ -182,7 +182,7 @@ const ChangePassword = () => {
     <main className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full">
 
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-6">
         <Link to="/"         className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">›</span>
         <Link to="/settings" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.settings')}</Link>
@@ -215,8 +215,8 @@ const ChangePassword = () => {
             {form.next && (
               <div className="mt-3">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-gray-500">{t('strength.label')}</span>
-                  <span className={`text-xs font-semibold ${strength.text}`}>{t(`strength.${strength.key}`)}</span>
+                  <span className="text-sm text-gray-500">{t('strength.label')}</span>
+                  <span className={`text-sm font-semibold ${strength.text}`}>{t(`strength.${strength.key}`)}</span>
                 </div>
                 <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
                   <div className={`h-full ${strength.bar} transition-all`} style={{ width: strength.width }} />
@@ -226,7 +226,7 @@ const ChangePassword = () => {
 
             {/* Requirements */}
             <div className="mt-4 bg-gray-50 border border-gray-100 rounded-xl p-4">
-              <p className="text-xs font-medium text-gray-600 mb-2">{t('requirements.title')}</p>
+              <p className="text-sm font-medium text-gray-600 mb-2">{t('requirements.title')}</p>
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-1.5 gap-x-4">
                 <ReqRow ok={checks.length} label={t('requirements.length')} />
                 <ReqRow ok={checks.upper}  label={t('requirements.upper')} />
@@ -246,13 +246,13 @@ const ChangePassword = () => {
             <button
               type="button"
               onClick={() => navigate('/settings')}
-              className="px-5 py-2.5 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-100 transition-colors">
+              className="px-5 py-2.5 text-gray-700 rounded-xl text-[15px] font-medium hover:bg-gray-100 transition-colors">
               {t('actions.cancel')}
             </button>
             <button
               type="submit"
               disabled={saving}
-              className={`px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold transition-colors flex items-center gap-2 ${
+              className={`px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-[15px] font-semibold transition-colors flex items-center gap-2 ${
                 saving ? 'opacity-70 cursor-not-allowed' : 'hover:bg-indigo-700'
               }`}>
               {saving && (
@@ -276,7 +276,7 @@ const ChangePassword = () => {
               </svg>
               {t('tips.title')}
             </h3>
-            <ul className="space-y-2.5 text-sm text-gray-600">
+            <ul className="space-y-2.5 text-[15px] text-gray-600">
               {['item1', 'item2', 'item3', 'item4'].map(k => (
                 <li key={k} className="flex gap-2">
                   <svg className="w-4 h-4 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

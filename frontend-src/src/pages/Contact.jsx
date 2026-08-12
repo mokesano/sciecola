@@ -199,7 +199,7 @@ const Contact = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-8">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">›</span>
         <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
@@ -228,7 +228,7 @@ const Contact = () => {
           </svg>
           <div>
             <p className="font-semibold text-green-800">{t('status.success_title')}</p>
-            <p className="text-sm text-green-700">{t('status.success_body')}</p>
+            <p className="text-[15px] text-green-700">{t('status.success_body')}</p>
           </div>
         </div>
       )}
@@ -240,7 +240,7 @@ const Contact = () => {
           </svg>
           <div>
             <p className="font-semibold text-red-800">{t('status.error_title')}</p>
-            <p className="text-sm text-red-700">{t('status.error_body')}</p>
+            <p className="text-[15px] text-red-700">{t('status.error_body')}</p>
           </div>
         </div>
       )}
@@ -263,7 +263,7 @@ const Contact = () => {
               {/* Name & Email Row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label htmlFor="name" className="block text-[15px] font-medium text-gray-700 mb-1.5">
                     <span className="flex items-center gap-2">
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -283,11 +283,11 @@ const Contact = () => {
                     placeholder={t('form.name_ph')}
                     required
                   />
-                  {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name}</p>}
+                  {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label htmlFor="email" className="block text-[15px] font-medium text-gray-700 mb-1.5">
                     <span className="flex items-center gap-2">
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -307,14 +307,14 @@ const Contact = () => {
                     placeholder={t('form.email_ph')}
                     required
                   />
-                  {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email}</p>}
+                  {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
                 </div>
               </div>
 
               {/* Organization & Inquiry Type Row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="organization" className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label htmlFor="organization" className="block text-[15px] font-medium text-gray-700 mb-1.5">
                     <span className="flex items-center gap-2">
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -334,7 +334,7 @@ const Contact = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="inquiry_type" className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label htmlFor="inquiry_type" className="block text-[15px] font-medium text-gray-700 mb-1.5">
                     <span className="flex items-center gap-2">
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
@@ -360,7 +360,7 @@ const Contact = () => {
 
               {/* Subject */}
               <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label htmlFor="subject" className="block text-[15px] font-medium text-gray-700 mb-1.5">
                   <span className="flex items-center gap-2">
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
@@ -380,12 +380,12 @@ const Contact = () => {
                   placeholder={t('form.subject_ph')}
                   required
                 />
-                {errors.subject && <p className="mt-1 text-xs text-red-600">{errors.subject}</p>}
+                {errors.subject && <p className="mt-1 text-sm text-red-600">{errors.subject}</p>}
               </div>
 
               {/* Message */}
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label htmlFor="message" className="block text-[15px] font-medium text-gray-700 mb-1.5">
                   <span className="flex items-center gap-2">
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -406,8 +406,8 @@ const Contact = () => {
                   required
                 />
                 <div className="flex justify-between items-center mt-1.5">
-                  {errors.message && <p className="text-xs text-red-600">{errors.message}</p>}
-                  <p className={`text-xs ml-auto ${charCount > MAX_MESSAGE_LENGTH * 0.9 ? 'text-orange-600' : 'text-gray-500'}`}>
+                  {errors.message && <p className="text-sm text-red-600">{errors.message}</p>}
+                  <p className={`text-sm ml-auto ${charCount > MAX_MESSAGE_LENGTH * 0.9 ? 'text-orange-600' : 'text-gray-500'}`}>
                     <span id="charCount">{charCount}</span> / {MAX_MESSAGE_LENGTH} {t('form.char_suffix')}
                   </p>
                 </div>
@@ -423,7 +423,7 @@ const Contact = () => {
                     onChange={handleChange}
                     className="w-4 h-4 mt-0.5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                   />
-                  <span className="text-sm text-gray-700">
+                  <span className="text-[15px] text-gray-700">
                     {t('form.newsletter')}
                   </span>
                 </label>
@@ -439,13 +439,13 @@ const Contact = () => {
                     }`}
                     required
                   />
-                  <span className="text-sm text-gray-700">
+                  <span className="text-[15px] text-gray-700">
                     {t('form.privacy_prefix')}{' '}
                     <Link to="/privacy" className="text-indigo-600 hover:underline">{t('form.privacy_link')}</Link>{' '}
                     *
                   </span>
                 </label>
-                {errors.privacy && <p className="text-xs text-red-600 -mt-2">{errors.privacy}</p>}
+                {errors.privacy && <p className="text-sm text-red-600 -mt-2">{errors.privacy}</p>}
               </div>
 
               {/* Submit Button */}
@@ -498,29 +498,29 @@ const Contact = () => {
                     </svg>
                   </div>
                   <div className="flex-grow">
-                    <h4 className="font-semibold text-gray-900 text-sm">{method.title}</h4>
+                    <h4 className="font-semibold text-gray-900 text-[15px]">{method.title}</h4>
                     {method.action?.startsWith('mailto:') || method.action?.startsWith('tel:') ? (
                       <a 
                         href={method.action} 
-                        className="text-sm text-indigo-600 hover:underline block"
+                        className="text-[15px] text-indigo-600 hover:underline block"
                       >
                         {method.value}
                       </a>
                     ) : method.action === 'chat' ? (
                       <>
-                        <p className="text-sm text-gray-600">{method.value}</p>
+                        <p className="text-[15px] text-gray-600">{method.value}</p>
                         <button
                           onClick={() => handleContactAction(method.action)}
-                          className="mt-2 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-medium hover:bg-indigo-700 transition-colors"
+                          className="mt-2 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
                         >
                           {method.buttonText}
                         </button>
                       </>
                     ) : (
-                      <p className="text-sm text-gray-600 whitespace-pre-line">{method.value}</p>
+                      <p className="text-[15px] text-gray-600 whitespace-pre-line">{method.value}</p>
                     )}
                     {method.note && (
-                      <p className="text-xs text-gray-500 mt-1">{method.note}</p>
+                      <p className="text-sm text-gray-500 mt-1">{method.note}</p>
                     )}
                   </div>
                 </div>
@@ -546,7 +546,7 @@ const Contact = () => {
                   <svg className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={link.icon} />
                   </svg>
-                  <span className="text-sm font-medium text-gray-700 group-hover:text-indigo-600 transition-colors">
+                  <span className="text-[15px] font-medium text-gray-700 group-hover:text-indigo-600 transition-colors">
                     {link.title}
                   </span>
                 </Link>
@@ -565,12 +565,12 @@ const Contact = () => {
             <div className="space-y-3">
               {officeHours.map((item, idx) => (
                 <div key={idx} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
-                  <span className="text-sm text-gray-700">{item.day}</span>
-                  <span className="text-sm font-medium text-gray-900">{item.time}</span>
+                  <span className="text-[15px] text-gray-700">{item.day}</span>
+                  <span className="text-[15px] font-medium text-gray-900">{item.time}</span>
                 </div>
               ))}
             </div>
-            <p className="text-xs text-gray-500 mt-4 flex items-center gap-1.5">
+            <p className="text-sm text-gray-500 mt-4 flex items-center gap-1.5">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -586,7 +586,7 @@ const Contact = () => {
               </svg>
               {t('sidebar.follow_us')}
             </h3>
-            <p className="text-sm text-gray-600 mb-4">{t('sidebar.follow_note')}</p>
+            <p className="text-[15px] text-gray-600 mb-4">{t('sidebar.follow_note')}</p>
             <div className="flex flex-wrap gap-2">
               {socialLinks.map((social, idx) => (
                 <a
@@ -594,7 +594,7 @@ const Contact = () => {
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-lg text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors text-sm font-medium"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-lg text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors text-[15px] font-medium"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                     <path d={social.icon} />
@@ -637,7 +637,7 @@ const Contact = () => {
               </button>
               {openFaqs[faq.id] && (
                 <div className="px-6 pb-4 pt-2 border-t border-gray-100">
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <p className="text-[15px] text-gray-600 leading-relaxed">
                     {faq.answer}
                   </p>
                 </div>

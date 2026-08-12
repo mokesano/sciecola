@@ -499,10 +499,10 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
   // Code Block Component
   const CodeBlock = ({ code, id, language = 'json' }) => (
     <div className="relative group my-4">
-      <pre className="bg-gray-900 text-gray-100 p-4 pt-12 rounded-xl text-sm overflow-x-auto border border-gray-700">
+      <pre className="bg-gray-900 text-gray-100 p-4 pt-12 rounded-xl text-[15px] overflow-x-auto border border-gray-700">
         <code className="font-mono whitespace-pre">{code}</code>
       </pre>
-      <span className="absolute top-3 left-3 px-2 py-1 bg-gray-800 text-gray-400 text-xs rounded font-medium">
+      <span className="absolute top-3 left-3 px-2 py-1 bg-gray-800 text-gray-400 text-sm rounded font-medium">
         {language}
       </span>
       <button
@@ -638,7 +638,7 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
                     <button
                       key={sub.id}
                       onClick={() => scrollToSection(sub.id)}
-                      className={`w-full pl-10 pr-3 py-1.5 text-sm transition-colors text-left ${
+                      className={`w-full pl-10 pr-3 py-1.5 text-[15px] transition-colors text-left ${
                         activeSection === sub.id
                           ? 'text-indigo-600 font-medium'
                           : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg'
@@ -679,7 +679,7 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
               <div id="endpoints-list">
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('overview.endpoints_list')}</h3>
                 <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
+                  <table className="w-full text-[15px]">
                     <thead className="bg-gray-50">
                       <tr>
                         <th className="px-4 py-3 text-left font-semibold text-gray-900">{t('overview.th_method')}</th>
@@ -1230,10 +1230,10 @@ SDG       = (coverage_ratio×0.4 + avg_confidence×0.6) × 100
                     <p className="text-indigo-100 text-m">{t('cta.body')}</p>
                   </div>
                   <div className="flex gap-3">
-                    <Link to="/contact" className="px-5 py-2.5 bg-white text-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition-colors text-sm whitespace-nowrap">
+                    <Link to="/contact" className="px-5 py-2.5 bg-white text-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition-colors text-[15px] whitespace-nowrap">
                       Hubungi Tim
                     </Link>
-                    <a href="https://api.sangia.org" target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 bg-indigo-500 text-white rounded-lg font-medium hover:bg-indigo-400 transition-colors text-sm whitespace-nowrap flex items-center gap-2">
+                    <a href="https://api.sangia.org" target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 bg-indigo-500 text-white rounded-lg font-medium hover:bg-indigo-400 transition-colors text-[15px] whitespace-nowrap flex items-center gap-2">
                       Try API
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />

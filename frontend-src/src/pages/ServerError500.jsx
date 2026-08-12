@@ -46,7 +46,7 @@ const ServerError500 = () => {
 
         {/* Error Details Box */}
         <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">
+          <h3 className="text-[15px] font-semibold text-gray-700 mb-3 uppercase tracking-wide">
             {t('error.whatHappened', 'Apa yang Terjadi?')}
           </h3>
           <p className="text-gray-600 text-left mb-4">
@@ -146,13 +146,13 @@ const ServerError500 = () => {
 
         {/* Reference ID */}
         <div className="mt-12 pt-8 border-t border-gray-200">
-          <p className="text-sm text-gray-500">
+          <p className="text-[15px] text-gray-500">
             {t('error.referenceId', 'ID Referensi:')}{' '}
-            <code className="bg-gray-100 px-2 py-1 rounded text-xs font-mono">
+            <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono">
               ERR-500-{Math.random().toString(36).substr(2, 9).toUpperCase()}
             </code>
           </p>
-          <p className="text-xs text-gray-400 mt-2">
+          <p className="text-sm text-gray-400 mt-2">
             {t('error.saveReference', 'Simpan ID ini untuk referensi saat menghubungi support.')}
           </p>
         </div>

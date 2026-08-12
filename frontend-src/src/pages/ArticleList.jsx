@@ -103,7 +103,7 @@ const ArticleList = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+      <div className="flex items-center gap-2 text-[15px] text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
@@ -137,7 +137,7 @@ const ArticleList = () => {
             <select
               value={selectedSDG}
               onChange={(e) => { setSelectedSDG(e.target.value); setPage(1); }}
-              className="bg-gray-50 border-none rounded-xl py-3 px-4 text-sm font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+              className="bg-gray-50 border-none rounded-xl py-3 px-4 text-[15px] font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
             >
               <option value="all">{t('filters.all_sdgs')}</option>
               {SDG_NUMBERS.map((n) => (
@@ -148,7 +148,7 @@ const ArticleList = () => {
             <select
               value={selectedYear}
               onChange={(e) => { setSelectedYear(e.target.value); setPage(1); }}
-              className="bg-gray-50 border-none rounded-xl py-3 px-4 text-sm font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+              className="bg-gray-50 border-none rounded-xl py-3 px-4 text-[15px] font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
             >
               <option value="all">{t('filters.all_years')}</option>
               {YEAR_OPTIONS.map((y) => (
@@ -159,7 +159,7 @@ const ArticleList = () => {
             <select
               value={sortBy}
               onChange={(e) => { setSortBy(e.target.value); setPage(1); }}
-              className="bg-gray-50 border-none rounded-xl py-3 px-4 text-sm font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+              className="bg-gray-50 border-none rounded-xl py-3 px-4 text-[15px] font-medium text-gray-600 outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
             >
               <option value="relevance">{t('filters.sort.relevance')}</option>
               <option value="citations">{t('filters.sort.citations')}</option>
@@ -171,9 +171,9 @@ const ArticleList = () => {
 
         {(selectedSDG !== 'all' || selectedYear !== 'all' || searchQuery) && (
           <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100 flex-wrap">
-            <span className="text-sm text-gray-500">{t('filters.active_label')}</span>
+            <span className="text-[15px] text-gray-500">{t('filters.active_label')}</span>
             {selectedSDG !== 'all' && (
-              <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold flex items-center gap-1">
+              <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold flex items-center gap-1">
                 {t('filters.sdg_label', { number: selectedSDG })}
                 <button onClick={() => setSelectedSDG('all')} className="hover:text-indigo-900">
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -183,7 +183,7 @@ const ArticleList = () => {
               </span>
             )}
             {selectedYear !== 'all' && (
-              <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold flex items-center gap-1">
+              <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold flex items-center gap-1">
                 {t('filters.year_label', { year: selectedYear })}
                 <button onClick={() => setSelectedYear('all')} className="hover:text-indigo-900">
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -193,7 +193,7 @@ const ArticleList = () => {
               </span>
             )}
             {searchQuery && (
-              <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold flex items-center gap-1">
+              <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-semibold flex items-center gap-1">
                 &quot;{searchQuery}&quot;
                 <button onClick={() => setSearchQuery('')} className="hover:text-indigo-900">
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -202,7 +202,7 @@ const ArticleList = () => {
                 </button>
               </span>
             )}
-            <button onClick={resetAll} className="text-xs text-gray-500 hover:text-gray-700 font-medium ml-2">
+            <button onClick={resetAll} className="text-sm text-gray-500 hover:text-gray-700 font-medium ml-2">
               {t('filters.reset_all')}
             </button>
           </div>
@@ -220,7 +220,7 @@ const ArticleList = () => {
       {!loading && articles.length > 0 && (
         <>
           <div className="mb-6 flex justify-between items-center">
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-600 text-[15px]">
               <Trans
                 i18nKey="results.count"
                 ns="articles"
@@ -281,9 +281,9 @@ const ArticleList = () => {
                         {article.title}
                       </h3>
                       {article.authors.length > 0 && (
-                        <p className="text-gray-600 text-sm mb-2 line-clamp-1">{article.authors.join(', ')}</p>
+                        <p className="text-gray-600 text-[15px] mb-2 line-clamp-1">{article.authors.join(', ')}</p>
                       )}
-                      <p className="text-gray-500 text-sm mb-3">
+                      <p className="text-gray-500 text-[15px] mb-3">
                         {article.journal && <span className="font-medium text-gray-700">{article.journal}</span>}
                         {article.journal && article.year ? ' • ' : ''}
                         {article.year && <span>{article.year}</span>}
@@ -292,14 +292,14 @@ const ArticleList = () => {
                         {article.sdgFocus.map((sdg) => (
                           <span
                             key={sdg}
-                            className="px-2.5 py-1 text-white rounded-lg text-[10px] font-bold shadow-sm"
+                            className="px-2.5 py-1 text-white rounded-lg text-xs font-bold shadow-sm"
                             style={{ backgroundColor: SDG_COLORS[sdg] || '#6b7280' }}
                           >
                             SDG {sdg}
                           </span>
                         ))}
                         {article.articleType && (
-                          <span className="px-2.5 py-1 bg-gray-100 text-gray-600 rounded-lg text-[10px] font-medium">
+                          <span className="px-2.5 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium">
                             {article.articleType}
                           </span>
                         )}
@@ -312,21 +312,21 @@ const ArticleList = () => {
                           <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
                           <span className="text-lg font-bold text-gray-900">{article.citations}</span>
                         </div>
-                        <p className="text-[10px] text-gray-500 uppercase font-semibold">{t('results.metrics.citations')}</p>
+                        <p className="text-xs text-gray-500 uppercase font-semibold">{t('results.metrics.citations')}</p>
                       </div>
                       <div className="text-center md:text-right">
                         <div className="flex items-center md:justify-end gap-1.5 mb-1">
                           <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                           <span className="text-lg font-bold text-gray-900">{formatNumber(article.views)}</span>
                         </div>
-                        <p className="text-[10px] text-gray-500 uppercase font-semibold">{t('results.metrics.views')}</p>
+                        <p className="text-xs text-gray-500 uppercase font-semibold">{t('results.metrics.views')}</p>
                       </div>
                       <div className="text-center md:text-right">
                         <div className="flex items-center md:justify-end gap-1.5 mb-1">
                           <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                           <span className="text-lg font-bold text-gray-900">{formatNumber(article.downloads)}</span>
                         </div>
-                        <p className="text-[10px] text-gray-500 uppercase font-semibold">{t('results.metrics.downloads')}</p>
+                        <p className="text-xs text-gray-500 uppercase font-semibold">{t('results.metrics.downloads')}</p>
                       </div>
                       <div className="md:ml-4">
                         <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-indigo-600 group-hover:text-white transition-all">
@@ -357,9 +357,9 @@ const ArticleList = () => {
                       {article.title}
                     </h3>
                     {article.authors.length > 0 && (
-                      <p className="text-gray-600 text-xs mb-2 line-clamp-1">{article.authors.join(', ')}</p>
+                      <p className="text-gray-600 text-sm mb-2 line-clamp-1">{article.authors.join(', ')}</p>
                     )}
-                    <p className="text-gray-500 text-xs mb-3 line-clamp-1">
+                    <p className="text-gray-500 text-sm mb-3 line-clamp-1">
                       {article.journal && <span className="font-medium text-gray-700">{article.journal}</span>}
                       {article.journal && article.year ? ' • ' : ''}
                       {article.year && <span>{article.year}</span>}
@@ -369,7 +369,7 @@ const ArticleList = () => {
                         {article.sdgFocus.slice(0, 4).map((sdg) => (
                           <span
                             key={sdg}
-                            className="px-2 py-0.5 text-white rounded text-[9px] font-bold"
+                            className="px-2 py-0.5 text-white rounded text-xs font-bold"
                             style={{ backgroundColor: SDG_COLORS[sdg] || '#6b7280' }}
                           >
                             SDG {sdg}
@@ -379,16 +379,16 @@ const ArticleList = () => {
                     )}
                     <div className="mt-auto pt-3 border-t border-gray-100 grid grid-cols-3 gap-2 text-center">
                       <div>
-                        <p className="text-sm font-bold text-gray-900">{formatNumber(article.citations)}</p>
-                        <p className="text-[9px] text-gray-500 uppercase font-semibold">{t('results.metrics.citations')}</p>
+                        <p className="text-[15px] font-bold text-gray-900">{formatNumber(article.citations)}</p>
+                        <p className="text-xs text-gray-500 uppercase font-semibold">{t('results.metrics.citations')}</p>
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-gray-900">{formatNumber(article.views)}</p>
-                        <p className="text-[9px] text-gray-500 uppercase font-semibold">{t('results.metrics.views')}</p>
+                        <p className="text-[15px] font-bold text-gray-900">{formatNumber(article.views)}</p>
+                        <p className="text-xs text-gray-500 uppercase font-semibold">{t('results.metrics.views')}</p>
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-gray-900">{formatNumber(article.downloads)}</p>
-                        <p className="text-[9px] text-gray-500 uppercase font-semibold">{t('results.metrics.downloads')}</p>
+                        <p className="text-[15px] font-bold text-gray-900">{formatNumber(article.downloads)}</p>
+                        <p className="text-xs text-gray-500 uppercase font-semibold">{t('results.metrics.downloads')}</p>
                       </div>
                     </div>
                   </div>
@@ -414,10 +414,10 @@ const ArticleList = () => {
             </div>
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('empty.no_match.title')}</h3>
-          <p className="text-gray-500 text-sm mb-6 max-w-md mx-auto">{t('empty.no_match.subtitle')}</p>
+          <p className="text-gray-500 text-[15px] mb-6 max-w-md mx-auto">{t('empty.no_match.subtitle')}</p>
           <button
             onClick={resetAll}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-[15px] font-medium hover:bg-indigo-700 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -436,7 +436,7 @@ const ArticleList = () => {
             </svg>
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('empty.no_data.title')}</h3>
-          <p className="text-gray-500 text-sm max-w-md mx-auto">{t('empty.no_data.subtitle')}</p>
+          <p className="text-gray-500 text-[15px] max-w-md mx-auto">{t('empty.no_data.subtitle')}</p>
         </div>
       )}
 

@@ -30,7 +30,7 @@ const EmptySection = ({ icon, message }) => (
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d={icon} />
       </svg>
     </div>
-    <p className="text-sm text-gray-400 max-w-xs">{message}</p>
+    <p className="text-[15px] text-gray-400 max-w-xs">{message}</p>
   </div>
 );
 
@@ -122,7 +122,7 @@ const InstitutionProfile = () => {
   const CustomTooltip = ({ active, payload, label }) => {
     if (!active || !payload?.length) return null;
     return (
-      <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg text-sm">
+      <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg text-[15px]">
         <p className="font-semibold text-gray-900">{label}</p>
         <p className="text-indigo-600">{payload[0].name}: {payload[0].value?.toLocaleString()}</p>
       </div>
@@ -152,7 +152,7 @@ const InstitutionProfile = () => {
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-6" aria-label="Breadcrumb">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
         <Link to="/institutions" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.institutions')}</Link>
@@ -171,8 +171,8 @@ const InstitutionProfile = () => {
             </svg>
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-1">{t('not_found.title')}</h3>
-          <p className="text-sm text-gray-500 mb-4">{t('not_found.subtitle')}</p>
-          <Link to="/institutions" className="inline-flex items-center gap-1 text-sm text-indigo-600 font-medium hover:text-indigo-700">
+          <p className="text-[15px] text-gray-500 mb-4">{t('not_found.subtitle')}</p>
+          <Link to="/institutions" className="inline-flex items-center gap-1 text-[15px] text-indigo-600 font-medium hover:text-indigo-700">
             {t('not_found.back')}
           </Link>
         </div>
@@ -194,16 +194,16 @@ const InstitutionProfile = () => {
                 />
                 <h1 className="text-lg font-bold text-gray-900 text-center mb-2">{inst.name}</h1>
                 <div className="flex flex-wrap gap-2 justify-center">
-                  {inst.type && <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-xl text-xs font-medium">{inst.type}</span>}
-                  {inst.country && <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-xl text-xs font-medium">{inst.country}</span>}
+                  {inst.type && <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-xl text-sm font-medium">{inst.type}</span>}
+                  {inst.country && <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium">{inst.country}</span>}
                 </div>
               </div>
 
               <div className="flex-grow min-w-0 p-2">
-                <p className="text-sm text-gray-600 mb-5 leading-relaxed">
+                <p className="text-[15px] text-gray-600 mb-5 leading-relaxed">
                   {inst.description || inst.motto || t('header.no_description')}
                 </p>
-                <div className="space-y-3 text-sm">
+                <div className="space-y-3 text-[15px]">
                   {inst.website && (
                     <div className="flex items-center gap-3 text-gray-600">
                       <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>
@@ -295,7 +295,7 @@ const InstitutionProfile = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={icon}/>
                           </svg>
                         </div>
-                        <span className="text-xs text-gray-500">{t(`stats.${key}`)}</span>
+                        <span className="text-sm text-gray-500">{t(`stats.${key}`)}</span>
                       </div>
                       <p className="text-2xl font-bold text-gray-900">{(inst[field] || 0).toLocaleString()}</p>
                     </div>
@@ -304,11 +304,11 @@ const InstitutionProfile = () => {
               </div>
               <div className="grid grid-cols-2 gap-2 mt-2">
                 <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex justify-between items-center">
-                  <span className="text-sm text-gray-500">{t('stats.hindex')}</span>
+                  <span className="text-[15px] text-gray-500">{t('stats.hindex')}</span>
                   <span className="text-xl font-bold text-gray-900">{inst.hIndex || 0}</span>
                 </div>
                 <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex justify-between items-center">
-                  <span className="text-sm text-gray-500">{t('stats.i10')}</span>
+                  <span className="text-[15px] text-gray-500">{t('stats.i10')}</span>
                   <span className="text-xl font-bold text-gray-900">{inst.i10Index || 0}</span>
                 </div>
               </div>
@@ -323,7 +323,7 @@ const InstitutionProfile = () => {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   aria-current={activeTab === tab.id ? 'page' : undefined}
-                  className={`flex items-center gap-2 px-4 py-3 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
+                  className={`flex items-center gap-2 px-4 py-3 border-b-2 font-medium text-[15px] whitespace-nowrap transition-colors ${
                     activeTab === tab.id
                       ? 'border-indigo-600 text-indigo-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -380,7 +380,7 @@ const InstitutionProfile = () => {
                       </ResponsiveContainer>
                       <div className="space-y-1.5 shrink-0">
                         {profileData.sdg_list.slice(0, 6).map((entry) => (
-                          <div key={entry.sdg} className="flex items-center gap-2 text-xs">
+                          <div key={entry.sdg} className="flex items-center gap-2 text-sm">
                             <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: SDG_COLORS[entry.sdg] || '#6366f1' }}/>
                             <span className="text-gray-600">SDG {entry.sdg}</span>
                             <span className="font-semibold text-gray-900">{entry.count}</span>
@@ -448,9 +448,9 @@ const InstitutionProfile = () => {
                     <svg className="w-14 h-14 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    <p className="text-sm">{t('ringkasan.map_placeholder')}</p>
+                    <p className="text-[15px]">{t('ringkasan.map_placeholder')}</p>
                   </div>
-                  <div className="flex items-center justify-center gap-6 mt-4 text-xs">
+                  <div className="flex items-center justify-center gap-6 mt-4 text-sm">
                     <div className="flex items-center gap-2"><div className="w-4 h-4 bg-indigo-200 rounded"/><span className="text-gray-500">{t('ringkasan.map_legend_high')}</span></div>
                     <div className="flex items-center gap-2"><div className="w-4 h-4 bg-indigo-50 rounded border border-indigo-100"/><span className="text-gray-500">{t('ringkasan.map_legend_low')}</span></div>
                   </div>
@@ -460,7 +460,7 @@ const InstitutionProfile = () => {
                 <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                   <div className="flex justify-between items-center mb-5">
                     <h3 className="text-lg font-bold text-gray-900">{t('ringkasan.top_collaborators')}</h3>
-                    <button onClick={() => setActiveTab('kolaborasi')} className="text-sm text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
+                    <button onClick={() => setActiveTab('kolaborasi')} className="text-[15px] text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
                       {t('ringkasan.view_all_collab')}
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
@@ -472,12 +472,12 @@ const InstitutionProfile = () => {
                           <img src={c.logo} alt={c.name} className="w-10 h-10 rounded-lg object-cover shrink-0"
                             onError={(e) => { e.target.src = '/assets/img/institution-default.svg'; }}/>
                           <div className="flex-grow min-w-0">
-                            <h4 className="font-semibold text-gray-900 text-sm truncate">{c.name}</h4>
-                            <p className="text-xs text-gray-500 truncate">{c.country}</p>
+                            <h4 className="font-semibold text-gray-900 text-[15px] truncate">{c.name}</h4>
+                            <p className="text-sm text-gray-500 truncate">{c.country}</p>
                           </div>
                           <div className="text-right shrink-0">
-                            <p className="text-sm font-bold text-gray-900">{c.publications}</p>
-                            <p className="text-xs text-gray-500">{t('ringkasan.publications_unit')}</p>
+                            <p className="text-[15px] font-bold text-gray-900">{c.publications}</p>
+                            <p className="text-sm text-gray-500">{t('ringkasan.publications_unit')}</p>
                           </div>
                         </div>
                       ))}
@@ -496,7 +496,7 @@ const InstitutionProfile = () => {
                 <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                   <div className="flex justify-between items-center mb-5">
                     <h3 className="text-lg font-bold text-gray-900">{t('ringkasan.journals_title')}</h3>
-                    <button onClick={() => setActiveTab('jurnal')} className="text-sm text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
+                    <button onClick={() => setActiveTab('jurnal')} className="text-[15px] text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
                       {t('ringkasan.view_all_journals')}
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
@@ -506,15 +506,15 @@ const InstitutionProfile = () => {
                       {profileData.affiliated_journals.slice(0, 5).map((j, idx) => (
                         <div key={idx} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors">
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs shrink-0">JR</div>
+                            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-sm shrink-0">JR</div>
                             <div className="min-w-0">
-                              <h4 className="font-semibold text-gray-900 text-sm truncate">{j.name || j.title}</h4>
-                              {j.eissn && <p className="text-xs text-gray-500">E-ISSN: {j.eissn}</p>}
+                              <h4 className="font-semibold text-gray-900 text-[15px] truncate">{j.name || j.title}</h4>
+                              {j.eissn && <p className="text-sm text-gray-500">E-ISSN: {j.eissn}</p>}
                             </div>
                           </div>
                           <div className="text-right shrink-0 ml-2">
-                            <p className="text-sm font-bold text-indigo-600">{j.total_articles || j.publications || 0}</p>
-                            <p className="text-xs text-gray-500">{t('ringkasan.articles_unit')}</p>
+                            <p className="text-[15px] font-bold text-indigo-600">{j.total_articles || j.publications || 0}</p>
+                            <p className="text-sm text-gray-500">{t('ringkasan.articles_unit')}</p>
                           </div>
                         </div>
                       ))}
@@ -531,7 +531,7 @@ const InstitutionProfile = () => {
                 <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
                   <div className="flex justify-between items-center mb-5">
                     <h3 className="text-lg font-bold text-gray-900">{t('ringkasan.news_title')}</h3>
-                    <button onClick={() => setActiveTab('berita')} className="text-sm text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
+                    <button onClick={() => setActiveTab('berita')} className="text-[15px] text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
                       {t('ringkasan.view_all_news')}
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
@@ -543,8 +543,8 @@ const InstitutionProfile = () => {
                           <img src={item.image} alt={item.title} className="w-20 h-16 object-cover rounded-lg shrink-0"
                             onError={(e) => { e.target.src = '/assets/img/article-default.svg'; }}/>
                           <div className="flex-grow min-w-0">
-                            <h4 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{item.title}</h4>
-                            <p className="text-xs text-gray-500">{item.date || item.published_at}</p>
+                            <h4 className="font-semibold text-gray-900 text-[15px] mb-1 line-clamp-2">{item.title}</h4>
+                            <p className="text-sm text-gray-500">{item.date || item.published_at}</p>
                           </div>
                         </div>
                       ))}
@@ -568,15 +568,15 @@ const InstitutionProfile = () => {
                 <div className="space-y-4">
                   {profileData.top_publications.map((pub, idx) => (
                     <div key={idx} className="flex gap-4 p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:bg-indigo-50/30 transition-colors">
-                      <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-700 font-bold text-sm shrink-0">{idx + 1}</div>
+                      <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-700 font-bold text-[15px] shrink-0">{idx + 1}</div>
                       <div className="flex-grow min-w-0">
-                        <h4 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">
+                        <h4 className="font-semibold text-gray-900 text-[15px] mb-1 line-clamp-2">
                           {pub.doi ? (
                             <Link to={`/doi/${encodeURIComponent(pub.doi)}`} className="hover:text-indigo-600 transition-colors">{pub.title}</Link>
                           ) : pub.title}
                         </h4>
-                        {pub.authors && <p className="text-xs text-gray-500 mb-2">{pub.authors}</p>}
-                        <div className="flex gap-3 text-xs text-gray-500">
+                        {pub.authors && <p className="text-sm text-gray-500 mb-2">{pub.authors}</p>}
+                        <div className="flex gap-3 text-sm text-gray-500">
                           {pub.year && <span>{t('publikasi.year')}: {pub.year}</span>}
                           {pub.citations != null && <span>{t('publikasi.citations')}: {pub.citations.toLocaleString()}</span>}
                         </div>
@@ -604,13 +604,13 @@ const InstitutionProfile = () => {
                       <img src={r.photo || r.avatar} alt={r.name} className="w-12 h-12 rounded-full object-cover shrink-0"
                         onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}/>
                       <div className="min-w-0">
-                        <h4 className="font-semibold text-gray-900 text-sm truncate">
+                        <h4 className="font-semibold text-gray-900 text-[15px] truncate">
                           {r.orcid ? (
                             <Link to={`/orcid/${r.orcid}`} className="hover:text-indigo-600">{r.name}</Link>
                           ) : r.name}
                         </h4>
-                        {r.department && <p className="text-xs text-gray-500 truncate">{r.department}</p>}
-                        <div className="flex gap-3 text-xs text-gray-500 mt-1">
+                        {r.department && <p className="text-sm text-gray-500 truncate">{r.department}</p>}
+                        <div className="flex gap-3 text-sm text-gray-500 mt-1">
                           {r.hIndex != null && <span>{t('peneliti.hindex')}: {r.hIndex}</span>}
                           {r.citations != null && <span>{t('peneliti.citations')}: {r.citations.toLocaleString()}</span>}
                         </div>
@@ -639,12 +639,12 @@ const InstitutionProfile = () => {
                       const pct = total > 0 ? Math.round(((sdg.count || 0) / total) * 100) : 0;
                       return (
                         <div key={sdg.sdg} className="flex items-center gap-4">
-                          <div className="w-9 h-9 rounded-lg flex items-center justify-center text-white font-bold text-xs shrink-0"
+                          <div className="w-9 h-9 rounded-lg flex items-center justify-center text-white font-bold text-sm shrink-0"
                             style={{ backgroundColor: SDG_COLORS[sdg.sdg] || '#6366f1' }}>
                             {sdg.sdg}
                           </div>
                           <div className="flex-grow">
-                            <div className="flex justify-between text-sm mb-1">
+                            <div className="flex justify-between text-[15px] mb-1">
                               <span className="font-medium text-gray-700">{sdg.name || `SDG ${sdg.sdg}`}</span>
                               <span className="text-gray-500 shrink-0 ml-2">{sdg.count} ({pct}%)</span>
                             </div>
@@ -677,9 +677,9 @@ const InstitutionProfile = () => {
                       <img src={c.logo} alt={c.name} className="w-12 h-12 rounded-lg object-cover shrink-0"
                         onError={(e) => { e.target.src = '/assets/img/institution-default.svg'; }}/>
                       <div className="flex-grow min-w-0">
-                        <h4 className="font-semibold text-gray-900 text-sm truncate">{c.name}</h4>
-                        <p className="text-xs text-gray-500">{c.country}</p>
-                        <p className="text-xs text-indigo-600 font-medium mt-1">{c.publications} {t('ringkasan.publications_unit')}</p>
+                        <h4 className="font-semibold text-gray-900 text-[15px] truncate">{c.name}</h4>
+                        <p className="text-sm text-gray-500">{c.country}</p>
+                        <p className="text-sm text-indigo-600 font-medium mt-1">{c.publications} {t('ringkasan.publications_unit')}</p>
                       </div>
                     </div>
                   ))}
@@ -702,19 +702,19 @@ const InstitutionProfile = () => {
                   {profileData.affiliated_journals.map((j, idx) => (
                     <div key={idx} className="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-indigo-200 hover:bg-indigo-50/30 transition-colors">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-xs shrink-0">JR</div>
+                        <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-sm shrink-0">JR</div>
                         <div className="min-w-0">
-                          <h4 className="font-semibold text-gray-900 text-sm truncate">
+                          <h4 className="font-semibold text-gray-900 text-[15px] truncate">
                             {j.slug ? (
                               <Link to={`/journals/${j.slug}`} className="hover:text-indigo-600">{j.name || j.title}</Link>
                             ) : (j.name || j.title)}
                           </h4>
-                          {j.eissn && <p className="text-xs text-gray-500">E-ISSN: {j.eissn}</p>}
+                          {j.eissn && <p className="text-sm text-gray-500">E-ISSN: {j.eissn}</p>}
                         </div>
                       </div>
                       <div className="text-right shrink-0 ml-2">
-                        <p className="text-sm font-bold text-indigo-600">{j.total_articles || j.publications || 0}</p>
-                        <p className="text-xs text-gray-500">{t('ringkasan.articles_unit')}</p>
+                        <p className="text-[15px] font-bold text-indigo-600">{j.total_articles || j.publications || 0}</p>
+                        <p className="text-sm text-gray-500">{t('ringkasan.articles_unit')}</p>
                       </div>
                     </div>
                   ))}
@@ -739,10 +739,10 @@ const InstitutionProfile = () => {
                       <img src={item.image} alt={item.title} className="w-24 h-20 object-cover rounded-lg shrink-0"
                         onError={(e) => { e.target.src = '/assets/img/article-default.svg'; }}/>
                       <div className="flex-grow min-w-0">
-                        <h4 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{item.title}</h4>
-                        <p className="text-xs text-gray-500">{item.date || item.published_at}</p>
+                        <h4 className="font-semibold text-gray-900 text-[15px] mb-1 line-clamp-2">{item.title}</h4>
+                        <p className="text-sm text-gray-500">{item.date || item.published_at}</p>
                         {item.url && (
-                          <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-600 hover:underline mt-1 inline-block">Read more →</a>
+                          <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-sm text-indigo-600 hover:underline mt-1 inline-block">Read more →</a>
                         )}
                       </div>
                     </div>
@@ -779,8 +779,8 @@ const InstitutionProfile = () => {
                     ['description', inst.description],
                   ].filter(([, v]) => v != null && v !== '').map(([key, val]) => (
                     <div key={key} className="p-4 rounded-xl bg-gray-50 border border-gray-100">
-                      <dt className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{key}</dt>
-                      <dd className="text-sm text-gray-900 font-medium break-words">
+                      <dt className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-1">{key}</dt>
+                      <dd className="text-[15px] text-gray-900 font-medium break-words">
                         {key === 'website' ? (
                           <a href={val} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{val}</a>
                         ) : String(val)}
@@ -789,7 +789,7 @@ const InstitutionProfile = () => {
                   ))}
                 </dl>
               ) : (
-                <p className="text-sm text-gray-500">{t('informasi_tab.no_data')}</p>
+                <p className="text-[15px] text-gray-500">{t('informasi_tab.no_data')}</p>
               )}
             </div>
           )}
@@ -803,8 +803,8 @@ const InstitutionProfile = () => {
               </div>
               <div className="flex gap-3 w-full lg:w-auto">
                 <input type="text" placeholder={t('cta.placeholder')}
-                  className="flex-grow lg:w-80 px-4 py-3 rounded-xl text-gray-900 focus:ring-2 focus:ring-white focus:outline-none text-sm"/>
-                <button className="px-6 py-3 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition-colors whitespace-nowrap flex items-center gap-2 text-sm">
+                  className="flex-grow lg:w-80 px-4 py-3 rounded-xl text-gray-900 focus:ring-2 focus:ring-white focus:outline-none text-[15px]"/>
+                <button className="px-6 py-3 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition-colors whitespace-nowrap flex items-center gap-2 text-[15px]">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                   </svg>

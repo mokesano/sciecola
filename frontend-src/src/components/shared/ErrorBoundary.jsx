@@ -84,7 +84,7 @@ class ErrorBoundary extends Component {
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-1">Detail Error</h3>
                   {this.state.error && (
-                    <p className="text-sm text-red-600 font-mono bg-red-50 p-2 rounded">
+                    <p className="text-[15px] text-red-600 font-mono bg-red-50 p-2 rounded">
                       {this.state.error.toString()}
                     </p>
                   )}
@@ -94,10 +94,10 @@ class ErrorBoundary extends Component {
               {/* Component Stack (Development Only) */}
               {process.env.NODE_ENV === 'development' && this.state.errorInfo && (
                 <details className="mt-4">
-                  <summary className="cursor-pointer text-sm font-medium text-gray-700 hover:text-gray-900">
+                  <summary className="cursor-pointer text-[15px] font-medium text-gray-700 hover:text-gray-900">
                     Lihat Component Stack
                   </summary>
-                  <pre className="mt-2 text-xs text-gray-600 bg-gray-50 p-3 rounded overflow-auto max-h-48">
+                  <pre className="mt-2 text-sm text-gray-600 bg-gray-50 p-3 rounded overflow-auto max-h-48">
                     {this.state.errorInfo.componentStack}
                   </pre>
                 </details>
@@ -169,7 +169,7 @@ class ErrorBoundary extends Component {
 
             {/* Help Text */}
             <div className="mt-8 text-center">
-              <p className="text-sm text-gray-500">
+              <p className="text-[15px] text-gray-500">
                 Jika masalah berlanjut, silakan hubungi tim support dengan menyertakan detail error di atas.
               </p>
             </div>

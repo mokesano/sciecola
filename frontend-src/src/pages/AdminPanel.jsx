@@ -21,8 +21,13 @@ const AdminPanel = () => {
       title: 'Manage Researchers',
       icon: User,
       fields: [
-        { name: 'orcid', label: 'ORCID', type: 'text', required: true },
+        { name: 'orcid', label: 'ORCID', type: 'text', required: true, placeholder: '0000-0002-5152-9727' },
         { name: 'name', label: 'Name', type: 'text', required: true },
+        // Identifier selain ORCID. Kolomnya sudah ada di tabel researchers dan
+        // dipakai strip identifier pada halaman profil anggota tim.
+        { name: 'scopus_id', label: 'Scopus Author ID', type: 'text', placeholder: '57204244163' },
+        { name: 'sinta_id', label: 'SINTA ID', type: 'text', placeholder: '6032151' },
+        { name: 'researcher_id', label: 'ResearcherID / Publons', type: 'text', placeholder: 'S-9066-2016' },
         { name: 'institution_id', label: 'Institution ID', type: 'number' },
         { name: 'collaboration_status', label: 'Collaboration Status', type: 'select', options: ['open', 'busy', 'limited'] },
         { name: 'bio', label: 'Bio', type: 'textarea' },
@@ -230,7 +235,7 @@ const AdminPanel = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 {currentForm.fields.map(field => (
                   <div key={field.name}>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-[15px] font-semibold text-gray-700 mb-2">
                       {field.label}
                       {field.required && <span className="text-red-500">*</span>}
                     </label>
@@ -304,12 +309,12 @@ const AdminPanel = () => {
         <div className="container max-w-7xl mx-auto px-8">
           <div className="bg-white rounded-lg p-6 border border-blue-200">
             <h3 className="font-bold text-gray-900 mb-2">API Integration Required</h3>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-600 text-[15px]">
               Admin endpoints need to be implemented in the backend. Create corresponding API files:<br/>
-              <code className="bg-gray-100 px-2 py-1 rounded text-xs">api/admin/researchers.php</code>,
-              <code className="bg-gray-100 px-2 py-1 rounded text-xs">api/admin/projects.php</code>,
-              <code className="bg-gray-100 px-2 py-1 rounded text-xs">api/admin/opportunities.php</code>,
-              <code className="bg-gray-100 px-2 py-1 rounded text-xs">api/admin/expertise.php</code>
+              <code className="bg-gray-100 px-2 py-1 rounded text-sm">api/admin/researchers.php</code>,
+              <code className="bg-gray-100 px-2 py-1 rounded text-sm">api/admin/projects.php</code>,
+              <code className="bg-gray-100 px-2 py-1 rounded text-sm">api/admin/opportunities.php</code>,
+              <code className="bg-gray-100 px-2 py-1 rounded text-sm">api/admin/expertise.php</code>
             </p>
           </div>
         </div>

@@ -56,7 +56,7 @@ const Sitemap = () => {
 
   return (
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-8">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400">›</span>
         <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
@@ -65,8 +65,8 @@ const Sitemap = () => {
       <section className="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 shadow-sm mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-3">{t('title')}</h1>
         <p className="text-gray-600 max-w-3xl">{t('subtitle')}</p>
-        {loading && <p className="text-sm text-indigo-700 mt-3">{t('loading')}</p>}
-        {error   && <p className="text-sm text-amber-700 mt-3">{error}</p>}
+        {loading && <p className="text-[15px] text-indigo-700 mt-3">{t('loading')}</p>}
+        {error   && <p className="text-[15px] text-amber-700 mt-3">{error}</p>}
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -78,7 +78,7 @@ const Sitemap = () => {
                 <li key={`${group.title}-${item.to}`}>
                   <Link
                     to={item.to}
-                    className="text-sm text-indigo-700 hover:text-indigo-900 hover:underline underline-offset-2"
+                    className="text-[15px] text-indigo-700 hover:text-indigo-900 hover:underline underline-offset-2"
                   >
                     {item.label}
                   </Link>

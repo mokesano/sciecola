@@ -36,24 +36,24 @@ const MemberCard = ({ member, t }) => (
   <Link to={`/teams/${member.slug}`} className="group flex flex-col items-center px-2 text-center">
     <Portrait photo={member.photo} name={member.name} />
 
-    <h3 className="mt-5 text-[15px] font-semibold leading-snug text-slate-900 group-hover:text-indigo-700">
+    <h3 className="mt-5 text-lg font-semibold leading-snug text-slate-900 group-hover:text-indigo-700">
       {member.name}
     </h3>
 
     {member.department && (
-      <p className="mt-1.5 text-[13px] leading-snug text-slate-500">{member.department}</p>
+      <p className="mt-1.5 text-[15px] leading-snug text-slate-500">{member.department}</p>
     )}
     {member.location && (
-      <p className="text-[13px] leading-snug text-slate-500">{member.location}</p>
+      <p className="text-[15px] leading-snug text-slate-500">{member.location}</p>
     )}
 
     {/* Role sits last and in the accent colour, the way a board page marks
         "Chair" — it is the distinguishing fact, not the affiliation. */}
     {member.position && (
-      <p className="mt-2 text-[13px] font-medium text-indigo-700">{member.position}</p>
+      <p className="mt-2 text-[15px] font-medium text-indigo-700">{member.position}</p>
     )}
 
-    <span className="mt-2 text-xs text-slate-400 opacity-0 transition-opacity group-hover:opacity-100">
+    <span className="mt-2 text-sm text-slate-400 opacity-0 transition-opacity group-hover:opacity-100">
       {t('card.view_profile')}
     </span>
   </Link>
@@ -118,7 +118,7 @@ const Teams = () => {
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
 
         {/* Breadcrumb */}
-        <nav className="mb-10 flex items-center gap-2 text-[13px] text-slate-500">
+        <nav className="mb-10 flex items-center gap-2 text-[15px] text-slate-500">
           <Link to="/"      className="hover:text-indigo-700 hover:underline">{t('breadcrumb.home')}</Link>
           <span className="text-slate-300">/</span>
           <Link to="/about" className="hover:text-indigo-700 hover:underline">{t('breadcrumb.about')}</Link>
@@ -128,13 +128,13 @@ const Teams = () => {
 
         {/* Masthead — centred, the way a board or governance page opens. */}
         <header className="mx-auto max-w-3xl text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-indigo-700">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-700">
             {t('breadcrumb.current')}
           </p>
           <h1 className="mt-3 font-serif text-4xl font-semibold tracking-tight text-slate-900 lg:text-5xl">
             {t('header.title')}
           </h1>
-          <p className="mt-5 text-[15px] leading-relaxed text-slate-600">
+          <p className="mt-5 text-base leading-relaxed text-slate-600">
             {t('header.subtitle')}
           </p>
         </header>
@@ -158,7 +158,7 @@ const Teams = () => {
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   placeholder={t('filter.search')}
-                  className="w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+                  className="w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 text-[15px] text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
                 />
                 <svg className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -181,7 +181,7 @@ const Teams = () => {
 
         {/* Loading */}
         {loading && (
-          <div className="flex items-center justify-center gap-3 py-24 text-sm text-slate-500">
+          <div className="flex items-center justify-center gap-3 py-24 text-[15px] text-slate-500">
             <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600" />
             {t('loading')}
           </div>
@@ -190,9 +190,9 @@ const Teams = () => {
         {/* Error */}
         {error && !loading && (
           <div className="mt-10 rounded-lg border border-slate-200 bg-slate-50 px-6 py-10 text-center">
-            <p className="text-sm font-medium text-slate-900">{t('error')}</p>
+            <p className="text-[15px] font-medium text-slate-900">{t('error')}</p>
             <button onClick={fetchData}
-              className="mt-4 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-slate-400">
+              className="mt-4 rounded-lg border border-slate-300 bg-white px-4 py-2 text-[15px] font-medium text-slate-700 transition-colors hover:border-slate-400">
               {t('retry')}
             </button>
           </div>
@@ -212,7 +212,7 @@ const Teams = () => {
                       {deptName}
                     </h2>
                     <div aria-hidden className="mx-auto mt-3 h-px w-10 bg-indigo-600" />
-                    <p className="mt-3 text-[13px] tabular-nums text-slate-400">{list.length}</p>
+                    <p className="mt-3 text-[15px] tabular-nums text-slate-400">{list.length}</p>
                   </div>
                   <div className="grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
                     {list.map(m => <MemberCard key={m.id} member={m} t={t} />)}
@@ -225,7 +225,7 @@ const Teams = () => {
 
         {/* Governance note */}
         {!loading && !error && members.length > 0 && (
-          <p className="mt-16 border-t border-slate-200 pt-5 text-center text-xs text-slate-400">
+          <p className="mt-16 border-t border-slate-200 pt-5 text-center text-sm text-slate-400">
             {t('admin_note')}
           </p>
         )}
@@ -235,10 +235,10 @@ const Teams = () => {
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="max-w-xl">
               <h3 className="font-serif text-2xl font-semibold tracking-tight">{t('cta.title')}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-300">{t('cta.subtitle')}</p>
+              <p className="mt-2 text-[15px] leading-relaxed text-slate-300">{t('cta.subtitle')}</p>
             </div>
             <Link to="/contact"
-              className="inline-flex shrink-0 items-center justify-center rounded-lg bg-white px-6 py-2.5 text-sm font-semibold text-slate-900 transition-colors hover:bg-slate-100">
+              className="inline-flex shrink-0 items-center justify-center rounded-lg bg-white px-6 py-2.5 text-[15px] font-semibold text-slate-900 transition-colors hover:bg-slate-100">
               {t('cta.button')}
             </Link>
           </div>
@@ -255,19 +255,19 @@ const Figure = ({ value, label }) => (
   <div className="px-4 py-6 text-center">
     <dd className="text-3xl font-semibold tabular-nums tracking-tight text-slate-900">{value}</dd>
     <div aria-hidden className="mx-auto mt-2.5 h-px w-8 bg-indigo-600" />
-    <dt className="mt-2.5 text-[11px] font-medium uppercase tracking-[0.1em] text-slate-500">{label}</dt>
+    <dt className="mt-2.5 text-xs font-medium uppercase tracking-[0.1em] text-slate-500">{label}</dt>
   </div>
 );
 
 const DeptTab = ({ label, count, active, onClick }) => (
   <button onClick={onClick}
-    className={`flex shrink-0 items-center gap-2 rounded-lg border px-3 py-1.5 text-[13px] font-medium transition-colors ${
+    className={`flex shrink-0 items-center gap-2 rounded-lg border px-3 py-1.5 text-[15px] font-medium transition-colors ${
       active
         ? 'border-slate-900 bg-slate-900 text-white'
         : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900'
     }`}>
     {label}
-    <span className={`tabular-nums text-[11px] ${active ? 'text-slate-300' : 'text-slate-400'}`}>
+    <span className={`tabular-nums text-xs ${active ? 'text-slate-300' : 'text-slate-400'}`}>
       {count}
     </span>
   </button>
@@ -277,13 +277,13 @@ const EmptyState = ({ hasFilter, onReset, t }) => {
   const variant = hasFilter ? 'no_match' : 'no_data';
   return (
     <div className="mt-16 rounded-lg border border-dashed border-slate-300 px-6 py-16 text-center">
-      <p className="text-sm font-semibold text-slate-900">{t(`empty.${variant}.title`)}</p>
-      <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-slate-500">
+      <p className="text-[15px] font-semibold text-slate-900">{t(`empty.${variant}.title`)}</p>
+      <p className="mx-auto mt-1.5 max-w-sm text-[15px] leading-relaxed text-slate-500">
         {t(`empty.${variant}.subtitle`)}
       </p>
       {hasFilter && (
         <button onClick={onReset}
-          className="mt-5 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-slate-400">
+          className="mt-5 rounded-lg border border-slate-300 bg-white px-4 py-2 text-[15px] font-medium text-slate-700 transition-colors hover:border-slate-400">
           {t('filter.reset')}
         </button>
       )}

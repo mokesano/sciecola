@@ -44,7 +44,7 @@ const CallToAction = () => {
 
       <div className="text-center lg:w-1/2 lg:text-left">
         <h2 className="text-2xl font-semibold tracking-tight">{t('cta.title')}</h2>
-        <p className="mt-2 text-sm leading-relaxed text-slate-300 md:text-[15px]">
+        <p className="mt-2 text-[15px] leading-relaxed text-slate-300 md:text-base">
           {t('cta.subtitle')}
         </p>
       </div>
@@ -59,18 +59,18 @@ const CallToAction = () => {
             value={inputValue}
             onChange={(e) => { setInputValue(e.target.value); setError(''); }}
             disabled={isLoading}
-            className="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-sm text-white placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400 disabled:opacity-60"
+            className="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-[15px] text-white placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400 disabled:opacity-60"
           />
           <button
             type="submit"
             disabled={isLoading}
-            className="flex shrink-0 items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition-colors hover:bg-slate-100 disabled:cursor-wait disabled:opacity-70"
+            className="flex shrink-0 items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 text-[15px] font-semibold text-slate-900 transition-colors hover:bg-slate-100 disabled:cursor-wait disabled:opacity-70"
           >
             {isLoading ? t('cta.button_loading') : t('cta.button')}
             {!isLoading && <ArrowRight className="h-4 w-4" />}
           </button>
         </form>
-        {error && <p className="mt-2 text-[13px] text-red-300">{error}</p>}
+        {error && <p className="mt-2 text-[15px] text-red-300">{error}</p>}
       </div>
 
     </div>

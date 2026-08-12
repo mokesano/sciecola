@@ -242,7 +242,7 @@ function InsightCard({ insight, t }) {
       {/* Top row: icon + category badge */}
       <div className="flex items-start justify-between gap-3">
         <InsightIcon icon={insight.icon} sdg={insight.sdg} />
-        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full shrink-0 ${badgeClass}`}>
+        <span className={`text-sm font-semibold px-2.5 py-1 rounded-full shrink-0 ${badgeClass}`}>
           {categoryLabel}
         </span>
       </div>
@@ -253,20 +253,20 @@ function InsightCard({ insight, t }) {
       </h3>
 
       {/* Description */}
-      <p className="text-gray-400 text-sm leading-relaxed flex-1">
+      <p className="text-gray-400 text-[15px] leading-relaxed flex-1">
         {insight.text}
       </p>
 
       {/* Footer: SDG badge + trend */}
       <div className="flex items-center justify-between mt-auto pt-2 border-t border-white/10">
         <div
-          className="w-6 h-6 rounded text-[10px] font-bold text-white flex items-center justify-center"
+          className="w-6 h-6 rounded text-xs font-bold text-white flex items-center justify-center"
           style={{ backgroundColor: SDG_COLORS[insight.sdg] || '#6366f1' }}
           title={t('sdg_label', { n: insight.sdg })}
         >
           {insight.sdg}
         </div>
-        <span className="text-xs font-bold text-indigo-300">{insight.trend}</span>
+        <span className="text-sm font-bold text-indigo-300">{insight.trend}</span>
       </div>
     </Link>
   );
@@ -280,7 +280,7 @@ function FilterBar({ active, onChange, t }) {
         <button
           key={cat}
           onClick={() => onChange(cat)}
-          className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 border
+          className={`px-4 py-2 rounded-full text-[15px] font-semibold transition-all duration-200 border
             ${active === cat
               ? 'bg-indigo-600 text-white border-indigo-600 shadow-md'
               : 'bg-white text-gray-600 border-gray-200 hover:border-indigo-300 hover:text-indigo-600'
@@ -327,7 +327,7 @@ const InsightsPage = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-gray-600 mb-6">
+        <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-6">
           <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
           <span className="text-gray-400">›</span>
           <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>

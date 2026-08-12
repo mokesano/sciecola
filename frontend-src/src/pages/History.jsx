@@ -68,7 +68,7 @@ const History = () => {
       <main className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
 
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+        <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-8">
           <Link to="/"      className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
           <span className="text-gray-400">›</span>
           <Link to="/about" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.about')}</Link>
@@ -90,7 +90,7 @@ const History = () => {
         {/* Filter pills */}
         <div className="flex justify-center mb-10 gap-2">
           <button onClick={() => setShowFeaturedOnly(false)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-full text-[15px] font-medium transition-colors ${
               !showFeaturedOnly
                 ? 'bg-orange-500 text-white shadow-sm'
                 : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
@@ -98,7 +98,7 @@ const History = () => {
             {t('filter.all')}
           </button>
           <button onClick={() => setShowFeaturedOnly(true)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-1.5 ${
+            className={`px-4 py-2 rounded-full text-[15px] font-medium transition-colors flex items-center gap-1.5 ${
               showFeaturedOnly
                 ? 'bg-orange-500 text-white shadow-sm'
                 : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
@@ -123,7 +123,7 @@ const History = () => {
           <div className="flex flex-col items-center gap-3 py-16">
             <p className="text-red-600 font-medium">{t('error')}</p>
             <button onClick={fetchTimeline}
-              className="px-5 py-2 bg-red-600 text-white rounded-xl text-sm font-medium hover:bg-red-700 transition-colors">
+              className="px-5 py-2 bg-red-600 text-white rounded-xl text-[15px] font-medium hover:bg-red-700 transition-colors">
               {t('retry')}
             </button>
           </div>
@@ -139,7 +139,7 @@ const History = () => {
               </svg>
             </div>
             <p className="font-semibold text-gray-800">{t('empty.title')}</p>
-            <p className="text-sm text-gray-500 text-center max-w-sm">{t('empty.subtitle')}</p>
+            <p className="text-[15px] text-gray-500 text-center max-w-sm">{t('empty.subtitle')}</p>
           </div>
         )}
 
@@ -168,11 +168,11 @@ const History = () => {
                             <div className="bg-white p-5 rounded-2xl border border-orange-200 shadow-sm hover:shadow-md transition-shadow">
                               <div className="flex items-center gap-2 mb-3 flex-wrap">
                                 {monthLabel && (
-                                  <span className="inline-block px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-bold">
+                                  <span className="inline-block px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-bold">
                                     {monthLabel}
                                   </span>
                                 )}
-                                <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold border capitalize ${cfg.color}`}>
+                                <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold border capitalize ${cfg.color}`}>
                                   {t(`type_label.${event.type}`, { defaultValue: event.type })}
                                 </span>
                                 {event.is_featured && (
@@ -183,16 +183,16 @@ const History = () => {
                               </div>
                               <h4 className="font-bold text-gray-900 text-lg mb-2">{event.title}</h4>
                               {event.description && (
-                                <p className="text-sm text-gray-600 leading-relaxed">{event.description}</p>
+                                <p className="text-[15px] text-gray-600 leading-relaxed">{event.description}</p>
                               )}
                               {event.impact_area && (
-                                <p className={`text-xs text-gray-400 mt-3 ${side === 'left' ? 'md:text-right' : 'md:text-left'}`}>
+                                <p className={`text-sm text-gray-400 mt-3 ${side === 'left' ? 'md:text-right' : 'md:text-left'}`}>
                                   {event.impact_area}
                                 </p>
                               )}
                               {event.link && (
                                 <a href={event.link} target="_blank" rel="noopener noreferrer"
-                                  className={`inline-flex items-center gap-1 text-xs mt-3 text-orange-600 hover:text-orange-700 font-medium ${side === 'left' ? 'md:float-right md:clear-both' : ''}`}>
+                                  className={`inline-flex items-center gap-1 text-sm mt-3 text-orange-600 hover:text-orange-700 font-medium ${side === 'left' ? 'md:float-right md:clear-both' : ''}`}>
                                   Learn more
                                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -233,7 +233,7 @@ const History = () => {
               {stats.slice(0, 4).map((s, idx) => (
                 <div key={idx} className="bg-white p-5 rounded-2xl border border-orange-200 shadow-sm text-center">
                   <p className="text-2xl font-bold text-orange-500">{s.value}</p>
-                  <p className="text-xs text-gray-600 mt-1">{s.label}</p>
+                  <p className="text-sm text-gray-600 mt-1">{s.label}</p>
                 </div>
               ))}
             </div>

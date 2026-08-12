@@ -20,9 +20,9 @@ const ChartTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg max-w-xs">
-      <p className="text-sm font-semibold text-gray-900 mb-1">{label}</p>
+      <p className="text-[15px] font-semibold text-gray-900 mb-1">{label}</p>
       {payload.map((p, i) => (
-        <p key={i} className="text-xs leading-snug" style={{ color: p.color || p.stroke || p.fill }}>
+        <p key={i} className="text-sm leading-snug" style={{ color: p.color || p.stroke || p.fill }}>
           {p.name}: <span className="font-semibold">{p.value?.toLocaleString()}</span>
         </p>
       ))}
@@ -36,8 +36,8 @@ const EmptySection = ({ title, subtitle, compact = false }) => (
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"
         d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
     </svg>
-    <p className="font-semibold text-gray-700 text-sm">{title}</p>
-    {subtitle && <p className="text-xs text-gray-500 mt-1 max-w-sm">{subtitle}</p>}
+    <p className="font-semibold text-gray-700 text-[15px]">{title}</p>
+    {subtitle && <p className="text-sm text-gray-500 mt-1 max-w-sm">{subtitle}</p>}
   </div>
 );
 
@@ -152,7 +152,7 @@ const TrendsAnalysis = () => {
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
 
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400"><ChevronRight /></span>
         <Link to="/analytics" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.analytics')}</Link>
@@ -170,7 +170,7 @@ const TrendsAnalysis = () => {
           <select
             value={sdgFilter}
             onChange={e => setSdgFilter(Number(e.target.value))}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="border border-gray-200 rounded-lg px-3 py-2 text-[15px] bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value={0}>{t('filter.sdg_all')}</option>
             {Array.from({ length: 17 }, (_, i) => i + 1).map(n => (
@@ -180,7 +180,7 @@ const TrendsAnalysis = () => {
           <select
             value={years}
             onChange={e => setYears(Number(e.target.value))}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="border border-gray-200 rounded-lg px-3 py-2 text-[15px] bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           >
             {PERIOD_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>{t(`filter.period.${opt.key}`)}</option>
@@ -188,7 +188,7 @@ const TrendsAnalysis = () => {
           </select>
           <button
             onClick={() => setShowInsights(s => !s)}
-            className={`px-4 py-2 text-sm font-medium rounded-lg shadow-sm transition-colors ${
+            className={`px-4 py-2 text-[15px] font-medium rounded-lg shadow-sm transition-colors ${
               showInsights
                 ? 'bg-indigo-600 text-white hover:bg-indigo-700'
                 : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
@@ -213,8 +213,8 @@ const TrendsAnalysis = () => {
           <svg className="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
-          <span className="text-red-700 text-sm flex-grow">{error}</span>
-          <button onClick={fetchData} className="text-sm text-red-600 underline shrink-0">{t('retry')}</button>
+          <span className="text-red-700 text-[15px] flex-grow">{error}</span>
+          <button onClick={fetchData} className="text-[15px] text-red-600 underline shrink-0">{t('retry')}</button>
         </div>
       )}
 
@@ -231,7 +231,7 @@ const TrendsAnalysis = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <h4 className="font-semibold mb-2 text-gray-700">{t('insights.main_trends')}</h4>
-                    <ul className="space-y-2 text-sm text-gray-700">
+                    <ul className="space-y-2 text-[15px] text-gray-700">
                       <li className="flex items-start gap-2"><CheckIcon /><span>{t('insights.trend_1', { academic: impactDeltas.academic })}</span></li>
                       <li className="flex items-start gap-2"><CheckIcon /><span>{t('insights.trend_2')}</span></li>
                       <li className="flex items-start gap-2"><CheckIcon /><span>{t('insights.trend_3')}</span></li>
@@ -239,7 +239,7 @@ const TrendsAnalysis = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold mb-2 text-gray-700">{t('insights.policy_recs')}</h4>
-                    <ul className="space-y-2 text-sm text-gray-700">
+                    <ul className="space-y-2 text-[15px] text-gray-700">
                       <li className="flex items-start gap-2"><ArrowRightIcon /><span>{t('insights.rec_1')}</span></li>
                       <li className="flex items-start gap-2"><ArrowRightIcon /><span>{t('insights.rec_2')}</span></li>
                       <li className="flex items-start gap-2"><ArrowRightIcon /><span>{t('insights.rec_3')}</span></li>
@@ -249,7 +249,7 @@ const TrendsAnalysis = () => {
                 </div>
                 {insightSummary && (
                   <div className="mt-4 pt-4 border-t border-green-200/50">
-                    <p className="text-sm text-gray-600 italic">"{insightSummary}"</p>
+                    <p className="text-[15px] text-gray-600 italic">"{insightSummary}"</p>
                   </div>
                 )}
               </div>
@@ -259,7 +259,7 @@ const TrendsAnalysis = () => {
           {/* Top growing topics cards */}
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-1 text-gray-800">{t('topic_cards.title')}</h3>
-            <p className="text-sm text-gray-500 mb-4">{t('topic_cards.subtitle')}</p>
+            <p className="text-[15px] text-gray-500 mb-4">{t('topic_cards.subtitle')}</p>
             {topicsGrowth.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {topicsGrowth.slice(0, 3).map(topic => {
@@ -275,21 +275,21 @@ const TrendsAnalysis = () => {
                       <div className="flex items-center gap-2 mb-3">
                         <img src={`/assets/sdgs/icons/sdg-${topic.sdg}.svg`} alt={topic.topic} className="w-10 h-10 rounded" />
                         <div>
-                          <h4 className="font-bold text-gray-900 text-sm leading-tight">{topic.topic}</h4>
-                          <p className="text-[10px] text-gray-500">SDG {topic.sdg}</p>
+                          <h4 className="font-bold text-gray-900 text-[15px] leading-tight">{topic.topic}</h4>
+                          <p className="text-xs text-gray-500">SDG {topic.sdg}</p>
                         </div>
                       </div>
                       <div className="flex items-end justify-between">
                         <div>
                           <p className="text-2xl font-bold" style={{ color: topic.color }}>+{topic.growth}%</p>
-                          <p className="text-[10px] text-gray-500">{t('topic_cards.growth_label')}</p>
+                          <p className="text-xs text-gray-500">{t('topic_cards.growth_label')}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm font-semibold text-gray-700">{topic.current_count.toLocaleString()}</p>
-                          <p className="text-[10px] text-gray-500">{t('topic_cards.publications')}</p>
+                          <p className="text-[15px] font-semibold text-gray-700">{topic.current_count.toLocaleString()}</p>
+                          <p className="text-xs text-gray-500">{t('topic_cards.publications')}</p>
                         </div>
                       </div>
-                      <p className="mt-2 text-xs text-gray-600">
+                      <p className="mt-2 text-sm text-gray-600">
                         <span className="font-semibold">{t('topic_cards.impact_label')}</span> {impactLabel}
                       </p>
                     </div>
@@ -321,7 +321,7 @@ const TrendsAnalysis = () => {
                     </ComposedChart>
                   </ResponsiveContainer>
                   {showInsights && predictionInsight && (
-                    <div className="mt-3 bg-indigo-50 p-3 rounded-lg text-sm text-indigo-700">{predictionInsight}</div>
+                    <div className="mt-3 bg-indigo-50 p-3 rounded-lg text-[15px] text-indigo-700">{predictionInsight}</div>
                   )}
                 </>
               ) : (
@@ -347,7 +347,7 @@ const TrendsAnalysis = () => {
                     </BarChart>
                   </ResponsiveContainer>
                   {showInsights && topicsInsight && (
-                    <div className="mt-3 bg-purple-50 p-3 rounded-lg text-sm text-purple-700">{topicsInsight}</div>
+                    <div className="mt-3 bg-purple-50 p-3 rounded-lg text-[15px] text-purple-700">{topicsInsight}</div>
                   )}
                 </>
               ) : (
@@ -361,7 +361,7 @@ const TrendsAnalysis = () => {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
               <h3 className="font-bold text-gray-900">{t('impact_trends.title')}</h3>
               {showInsights && impactDeltas.academic !== 0 && (
-                <div className="bg-yellow-50 border-l-4 border-yellow-400 px-3 py-1.5 text-xs text-yellow-700 flex items-center gap-2">
+                <div className="bg-yellow-50 border-l-4 border-yellow-400 px-3 py-1.5 text-sm text-yellow-700 flex items-center gap-2">
                   <InfoIcon />
                   <span>{t('impact_trends.delta_label', { year: startYear })}: +{impactDeltas.total}%</span>
                 </div>
@@ -392,17 +392,17 @@ const TrendsAnalysis = () => {
                     { key: 'total',     delta: impactDeltas.total,     bg: 'bg-red-50',    text: 'text-red-700',    sub: 'text-red-600'    },
                   ].map(item => (
                     <div key={item.key} className={`p-3 rounded-lg ${item.bg}`}>
-                      <p className={`text-xs font-medium ${item.text}`}>{t(`impact_trends.${item.key}`)}</p>
+                      <p className={`text-sm font-medium ${item.text}`}>{t(`impact_trends.${item.key}`)}</p>
                       <p className={`text-xl font-bold ${item.text}`}>
                         {item.delta > 0 ? '+' : ''}{item.delta}%
                       </p>
-                      <p className={`text-[10px] ${item.sub}`}>{t('impact_trends.delta_label', { year: startYear })}</p>
+                      <p className={`text-xs ${item.sub}`}>{t('impact_trends.delta_label', { year: startYear })}</p>
                     </div>
                   ))}
                 </div>
 
                 {(impactDeltas.social === 0 || impactDeltas.practical === 0) && showInsights && (
-                  <div className="mt-3 text-xs text-gray-500 italic">
+                  <div className="mt-3 text-sm text-gray-500 italic">
                     {impactDeltas.social === 0 && <p>* {t('impact_trends.social_unavailable')}</p>}
                     {impactDeltas.practical === 0 && <p>* {t('impact_trends.practical_unavailable')}</p>}
                   </div>
@@ -433,7 +433,7 @@ const TrendsAnalysis = () => {
                     </LineChart>
                   </ResponsiveContainer>
                   {showInsights && fieldInsight && (
-                    <div className="mt-3 bg-blue-50 p-3 rounded-lg text-sm text-blue-700">{fieldInsight}</div>
+                    <div className="mt-3 bg-blue-50 p-3 rounded-lg text-[15px] text-blue-700">{fieldInsight}</div>
                   )}
                 </>
               ) : (
@@ -457,18 +457,18 @@ const TrendsAnalysis = () => {
                     </AreaChart>
                   </ResponsiveContainer>
                   {showInsights && (
-                    <div className="mt-3 bg-green-50 p-3 rounded-lg text-sm text-green-700">{t('collab_trend.insight')}</div>
+                    <div className="mt-3 bg-green-50 p-3 rounded-lg text-[15px] text-green-700">{t('collab_trend.insight')}</div>
                   )}
 
                   {/* Top countries */}
                   <div className="mt-4 pt-4 border-t border-gray-100">
-                    <h4 className="text-sm font-semibold mb-3 text-gray-700">{t('top_countries.title')}</h4>
+                    <h4 className="text-[15px] font-semibold mb-3 text-gray-700">{t('top_countries.title')}</h4>
                     {topCountries.length > 0 ? (
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         {topCountries.slice(0, 8).map((c, i) => (
                           <div key={i} className="bg-gray-50 p-2 rounded text-center">
-                            <p className="text-xs text-gray-500 truncate">{c.country}</p>
-                            <p className="text-sm font-bold text-gray-900">{c.collaborations.toLocaleString()}</p>
+                            <p className="text-sm text-gray-500 truncate">{c.country}</p>
+                            <p className="text-[15px] font-bold text-gray-900">{c.collaborations.toLocaleString()}</p>
                           </div>
                         ))}
                       </div>
@@ -499,7 +499,7 @@ const TrendsAnalysis = () => {
               </BarChart>
             </ResponsiveContainer>
             {showInsights && (
-              <div className="mt-3 bg-purple-50 p-3 rounded-lg text-sm text-purple-700">{t('regional.insight')}</div>
+              <div className="mt-3 bg-purple-50 p-3 rounded-lg text-[15px] text-purple-700">{t('regional.insight')}</div>
             )}
           </div>
         </>

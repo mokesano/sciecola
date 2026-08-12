@@ -4,7 +4,7 @@ import { IconChevronRight } from './icons';
 
 export default function Breadcrumb({ items = [] }) {
   return (
-    <nav className="flex items-center gap-1.5 text-sm text-gray-500 mb-6" aria-label="breadcrumb">
+    <nav className="flex items-center gap-1.5 text-[15px] text-gray-500 mb-6" aria-label="breadcrumb">
       <Link to="/" className="hover:text-indigo-600 transition-colors">Beranda</Link>
       {items.map((item, idx) => (
         <React.Fragment key={idx}>

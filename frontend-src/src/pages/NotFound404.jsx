@@ -72,34 +72,34 @@ const NotFound404 = () => {
 
         {/* Search Suggestion */}
         <div className="mt-12 pt-8 border-t border-gray-200">
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-[15px] text-gray-500 mb-4">
             {t('error.searchSuggestion', 'Cari yang Anda butuhkan:')}
           </p>
           <div className="flex justify-center space-x-4 flex-wrap gap-2">
             <Link
               to="/researchers"
-              className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
+              className="text-blue-600 hover:text-blue-800 text-[15px] font-medium transition-colors"
             >
               {t('menu.researchers', 'Peneliti')}
             </Link>
             <span className="text-gray-300">|</span>
             <Link
               to="/articles"
-              className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
+              className="text-blue-600 hover:text-blue-800 text-[15px] font-medium transition-colors"
             >
               {t('menu.articles', 'Artikel')}
             </Link>
             <span className="text-gray-300">|</span>
             <Link
               to="/institutions"
-              className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
+              className="text-blue-600 hover:text-blue-800 text-[15px] font-medium transition-colors"
             >
               {t('menu.institutions', 'Institusi')}
             </Link>
             <span className="text-gray-300">|</span>
             <Link
               to="/sdgs"
-              className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
+              className="text-blue-600 hover:text-blue-800 text-[15px] font-medium transition-colors"
             >
               SDGs
             </Link>

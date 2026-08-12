@@ -37,7 +37,7 @@ const DistributionMap = ({
     <section className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
       <div className="p-5 border-b border-gray-100">
         <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-        {subtitle && <p className="mt-1 text-sm text-gray-500">{subtitle}</p>}
+        {subtitle && <p className="mt-1 text-[15px] text-gray-500">{subtitle}</p>}
       </div>
 
       <div className="p-4">
@@ -65,12 +65,12 @@ const DistributionMap = ({
 
         {showLegend && (
           <div className="mt-4">
-            <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+            <div className="flex items-center justify-between text-sm text-gray-500 mb-1">
               <span>Less</span>
               <span>More</span>
             </div>
             <div className="h-2 rounded-full bg-gradient-to-r from-blue-200 via-blue-400 to-blue-700" />
-            <div className="flex items-center justify-between mt-1 text-[11px] text-gray-500">
+            <div className="flex items-center justify-between mt-1 text-xs text-gray-500">
               <span>{minValue.toLocaleString()}</span>
               <span>{maxValue.toLocaleString()}</span>
             </div>

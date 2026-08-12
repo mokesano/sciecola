@@ -17,8 +17,8 @@ const EmptySection = ({ title, subtitle, compact = false }) => (
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"
         d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
-    <p className="font-semibold text-gray-700 text-sm">{title}</p>
-    {subtitle && <p className="text-xs text-gray-500 mt-1 max-w-sm">{subtitle}</p>}
+    <p className="font-semibold text-gray-700 text-[15px]">{title}</p>
+    {subtitle && <p className="text-sm text-gray-500 mt-1 max-w-sm">{subtitle}</p>}
   </div>
 );
 
@@ -62,9 +62,9 @@ const getChoroplethColor = (count, maxCount) => {
 };
 
 const SdgPill = ({ sdg }) => {
-  if (!sdg) return <span className="text-xs text-gray-400">—</span>;
+  if (!sdg) return <span className="text-sm text-gray-400">—</span>;
   return (
-    <span className="inline-flex items-center gap-1.5 text-xs">
+    <span className="inline-flex items-center gap-1.5 text-sm">
       <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: sdg.color }} />
       <span className="text-gray-700">SDG {sdg.number}: {sdg.name}</span>
     </span>
@@ -207,7 +207,7 @@ const ResearcherDistribution = () => {
     <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
 
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-gray-600 mb-12">
+      <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-12">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400"><ChevronRight /></span>
         <Link to="/analytics" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.analytics')}</Link>
@@ -224,15 +224,15 @@ const ResearcherDistribution = () => {
       {/* Aggregate stats */}
       <div className="grid grid-cols-3 gap-3 mb-6">
         <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-          <p className="text-xs text-gray-500 font-medium mb-1">{t('stats.total_researchers')}</p>
+          <p className="text-sm text-gray-500 font-medium mb-1">{t('stats.total_researchers')}</p>
           <p className="text-2xl font-bold text-gray-900">{totalStats.researchers.toLocaleString()}</p>
         </div>
         <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-          <p className="text-xs text-gray-500 font-medium mb-1">{t('stats.total_countries')}</p>
+          <p className="text-sm text-gray-500 font-medium mb-1">{t('stats.total_countries')}</p>
           <p className="text-2xl font-bold text-gray-900">{totalStats.countries.toLocaleString()}</p>
         </div>
         <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-          <p className="text-xs text-gray-500 font-medium mb-1">{t('stats.total_institutions')}</p>
+          <p className="text-sm text-gray-500 font-medium mb-1">{t('stats.total_institutions')}</p>
           <p className="text-2xl font-bold text-gray-900">{totalStats.institutions.toLocaleString()}</p>
         </div>
       </div>
@@ -245,7 +245,7 @@ const ResearcherDistribution = () => {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder={t('filter.search_placeholder')}
-            className="border border-gray-200 rounded-lg pl-9 pr-3 py-2 text-sm bg-white shadow-sm w-full focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="border border-gray-200 rounded-lg pl-9 pr-3 py-2 text-[15px] bg-white shadow-sm w-full focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
           />
           <svg className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -254,7 +254,7 @@ const ResearcherDistribution = () => {
         <select
           value={sdg}
           onChange={e => setSdg(Number(e.target.value))}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          className="border border-gray-200 rounded-lg px-3 py-2 text-[15px] bg-white shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
         >
           <option value={0}>{t('filter.sdg_all')}</option>
           {Array.from({ length: 17 }, (_, i) => i + 1).map(n => (
@@ -264,7 +264,7 @@ const ResearcherDistribution = () => {
         <div className="flex border border-gray-200 rounded-lg bg-white shadow-sm overflow-hidden">
           <button
             onClick={() => setMapView('country')}
-            className={`px-4 py-2 text-sm font-medium transition-colors ${
+            className={`px-4 py-2 text-[15px] font-medium transition-colors ${
               mapView === 'country' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'
             }`}
           >
@@ -272,7 +272,7 @@ const ResearcherDistribution = () => {
           </button>
           <button
             onClick={() => setMapView('institution')}
-            className={`px-4 py-2 text-sm font-medium transition-colors border-l border-gray-200 ${
+            className={`px-4 py-2 text-[15px] font-medium transition-colors border-l border-gray-200 ${
               mapView === 'institution' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'
             }`}
           >
@@ -282,7 +282,7 @@ const ResearcherDistribution = () => {
         {hasActiveFilters && (
           <button
             onClick={resetFilters}
-            className="px-3 py-2 text-sm text-indigo-600 font-medium hover:bg-indigo-50 rounded-lg transition-colors"
+            className="px-3 py-2 text-[15px] text-indigo-600 font-medium hover:bg-indigo-50 rounded-lg transition-colors"
           >
             {t('filter.reset')}
           </button>
@@ -303,8 +303,8 @@ const ResearcherDistribution = () => {
           <svg className="w-5 h-5 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
-          <span className="text-red-700 text-sm flex-grow">{error}</span>
-          <button onClick={fetchData} className="text-sm text-red-600 underline shrink-0">{t('retry')}</button>
+          <span className="text-red-700 text-[15px] flex-grow">{error}</span>
+          <button onClick={fetchData} className="text-[15px] text-red-600 underline shrink-0">{t('retry')}</button>
         </div>
       )}
 
@@ -366,16 +366,16 @@ const ResearcherDistribution = () => {
                   >
                     <Popup>
                       <div className="p-1 min-w-[160px]">
-                        <p className="font-bold text-sm text-gray-900 leading-tight">{inst.name}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">{inst.country}</p>
-                        <p className="text-xs text-gray-700 mt-1">
+                        <p className="font-bold text-[15px] text-gray-900 leading-tight">{inst.name}</p>
+                        <p className="text-sm text-gray-500 mt-0.5">{inst.country}</p>
+                        <p className="text-sm text-gray-700 mt-1">
                           <b>{inst.researchers.toLocaleString()}</b> {t('map.popup.researchers')}
                         </p>
-                        <p className="text-xs text-gray-600">
+                        <p className="text-sm text-gray-600">
                           <b>{(inst.publications || 0).toLocaleString()}</b> {t('map.popup.publications')}
                         </p>
                         {inst.top_sdg && (
-                          <p className="text-xs mt-1"><SdgPill sdg={inst.top_sdg} /></p>
+                          <p className="text-sm mt-1"><SdgPill sdg={inst.top_sdg} /></p>
                         )}
                       </div>
                     </Popup>
@@ -386,7 +386,7 @@ const ResearcherDistribution = () => {
 
             {/* Legend for country view */}
             {mapView === 'country' && (
-              <div className="p-3 border-t border-gray-100 flex items-center justify-center gap-3 flex-wrap text-xs">
+              <div className="p-3 border-t border-gray-100 flex items-center justify-center gap-3 flex-wrap text-sm">
                 <span className="text-gray-500">{t('map.legend_label')}</span>
                 {[
                   { color: '#f5f5f5', label: t('map.legend_zero')    },
@@ -409,12 +409,12 @@ const ResearcherDistribution = () => {
             <div className="bg-indigo-50 border border-indigo-200 p-5 rounded-xl mb-6">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <p className="text-xs font-semibold text-indigo-600 mb-1 uppercase tracking-wide">
+                  <p className="text-sm font-semibold text-indigo-600 mb-1 uppercase tracking-wide">
                     {selectedDetail.type === 'country' ? t('detail.country_title') : t('detail.institution_title')}
                   </p>
                   <h3 className="font-bold text-gray-900 text-lg leading-snug">{selectedDetail.data.name}</h3>
                   {selectedDetail.type === 'institution' && (
-                    <p className="text-xs text-gray-500 mt-0.5">{selectedDetail.data.country}{selectedDetail.data.city ? ` · ${selectedDetail.data.city}` : ''}</p>
+                    <p className="text-sm text-gray-500 mt-0.5">{selectedDetail.data.country}{selectedDetail.data.city ? ` · ${selectedDetail.data.city}` : ''}</p>
                   )}
                 </div>
                 <button
@@ -431,8 +431,8 @@ const ResearcherDistribution = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Key stats */}
                 <div>
-                  <h4 className="font-semibold text-gray-800 mb-3 text-sm">{t('detail.key_stats')}</h4>
-                  <div className="space-y-2 bg-white rounded-lg p-3 text-sm">
+                  <h4 className="font-semibold text-gray-800 mb-3 text-[15px]">{t('detail.key_stats')}</h4>
+                  <div className="space-y-2 bg-white rounded-lg p-3 text-[15px]">
                     <div className="flex justify-between border-b border-gray-100 pb-2">
                       <span className="text-gray-600">{t('detail.total_researchers')}</span>
                       <span className="font-bold text-gray-900">{selectedDetail.data.researchers.toLocaleString()}</span>
@@ -454,7 +454,7 @@ const ResearcherDistribution = () => {
                           <div className="bg-indigo-600 h-2 rounded-full"
                             style={{ width: `${Math.max(0, Math.min(100, selectedDetail.data.avg_impact))}%` }} />
                         </div>
-                        <span className="text-xs font-bold text-gray-900">{selectedDetail.data.avg_impact}</span>
+                        <span className="text-sm font-bold text-gray-900">{selectedDetail.data.avg_impact}</span>
                       </div>
                     </div>
                     <div className="flex justify-between items-center">
@@ -467,16 +467,16 @@ const ResearcherDistribution = () => {
                 {/* Top institutions (only for country view) */}
                 {selectedDetail.type === 'country' && (
                   <div>
-                    <h4 className="font-semibold text-gray-800 mb-3 text-sm">{t('detail.top_institutions')}</h4>
+                    <h4 className="font-semibold text-gray-800 mb-3 text-[15px]">{t('detail.top_institutions')}</h4>
                     {selectedDetail.institutions.length > 0 ? (
                       <ul className="space-y-2">
                         {selectedDetail.institutions.map((inst, i) => (
-                          <li key={inst.id} className="flex items-center justify-between gap-3 bg-white rounded-lg p-2.5 text-sm">
+                          <li key={inst.id} className="flex items-center justify-between gap-3 bg-white rounded-lg p-2.5 text-[15px]">
                             <div className="flex items-center gap-2 min-w-0">
-                              <span className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-600 shrink-0">{i + 1}</span>
+                              <span className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600 shrink-0">{i + 1}</span>
                               <span className="font-medium text-gray-900 truncate">{inst.name}</span>
                             </div>
-                            <span className="text-xs font-bold text-gray-700 shrink-0">
+                            <span className="text-sm font-bold text-gray-700 shrink-0">
                               {inst.researchers.toLocaleString()}
                             </span>
                           </li>
@@ -506,8 +506,8 @@ const ResearcherDistribution = () => {
             </div>
             {mapView === 'country' && filteredCountries.length > 0 ? (
               <div className="overflow-x-auto">
-                <table className="min-w-full text-sm">
-                  <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
+                <table className="min-w-full text-[15px]">
+                  <thead className="bg-gray-50 text-sm text-gray-500 uppercase tracking-wider">
                     <tr>
                       <th className="px-4 py-3 text-left font-medium">{t('table.columns.country')}</th>
                       <th className="px-4 py-3 text-right font-medium">{t('table.columns.researchers')}</th>
@@ -537,7 +537,7 @@ const ResearcherDistribution = () => {
                               <div className="bg-indigo-600 h-2 rounded-full"
                                 style={{ width: `${Math.max(0, Math.min(100, c.avg_impact))}%` }} />
                             </div>
-                            <span className="text-xs font-bold text-gray-900 shrink-0">{c.avg_impact}</span>
+                            <span className="text-sm font-bold text-gray-900 shrink-0">{c.avg_impact}</span>
                           </div>
                         </td>
                       </tr>
@@ -547,8 +547,8 @@ const ResearcherDistribution = () => {
               </div>
             ) : mapView === 'institution' && filteredInstitutions.length > 0 ? (
               <div className="overflow-x-auto">
-                <table className="min-w-full text-sm">
-                  <thead className="bg-gray-50 text-xs text-gray-500 uppercase tracking-wider">
+                <table className="min-w-full text-[15px]">
+                  <thead className="bg-gray-50 text-sm text-gray-500 uppercase tracking-wider">
                     <tr>
                       <th className="px-4 py-3 text-left font-medium">{t('table.columns.institution')}</th>
                       <th className="px-4 py-3 text-right font-medium">{t('table.columns.researchers')}</th>
@@ -568,7 +568,7 @@ const ResearcherDistribution = () => {
                       >
                         <td className="px-4 py-3">
                           <div className="font-medium text-gray-900 max-w-md truncate">{i.name}</div>
-                          <div className="text-xs text-gray-500">{i.country}{i.city ? ` · ${i.city}` : ''}</div>
+                          <div className="text-sm text-gray-500">{i.country}{i.city ? ` · ${i.city}` : ''}</div>
                         </td>
                         <td className="px-4 py-3 text-right text-gray-900 font-semibold">{i.researchers.toLocaleString()}</td>
                         <td className="px-4 py-3 text-right text-gray-700">{(i.publications || 0).toLocaleString()}</td>
@@ -579,7 +579,7 @@ const ResearcherDistribution = () => {
                               <div className="bg-indigo-600 h-2 rounded-full"
                                 style={{ width: `${Math.max(0, Math.min(100, i.avg_impact))}%` }} />
                             </div>
-                            <span className="text-xs font-bold text-gray-900 shrink-0">{i.avg_impact}</span>
+                            <span className="text-sm font-bold text-gray-900 shrink-0">{i.avg_impact}</span>
                           </div>
                         </td>
                       </tr>
@@ -598,7 +598,7 @@ const ResearcherDistribution = () => {
           {/* Top 10 Countries chart */}
           <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
             <h3 className="font-semibold text-gray-900 mb-1">{t('top_countries.title')}</h3>
-            <p className="text-xs text-gray-500 mb-4">{t('top_countries.subtitle')}</p>
+            <p className="text-sm text-gray-500 mb-4">{t('top_countries.subtitle')}</p>
             {top10Countries.length > 0 ? (
               <ResponsiveContainer width="100%" height={320}>
                 <BarChart data={top10Countries} margin={{ top: 20, right: 20, left: 0, bottom: 30 }}>

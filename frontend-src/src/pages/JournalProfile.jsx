@@ -25,8 +25,8 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-      <p className="text-sm font-semibold text-gray-900">{label}</p>
-      <p className="text-sm text-indigo-600">{payload[0].name}: {payload[0].value}</p>
+      <p className="text-[15px] font-semibold text-gray-900">{label}</p>
+      <p className="text-[15px] text-indigo-600">{payload[0].name}: {payload[0].value}</p>
     </div>
   );
 };
@@ -36,7 +36,7 @@ const EmptySection = ({ icon, message }) => (
     <svg className="w-10 h-10 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d={icon} />
     </svg>
-    <p className="text-sm">{message}</p>
+    <p className="text-[15px]">{message}</p>
   </div>
 );
 
@@ -156,7 +156,7 @@ const JournalProfile = () => {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{j.name || '—'}</h1>
               {j.issn && <p className="text-gray-600 mb-4">{t('header.issn', { value: j.issn })}</p>}
 
-              <div className="space-y-2 text-sm">
+              <div className="space-y-2 text-[15px]">
                 {j.publisher && (
                   <div className="flex items-center gap-2 text-gray-600">
                     <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -243,7 +243,7 @@ const JournalProfile = () => {
             ].map((s) => (
               <div key={s.key} className="text-center p-4 bg-gray-50 rounded-xl">
                 <p className="text-2xl font-bold text-gray-900">{s.value}</p>
-                <p className="text-sm text-gray-600 mt-1">{t(`header.stats.${s.key}`)}</p>
+                <p className="text-[15px] text-gray-600 mt-1">{t(`header.stats.${s.key}`)}</p>
               </div>
             ))}
           </div>
@@ -257,7 +257,7 @@ const JournalProfile = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-3 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
+              className={`flex items-center gap-2 px-4 py-3 border-b-2 font-medium text-[15px] whitespace-nowrap transition-colors ${
                 activeTab === tab.id
                   ? 'border-indigo-600 text-indigo-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -292,7 +292,7 @@ const JournalProfile = () => {
                 </div>
                 <div>
                   <p className="text-lg font-bold text-gray-900">{typeof s.value === 'number' ? s.value.toLocaleString() : s.value}</p>
-                  <p className="text-xs text-gray-600">{t(`ringkasan.stats.${s.key}`)}</p>
+                  <p className="text-sm text-gray-600">{t(`ringkasan.stats.${s.key}`)}</p>
                 </div>
               </div>
             ))}
@@ -357,7 +357,7 @@ const JournalProfile = () => {
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-bold text-gray-900">{t('ringkasan.top_articles')}</h3>
                 {topArticles.length > 0 && (
-                  <button onClick={() => setActiveTab('artikel')} className="text-sm text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
+                  <button onClick={() => setActiveTab('artikel')} className="text-[15px] text-indigo-600 font-medium hover:text-indigo-700 flex items-center gap-1">
                     {t('ringkasan.view_all')}
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
@@ -373,9 +373,9 @@ const JournalProfile = () => {
                         className="w-16 h-16 object-cover rounded-lg"
                         onError={(e) => { e.target.src = '/assets/img/article-default.svg'; }} />
                       <div className="flex-grow min-w-0">
-                        <h4 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{art.title}</h4>
-                        {art.volume && <p className="text-xs text-gray-500 mb-2">{art.volume}</p>}
-                        <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-xs font-semibold">
+                        <h4 className="font-semibold text-gray-900 text-[15px] mb-1 line-clamp-2">{art.title}</h4>
+                        {art.volume && <p className="text-sm text-gray-500 mb-2">{art.volume}</p>}
+                        <span className="px-2 py-1 bg-indigo-50 text-indigo-700 rounded text-sm font-semibold">
                           {t('ringkasan.citations_unit', { count: art.citations || 0 })}
                         </span>
                       </div>
@@ -398,10 +398,10 @@ const JournalProfile = () => {
               <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
                 <h2 className="text-xl font-bold text-gray-900">{t('artikel.title', { count: topArticles.length })}</h2>
                 <div className="flex gap-3 flex-wrap">
-                  <select className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500">
+                  <select className="text-[15px] border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500">
                     <option>{t('artikel.all_years')}</option>
                   </select>
-                  <select className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500">
+                  <select className="text-[15px] border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500">
                     <option>{t('artikel.sort_citations')}</option>
                     <option>{t('artikel.sort_newest')}</option>
                     <option>{t('artikel.sort_views')}</option>
@@ -418,12 +418,12 @@ const JournalProfile = () => {
                         onError={(e) => { e.target.src = '/assets/img/article-default.svg'; }} />
                       <div className="flex-grow min-w-0">
                         <h3 className="font-bold text-gray-900 text-base mb-1 line-clamp-2">{art.title}</h3>
-                        {art.volume && <p className="text-sm text-gray-600 mb-3">{art.volume}</p>}
+                        {art.volume && <p className="text-[15px] text-gray-600 mb-3">{art.volume}</p>}
                         <div className="flex items-center gap-3 flex-wrap">
-                          <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-semibold">
+                          <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-[15px] font-semibold">
                             {t('artikel.citations_unit', { count: art.citations || 0 })}
                           </span>
-                          {art.doi && <span className="text-sm text-gray-500 truncate">{t('artikel.doi_label', { doi: art.doi })}</span>}
+                          {art.doi && <span className="text-[15px] text-gray-500 truncate">{t('artikel.doi_label', { doi: art.doi })}</span>}
                         </div>
                       </div>
                     </div>
@@ -515,7 +515,7 @@ const JournalProfile = () => {
               ].filter((m) => m.value !== undefined && m.value !== null && m.value !== '').map((m) => (
                 <div key={m.key} className="bg-gray-50 rounded-xl p-4 text-center">
                   <p className="text-xl font-bold text-indigo-700 mb-1">{m.value}</p>
-                  <p className="text-xs text-gray-600">{t(`performance_metrics.${m.key}`)}</p>
+                  <p className="text-sm text-gray-600">{t(`performance_metrics.${m.key}`)}</p>
                 </div>
               ))}
             </div>
@@ -542,8 +542,8 @@ const JournalProfile = () => {
                   {sdgDistribution.map((sdg, idx) => (
                     <div key={idx} className="flex items-center gap-3">
                       <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: sdgPalette(sdg) }} />
-                      <span className="text-gray-700 text-sm flex-grow">{sdg.name}</span>
-                      <span className="font-bold text-gray-900 text-sm">{sdg.value}%</span>
+                      <span className="text-gray-700 text-[15px] flex-grow">{sdg.name}</span>
+                      <span className="font-bold text-gray-900 text-[15px]">{sdg.value}%</span>
                     </div>
                   ))}
                 </div>
@@ -568,7 +568,7 @@ const JournalProfile = () => {
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
-                <p className="text-xs text-gray-500 mt-4 text-center">{t('sdgs_tab.total_covered', { count: j.sdgsCovered ?? sdgDistribution.length })}</p>
+                <p className="text-sm text-gray-500 mt-4 text-center">{t('sdgs_tab.total_covered', { count: j.sdgsCovered ?? sdgDistribution.length })}</p>
               </>
             ) : (
               <EmptySection icon={ICON_SDG} message={t('sdgs_tab.empty')} />
@@ -597,7 +597,7 @@ const JournalProfile = () => {
 
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
             <h3 className="text-lg font-bold text-gray-900 mb-6">{t('informasi.journal_info')}</h3>
-            <div className="space-y-3 text-sm">
+            <div className="space-y-3 text-[15px]">
               {[
                 { key: 'eissn',          value: j.eissn },
                 { key: 'pissn',          value: j.pissn },
@@ -617,8 +617,8 @@ const JournalProfile = () => {
 
             {j.scope && (
               <div className="mt-6 pt-4 border-t border-gray-100">
-                <h4 className="font-semibold text-gray-900 mb-2 text-sm">{t('informasi.scope')}</h4>
-                <p className="text-sm text-gray-600 leading-relaxed">{j.scope}</p>
+                <h4 className="font-semibold text-gray-900 mb-2 text-[15px]">{t('informasi.scope')}</h4>
+                <p className="text-[15px] text-gray-600 leading-relaxed">{j.scope}</p>
               </div>
             )}
           </div>

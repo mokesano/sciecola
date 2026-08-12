@@ -49,7 +49,7 @@ const RankBadge = ({ rank }) => {
         ? 'text-amber-700 bg-amber-100'
         : 'text-gray-700 bg-gray-100';
   return (
-    <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${cls}`}>
+    <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-[15px] ${cls}`}>
       {rank}
     </span>
   );
@@ -64,7 +64,7 @@ const Avatar = ({ src, name }) => {
     );
   }
   return (
-    <span className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 font-bold text-sm flex items-center justify-center">
+    <span className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 font-bold text-[15px] flex items-center justify-center">
       {getInitials(name)}
     </span>
   );
@@ -74,7 +74,7 @@ const SintaChip = ({ value }) => {
   if (!value) return null;
   const style = SINTA_STYLE[value] ?? { chip: 'bg-gray-100 text-gray-700' };
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${style.chip}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded text-sm font-semibold ${style.chip}`}>
       SINTA {value.replace('S', '')}
     </span>
   );
@@ -173,10 +173,10 @@ const Leaderboard = () => {
             </svg>
           </div>
           <p className="font-semibold text-gray-700">{t(`empty.${empty}.title`)}</p>
-          <p className="text-sm text-gray-500">{t(`empty.${empty}.subtitle`)}</p>
+          <p className="text-[15px] text-gray-500">{t(`empty.${empty}.subtitle`)}</p>
           {hasFilter && (
             <button onClick={resetFilters}
-              className="mt-1 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+              className="mt-1 px-4 py-2 text-[15px] bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
               {t('filter.reset')}
             </button>
           )}
@@ -192,7 +192,7 @@ const Leaderboard = () => {
   const renderResearchersTable = () => (
     <div className="overflow-x-auto">
       <table className="w-full text-left">
-        <thead className="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
+        <thead className="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider">
           <tr>
             <th className="px-6 py-4 font-medium">{t('table.rank')}</th>
             <th className="px-6 py-4 font-medium">{t('table.researcher')}</th>
@@ -218,7 +218,7 @@ const Leaderboard = () => {
                     ) : (
                       <p className="font-semibold text-gray-900">{r.name}</p>
                     )}
-                    <p className="text-sm text-gray-500">{r.institution}</p>
+                    <p className="text-[15px] text-gray-500">{r.institution}</p>
                   </div>
                 </div>
               </td>
@@ -243,7 +243,7 @@ const Leaderboard = () => {
   const renderJournalsTable = () => (
     <div className="overflow-x-auto">
       <table className="w-full text-left">
-        <thead className="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
+        <thead className="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider">
           <tr>
             <th className="px-6 py-4 font-medium">{t('table.rank')}</th>
             <th className="px-6 py-4 font-medium">{t('table.journal')}</th>
@@ -259,7 +259,7 @@ const Leaderboard = () => {
               <td className="px-6 py-4"><RankBadge rank={j.rank} /></td>
               <td className="px-6 py-4">
                 <p className="font-semibold text-gray-900">{j.name}</p>
-                {j.issn && <p className="text-xs text-gray-500">ISSN {j.issn}</p>}
+                {j.issn && <p className="text-sm text-gray-500">ISSN {j.issn}</p>}
               </td>
               <td className="px-6 py-4 text-right font-medium text-gray-900">{j.citescore}</td>
               <td className="px-6 py-4 text-center"><SintaChip value={j.sinta} /></td>
@@ -275,7 +275,7 @@ const Leaderboard = () => {
   const renderInstitutionsTable = () => (
     <div className="overflow-x-auto">
       <table className="w-full text-left">
-        <thead className="bg-gray-50 text-gray-600 text-xs uppercase tracking-wider">
+        <thead className="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider">
           <tr>
             <th className="px-6 py-4 font-medium">{t('table.rank')}</th>
             <th className="px-6 py-4 font-medium">{t('table.institution')}</th>
@@ -290,7 +290,7 @@ const Leaderboard = () => {
               <td className="px-6 py-4"><RankBadge rank={inst.rank} /></td>
               <td className="px-6 py-4">
                 <p className="font-semibold text-gray-900">{inst.name}</p>
-                {inst.country && <p className="text-sm text-gray-500">{inst.country}</p>}
+                {inst.country && <p className="text-[15px] text-gray-500">{inst.country}</p>}
               </td>
               <td className="px-6 py-4 text-right font-medium text-gray-900">{inst.researchers.toLocaleString()}</td>
               <td className="px-6 py-4 text-right font-medium text-gray-900">{inst.publications.toLocaleString()}</td>
@@ -316,7 +316,7 @@ const Leaderboard = () => {
       <main className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
 
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-gray-600 mb-8">
+        <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-8">
           <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
           <span className="text-gray-400">›</span>
           <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
@@ -340,7 +340,7 @@ const Leaderboard = () => {
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-gray-900">{card.value}</p>
-                  <p className="text-sm text-gray-600">{t(`stats.${card.key}`)}</p>
+                  <p className="text-[15px] text-gray-600">{t(`stats.${card.key}`)}</p>
                 </div>
               </div>
             ))}
@@ -352,7 +352,7 @@ const Leaderboard = () => {
           {['researchers', 'institutions', 'journals'].map(cat => (
             <button key={cat}
               onClick={() => { setCategory(cat); setSdgFilter(0); setCountry(''); }}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-lg text-[15px] font-medium transition-colors ${
                 category === cat
                   ? 'bg-indigo-600 text-white shadow-sm'
                   : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
@@ -362,7 +362,7 @@ const Leaderboard = () => {
           ))}
 
           <select value={sdgFilter} onChange={e => setSdgFilter(Number(e.target.value))}
-            className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-[15px] text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
             <option value={0}>{t('filter.sdg_all')}</option>
             {Array.from({ length: 17 }, (_, i) => i + 1).map(n => (
               <option key={n} value={n}>{t('filter.sdg_label', { number: n })}</option>
@@ -371,7 +371,7 @@ const Leaderboard = () => {
 
           {(category === 'researchers' || category === 'institutions') && (
             <select value={country} onChange={e => setCountry(e.target.value)}
-              className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+              className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-[15px] text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
               <option value="">{t('filter.country_all')}</option>
               {countries.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
@@ -379,7 +379,7 @@ const Leaderboard = () => {
 
           {hasFilter && (
             <button onClick={resetFilters}
-              className="px-3 py-2 rounded-lg text-sm font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 transition-colors">
+              className="px-3 py-2 rounded-lg text-[15px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 hover:bg-indigo-100 transition-colors">
               {t('filter.reset')}
             </button>
           )}
@@ -390,7 +390,7 @@ const Leaderboard = () => {
           <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6 flex flex-col items-center gap-3">
             <p className="text-red-700 font-medium">{t('error')}</p>
             <button onClick={fetchData}
-              className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">
+              className="px-4 py-2 bg-red-600 text-white rounded-lg text-[15px] font-medium hover:bg-red-700 transition-colors">
               {t('retry')}
             </button>
           </div>
@@ -399,7 +399,7 @@ const Leaderboard = () => {
         {/* Table */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-10">
           {loading && (
-            <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 text-sm text-gray-500">
+            <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100 text-[15px] text-gray-500">
               <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
               {t('loading')}
             </div>
@@ -408,7 +408,7 @@ const Leaderboard = () => {
           {!loading && !error && data.length > visibleCount && (
             <div className="px-6 py-4 border-t border-gray-100 text-center">
               <button onClick={() => setVisible(v => v + 10)}
-                className="px-6 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors inline-flex items-center gap-2">
+                className="px-6 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg text-[15px] font-medium hover:bg-gray-50 transition-colors inline-flex items-center gap-2">
                 {t('table.load_more')}
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
@@ -424,7 +424,7 @@ const Leaderboard = () => {
           {/* Impact Score Method */}
           <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
             <h3 className="font-bold text-gray-900 mb-2">{t('method.title')}</h3>
-            <p className="text-sm text-gray-600 mb-4">{t('method.description')}</p>
+            <p className="text-[15px] text-gray-600 mb-4">{t('method.description')}</p>
             <div className="space-y-3">
               {Object.entries(IMPACT_WEIGHTS).map(([key, weight]) => (
                 <div key={key} className="flex items-center justify-between">
@@ -434,9 +434,9 @@ const Leaderboard = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={FACTOR_ICONS[key]} />
                       </svg>
                     </div>
-                    <span className="text-sm text-gray-700">{t(`method.factors.${key}`)}</span>
+                    <span className="text-[15px] text-gray-700">{t(`method.factors.${key}`)}</span>
                   </div>
-                  <span className="text-sm font-semibold text-gray-900">{weight}%</span>
+                  <span className="text-[15px] font-semibold text-gray-900">{weight}%</span>
                 </div>
               ))}
             </div>
@@ -445,28 +445,28 @@ const Leaderboard = () => {
           {/* SDG Distribution */}
           <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
             <h3 className="font-bold text-gray-900 mb-1">{t('sdg_dist.title')}</h3>
-            <p className="text-sm text-gray-500 mb-4">{t('sdg_dist.subtitle')}</p>
+            <p className="text-[15px] text-gray-500 mb-4">{t('sdg_dist.subtitle')}</p>
             {sdgDist.length > 0 ? (
               <div className="space-y-2.5">
                 {sdgDist.map((item, idx) => {
                   const max = sdgDist[0]?.count || 1;
                   return (
                     <div key={item.sdg} className="flex items-center gap-2">
-                      <span className="w-5 h-5 rounded text-[10px] font-bold flex items-center justify-center text-white shrink-0"
+                      <span className="w-5 h-5 rounded text-xs font-bold flex items-center justify-center text-white shrink-0"
                         style={{ backgroundColor: item.color }}>
                         {idx + 1}
                       </span>
-                      <span className="text-sm text-gray-700 flex-1 truncate">{item.name}</span>
+                      <span className="text-[15px] text-gray-700 flex-1 truncate">{item.name}</span>
                       <div className="w-20 h-1.5 bg-gray-100 rounded-full overflow-hidden">
                         <div className="h-full rounded-full" style={{ width: `${(item.count / max) * 100}%`, backgroundColor: item.color }} />
                       </div>
-                      <span className="text-xs text-gray-500 w-12 text-right">{item.count.toLocaleString()}</span>
+                      <span className="text-sm text-gray-500 w-12 text-right">{item.count.toLocaleString()}</span>
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <p className="text-sm text-gray-400 text-center py-4">—</p>
+              <p className="text-[15px] text-gray-400 text-center py-4">—</p>
             )}
           </div>
 
@@ -478,25 +478,25 @@ const Leaderboard = () => {
               </svg>
               {t('achievements.title')}
             </h3>
-            <p className="text-sm text-gray-600 mb-4">{t('achievements.description')}</p>
+            <p className="text-[15px] text-gray-600 mb-4">{t('achievements.description')}</p>
             {achievements.length > 0 ? (
               <div className="space-y-3">
                 {achievements.map((ach, idx) => (
                   <div key={idx} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors">
                     <Avatar src={ach.avatar} name={ach.name} />
                     <div className="flex-grow min-w-0">
-                      <p className="text-sm font-semibold text-gray-900 truncate">{ach.name}</p>
-                      <p className="text-xs text-gray-500 truncate">{ach.institution}</p>
+                      <p className="text-[15px] font-semibold text-gray-900 truncate">{ach.name}</p>
+                      <p className="text-sm text-gray-500 truncate">{ach.institution}</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-sm font-bold text-indigo-600">{ach.score}</p>
-                      <p className="text-[10px] text-gray-500">{t('achievements.score_label')}</p>
+                      <p className="text-[15px] font-bold text-indigo-600">{ach.score}</p>
+                      <p className="text-xs text-gray-500">{t('achievements.score_label')}</p>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-gray-400 text-center py-4">—</p>
+              <p className="text-[15px] text-gray-400 text-center py-4">—</p>
             )}
           </div>
 

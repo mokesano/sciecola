@@ -77,7 +77,7 @@ const OfflineError = () => {
         {/* Status Badge */}
         <div className="mb-6">
           <span
-            className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${
+            className={`inline-flex items-center px-4 py-2 rounded-full text-[15px] font-semibold ${
               isOnline
                 ? 'bg-green-100 text-green-800'
                 : 'bg-red-100 text-red-800'
@@ -142,30 +142,30 @@ const OfflineError = () => {
 
             {/* Troubleshooting Tips */}
             <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
-              <h3 className="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
+              <h3 className="text-[15px] font-semibold text-gray-700 mb-4 uppercase tracking-wide">
                 {t('error.troubleshootingTips', 'Tips Troubleshooting')}
               </h3>
               <ul className="text-left text-gray-600 space-y-3">
                 <li className="flex items-start">
-                  <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold mr-3">
+                  <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-[15px] font-bold mr-3">
                     1
                   </span>
                   <span>{t('error.tip1', 'Periksa kabel WiFi atau Ethernet Anda')}</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold mr-3">
+                  <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-[15px] font-bold mr-3">
                     2
                   </span>
                   <span>{t('error.tip2', 'Restart router/modem Anda')}</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold mr-3">
+                  <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-[15px] font-bold mr-3">
                     3
                   </span>
                   <span>{t('error.tip3', 'Aktifkan mode pesawat selama 10 detik, lalu matikan')}</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-bold mr-3">
+                  <span className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-[15px] font-bold mr-3">
                     4
                   </span>
                   <span>{t('error.tip4', 'Hubungi penyedia internet jika masalah berlanjut')}</span>
@@ -204,7 +204,7 @@ const OfflineError = () => {
 
         {/* Last Checked */}
         <div className="mt-8 pt-8 border-t border-gray-200">
-          <p className="text-sm text-gray-500">
+          <p className="text-[15px] text-gray-500">
             {t('error.lastChecked', 'Terakhir diperiksa:')}{' '}
             <span className="font-mono">
               {lastChecked.toLocaleTimeString()}
@@ -216,7 +216,7 @@ const OfflineError = () => {
         <div className="mt-6 flex flex-wrap justify-center gap-4">
           <Link
             to="/help"
-            className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors flex items-center"
+            className="text-blue-600 hover:text-blue-800 text-[15px] font-medium transition-colors flex items-center"
           >
             <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -225,7 +225,7 @@ const OfflineError = () => {
           </Link>
           <Link
             to="/contact"
-            className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors flex items-center"
+            className="text-blue-600 hover:text-blue-800 text-[15px] font-medium transition-colors flex items-center"
           >
             <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />

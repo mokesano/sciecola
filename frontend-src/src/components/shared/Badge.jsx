@@ -15,7 +15,7 @@ const VARIANTS = {
 
 export default function Badge({ children, variant = 'default', dot, className = '' }) {
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${VARIANTS[variant] || VARIANTS.default} ${className}`}>
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-sm font-semibold ${VARIANTS[variant] || VARIANTS.default} ${className}`}>
       {dot && <span className={`w-1.5 h-1.5 rounded-full bg-current`} />}
       {children}
     </span>
