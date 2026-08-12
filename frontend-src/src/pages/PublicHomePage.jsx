@@ -6,7 +6,7 @@ import {
   FlaskConical, Brain, Handshake,
 } from 'lucide-react';
 import Sparkline, { readDirection } from '../components/shared/Sparkline';
-import { SpotlightCard, SectionArt } from '../components/shared/Spotlight';
+import { AmbientSection, SpotlightCard, ACCENTS, ART, CARD } from '../components/shared/Ambient';
 
 // =====================================================================
 // VISUAL CONFIG
@@ -20,23 +20,8 @@ import { SpotlightCard, SectionArt } from '../components/shared/Spotlight';
 // satu grid kartu membaca sebagai dekorasi, bukan informasi.
 // =====================================================================
 
-const ART = {
-  hero:     '/assets/img/sections/hero-grid.svg',
-  coverage: '/assets/img/sections/globe.svg',
-  features: '/assets/img/sections/network.svg',
-  flow:     '/assets/img/sections/flow.svg',
-  insights: '/assets/img/sections/waves.svg',
-};
-
 const FEATURE_ICONS = [FlaskConical, Search, BarChart2, Users, Brain, Handshake];
 const STEP_ICONS    = [Search, Brain, BarChart2];
-
-// Emboss: garis sorot setipis rambut di tepi atas kartu, supaya permukaannya
-// terbaca terangkat dari bidang gelap alih-alih tercetak rata di atasnya.
-const CARD =
-  'rounded-xl bg-white/[0.035] ring-1 ring-white/10 ' +
-  'shadow-[inset_0_1px_0_0_rgba(255,255,255,0.07)] ' +
-  'transition-colors duration-300 hover:ring-indigo-400/40';
 
 // Deteksi identifier yang sama dengan HeroSearch, tapi tanpa memaksa login.
 // Siapa pun bisa menelusuri keempat ID peneliti yang didukung (atau DOI).
@@ -121,10 +106,10 @@ const PublicSearch = ({ t }) => {
 // dari locale (t function). Memastikan tidak ada teks naratif ter-hardcode.
 const text = (override, t, key, options) => override ?? t(key, options);
 
-const SectionHead = ({ eyebrow, title, subtitle, align = 'center', className = 'mb-14' }) => (
+const SectionHead = ({ eyebrow, title, subtitle, align = 'center', className = 'mb-14', accent = 'blue' }) => (
   <div className={`${className} ${align === 'center' ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl'}`}>
     {eyebrow && (
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-400">{eyebrow}</p>
+      <p className={`text-xs font-semibold uppercase tracking-[0.2em] ${ACCENTS[accent].eyebrow}`}>{eyebrow}</p>
     )}
     <h2 className="mt-4 text-3xl font-bold tracking-tight text-white sm:text-4xl">{title}</h2>
     {subtitle && <p className="mt-4 text-base leading-relaxed text-slate-400">{subtitle}</p>}
@@ -222,23 +207,17 @@ const PublicHomePage = () => {
   return (
     <main className="min-h-screen bg-[#08080C] pt-20">
 
-      {/* ============================================================ */}
-      {/* HERO — kisi data dalam perspektif                             */}
-      {/* ============================================================ */}
-      <section className="relative overflow-hidden">
-        <SectionArt src={ART.hero} opacity={0.6} />
-        {/* Cahaya aksen di belakang judul, memberi kedalaman pada bidang gelap */}
-        <span aria-hidden className="pointer-events-none absolute left-1/2 top-0 h-[34rem] w-[54rem] -translate-x-1/2 -translate-y-1/3 rounded-full bg-indigo-600/20 blur-[110px]" />
-
-        <div className="relative mx-auto max-w-5xl px-6 py-28 text-center lg:px-8">
+      {/* ══ HERO — biru, kisi data ══════════════════════════════════ */}
+      <AmbientSection accent="blue" art={ART.hero} artOpacity={0.5}>
+        <div className="mx-auto max-w-5xl px-6 py-28 text-center lg:px-8">
           <span className="inline-flex items-center gap-2.5 rounded-full bg-white/[0.06] px-4 py-1.5 text-[15px] font-medium text-slate-300 ring-1 ring-white/15">
-            <span className="h-1.5 w-1.5 rounded-full bg-indigo-400 shadow-[0_0_8px_2px_rgba(129,140,248,0.8)]" />
+            <span className={`h-1.5 w-1.5 rounded-full ${ACCENTS.blue.dot}`} />
             {text(pick('hero.badge'), t, 'hero.badge')}
           </span>
 
           <h1 className="mt-8 text-4xl font-bold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
             {text(pick('hero.title_1'), t, 'hero.title_1')}{' '}
-            <span className="text-indigo-400">
+            <span className={ACCENTS.blue.eyebrow}>
               {text(pick('hero.title_2'), t, 'hero.title_2')}
             </span>
           </h1>
@@ -251,7 +230,7 @@ const PublicHomePage = () => {
             <ul className="mx-auto mt-9 grid max-w-2xl gap-x-8 gap-y-3 text-left sm:grid-cols-2">
               {heroHighlights.map((item, i) => (
                 <li key={i} className="flex items-start gap-3 text-[15px] leading-snug text-slate-300">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-300 ring-1 ring-indigo-400/40">
+                  <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${ACCENTS.blue.tile}`}>
                     <Check className="h-3 w-3" strokeWidth={3} />
                   </span>
                   {item}
@@ -276,58 +255,54 @@ const PublicHomePage = () => {
 
           <p className="mt-6 text-[15px] text-slate-500">
             {text(pick('hero.orcid_hint_prefix'), t, 'hero.orcid_hint_prefix')}{' '}
-            <Link to="/tutorial-orcid" className="font-medium text-indigo-400 underline-offset-4 hover:underline">
+            <Link to="/tutorial-orcid" className={`font-medium underline-offset-4 hover:underline ${ACCENTS.blue.link}`}>
               {text(pick('hero.orcid_hint_link'), t, 'hero.orcid_hint_link')}
             </Link>
           </p>
         </div>
-      </section>
+      </AmbientSection>
 
-      {/* ============================================================ */}
-      {/* CAKUPAN — bola meridian                                       */}
-      {/* ============================================================ */}
+      {/* ══ CAKUPAN — oranye, bola meridian ═════════════════════════ */}
       {stats.length > 0 && (
-        <section className="relative overflow-hidden border-y border-white/10 bg-[#0B0B12]">
-          <SectionArt src={ART.coverage} opacity={0.45} />
-          <div className="relative mx-auto max-w-6xl px-6 py-20 lg:px-8">
-            <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-indigo-400">
+        <AmbientSection accent="orange" art={ART.coverage} artOpacity={0.45}
+          className="border-y border-white/10">
+          <div className="mx-auto max-w-6xl px-6 py-20 lg:px-8">
+            <p className={`text-center text-xs font-semibold uppercase tracking-[0.2em] ${ACCENTS.orange.eyebrow}`}>
               {t('stats_section.eyebrow')}
             </p>
             <dl className="mt-12 grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-4">
               {stats.map((s, i) => (
                 <div key={i} className="text-center">
-                  <dd className="text-4xl font-bold tabular-nums tracking-tight text-indigo-400 sm:text-5xl">
+                  <dd className={`text-4xl font-bold tabular-nums tracking-tight sm:text-5xl ${ACCENTS.orange.numeral}`}>
                     {s.value}
                   </dd>
-                  <div aria-hidden className="mx-auto mt-4 h-px w-10 bg-indigo-500/70" />
+                  <div aria-hidden className={`mx-auto mt-4 h-px w-10 ${ACCENTS.orange.rule}`} />
                   <dt className="mt-4 text-[15px] leading-snug text-slate-400">{s.label}</dt>
                 </div>
               ))}
             </dl>
           </div>
-        </section>
+        </AmbientSection>
       )}
 
-      {/* ============================================================ */}
-      {/* FITUR — jaringan simpul, kartu bersorot kursor                */}
-      {/* ============================================================ */}
-      <section className="relative overflow-hidden py-28">
-        <SectionArt src={ART.features} opacity={0.35} />
-        <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
+      {/* ══ KEMAMPUAN — oranye tua, jaringan simpul ═════════════════ */}
+      <AmbientSection accent="ember" art={ART.network} artOpacity={0.4} className="py-28">
+        <div className="mx-auto max-w-6xl px-6 lg:px-8">
           <SectionHead
+            accent="ember"
             eyebrow={t('features_section.eyebrow')}
             title={text(pick('features_section.title'), t, 'features_section.title')}
             subtitle={text(pick('features_section.subtitle'), t, 'features_section.subtitle')}
           />
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f, i) => (
-              <SpotlightCard key={i} className={`${CARD} p-6`}>
+              <SpotlightCard key={i} accent="ember" className={`${CARD} ${ACCENTS.ember.ring} p-6`}>
                 <div className="flex items-start justify-between gap-3">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-indigo-500/15 text-indigo-300 ring-1 ring-indigo-400/30">
+                  <span className={`flex h-11 w-11 items-center justify-center rounded-lg ${ACCENTS.ember.tile}`}>
                     <f.Icon className="h-5 w-5" />
                   </span>
                   {f.label && (
-                    <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-indigo-300 ring-1 ring-white/10">
+                    <span className={`rounded-full bg-white/[0.06] px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.12em] ring-1 ring-white/10 ${ACCENTS.ember.chip}`}>
                       {f.label}
                     </span>
                   )}
@@ -338,15 +313,15 @@ const PublicHomePage = () => {
             ))}
           </div>
         </div>
-      </section>
+      </AmbientSection>
 
-      {/* ============================================================ */}
-      {/* 17 SDG — warna resmi PBB, satu-satunya warna yang memang data  */}
-      {/* ============================================================ */}
+      {/* ══ 17 SDG — biru; ubinnya sendiri sudah berwarna resmi ═════ */}
       {sdgList.length > 0 && (
-        <section className="relative border-y border-white/10 bg-[#0B0B12] py-28">
+        <AmbientSection accent="blue" art={ART.hero} artOpacity={0.3} artPosition="bottom"
+          className="border-y border-white/10 py-28">
           <div className="mx-auto max-w-6xl px-6 lg:px-8">
             <SectionHead
+              accent="blue"
               eyebrow={t('sdg_section.eyebrow')}
               title={text(pick('sdg_section.title'), t, 'sdg_section.title')}
               subtitle={text(pick('sdg_section.subtitle'), t, 'sdg_section.subtitle')}
@@ -357,10 +332,7 @@ const PublicHomePage = () => {
                 <Link key={sdg.sdg} to="/sdgs" className="group flex flex-col items-center">
                   <div
                     className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-xl ring-1 ring-white/10 transition-all duration-300 group-hover:-translate-y-1.5 group-hover:ring-white/40"
-                    style={{
-                      backgroundColor: sdg.color,
-                      boxShadow: `0 8px 26px -8px ${sdg.color}`,
-                    }}
+                    style={{ backgroundColor: sdg.color, boxShadow: `0 8px 26px -8px ${sdg.color}` }}
                   >
                     <img
                       src={`/assets/sdgs/icons/sdg-${sdg.sdg}.svg`}
@@ -388,16 +360,14 @@ const PublicHomePage = () => {
               </Link>
             </div>
           </div>
-        </section>
+        </AmbientSection>
       )}
 
-      {/* ============================================================ */}
-      {/* ALUR KERJA — rantai langkah                                   */}
-      {/* ============================================================ */}
-      <section className="relative overflow-hidden py-28">
-        <SectionArt src={ART.flow} opacity={0.5} />
-        <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
+      {/* ══ ALUR KERJA — oranye, rantai langkah ═════════════════════ */}
+      <AmbientSection accent="orange" art={ART.flow} artOpacity={0.5} className="py-28">
+        <div className="mx-auto max-w-6xl px-6 lg:px-8">
           <SectionHead
+            accent="orange"
             eyebrow={t('how_it_works_section.eyebrow')}
             title={text(pick('how_it_works_section.title'), t, 'how_it_works_section.title')}
             subtitle={text(pick('how_it_works_section.subtitle'), t, 'how_it_works_section.subtitle')}
@@ -405,12 +375,13 @@ const PublicHomePage = () => {
 
           <ol className="grid grid-cols-1 gap-5 md:grid-cols-3">
             {steps.map((item) => (
-              <SpotlightCard key={item.step} as="li" className={`${CARD} p-7`}>
+              <SpotlightCard key={item.step} as="li" accent="orange"
+                className={`${CARD} ${ACCENTS.orange.ring} p-7`}>
                 <div className="flex items-center gap-4">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-indigo-500 text-base font-bold tabular-nums text-white shadow-lg shadow-indigo-500/40">
+                  <span className={`flex h-11 w-11 items-center justify-center rounded-full text-base font-bold tabular-nums text-white ${ACCENTS.orange.step}`}>
                     {item.step}
                   </span>
-                  <item.Icon className="h-5 w-5 text-indigo-300" />
+                  <item.Icon className={`h-5 w-5 ${ACCENTS.orange.chip}`} />
                 </div>
                 <h3 className="mt-6 text-lg font-semibold tracking-tight text-white">{item.title}</h3>
                 <p className="mt-2 text-[15px] leading-relaxed text-slate-400">{item.desc}</p>
@@ -418,25 +389,22 @@ const PublicHomePage = () => {
             ))}
           </ol>
         </div>
-      </section>
+      </AmbientSection>
 
-      {/* ============================================================ */}
-      {/* AI INSIGHTS — kurva tren                                      */}
-      {/* ============================================================ */}
+      {/* ══ INSIGHTS — oranye tua, kurva tren ═══════════════════════ */}
       {insights.length > 0 && (
-        <section className="relative overflow-hidden border-y border-white/10 bg-[#0B0B12] py-28">
-          <SectionArt src={ART.insights} opacity={0.5} position="bottom" fade={false} />
-          <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
+        <AmbientSection accent="ember" art={ART.waves} artOpacity={0.5} artPosition="bottom"
+          fade={false} className="border-y border-white/10 py-28">
+          <div className="mx-auto max-w-6xl px-6 lg:px-8">
             <div className="mb-14 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
               <SectionHead
-                align="left"
-                className=""
+                align="left" className="" accent="ember"
                 eyebrow={t('insights_section.eyebrow')}
                 title={text(pick('insights_section.title'), t, 'insights_section.title')}
                 subtitle={text(pick('insights_section.subtitle'), t, 'insights_section.subtitle')}
               />
               <Link to="/insights"
-                className="inline-flex shrink-0 items-center gap-2 pb-1 text-[15px] font-medium text-indigo-400 underline-offset-4 hover:underline">
+                className={`inline-flex shrink-0 items-center gap-2 pb-1 text-[15px] font-medium underline-offset-4 hover:underline ${ACCENTS.ember.link}`}>
                 {text(pick('insights_section.cta_label'), t, 'insights_section.cta_label')}
                 <ArrowRight className="h-4 w-4" />
               </Link>
@@ -444,15 +412,15 @@ const PublicHomePage = () => {
 
             <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
               {insights.map((ins) => {
-                const color     = sdgColorById[ins.sdg] || '#818cf8';
+                const color     = sdgColorById[ins.sdg] || '#F87171';
                 const series    = Array.isArray(ins.series) ? ins.series : [];
                 const direction = readDirection(series, ins.trend);
                 const start     = ins.series_start;
                 const end       = start && series.length ? start + series.length - 1 : null;
 
                 return (
-                  <SpotlightCard key={ins.id} as="article" className={`${CARD} flex flex-col p-6`}
-                    glow={`${color}2E`}>
+                  <SpotlightCard key={ins.id} as="article" accent="ember" glow={`${color}2E`}
+                    className={`${CARD} ${ACCENTS.ember.ring} flex flex-col p-6`}>
                     <div className="flex items-center gap-2.5">
                       <span aria-hidden className="h-3 w-3 rounded-[3px]"
                         style={{ backgroundColor: color, boxShadow: `0 0 12px 0 ${color}` }} />
@@ -474,7 +442,7 @@ const PublicHomePage = () => {
                         {ins.trend && (
                           <p className={`text-2xl font-bold tabular-nums ${
                             direction === 'down' ? 'text-rose-400'
-                              : direction === 'up' ? 'text-indigo-300' : 'text-slate-300'
+                              : direction === 'up' ? 'text-red-300' : 'text-slate-300'
                           }`}>
                             {ins.trend}
                           </p>
@@ -492,17 +460,16 @@ const PublicHomePage = () => {
               })}
             </div>
           </div>
-        </section>
+        </AmbientSection>
       )}
 
-      {/* ============================================================ */}
-      {/* MITRA                                                         */}
-      {/* ============================================================ */}
+      {/* ══ MITRA — biru ════════════════════════════════════════════ */}
       {partners.length > 0 && (
-        <section className="relative overflow-hidden py-24">
-          <SectionArt src={ART.features} opacity={0.22} position="top" />
-          <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
+        <AmbientSection accent="blue" art={ART.network} artOpacity={0.28} artPosition="top"
+          className="py-24">
+          <div className="mx-auto max-w-6xl px-6 lg:px-8">
             <SectionHead
+              accent="blue"
               eyebrow={t('partners_section.eyebrow')}
               title={text(pick('partners_section.title'), t, 'partners_section.title')}
               subtitle={text(pick('partners_section.subtitle'), t, 'partners_section.subtitle')}
@@ -510,7 +477,7 @@ const PublicHomePage = () => {
 
             <div className="flex flex-wrap items-center justify-center gap-3">
               {partners.map((p) => (
-                <SpotlightCard key={p.id ?? p.name} as="span" radius={160}
+                <SpotlightCard key={p.id ?? p.name} as="span" accent="blue" radius={160}
                   className="rounded-lg bg-white/[0.04] px-5 py-3 text-[15px] font-medium text-slate-300 ring-1 ring-white/10 transition-colors hover:text-white">
                   {p.name}
                 </SpotlightCard>
@@ -519,23 +486,19 @@ const PublicHomePage = () => {
 
             <div className="mt-10 text-center">
               <Link to="/partners"
-                className="inline-flex items-center gap-1 text-[15px] font-medium text-indigo-400 underline-offset-4 hover:underline">
+                className={`inline-flex items-center gap-1 text-[15px] font-medium underline-offset-4 hover:underline ${ACCENTS.blue.link}`}>
                 {text(pick('partners_section.cta_label'), t, 'partners_section.cta_label')}
                 <ChevronRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
-        </section>
+        </AmbientSection>
       )}
 
-      {/* ============================================================ */}
-      {/* PENUTUP                                                       */}
-      {/* ============================================================ */}
-      <section className="relative overflow-hidden border-t border-white/10 bg-[#0B0B12] py-28">
-        <SectionArt src={ART.coverage} opacity={0.4} />
-        <span aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 h-[26rem] w-[46rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-600/20 blur-[110px]" />
-
-        <div className="relative mx-auto max-w-4xl px-6 text-center lg:px-8">
+      {/* ══ PENUTUP — oranye ════════════════════════════════════════ */}
+      <AmbientSection accent="orange" art={ART.coverage} artOpacity={0.4}
+        className="border-t border-white/10 py-28">
+        <div className="mx-auto max-w-4xl px-6 text-center lg:px-8">
           <span className="inline-flex items-center gap-2 rounded-full bg-white/[0.06] px-4 py-1.5 text-[15px] font-medium text-slate-300 ring-1 ring-white/15">
             {text(pick('cta_section.badge'), t, 'cta_section.badge')}
           </span>
@@ -549,7 +512,7 @@ const PublicHomePage = () => {
 
           <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link to="/register"
-              className="inline-flex items-center gap-2 rounded-lg bg-indigo-500 px-7 py-3.5 text-[15px] font-semibold text-white shadow-lg shadow-indigo-500/30 transition-all hover:-translate-y-0.5 hover:bg-indigo-400">
+              className={`inline-flex items-center gap-2 rounded-lg px-7 py-3.5 text-[15px] font-semibold text-white transition-all hover:-translate-y-0.5 ${ACCENTS.orange.button}`}>
               {text(pick('cta_section.cta_primary'), t, 'cta_section.cta_primary')}
               <ArrowRight className="h-4 w-4" />
             </Link>
@@ -562,13 +525,13 @@ const PublicHomePage = () => {
           <div className="mt-12 flex flex-wrap items-center justify-center gap-x-7 gap-y-3 text-[15px] text-slate-400">
             {(Array.isArray(trustSignals) ? trustSignals : []).map((label, i) => (
               <span key={i} className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-indigo-400" strokeWidth={3} />
+                <Check className={`h-4 w-4 ${ACCENTS.orange.eyebrow}`} strokeWidth={3} />
                 {label}
               </span>
             ))}
           </div>
         </div>
-      </section>
+      </AmbientSection>
 
     </main>
   );

@@ -42,9 +42,14 @@ const Navbar = () => {
   const isResearchersActive = location.pathname === '/researchers' || location.pathname.startsWith('/orcid/');
   const isArticlesActive    = location.pathname === '/articles'    || location.pathname.startsWith('/doi/');
 
-  /* Landing publik memakai bidang gelap, jadi navbar ikut gelap di sana saja.
-     Halaman lain tetap terang seperti semula. */
-  const onDark = !user && location.pathname === '/';
+  /* Halaman bertema gelap: landing publik, About, Teams, dan profil anggota.
+     Navbar putih di atas bidang hitam terbaca patah, jadi ia ikut gelap di
+     sana. Halaman aplikasi lainnya tetap terang seperti semula. */
+  const onDark =
+    (!user && location.pathname === '/') ||
+    location.pathname === '/about' ||
+    location.pathname === '/teams' ||
+    location.pathname.startsWith('/teams/');
 
   const activeClass = onDark
     ? 'text-white font-bold border-b-[4px] border-indigo-400 pb-7 transition-all'
