@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generator: Adobe Illustrator 22.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 56.7 56.7" style="enable-background:new 0 0 56.7 56.7;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#3EB1CB;}
+	.st1{opacity:0.6;fill:#3EB1CB;enable-background:new    ;}
+	.st2{opacity:0.3;fill:#3EB1CB;enable-background:new    ;}
+	.st3{opacity:0.9;fill:#3EB1CB;enable-background:new    ;}
+	.st4{opacity:0.5;fill:#3EB1CB;enable-background:new    ;}
+	.st5{opacity:0.2;fill:#3EB1CB;enable-background:new    ;}
+	.st6{opacity:0.8;fill:#3EB1CB;enable-background:new    ;}
+	.st7{opacity:0.4;fill:#3EB1CB;enable-background:new    ;}
+	.st8{opacity:0.1;fill:#3EB1CB;enable-background:new    ;}
+	.st9{opacity:0.7;fill:#3EB1CB;enable-background:new    ;}
+</style>
+<title>Asset_Load_Throbber</title>
+<g id="Load_Throbber_Teal">
+	<rect x="26.9" class="st0" width="3" height="17.9"/>
+	<rect x="26.9" y="38.8" class="st1" width="3" height="17.9"/>
+	<rect x="38.8" y="26.9" class="st2" width="17.9" height="3"/>
+	<rect x="0" y="26.9" class="st3" width="17.9" height="3"/>
+	<rect x="17.1" y="2.6" transform="matrix(0.8641 -0.5033 0.5033 0.8641 -3.3076 10.9266)" class="st0" width="3" height="17.9"/>
+	<rect x="36.6" y="36.2" transform="matrix(0.8641 -0.5033 0.5033 0.8641 -17.5205 25.3145)" class="st4" width="3" height="17.9"/>
+	<rect x="36.1" y="17.1" transform="matrix(0.8641 -0.5033 0.5033 0.8641 -3.2233 25.2252)" class="st5" width="17.9" height="3"/>
+	<rect x="2.6" y="36.6" transform="matrix(0.8641 -0.5033 0.5033 0.8641 -17.6112 11.0123)" class="st6" width="17.9" height="3"/>
+	<rect x="10.1" y="9.6" transform="matrix(0.5023 -0.8647 0.8647 0.5023 -10.3262 19.2628)" class="st0" width="3" height="17.9"/>
+	<rect x="43.6" y="29.1" transform="matrix(0.5023 -0.8647 0.8647 0.5023 -10.4796 57.9777)" class="st7" width="3" height="17.9"/>
+	<rect x="29.1" y="10.1" transform="matrix(0.5023 -0.8647 0.8647 0.5023 8.9546 38.6969)" class="st8" width="17.9" height="3"/>
+	<rect x="9.6" y="43.6" transform="matrix(0.5023 -0.8647 0.8647 0.5023 -29.7518 38.5386)" class="st9" width="17.9" height="3"/>
+</g>
+</svg>

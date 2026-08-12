@@ -232,19 +232,6 @@ const PublicHomePage = () => {
             {text(pick('hero.subtitle'), t, 'hero.subtitle')}
           </p>
 
-          {Array.isArray(heroHighlights) && heroHighlights.length > 0 && (
-            <ul className="mx-auto mt-9 grid max-w-2xl gap-x-8 gap-y-3 text-left sm:grid-cols-2">
-              {heroHighlights.map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-[15px] leading-snug text-slate-300">
-                  <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${ACCENTS.blue.tile}`}>
-                    <Check className="h-3 w-3" strokeWidth={3} />
-                  </span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          )}
-
           <PublicSearch t={t} />
 
           <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">

@@ -1,0 +1,20 @@
+<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <ellipse id="a" cx="3.962" cy="45.968" rx="3.962" ry="3.951"/>
+    <ellipse id="b" cx="69.508" cy="45.968" rx="3.962" ry="3.951"/>
+    <ellipse id="c" cx="29.491" cy="3.951" rx="3.962" ry="3.951"/>
+    <ellipse id="d" cx="56.903" cy="74.539" rx="3.962" ry="3.951"/>
+    <mask id="e" x="0" y="0" width="7.923" height="7.902" fill="#fff">
+      <use xlink:href="#a"/>
+    </mask>
+    <mask id="f" x="0" y="0" width="7.923" height="7.902" fill="#fff">
+      <use xlink:href="#b"/>
+    </mask>
+    <mask id="g" x="0" y="0" width="7.923" height="7.902" fill="#fff"><use xlink:href="#c"/></mask>
+    <mask id="h" x="0" y="0" width="7.923" height="7.902" fill="#fff"><use xlink:href="#d"/></mask>
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <rect fill="#FFF" opacity=".9" width="99.185" height="99.624" rx="49.593"/>
+    <g transform="translate(11.765 10.084)">
+      <path d="M5.042 10.563l5.081 4.784m62.242-.784l-5.541 3.857M12.156 57.57l-6.274 5.542m54.303-3.129l8.378 9.17" stroke="#0CB" stroke-width="2" stroke-linecap="round"/><use stroke="#A0DED9" mask="url(#e)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" xlink:href="#a"/><ellipse fill="#C5E8E5" cx="6.927" cy="25.411" rx="2.726" ry="2.722"/><ellipse fill="#C5E8E5" cx="20.692" cy="72.511" rx="2.726" ry="2.722"/><use stroke="#A0DED9" mask="url(#f)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" transform="matrix(-1 0 0 1 139.015 0)" xlink:href="#b"/><use stroke="#A0DED9" mask="url(#g)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" transform="matrix(-1 0 0 1 58.982 0)" xlink:href="#c"/><use stroke="#A0DED9" mask="url(#h)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" transform="matrix(-1 0 0 1 113.805 0)" xlink:href="#d"/><ellipse fill="#C5E8E5" transform="matrix(-1 0 0 1 146.628 0)" cx="73.314" cy="27.932" rx="2.726" ry="2.722"/><ellipse fill="#C5E8E5" transform="matrix(-1 0 0 1 97.57 0)" cx="48.785" cy="8.402" rx="2.726" ry="2.722"/></g><path d="M68.115 39.975h-36.33c-.716 0-1.298-.58-1.298-1.298v-10.38c0-.717.582-1.297 1.298-1.297h36.33c.716 0 1.297.58 1.297 1.297v10.38c0 .718-.58 1.298-1.297 1.298z" fill="#00444D"/><path d="M41.36 66.145a1.29 1.29 0 01-1.116-.636L24.682 39.223a1.298 1.298 0 01-.004-1.315l5.987-10.263A1.296 1.296 0 0131.78 27h.004c.458 0 .884.243 1.116.636l18.51 31.262a1.296 1.296 0 01-.456 1.777l-8.932 5.289c-.202.12-.43.181-.662.181z" fill="#00A39E"/><path d="M58.54 66.145c-.232 0-.46-.062-.661-.181l-8.932-5.289a1.296 1.296 0 01-.455-1.777l18.507-31.262A1.298 1.298 0 0168.115 27h.004c.46.001.885.245 1.116.644l5.986 10.263c.238.406.236.91-.004 1.315L59.655 65.51a1.293 1.293 0 01-1.116.635z" fill="#00A39E"/><path d="M49.95 81.495c-7.87 0-14.273-6.403-14.273-14.273 0-7.869 6.404-14.272 14.273-14.272 7.87 0 14.272 6.403 14.272 14.272 0 7.87-6.403 14.273-14.272 14.273z" fill="#A0DED9"/><path d="M49.95 77.343c-5.58 0-10.12-4.54-10.12-10.12 0-5.582 4.54-10.121 10.12-10.121 5.58 0 10.12 4.54 10.12 10.12 0 5.581-4.54 10.12-10.12 10.12zm0-17.992c-4.34 0-7.872 3.532-7.872 7.871 0 4.34 3.531 7.872 7.872 7.872 4.34 0 7.871-3.532 7.871-7.872s-3.53-7.871-7.871-7.871z" fill="#00A39E"/></g>
+</svg>
