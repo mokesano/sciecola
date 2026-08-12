@@ -18,7 +18,8 @@
       "publications": "publications",
       "share": "of total",
       "hint": "Hover a marker to see its data"
-    }
+    },
+    "tutorial_link": "Read the ORCID analysis guide"
   },
   "search": {
     "placeholder": "ORCID · Scopus · SINTA · ResearcherID · DOI",
@@ -118,5 +119,38 @@
   ],
   "stats_section": {
     "eyebrow": "Platform coverage"
+  },
+  "search_section": {
+    "eyebrow": "Profile Lookup",
+    "title": "Check anyone’s research record, no sign-in",
+    "subtitle": "Enter an ORCID, Scopus ID, SINTA ID, ResearcherID or DOI. You only need an account to manage your own ORCID record."
+  },
+  "sources_section": {
+    "eyebrow": "Data Sources",
+    "title": "Read from sources the field already trusts",
+    "subtitle": "Every figure here traces back to its origin. No score appears without a trail."
+  },
+  "audience_section": {
+    "eyebrow": "Who It Serves",
+    "title": "One platform, four different questions",
+    "subtitle": "Researchers, institutions, funders and policymakers read the same data from different angles.",
+    "items": [
+      {
+        "title": "Researchers",
+        "desc": "See which goals your work already speaks to, and where the gaps remain open."
+      },
+      {
+        "title": "Institutions",
+        "desc": "Map an entire faculty’s contribution to the 2030 agenda in a single view."
+      },
+      {
+        "title": "Funders",
+        "desc": "Judge the reach of a grant on published evidence rather than narrative reporting."
+      },
+      {
+        "title": "Policymakers",
+        "desc": "Find the under-researched areas before setting national priorities."
+      }
+    ]
   }
 }
