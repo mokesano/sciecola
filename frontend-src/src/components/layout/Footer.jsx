@@ -125,7 +125,7 @@ const Footer = () => {
             {t('copyright.developed_by')}{' '}
             <a href="https://sangia.org" target="_blank" rel="noopener noreferrer"
               className="text-indigo-300 underline-offset-4 transition-colors hover:text-indigo-200 hover:underline">
-              Sangia Research Media &amp; Publishing
+              CodeCanau &amp; Cumebano
             </a>
           </p>
         </div>
