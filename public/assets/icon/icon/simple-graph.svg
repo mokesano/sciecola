@@ -1,0 +1,7 @@
+<svg viewBox="0 0 48 48" version="1" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 48 48" class="h-5 w-5 ml-2 text-indigo-500">
+    <g fill="none" stroke="currentColor" stroke-width="3">
+        <rect x="19" y="22" width="10" height="20"></rect>
+        <rect x="6" y="12" width="10" height="30"></rect>
+        <rect x="32" y="6" width="10" height="36"></rect>
+    </g>
+</svg>

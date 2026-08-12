@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 24" class="braintree-icon--bordered" aria-hidden="true" focusable="false">
+    <title>CVV Back</title>
+    <path d="M38.48 24H1.52C.75 24 0 23.28 0 22.5v-21C0 .72.75 0 1.52 0h36.96C39.25 0 40 .72 40 1.5v21c0 .78-.75 1.5-1.52 1.5z" 
+        fill="#FFF"/>
+    <path d="M0 5h40v4H0z" fill="#828282"/>
+    <path d="M20 13.772v5.456c0 .423.37.772.82.772h13.36c.45 0 .82-.35.82-.772v-5.456c0-.423-.37-.772-.82-.772H20.82c-.45 0-.82.35-.82.772zm-1-.142c0-.9.76-1.63 1.68-1.63h13.64c.928 0 1.68.737 1.68 1.63v5.74c0 .9-.76 1.63-1.68 1.63H20.68c-.928 0-1.68-.737-1.68-1.63v-5.74z" fill="#000" fill-rule="nonzero" />
+    <circle fill="#828282" cx="23.5" cy="16.5" r="1.5"/>
+    <circle fill="#828282" cx="27.5" cy="16.5" r="1.5"/>
+    <circle fill="#828282" cx="31.5" cy="16.5" r="1.5"/>
+</svg>
