@@ -37,7 +37,7 @@ const Footer = () => {
   const { t } = useTranslation('footer');
 
   return (
-    <footer className="relative mt-16 overflow-hidden bg-[#08080C] text-slate-400">
+    <footer className="relative overflow-hidden bg-[#08080C] text-slate-400">
       {/* Garis aksen yang memisahkan footer dari isi halaman */}
       <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-indigo-500/70" />
       <div aria-hidden className="pointer-events-none absolute left-1/2 top-0 h-64 w-[46rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-600/15 blur-[100px]" />
