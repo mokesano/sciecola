@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { AmbientSection, SpotlightCard, ACCENTS, ART, CARD } from '../components/shared/Ambient';
 
 /* ─── helpers ────────────────────────────────────────────────────────────── */
 
@@ -10,60 +11,10 @@ function getInitials(name) {
     .map(w => w[0]).join('').toUpperCase();
 }
 
-/* ─── portrait ───────────────────────────────────────────────────────────── */
-/* Circular, greyscale at rest and colour on hover — the convention used on
-   OpenAIRE's board pages. Greyscale evens out portraits shot under wildly
-   different lighting, which is what a real roster always looks like. */
-const Portrait = ({ photo, name }) => {
-  const [err, setErr] = useState(false);
-  const showImage = photo && !err;
-  return (
-    <div className="mx-auto h-32 w-32 overflow-hidden rounded-full border border-slate-200 bg-slate-50 shadow-sm ring-4 ring-white">
-      {showImage ? (
-        <img src={photo} alt={name} onError={() => setErr(true)}
-          className="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0" />
-      ) : (
-        <div className="flex h-full w-full items-center justify-center text-2xl font-medium tracking-wide text-slate-400">
-          {getInitials(name)}
-        </div>
-      )}
-    </div>
-  );
-};
-
-/* ─── member record ──────────────────────────────────────────────────────── */
-const MemberCard = ({ member, t }) => (
-  <Link to={`/teams/${member.slug}`} className="group flex flex-col items-center px-2 text-center">
-    <Portrait photo={member.photo} name={member.name} />
-
-    <h3 className="mt-5 text-lg font-semibold leading-snug text-slate-900 group-hover:text-indigo-700">
-      {member.name}
-    </h3>
-
-    {member.department && (
-      <p className="mt-1.5 text-[15px] leading-snug text-slate-500">{member.department}</p>
-    )}
-    {member.location && (
-      <p className="text-[15px] leading-snug text-slate-500">{member.location}</p>
-    )}
-
-    {/* Role sits last and in the accent colour, the way a board page marks
-        "Chair" — it is the distinguishing fact, not the affiliation. */}
-    {member.position && (
-      <p className="mt-2 text-[15px] font-medium text-indigo-700">{member.position}</p>
-    )}
-
-    <span className="mt-2 text-sm text-slate-400 opacity-0 transition-opacity group-hover:opacity-100">
-      {t('card.view_profile')}
-    </span>
-  </Link>
-);
-
 /*
  * Grid mengikuti jumlah anggota di grup, bukan dikunci empat kolom. Satu
- * anggota di grid empat kolom menyisakan tiga sel kosong dan membuat halaman
- * terlihat rusak. Kelas ditulis utuh (bukan dirangkai dari variabel) supaya
- * tetap terbaca pemindai kelas Tailwind.
+ * anggota di grid empat kolom menyisakan tiga sel kosong. Kelas ditulis utuh
+ * supaya tetap terbaca pemindai kelas Tailwind.
  */
 function gridForCount(n) {
   if (n === 1) return 'grid-cols-1 max-w-xs';
@@ -72,6 +23,50 @@ function gridForCount(n) {
   if (n === 4) return 'grid-cols-2 sm:grid-cols-4 max-w-4xl';
   return 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4';
 }
+
+/* ─── portrait ───────────────────────────────────────────────────────────── */
+const Portrait = ({ photo, name }) => {
+  const [err, setErr] = useState(false);
+  const showImage = photo && !err;
+  return (
+    <div className="mx-auto h-32 w-32 overflow-hidden rounded-full bg-white/[0.06] ring-2 ring-white/15 transition-all duration-300 group-hover:ring-white/40">
+      {showImage ? (
+        <img src={photo} alt={name} onError={() => setErr(true)}
+          className="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0" />
+      ) : (
+        <div className="flex h-full w-full items-center justify-center text-2xl font-medium tracking-wide text-slate-500">
+          {getInitials(name)}
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ─── member record ──────────────────────────────────────────────────────── */
+const MemberCard = ({ member, t, accent }) => (
+  <SpotlightCard as={Link} to={`/teams/${member.slug}`} accent={accent} radius={220}
+    className={`${CARD} ${ACCENTS[accent].ring} flex flex-col items-center p-6 text-center`}>
+    <Portrait photo={member.photo} name={member.name} />
+
+    <h3 className="mt-5 text-lg font-semibold leading-snug text-white">{member.name}</h3>
+
+    {member.department && (
+      <p className="mt-1.5 text-[15px] leading-snug text-slate-400">{member.department}</p>
+    )}
+    {member.location && (
+      <p className="text-[15px] leading-snug text-slate-500">{member.location}</p>
+    )}
+
+    {/* Jabatan terakhir dan beraksen — itu fakta pembeda, bukan afiliasinya. */}
+    {member.position && (
+      <p className={`mt-3 text-[15px] font-medium ${ACCENTS[accent].chip}`}>{member.position}</p>
+    )}
+
+    <span className="mt-3 text-sm text-slate-600 transition-colors group-hover:text-slate-300">
+      {t('card.view_profile')}
+    </span>
+  </SpotlightCard>
+);
 
 /* ─── main ────────────────────────────────────────────────────────────────── */
 const Teams = () => {
@@ -128,60 +123,61 @@ const Teams = () => {
   const hasFilter = activeDept !== 'all' || search.trim() !== '';
 
   return (
-    <main className="w-full pb-24 pt-28">
-      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-[#08080C] pt-20">
 
-        {/* Breadcrumb */}
-        <nav className="mb-10 flex items-center gap-2 text-[15px] text-slate-500">
-          <Link to="/"      className="hover:text-indigo-700 hover:underline">{t('breadcrumb.home')}</Link>
-          <span className="text-slate-300">/</span>
-          <Link to="/about" className="hover:text-indigo-700 hover:underline">{t('breadcrumb.about')}</Link>
-          <span className="text-slate-300">/</span>
-          <span className="text-slate-700">{t('breadcrumb.current')}</span>
-        </nav>
+      {/* ══ MASTHEAD — biru ═════════════════════════════════════════ */}
+      <AmbientSection accent="blue" art={ART.network} artOpacity={0.45}>
+        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
+          <nav className="mb-10 flex items-center gap-2 text-[15px] text-slate-500">
+            <Link to="/"      className="hover:text-white hover:underline">{t('breadcrumb.home')}</Link>
+            <span className="text-slate-700">/</span>
+            <Link to="/about" className="hover:text-white hover:underline">{t('breadcrumb.about')}</Link>
+            <span className="text-slate-700">/</span>
+            <span className="text-slate-300">{t('breadcrumb.current')}</span>
+          </nav>
 
-        {/* Masthead — centred, the way a board or governance page opens. */}
-        <header className="mx-auto max-w-3xl text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-700">
-            {t('breadcrumb.current')}
-          </p>
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-900 lg:text-5xl">
-            {t('header.title')}
-          </h1>
-          <p className="mt-5 text-base leading-relaxed text-slate-600">
-            {t('header.subtitle')}
-          </p>
-        </header>
+          <header className="mx-auto max-w-3xl text-center">
+            <p className={`text-xs font-semibold uppercase tracking-[0.2em] ${ACCENTS.blue.eyebrow}`}>
+              {t('breadcrumb.current')}
+            </p>
+            <h1 className="mt-4 text-4xl font-bold tracking-tight text-white lg:text-5xl">
+              {t('header.title')}
+            </h1>
+            <p className="mt-5 text-base leading-relaxed text-slate-400">{t('header.subtitle')}</p>
+          </header>
 
-        {/* Key figures */}
-        {!loading && !error && members.length > 2 && (
-          <dl className="mx-auto mt-12 grid max-w-2xl grid-cols-3 divide-x divide-slate-200 border-y border-slate-200">
-            <Figure value={members.length}     label={t('stats.members')} />
-            <Figure value={departments.length} label={t('stats.departments')} />
-            <Figure value={countries}          label={t('stats.countries')} />
-          </dl>
-        )}
+          {!loading && !error && members.length > 2 && (
+            <dl className="mx-auto mt-14 grid max-w-2xl grid-cols-3 gap-x-8">
+              <Figure value={members.length}     label={t('stats.members')} />
+              <Figure value={departments.length} label={t('stats.departments')} />
+              <Figure value={countries}          label={t('stats.countries')} />
+            </dl>
+          )}
+        </div>
+      </AmbientSection>
 
-        {/* Filters — sticks below the navbar so filtering stays reachable
-            while scrolling a long roster. */}
-        {/* Menyaring daftar yang muat dalam satu layar tidak ada gunanya —
-            bilahnya baru muncul saat rosternya cukup panjang. */}
-        {!loading && !error && members.length > 6 && (
-          <div className="sticky top-20 z-30 -mx-4 mt-2 border-b border-slate-200 bg-white px-4 py-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      {/* ══ ROSTER — oranye ═════════════════════════════════════════ */}
+      <AmbientSection accent="orange" art={ART.coverage} artOpacity={0.3}
+        className="border-y border-white/10">
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+
+          {/* Menyaring daftar yang muat dalam satu layar tidak ada gunanya —
+              bilahnya baru muncul saat rosternya cukup panjang. */}
+          {!loading && !error && members.length > 6 && (
+            <div className="mb-14 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="relative w-full lg:max-w-xs">
                 <input
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   placeholder={t('filter.search')}
-                  className="w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 text-[15px] text-slate-900 placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+                  className="w-full rounded-lg bg-white/[0.06] py-2.5 pl-10 pr-3 text-[15px] text-white ring-1 ring-white/15 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-400"
                 />
-                <svg className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
 
-              <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 lg:pb-0">
+              <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 lg:pb-0">
                 <DeptTab label={t('filter.all')} count={members.length}
                   active={activeDept === 'all'} onClick={() => setActiveDept('all')} />
                 {departments.map(d => (
@@ -192,79 +188,75 @@ const Teams = () => {
                 ))}
               </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Loading */}
-        {loading && (
-          <div className="flex items-center justify-center gap-3 py-24 text-[15px] text-slate-500">
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600" />
-            {t('loading')}
-          </div>
-        )}
-
-        {/* Error */}
-        {error && !loading && (
-          <div className="mt-10 rounded-lg border border-slate-200 bg-slate-50 px-6 py-10 text-center">
-            <p className="text-[15px] font-medium text-slate-900">{t('error')}</p>
-            <button onClick={fetchData}
-              className="mt-4 rounded-lg border border-slate-300 bg-white px-4 py-2 text-[15px] font-medium text-slate-700 transition-colors hover:border-slate-400">
-              {t('retry')}
-            </button>
-          </div>
-        )}
-
-        {/* Roster */}
-        {!loading && !error && (
-          filtered.length === 0 ? (
-            <EmptyState hasFilter={hasFilter} t={t}
-              onReset={() => { setActiveDept('all'); setSearch(''); }} />
-          ) : (
-            <div className="mt-16 space-y-20">
-              {Object.entries(grouped).map(([deptName, list]) => (
-                <section key={deptName}>
-                  {/* Judul divisi hanya berguna kalau ada divisi lain untuk
-                      dibedakan. Satu grup tunggal cukup memakai judul halaman. */}
-                  {Object.keys(grouped).length > 1 && (
-                    <div className="mb-12 text-center">
-                      <h2 className="text-2xl font-semibold tracking-tight text-slate-900">
-                        {deptName}
-                      </h2>
-                      <div aria-hidden className="mx-auto mt-3 h-px w-10 bg-indigo-600" />
-                      <p className="mt-3 text-[15px] tabular-nums text-slate-400">{list.length}</p>
-                    </div>
-                  )}
-                  <div className={`mx-auto grid gap-x-6 gap-y-12 ${gridForCount(list.length)}`}>
-                    {list.map(m => <MemberCard key={m.id} member={m} t={t} />)}
-                  </div>
-                </section>
-              ))}
+          {loading && (
+            <div className="flex items-center justify-center gap-3 py-24 text-[15px] text-slate-500">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-orange-400" />
+              {t('loading')}
             </div>
-          )
-        )}
+          )}
 
-        {/* Governance note */}
-        {!loading && !error && members.length > 0 && (
-          <p className="mt-16 border-t border-slate-200 pt-5 text-center text-sm text-slate-400">
-            {t('admin_note')}
-          </p>
-        )}
+          {error && !loading && (
+            <div className={`${CARD} px-6 py-12 text-center`}>
+              <p className="text-[15px] font-medium text-white">{t('error')}</p>
+              <button onClick={fetchData}
+                className="mt-5 rounded-lg bg-white/[0.06] px-5 py-2.5 text-[15px] font-medium text-white ring-1 ring-white/15 transition-colors hover:bg-white/[0.12]">
+                {t('retry')}
+              </button>
+            </div>
+          )}
 
-        {/* Enquiries */}
-        <section className="mt-16 rounded-lg bg-indigo-700 px-6 py-10 text-white sm:px-10">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          {!loading && !error && (
+            filtered.length === 0 ? (
+              <EmptyState hasFilter={hasFilter} t={t}
+                onReset={() => { setActiveDept('all'); setSearch(''); }} />
+            ) : (
+              <div className="space-y-20">
+                {Object.entries(grouped).map(([deptName, list]) => (
+                  <section key={deptName}>
+                    {/* Judul divisi hanya berguna kalau ada divisi lain untuk
+                        dibedakan. Satu grup tunggal cukup memakai judul halaman. */}
+                    {Object.keys(grouped).length > 1 && (
+                      <div className="mb-12 text-center">
+                        <h2 className="text-2xl font-bold tracking-tight text-white">{deptName}</h2>
+                        <div aria-hidden className={`mx-auto mt-3 h-px w-10 ${ACCENTS.orange.rule}`} />
+                        <p className="mt-3 text-[15px] tabular-nums text-slate-500">{list.length}</p>
+                      </div>
+                    )}
+                    <div className={`mx-auto grid gap-5 ${gridForCount(list.length)}`}>
+                      {list.map(m => <MemberCard key={m.id} member={m} t={t} accent="orange" />)}
+                    </div>
+                  </section>
+                ))}
+              </div>
+            )
+          )}
+
+          {!loading && !error && members.length > 0 && (
+            <p className="mt-16 border-t border-white/10 pt-6 text-center text-sm text-slate-600">
+              {t('admin_note')}
+            </p>
+          )}
+        </div>
+      </AmbientSection>
+
+      {/* ══ PENUTUP — oranye tua ════════════════════════════════════ */}
+      <AmbientSection accent="ember" art={ART.flow} artOpacity={0.4} className="py-20">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <div className={`${CARD} flex flex-col gap-6 p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10`}>
             <div className="max-w-xl">
-              <h3 className="text-2xl font-semibold tracking-tight">{t('cta.title')}</h3>
-              <p className="mt-2 text-[15px] leading-relaxed text-indigo-100">{t('cta.subtitle')}</p>
+              <h3 className="text-2xl font-bold tracking-tight text-white">{t('cta.title')}</h3>
+              <p className="mt-2 text-[15px] leading-relaxed text-slate-400">{t('cta.subtitle')}</p>
             </div>
             <Link to="/contact"
-              className="inline-flex shrink-0 items-center justify-center rounded-lg bg-white px-6 py-2.5 text-[15px] font-semibold text-indigo-700 transition-colors hover:bg-indigo-50">
+              className={`inline-flex shrink-0 items-center justify-center rounded-lg px-7 py-3 text-[15px] font-semibold text-white transition-all hover:-translate-y-0.5 ${ACCENTS.ember.button}`}>
               {t('cta.button')}
             </Link>
           </div>
-        </section>
+        </div>
+      </AmbientSection>
 
-      </div>
     </main>
   );
 };
@@ -272,22 +264,22 @@ const Teams = () => {
 /* ─── sub-components ─────────────────────────────────────────────────────── */
 
 const Figure = ({ value, label }) => (
-  <div className="px-4 py-6 text-center">
-    <dd className="text-3xl font-semibold tabular-nums tracking-tight text-slate-900">{value}</dd>
-    <div aria-hidden className="mx-auto mt-2.5 h-px w-8 bg-indigo-600" />
-    <dt className="mt-2.5 text-xs font-medium uppercase tracking-[0.1em] text-slate-500">{label}</dt>
+  <div className="text-center">
+    <dd className={`text-3xl font-bold tabular-nums tracking-tight ${ACCENTS.blue.numeral}`}>{value}</dd>
+    <div aria-hidden className={`mx-auto mt-2.5 h-px w-8 ${ACCENTS.blue.rule}`} />
+    <dt className="mt-2.5 text-xs font-medium uppercase tracking-[0.12em] text-slate-500">{label}</dt>
   </div>
 );
 
 const DeptTab = ({ label, count, active, onClick }) => (
   <button onClick={onClick}
-    className={`flex shrink-0 items-center gap-2 rounded-lg border px-3 py-1.5 text-[15px] font-medium transition-colors ${
+    className={`flex shrink-0 items-center gap-2 rounded-lg px-4 py-2 text-[15px] font-medium transition-colors ${
       active
-        ? 'border-slate-900 bg-slate-900 text-white'
-        : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900'
+        ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/30'
+        : 'bg-white/[0.06] text-slate-300 ring-1 ring-white/10 hover:bg-white/[0.12] hover:text-white'
     }`}>
     {label}
-    <span className={`tabular-nums text-xs ${active ? 'text-slate-300' : 'text-slate-400'}`}>
+    <span className={`tabular-nums text-xs ${active ? 'text-orange-100' : 'text-slate-500'}`}>
       {count}
     </span>
   </button>
@@ -296,14 +288,14 @@ const DeptTab = ({ label, count, active, onClick }) => (
 const EmptyState = ({ hasFilter, onReset, t }) => {
   const variant = hasFilter ? 'no_match' : 'no_data';
   return (
-    <div className="mt-16 rounded-lg border border-dashed border-slate-300 px-6 py-16 text-center">
-      <p className="text-[15px] font-semibold text-slate-900">{t(`empty.${variant}.title`)}</p>
-      <p className="mx-auto mt-1.5 max-w-sm text-[15px] leading-relaxed text-slate-500">
+    <div className="rounded-xl border border-dashed border-white/15 px-6 py-16 text-center">
+      <p className="text-[15px] font-semibold text-white">{t(`empty.${variant}.title`)}</p>
+      <p className="mx-auto mt-2 max-w-sm text-[15px] leading-relaxed text-slate-400">
         {t(`empty.${variant}.subtitle`)}
       </p>
       {hasFilter && (
         <button onClick={onReset}
-          className="mt-5 rounded-lg border border-slate-300 bg-white px-4 py-2 text-[15px] font-medium text-slate-700 transition-colors hover:border-slate-400">
+          className="mt-6 rounded-lg bg-white/[0.06] px-5 py-2.5 text-[15px] font-medium text-white ring-1 ring-white/15 transition-colors hover:bg-white/[0.12]">
           {t('filter.reset')}
         </button>
       )}
