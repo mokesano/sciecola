@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight } from 'lucide-react';
 
 function parseInput(raw) {
   const q = raw.trim();
@@ -40,37 +39,54 @@ const CallToAction = () => {
   };
 
   return (
-    <div className="mb-8 mt-12 flex flex-col items-center justify-between gap-8 rounded-xl bg-slate-900 p-8 text-white lg:flex-row">
+    <div className="bg-gradient-to-r from-[#4F46E5] via-[#6366F1] to-[#8B5CF6] rounded-2xl p-6 mt-12 mb-8 flex flex-col lg:flex-row items-center justify-between text-white shadow-xl relative overflow-hidden">
 
-      <div className="text-center lg:w-1/2 lg:text-left">
-        <h2 className="text-2xl font-semibold tracking-tight">{t('cta.title')}</h2>
-        <p className="mt-2 text-[15px] leading-relaxed text-slate-300 md:text-base">
+      <div className="absolute -top-24 -right-24 w-64 h-64 bg-white opacity-10 rounded-full blur-2xl pointer-events-none"></div>
+      <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-white opacity-10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <div className="lg:w-1/2 mb-6 lg:mb-0 relative z-10 text-center lg:text-left">
+        <h2 className="text-2xl md:text-2xl font-bold mb-2">
+          {t('cta.title')}
+        </h2>
+        <p className="text-indigo-100 text-[15px] md:text-base leading-relaxed">
           {t('cta.subtitle')}
         </p>
       </div>
 
-      {/* The error line lives inside this column rather than beside the form,
-          so it reads as feedback on the field instead of a stray note. */}
-      <div className="w-full lg:w-1/2">
-        <form onSubmit={handleSearchSubmit} className="flex w-full flex-col gap-2 md:flex-row lg:ml-auto lg:max-w-lg">
+      {/* Pesan error diletakkan di kolom yang sama dengan form, bukan di
+          sebelahnya. Sebagai sibling di dalam flex row, ia terdorong ke
+          samping field alih-alih muncul di bawahnya. */}
+      <div className="lg:w-1/2 flex flex-col w-full relative z-10 lg:items-end">
+
+        <form onSubmit={handleSearchSubmit} className="bg-white rounded-xl p-1.5 flex flex-col md:flex-row w-full max-w-lg shadow-md">
+
           <input
             type="text"
             placeholder={t('cta.placeholder')}
             value={inputValue}
             onChange={(e) => { setInputValue(e.target.value); setError(''); }}
             disabled={isLoading}
-            className="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-3 text-[15px] text-white placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400 disabled:opacity-60"
+            className={`flex-1 px-5 py-3 text-gray-700 text-[15px] md:text-base outline-none bg-transparent rounded-full placeholder-gray-400 disabled:bg-gray-50 ${error ? 'text-red-700' : ''}`}
           />
+
           <button
             type="submit"
             disabled={isLoading}
-            className="flex shrink-0 items-center justify-center gap-2 rounded-lg bg-white px-6 py-3 text-[15px] font-semibold text-slate-900 transition-colors hover:bg-slate-100 disabled:cursor-wait disabled:opacity-70"
+            className="bg-[#5A67D8] hover:bg-[#4C51BF] text-white px-6 py-3 rounded-lg text-[15px] md:text-base font-medium flex items-center justify-center gap-2 mt-2 md:mt-0 transition-colors disabled:opacity-70 disabled:cursor-wait"
           >
             {isLoading ? t('cta.button_loading') : t('cta.button')}
-            {!isLoading && <ArrowRight className="h-4 w-4" />}
+            {!isLoading && (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            )}
           </button>
+
         </form>
-        {error && <p className="mt-2 text-[15px] text-red-300">{error}</p>}
+        {error && (
+          <p className="mt-2 w-full max-w-lg text-sm text-red-200">{error}</p>
+        )}
+
       </div>
 
     </div>
