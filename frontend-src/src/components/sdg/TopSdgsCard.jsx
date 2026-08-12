@@ -75,7 +75,7 @@ const TopSdgsCard = () => {
 
       {/* Container Cards */}
       {sdgsData.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-white py-12 text-center text-[15px] text-slate-500">
+        <div className="bg-white rounded-2xl border border-dashed border-gray-200 py-12 text-center text-[15px] text-gray-500">
           {t('top_sdgs.empty')}
         </div>
       ) : (

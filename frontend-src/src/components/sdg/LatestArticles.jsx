@@ -25,7 +25,7 @@ const LatestArticles = () => {
   }, []);
 
   return (
-    <div className="flex h-full flex-col rounded-xl border border-slate-200 bg-white p-6 font-sans">
+    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col h-full font-sans">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-bold text-gray-800">{t('latest_articles.title')}</h3>
         <Link to="/articles" className="text-[15px] text-indigo-600 hover:text-indigo-800 font-medium transition-colors">
