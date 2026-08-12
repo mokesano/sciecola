@@ -43,7 +43,7 @@ const Footer = () => {
       <div aria-hidden className="pointer-events-none absolute left-1/2 top-0 h-64 w-[46rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-600/15 blur-[100px]" />
       <SectionArt src="/assets/img/sections/network.svg" opacity={0.25} position="top" />
 
-      <div className="relative mx-auto max-w-7xl px-4 pt-16 sm:px-6 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
 
         {/* ── Row 1: wordmark, secondary links, social ─────────────────── */}
         <div className="flex flex-col gap-6 pb-8 lg:flex-row lg:items-center lg:justify-between">
