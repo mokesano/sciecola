@@ -13,6 +13,7 @@ const Navbar = () => {
 
   const [langOpen, setLangOpen]   = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
+  const [scrolled, setScrolled]   = useState(false);
   const langRef = useRef(null);
 
   // Sync state lokal dengan nilai i18n saat ini
@@ -38,14 +39,36 @@ const Navbar = () => {
   // Tutup menu mobile saat navigasi
   useEffect(() => { setMenuOpen(false); }, [location]);
 
+  /* Navbar menyatu dengan hero selama halaman belum digulir, lalu memakai
+     permukaannya sendiri begitu hero terlewati. Nilainya dibaca lewat rAF —
+     event scroll menyala puluhan kali per detik, dan yang kita butuhkan hanya
+     satu ambang boolean. */
+  useEffect(() => {
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        setScrolled(window.scrollY > window.innerHeight * 0.6);
+        ticking = false;
+      });
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   // Helpers active state
   const isResearchersActive = location.pathname === '/researchers' || location.pathname.startsWith('/orcid/');
   const isArticlesActive    = location.pathname === '/articles'    || location.pathname.startsWith('/doi/');
 
-  /* Hanya landing publik yang bertema gelap; navbar putih di atas bidang
-     hitam terbaca patah, jadi ia ikut gelap di sana saja. About, Teams, dan
-     profil anggota kembali berlatar putih, jadi navbar-nya tetap terang. */
-  const onDark = !user && location.pathname === '/';
+  /* Di landing publik, navbar menyatu dengan hero selama masih di puncak
+     halaman: tanpa permukaan sendiri, tanpa garis batas, teks putih. Begitu
+     hero terlewati ia mengambil permukaannya kembali. Halaman lain tidak
+     terpengaruh. */
+  const onLanding = !user && location.pathname === '/';
+  const onHero    = onLanding && !scrolled;
+  const onDark    = onHero;
 
   const activeClass = onDark
     ? 'text-white font-bold border-b-[4px] border-indigo-400 pb-7 transition-all'
@@ -62,8 +85,10 @@ const Navbar = () => {
   const activeLang = langData[currentLang] || { flag: '🌐', code: currentLang.toUpperCase(), country: currentLang };
 
   return (
-    <nav className={`fixed top-0 w-full z-50 backdrop-blur-md transition-colors ${
-      onDark ? 'bg-[#08080C]/85 border-b border-white/10' : 'bg-white/95 border-b border-gray-100 shadow-sm'
+    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+      onHero
+        ? 'bg-transparent'
+        : 'bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
@@ -211,7 +236,9 @@ const Navbar = () => {
 
         {/* ── Mobile Menu ── */}
         {menuOpen && (
-          <div className={`lg:hidden py-3 ${onDark ? 'border-t border-white/10' : 'border-t border-gray-100'}`}>
+          <div className={`lg:hidden py-3 ${
+            onHero ? 'mt-2 rounded-xl border border-white/15 bg-[#7C2D12]/95 backdrop-blur-md' : 'border-t border-gray-100'
+          }`}>
             {[
               { to: '/',            label: t('nav.home') },
               { to: '/researchers', label: t('nav.researchers') },
