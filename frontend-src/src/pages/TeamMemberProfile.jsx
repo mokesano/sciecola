@@ -26,10 +26,27 @@ function getInitials(name) {
     .map(w => w[0]).join('').toUpperCase();
 }
 
+/*
+ * Researcher identifiers, each keyed by its source's own brand colour — the
+ * pattern used on the Sangia author pages. Only ORCID is populated by the
+ * current team endpoint; the other three render automatically if the API
+ * starts returning them, and are simply skipped until then.
+ */
+function collectIdentifiers(m) {
+  return [
+    m.orcid        && { key: 'ORCID',        value: m.orcid,        color: '#A6CE39',
+                        href: `https://orcid.org/${m.orcid}`, external: true },
+    m.scopus_id    && { key: 'Scopus',       value: m.scopus_id,    color: '#E9711C',
+                        href: `/scopus/${m.scopus_id}` },
+    m.sinta_id     && { key: 'SINTA',        value: m.sinta_id,     color: '#1D4ED8',
+                        href: `/sinta/${m.sinta_id}` },
+    m.researcherid && { key: 'ResearcherID', value: m.researcherid, color: '#5E33BF',
+                        href: `/researcherid/${m.researcherid}` },
+  ].filter(Boolean);
+}
+
 /* ─── small components ───────────────────────────────────────────────────── */
 
-/* The official UN goal colour is kept, but reduced to a small key swatch so a
-   dense SDG list reads as a data set rather than a block of saturated pills. */
 const SdgBadge = ({ sdg }) => (
   <span className="inline-flex items-center gap-2 rounded border border-slate-200 bg-white py-1.5 pl-2 pr-3 text-xs text-slate-700">
     <span aria-hidden className="h-3 w-3 shrink-0 rounded-[2px]" style={{ backgroundColor: SDG_COLORS[sdg] }} />
@@ -40,14 +57,13 @@ const SdgBadge = ({ sdg }) => (
   </span>
 );
 
-const ProfilePhoto = ({ photo, name }) => {
+const ProfilePhoto = ({ photo, name, size = 'h-36 w-36' }) => {
   const [err, setErr] = useState(false);
   const showImage = photo && !err;
   return (
-    <div className="h-36 w-36 shrink-0 overflow-hidden rounded border border-slate-200 bg-slate-50 sm:h-40 sm:w-40">
+    <div className={`${size} shrink-0 overflow-hidden rounded-full border-4 border-white/90 bg-slate-100 shadow-lg`}>
       {showImage ? (
-        <img src={photo} alt={name} onError={() => setErr(true)}
-          className="h-full w-full object-cover" />
+        <img src={photo} alt={name} onError={() => setErr(true)} className="h-full w-full object-cover" />
       ) : (
         <div className="flex h-full w-full items-center justify-center text-3xl font-medium tracking-wide text-slate-400">
           {getInitials(name)}
@@ -57,20 +73,32 @@ const ProfilePhoto = ({ photo, name }) => {
   );
 };
 
-/* Section heading + hairline rule. Content sits on the page, not inside a
-   floating card — closer to how a CV or institutional bio is set. */
-const Section = ({ title, children }) => (
-  <section>
-    <h2 className="border-b border-slate-200 pb-2.5 text-[13px] font-semibold uppercase tracking-[0.12em] text-slate-900">
+/*
+ * Panel with a solid title bar, after the OpenAIRE profile cards. Two tones
+ * only — accent for the main column, slate for supporting panels — so the
+ * page stays structured without turning into a colour chart.
+ */
+const Panel = ({ title, tone = 'accent', children }) => (
+  <section className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+    <h2 className={`px-5 py-3 text-[15px] font-semibold tracking-tight text-white ${
+      tone === 'accent' ? 'bg-indigo-700' : 'bg-slate-700'
+    }`}>
       {title}
     </h2>
-    <div className="pt-5">{children}</div>
+    <div className="p-5 sm:p-6">{children}</div>
   </section>
 );
 
-/* Fact row in the sidebar panel. */
+/* Sub-heading inside a panel — a short accent bar to the left of the label,
+   the device the Sangia author pages use to open each block. */
+const RuleHeading = ({ children }) => (
+  <h3 className="mb-3 border-l-[3px] border-indigo-600 pl-3 text-[13px] font-semibold uppercase tracking-[0.1em] text-slate-900">
+    {children}
+  </h3>
+);
+
 const Fact = ({ label, children, mono = false }) => (
-  <div className="flex items-baseline justify-between gap-4 px-5 py-3">
+  <div className="flex items-baseline justify-between gap-4 py-2.5">
     <dt className="shrink-0 text-xs text-slate-500">{label}</dt>
     <dd className={`text-right text-[13px] font-medium text-slate-900 ${mono ? 'font-mono' : ''}`}>
       {children}
@@ -78,26 +106,15 @@ const Fact = ({ label, children, mono = false }) => (
   </div>
 );
 
-/* Plain contact link — underlined on hover, no button chrome. */
-const ContactLink = ({ href, children, external = false }) => (
-  <a
-    href={href}
-    {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-    className="text-[13px] text-slate-600 underline-offset-4 hover:text-indigo-700 hover:underline"
-  >
-    {children}
-  </a>
-);
-
 const NotFound = ({ slug, t }) => (
   <main className="mx-auto max-w-3xl px-4 pb-24 pt-32 sm:px-6 lg:px-8">
-    <div className="rounded-md border border-slate-200 bg-slate-50 px-6 py-16 text-center">
-      <h2 className="font-serif text-2xl tracking-tight text-slate-900">{t('not_found.title')}</h2>
+    <div className="rounded-lg border border-slate-200 bg-slate-50 px-6 py-16 text-center">
+      <h2 className="font-serif text-2xl font-semibold tracking-tight text-slate-900">{t('not_found.title')}</h2>
       <p className="mt-2 text-sm text-slate-600">
         {t('not_found.subtitle')} <span className="font-mono text-slate-900">{slug}</span>.
       </p>
       <Link to="/teams"
-        className="mt-6 inline-flex items-center rounded bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-800">
+        className="mt-6 inline-flex items-center rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-800">
         {t('not_found.button')}
       </Link>
     </div>
@@ -147,98 +164,136 @@ const TeamMemberProfile = () => {
   const expertise    = m.expertise  ?? [];
   const sdgFocus     = m.sdg_focus  ?? [];
   const social       = Object.entries(m.social ?? {}).filter(([, v]) => v);
-  const affiliation  = [m.department, m.location].filter(Boolean).join(' · ');
+  const identifiers  = collectIdentifiers(m);
 
   return (
-    <main className="w-full pb-24 pt-28">
+    <main className="w-full pb-24 pt-20">
+
+      {/* ============================================================ */}
+      {/* Identity band — full-bleed, portrait beside the name and a    */}
+      {/* short bio, as on the OpenAIRE board profiles.                 */}
+      {/* ============================================================ */}
+      <section className="bg-indigo-900 text-white">
+        <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+          <nav className="mb-8 flex items-center gap-2 text-[13px] text-indigo-200">
+            <Link to="/"      className="hover:text-white hover:underline">{t('breadcrumb.home')}</Link>
+            <span className="text-indigo-400">/</span>
+            <Link to="/teams" className="hover:text-white hover:underline">{t('breadcrumb.teams')}</Link>
+            <span className="text-indigo-400">/</span>
+            <span className="max-w-[220px] truncate text-white">{m.name}</span>
+          </nav>
+
+          <div className="flex flex-col items-center gap-7 text-center sm:flex-row sm:items-start sm:text-left">
+            <ProfilePhoto photo={m.photo} name={m.name} />
+
+            <div className="min-w-0 flex-1 sm:pt-2">
+              {m.code && (
+                <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-indigo-300">{m.code}</p>
+              )}
+              <h1 className="mt-1.5 font-serif text-3xl font-semibold leading-tight tracking-tight sm:text-[2.5rem]">
+                {m.name}
+              </h1>
+              {m.position && (
+                <p className="mt-2 text-sm font-semibold text-indigo-200">{m.position}</p>
+              )}
+              {m.bio && (
+                <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-indigo-100">{m.bio}</p>
+              )}
+              <div className="mt-4 space-y-0.5 text-[13px] text-indigo-200">
+                {m.department && <p>{m.department}</p>}
+                {m.location   && <p>{m.location}</p>}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8">
 
-        {/* Breadcrumb */}
-        <nav className="mb-10 flex items-center gap-2 text-[13px] text-slate-500">
-          <Link to="/"      className="hover:text-indigo-700 hover:underline">{t('breadcrumb.home')}</Link>
-          <span className="text-slate-300">/</span>
-          <Link to="/teams" className="hover:text-indigo-700 hover:underline">{t('breadcrumb.teams')}</Link>
-          <span className="text-slate-300">/</span>
-          <span className="max-w-[220px] truncate text-slate-700">{m.name}</span>
-        </nav>
+        {/* Identifier strip — each source keyed by its own brand colour. */}
+        {(identifiers.length > 0 || m.email || social.length > 0) && (
+          <div className="-mt-6 rounded-lg border border-slate-200 bg-white px-5 py-4 shadow-sm">
+            <ul className="flex flex-wrap items-center gap-x-7 gap-y-3">
+              {identifiers.map(id => (
+                <li key={id.key} className="flex items-center gap-2 text-[13px]">
+                  <span aria-hidden className="h-2.5 w-2.5 shrink-0 rounded-full"
+                    style={{ backgroundColor: id.color }} />
+                  <span className="font-semibold text-slate-700">{id.key}</span>
+                  {id.external ? (
+                    <a href={id.href} target="_blank" rel="noopener noreferrer"
+                      className="font-mono text-slate-600 underline-offset-4 hover:text-indigo-700 hover:underline">
+                      {id.value}
+                    </a>
+                  ) : (
+                    <Link to={id.href}
+                      className="font-mono text-slate-600 underline-offset-4 hover:text-indigo-700 hover:underline">
+                      {id.value}
+                    </Link>
+                  )}
+                </li>
+              ))}
 
-        {/* Identity block */}
-        <header className="flex flex-col gap-6 border-b border-slate-200 pb-10 sm:flex-row sm:gap-8">
-          <ProfilePhoto photo={m.photo} name={m.name} />
+              {m.email && (
+                <li className="text-[13px]">
+                  <a href={`mailto:${m.email}`}
+                    className="text-slate-600 underline-offset-4 hover:text-indigo-700 hover:underline">
+                    {m.email}
+                  </a>
+                </li>
+              )}
 
-          <div className="min-w-0 flex-1">
-            {m.code && (
-              <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">{m.code}</p>
-            )}
-            <h1 className="mt-1.5 font-serif text-3xl leading-tight tracking-tight text-slate-900 sm:text-[2.25rem]">
-              {m.name}
-            </h1>
-            {m.position && (
-              <p className="mt-2 text-[15px] text-slate-700">{m.position}</p>
-            )}
-            {affiliation && (
-              <p className="mt-1 text-sm text-slate-500">{affiliation}</p>
-            )}
-
-            {/* Identifiers and contact, set as a single delimited line. */}
-            {(m.email || m.orcid || social.length > 0) && (
-              <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2">
-                {m.email && (
-                  <ContactLink href={`mailto:${m.email}`}>{m.email}</ContactLink>
-                )}
-                {m.orcid && (
-                  <ContactLink href={`https://orcid.org/${m.orcid}`} external>
-                    <span className="text-slate-400">ORCID </span>
-                    <span className="font-mono">{m.orcid}</span>
-                  </ContactLink>
-                )}
-                {social.map(([k, v]) => (
-                  <ContactLink key={k} href={v} external>
-                    <span className="capitalize">{k}</span>
-                  </ContactLink>
-                ))}
-              </div>
-            )}
+              {social.map(([k, v]) => (
+                <li key={k} className="text-[13px]">
+                  <a href={v} target="_blank" rel="noopener noreferrer"
+                    className="capitalize text-slate-600 underline-offset-4 hover:text-indigo-700 hover:underline">
+                    {k}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
-        </header>
+        )}
 
         {/* Body */}
-        <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-3 lg:gap-12">
+        <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
 
-          {/* Main column */}
-          <div className="space-y-10 lg:col-span-2">
+          <div className="space-y-6 lg:col-span-2">
 
             {(m.long_bio || m.bio) && (
-              <Section title={t('section.about')}>
+              <Panel title={t('section.about')}>
                 <p className="whitespace-pre-line text-[15px] leading-[1.75] text-slate-700">
                   {m.long_bio || m.bio}
                 </p>
-              </Section>
+              </Panel>
             )}
 
-            {expertise.length > 0 && (
-              <Section title={t('section.expertise')}>
-                <ul className="flex flex-wrap gap-2">
-                  {expertise.map((e, i) => (
-                    <li key={i} className="rounded border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-slate-700">
-                      {e}
-                    </li>
-                  ))}
-                </ul>
-              </Section>
-            )}
+            {(expertise.length > 0 || sdgFocus.length > 0) && (
+              <Panel title={t('section.expertise')}>
+                {/* No sub-heading here — it would repeat the panel title. */}
+                {expertise.length > 0 && (
+                  <ul className="flex flex-wrap gap-2">
+                    {expertise.map((e, i) => (
+                      <li key={i} className="rounded border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-slate-700">
+                        {e}
+                      </li>
+                    ))}
+                  </ul>
+                )}
 
-            {sdgFocus.length > 0 && (
-              <Section title={t('section.sdg_focus')}>
-                <div className="flex flex-wrap gap-2">
-                  {sdgFocus.map(s => <SdgBadge key={s} sdg={s} />)}
-                </div>
-              </Section>
+                {sdgFocus.length > 0 && (
+                  <div className={expertise.length > 0 ? 'mt-7' : ''}>
+                    <RuleHeading>{t('section.sdg_focus')}</RuleHeading>
+                    <div className="flex flex-wrap gap-2">
+                      {sdgFocus.map(s => <SdgBadge key={s} sdg={s} />)}
+                    </div>
+                  </div>
+                )}
+              </Panel>
             )}
 
             {/* Education — year in a fixed gutter, as on a CV. */}
             {education.length > 0 && (
-              <Section title={t('section.education')}>
+              <Panel title={t('section.education')}>
                 <ol className="space-y-5">
                   {education.map((edu, i) => (
                     <li key={i} className="grid grid-cols-[3.5rem_1fr] gap-4 border-b border-slate-100 pb-5 last:border-0 last:pb-0">
@@ -249,22 +304,17 @@ const TeamMemberProfile = () => {
                         <p className="text-sm font-semibold leading-snug text-slate-900">
                           {edu.degree}{edu.field ? ` — ${edu.field}` : ''}
                         </p>
-                        {edu.institution && (
-                          <p className="mt-0.5 text-sm text-slate-600">{edu.institution}</p>
-                        )}
-                        {edu.honors && (
-                          <p className="mt-1 text-xs italic text-slate-500">{edu.honors}</p>
-                        )}
+                        {edu.institution && <p className="mt-0.5 text-sm text-slate-600">{edu.institution}</p>}
+                        {edu.honors && <p className="mt-1 text-xs italic text-slate-500">{edu.honors}</p>}
                       </div>
                     </li>
                   ))}
                 </ol>
-              </Section>
+              </Panel>
             )}
 
-            {/* Awards — same gutter rhythm as education. */}
             {achievements.length > 0 && (
-              <Section title={t('section.achievements')}>
+              <Panel title={t('section.achievements')}>
                 <ol className="space-y-5">
                   {achievements.map((a, i) => (
                     <li key={i} className="grid grid-cols-[3.5rem_1fr] gap-4 border-b border-slate-100 pb-5 last:border-0 last:pb-0">
@@ -287,17 +337,14 @@ const TeamMemberProfile = () => {
                     </li>
                   ))}
                 </ol>
-              </Section>
+              </Panel>
             )}
           </div>
 
           {/* Sidebar */}
           <aside className="lg:col-span-1">
             <div className="lg:sticky lg:top-24">
-              <div className="rounded-md border border-slate-200 bg-white">
-                <h2 className="border-b border-slate-200 px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
-                  {t('section.membership')}
-                </h2>
+              <Panel title={t('section.membership')} tone="muted">
                 <dl className="divide-y divide-slate-100">
                   {m.code       && <Fact label={t('meta.code')} mono>{m.code}</Fact>}
                   {m.department && <Fact label={t('meta.department')}>{m.department}</Fact>}
@@ -309,7 +356,7 @@ const TeamMemberProfile = () => {
                   )}
                   {m.location   && <Fact label={t('meta.location')}>{m.location}</Fact>}
                 </dl>
-              </div>
+              </Panel>
 
               <Link to="/teams"
                 className="mt-5 inline-flex items-center gap-2 text-[13px] font-medium text-slate-600 underline-offset-4 hover:text-indigo-700 hover:underline">
