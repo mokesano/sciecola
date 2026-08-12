@@ -6,21 +6,37 @@ import {
   FlaskConical, Brain, Handshake,
 } from 'lucide-react';
 import Sparkline, { readDirection } from '../components/shared/Sparkline';
+import { SpotlightCard, SectionArt } from '../components/shared/Spotlight';
 
 // =====================================================================
 // VISUAL CONFIG
-// Icon untuk tiap kartu fitur / langkah. Bukan teks naratif — hanya
-// konfigurasi presentasi yang dipasangkan ke konten naratif berdasarkan
-// urutan. Teks naratifnya bisa berasal dari DB (admin) atau locale file
-// sebagai fallback.
 //
-// Ikon sengaja tidak lagi membawa warnanya sendiri. Enam keluarga warna
-// berbeda pada satu grid kartu membaca sebagai dekorasi, bukan informasi;
-// seluruh ikon kini memakai satu perlakuan aksen yang sama.
+// Halaman ini gelap, mengikuti rujukan ScholarAPI: bidang mendekati hitam,
+// satu aksen yang dipakai dengan berani, dan tiap seksi punya latar SVG yang
+// menggambarkan isinya (kisi data, jaringan simpul, kurva tren, rantai
+// langkah, bola meridian) — bukan bidang polos.
+//
+// Ikon fitur tidak membawa warnanya sendiri. Enam keluarga warna berbeda pada
+// satu grid kartu membaca sebagai dekorasi, bukan informasi.
 // =====================================================================
+
+const ART = {
+  hero:     '/assets/img/sections/hero-grid.svg',
+  coverage: '/assets/img/sections/globe.svg',
+  features: '/assets/img/sections/network.svg',
+  flow:     '/assets/img/sections/flow.svg',
+  insights: '/assets/img/sections/waves.svg',
+};
 
 const FEATURE_ICONS = [FlaskConical, Search, BarChart2, Users, Brain, Handshake];
 const STEP_ICONS    = [Search, Brain, BarChart2];
+
+// Emboss: garis sorot setipis rambut di tepi atas kartu, supaya permukaannya
+// terbaca terangkat dari bidang gelap alih-alih tercetak rata di atasnya.
+const CARD =
+  'rounded-xl bg-white/[0.035] ring-1 ring-white/10 ' +
+  'shadow-[inset_0_1px_0_0_rgba(255,255,255,0.07)] ' +
+  'transition-colors duration-300 hover:ring-indigo-400/40';
 
 // Deteksi identifier yang sama dengan HeroSearch, tapi tanpa memaksa login.
 // Siapa pun bisa menelusuri keempat ID peneliti yang didukung (atau DOI).
@@ -56,47 +72,47 @@ const PublicSearch = ({ t }) => {
     <div className="mx-auto mt-10 max-w-2xl">
       <form onSubmit={submit} className="flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder={t('search.placeholder')}
-            className="w-full rounded-lg border border-slate-300 bg-white py-3 pl-10 pr-3 text-base text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+            className="w-full rounded-lg bg-white/[0.06] py-3.5 pl-11 pr-3 text-base text-white ring-1 ring-white/15 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-400"
           />
         </div>
         <button
           type="submit"
-          className="shrink-0 rounded-lg bg-indigo-600 px-6 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-indigo-700"
+          className="shrink-0 rounded-lg bg-indigo-500 px-7 py-3.5 text-[15px] font-semibold text-white shadow-lg shadow-indigo-500/30 transition-all hover:bg-indigo-400 hover:shadow-indigo-400/40"
         >
           {t('search.submit')}
         </button>
       </form>
 
-      {err && <p className="mt-3 text-[15px] text-red-600">{err}</p>}
+      {err && <p className="mt-3 text-[15px] text-rose-400">{err}</p>}
 
       {ambiguousId && (
-        <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-left">
-          <p className="mb-2.5 text-[15px] text-slate-600">
+        <div className="mt-3 rounded-lg bg-white/[0.05] p-4 text-left ring-1 ring-white/10">
+          <p className="mb-2.5 text-[15px] text-slate-300">
             {t('search.ambiguous', { id: ambiguousId })}
           </p>
           <div className="flex flex-wrap gap-2">
             <button type="button" onClick={() => go(`/scopus/${ambiguousId}`)}
-              className="rounded border border-slate-300 bg-white px-3 py-1.5 text-[15px] font-medium text-slate-700 hover:border-slate-400 hover:bg-slate-50">
+              className="rounded-lg bg-white/10 px-3.5 py-2 text-[15px] font-medium text-white ring-1 ring-white/15 transition-colors hover:bg-white/20">
               Scopus
             </button>
             <button type="button" onClick={() => go(`/sinta/${ambiguousId}`)}
-              className="rounded border border-slate-300 bg-white px-3 py-1.5 text-[15px] font-medium text-slate-700 hover:border-slate-400 hover:bg-slate-50">
+              className="rounded-lg bg-white/10 px-3.5 py-2 text-[15px] font-medium text-white ring-1 ring-white/15 transition-colors hover:bg-white/20">
               SINTA
             </button>
             <button type="button" onClick={() => setAmbiguousId(null)}
-              className="rounded px-3 py-1.5 text-[15px] font-medium text-slate-500 hover:text-slate-900">
+              className="rounded-lg px-3.5 py-2 text-[15px] font-medium text-slate-400 transition-colors hover:text-white">
               {t('search.cancel')}
             </button>
           </div>
         </div>
       )}
 
-      <p className="mt-3 text-[15px] text-slate-500">{t('search.no_login')}</p>
+      <p className="mt-4 text-[15px] text-slate-500">{t('search.no_login')}</p>
     </div>
   );
 };
@@ -105,17 +121,13 @@ const PublicSearch = ({ t }) => {
 // dari locale (t function). Memastikan tidak ada teks naratif ter-hardcode.
 const text = (override, t, key, options) => override ?? t(key, options);
 
-/* Kepala seksi dengan ukuran tipografi yang konsisten. Sebelumnya setiap
-   judul seksi memakai text-6xl — sebesar judul hero — sehingga tidak ada
-   hierarki sama sekali di antara keduanya. */
-const SectionHead = ({ eyebrow, title, subtitle, align = 'center', className = 'mb-12', children }) => (
+const SectionHead = ({ eyebrow, title, subtitle, align = 'center', className = 'mb-14' }) => (
   <div className={`${className} ${align === 'center' ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl'}`}>
     {eyebrow && (
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-indigo-700">{eyebrow}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-400">{eyebrow}</p>
     )}
-    <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">{title}</h2>
-    {subtitle && <p className="mt-4 text-base leading-relaxed text-slate-600">{subtitle}</p>}
-    {children}
+    <h2 className="mt-4 text-3xl font-bold tracking-tight text-white sm:text-4xl">{title}</h2>
+    {subtitle && <p className="mt-4 text-base leading-relaxed text-slate-400">{subtitle}</p>}
   </div>
 );
 
@@ -190,8 +202,6 @@ const PublicHomePage = () => {
   const featureLabels = t('feature_labels', { returnObjects: true });
   const features = FEATURE_ICONS.map((Icon, i) => ({
     Icon,
-    // Admin content may carry its own micro-label; otherwise fall back to the
-    // locale list. Missing on both sides simply renders no label.
     label: featureTexts?.[i]?.label ?? (Array.isArray(featureLabels) ? featureLabels[i] : undefined),
     title: featureTexts?.[i]?.title ?? '',
     desc:  featureTexts?.[i]?.desc  ?? '',
@@ -210,52 +220,38 @@ const PublicHomePage = () => {
     ? pick('cta_section.trust_signals') : t('cta_section.trust_signals', { returnObjects: true });
 
   return (
-    <main className="min-h-screen bg-white pt-20">
+    <main className="min-h-screen bg-[#08080C] pt-20">
 
       {/* ============================================================ */}
-      {/* HERO                                                          */}
-      {/* Bidang terang dengan kisi tipis, bukan gradien gelap dengan   */}
-      {/* tiga blob blur. Kotak pencarian jadi pusat perhatian, karena  */}
-      {/* penelusuran profil memang tidak memerlukan login.             */}
+      {/* HERO — kisi data dalam perspektif                             */}
       {/* ============================================================ */}
-      <section className="relative overflow-hidden border-b border-indigo-100 bg-indigo-50">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.55]"
-          style={{
-            backgroundImage:
-              'linear-gradient(to right, #c7d2fe 1px, transparent 1px),' +
-              'linear-gradient(to bottom, #c7d2fe 1px, transparent 1px)',
-            backgroundSize: '64px 64px',
-            maskImage: 'radial-gradient(ellipse 70% 60% at 50% 0%, #000 40%, transparent 100%)',
-            WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 0%, #000 40%, transparent 100%)',
-          }}
-        />
+      <section className="relative overflow-hidden">
+        <SectionArt src={ART.hero} opacity={0.6} />
+        {/* Cahaya aksen di belakang judul, memberi kedalaman pada bidang gelap */}
+        <span aria-hidden className="pointer-events-none absolute left-1/2 top-0 h-[34rem] w-[54rem] -translate-x-1/2 -translate-y-1/3 rounded-full bg-indigo-600/20 blur-[110px]" />
 
-        <div className="relative mx-auto max-w-5xl px-6 py-24 text-center lg:px-8">
-          <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1.5 text-[15px] font-medium text-slate-600 shadow-sm">
-            <span className="h-1.5 w-1.5 rounded-full bg-indigo-600" />
+        <div className="relative mx-auto max-w-5xl px-6 py-28 text-center lg:px-8">
+          <span className="inline-flex items-center gap-2.5 rounded-full bg-white/[0.06] px-4 py-1.5 text-[15px] font-medium text-slate-300 ring-1 ring-white/15">
+            <span className="h-1.5 w-1.5 rounded-full bg-indigo-400 shadow-[0_0_8px_2px_rgba(129,140,248,0.8)]" />
             {text(pick('hero.badge'), t, 'hero.badge')}
           </span>
 
-          <h1 className="mt-7 text-4xl font-semibold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+          <h1 className="mt-8 text-4xl font-bold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
             {text(pick('hero.title_1'), t, 'hero.title_1')}{' '}
-            <span className="text-indigo-600">
+            <span className="text-indigo-400">
               {text(pick('hero.title_2'), t, 'hero.title_2')}
             </span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-400">
             {text(pick('hero.subtitle'), t, 'hero.subtitle')}
           </p>
 
-          {/* Ringkasan kemampuan sebagai checklist — pembaca institusional
-              menilai cakupan lebih dulu sebelum mencoba. */}
           {Array.isArray(heroHighlights) && heroHighlights.length > 0 && (
-            <ul className="mx-auto mt-8 grid max-w-2xl gap-x-8 gap-y-2.5 text-left sm:grid-cols-2">
+            <ul className="mx-auto mt-9 grid max-w-2xl gap-x-8 gap-y-3 text-left sm:grid-cols-2">
               {heroHighlights.map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-[15px] leading-snug text-slate-800">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-white">
+                <li key={i} className="flex items-start gap-3 text-[15px] leading-snug text-slate-300">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-300 ring-1 ring-indigo-400/40">
                     <Check className="h-3 w-3" strokeWidth={3} />
                   </span>
                   {item}
@@ -268,20 +264,19 @@ const PublicHomePage = () => {
 
           <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link to="/login"
-              className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-[15px] font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700">
+              className="inline-flex items-center gap-2 rounded-lg bg-white px-7 py-3 text-[15px] font-semibold text-slate-900 transition-transform hover:-translate-y-0.5">
               {text(pick('hero.cta_primary'), t, 'hero.cta_primary')}
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link to="/register"
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-3 text-[15px] font-semibold text-slate-700 transition-colors hover:border-slate-400 hover:bg-slate-50">
+              className="inline-flex items-center gap-2 rounded-lg bg-white/[0.06] px-7 py-3 text-[15px] font-semibold text-white ring-1 ring-white/15 transition-colors hover:bg-white/[0.12]">
               {text(pick('hero.cta_secondary'), t, 'hero.cta_secondary')}
             </Link>
           </div>
 
           <p className="mt-6 text-[15px] text-slate-500">
             {text(pick('hero.orcid_hint_prefix'), t, 'hero.orcid_hint_prefix')}{' '}
-            <Link to="/tutorial-orcid"
-              className="font-medium text-indigo-700 underline-offset-4 hover:underline">
+            <Link to="/tutorial-orcid" className="font-medium text-indigo-400 underline-offset-4 hover:underline">
               {text(pick('hero.orcid_hint_link'), t, 'hero.orcid_hint_link')}
             </Link>
           </p>
@@ -289,21 +284,22 @@ const PublicHomePage = () => {
       </section>
 
       {/* ============================================================ */}
-      {/* PLATFORM STATS                                                */}
+      {/* CAKUPAN — bola meridian                                       */}
       {/* ============================================================ */}
       {stats.length > 0 && (
-        <section className="bg-slate-900 py-16 text-white">
-          <div className="mx-auto max-w-6xl px-6 lg:px-8">
-            <p className="text-center text-xs font-semibold uppercase tracking-[0.16em] text-indigo-400">
+        <section className="relative overflow-hidden border-y border-white/10 bg-[#0B0B12]">
+          <SectionArt src={ART.coverage} opacity={0.45} />
+          <div className="relative mx-auto max-w-6xl px-6 py-20 lg:px-8">
+            <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-indigo-400">
               {t('stats_section.eyebrow')}
             </p>
-            <dl className="mt-10 grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-4">
+            <dl className="mt-12 grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-4">
               {stats.map((s, i) => (
                 <div key={i} className="text-center">
                   <dd className="text-4xl font-bold tabular-nums tracking-tight text-indigo-400 sm:text-5xl">
                     {s.value}
                   </dd>
-                  <div aria-hidden className="mx-auto mt-4 h-px w-10 bg-indigo-500" />
+                  <div aria-hidden className="mx-auto mt-4 h-px w-10 bg-indigo-500/70" />
                   <dt className="mt-4 text-[15px] leading-snug text-slate-400">{s.label}</dt>
                 </div>
               ))}
@@ -313,10 +309,11 @@ const PublicHomePage = () => {
       )}
 
       {/* ============================================================ */}
-      {/* FITUR UTAMA                                                   */}
+      {/* FITUR — jaringan simpul, kartu bersorot kursor                */}
       {/* ============================================================ */}
-      <section className="bg-white py-24">
-        <div className="mx-auto max-w-6xl px-6 lg:px-8">
+      <section className="relative overflow-hidden py-28">
+        <SectionArt src={ART.features} opacity={0.35} />
+        <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
           <SectionHead
             eyebrow={t('features_section.eyebrow')}
             title={text(pick('features_section.title'), t, 'features_section.title')}
@@ -324,32 +321,30 @@ const PublicHomePage = () => {
           />
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f, i) => (
-              <div key={i}
-                className="group rounded-xl border border-slate-200 bg-white p-6 transition-all hover:border-indigo-300 hover:shadow-md hover:shadow-indigo-100">
+              <SpotlightCard key={i} className={`${CARD} p-6`}>
                 <div className="flex items-start justify-between gap-3">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-indigo-600 text-white">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-indigo-500/15 text-indigo-300 ring-1 ring-indigo-400/30">
                     <f.Icon className="h-5 w-5" />
                   </span>
                   {f.label && (
-                    <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.1em] text-indigo-700">
+                    <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-indigo-300 ring-1 ring-white/10">
                       {f.label}
                     </span>
                   )}
                 </div>
-                <h3 className="mt-5 text-lg font-semibold tracking-tight text-slate-900">{f.title}</h3>
-                <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{f.desc}</p>
-              </div>
+                <h3 className="mt-6 text-lg font-semibold tracking-tight text-white">{f.title}</h3>
+                <p className="mt-2 text-[15px] leading-relaxed text-slate-400">{f.desc}</p>
+              </SpotlightCard>
             ))}
           </div>
         </div>
       </section>
 
       {/* ============================================================ */}
-      {/* 17 SDGs — warna resmi PBB dipertahankan karena ia data,       */}
-      {/* bukan dekorasi.                                               */}
+      {/* 17 SDG — warna resmi PBB, satu-satunya warna yang memang data  */}
       {/* ============================================================ */}
       {sdgList.length > 0 && (
-        <section className="border-y border-slate-200 bg-slate-50 py-24">
+        <section className="relative border-y border-white/10 bg-[#0B0B12] py-28">
           <div className="mx-auto max-w-6xl px-6 lg:px-8">
             <SectionHead
               eyebrow={t('sdg_section.eyebrow')}
@@ -357,12 +352,15 @@ const PublicHomePage = () => {
               subtitle={text(pick('sdg_section.subtitle'), t, 'sdg_section.subtitle')}
             />
 
-            <div className="grid grid-cols-4 gap-3 sm:grid-cols-6 lg:grid-cols-9">
+            <div className="grid grid-cols-4 gap-4 sm:grid-cols-6 lg:grid-cols-9">
               {sdgList.map((sdg) => (
                 <Link key={sdg.sdg} to="/sdgs" className="group flex flex-col items-center">
                   <div
-                    className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-lg shadow-sm transition-transform group-hover:scale-[1.06]"
-                    style={{ backgroundColor: sdg.color }}
+                    className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-xl ring-1 ring-white/10 transition-all duration-300 group-hover:-translate-y-1.5 group-hover:ring-white/40"
+                    style={{
+                      backgroundColor: sdg.color,
+                      boxShadow: `0 8px 26px -8px ${sdg.color}`,
+                    }}
                   >
                     <img
                       src={`/assets/sdgs/icons/sdg-${sdg.sdg}.svg`}
@@ -371,20 +369,20 @@ const PublicHomePage = () => {
                       onError={(e) => {
                         e.target.style.display = 'none';
                         e.target.parentElement.innerHTML =
-                          `<span class="text-white font-semibold text-lg">${sdg.sdg}</span>`;
+                          `<span class="text-white font-bold text-xl">${sdg.sdg}</span>`;
                       }}
                     />
                   </div>
-                  <span className="mt-2 text-center text-xs font-medium leading-tight text-slate-500 group-hover:text-slate-900">
+                  <span className="mt-2.5 text-center text-xs font-medium leading-tight text-slate-500 transition-colors group-hover:text-white">
                     {sdg.name}
                   </span>
                 </Link>
               ))}
             </div>
 
-            <div className="mt-12 text-center">
+            <div className="mt-14 text-center">
               <Link to="/sdgs"
-                className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-[15px] font-semibold text-slate-700 transition-colors hover:border-slate-400">
+                className="inline-flex items-center gap-2 rounded-lg bg-white/[0.06] px-6 py-3 text-[15px] font-semibold text-white ring-1 ring-white/15 transition-colors hover:bg-white/[0.12]">
                 {text(pick('sdg_section.cta_label'), t, 'sdg_section.cta_label')}
                 <ChevronRight className="h-4 w-4" />
               </Link>
@@ -394,41 +392,42 @@ const PublicHomePage = () => {
       )}
 
       {/* ============================================================ */}
-      {/* HOW IT WORKS                                                  */}
+      {/* ALUR KERJA — rantai langkah                                   */}
       {/* ============================================================ */}
-      <section className="bg-white py-24">
-        <div className="mx-auto max-w-6xl px-6 lg:px-8">
+      <section className="relative overflow-hidden py-28">
+        <SectionArt src={ART.flow} opacity={0.5} />
+        <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
           <SectionHead
             eyebrow={t('how_it_works_section.eyebrow')}
             title={text(pick('how_it_works_section.title'), t, 'how_it_works_section.title')}
             subtitle={text(pick('how_it_works_section.subtitle'), t, 'how_it_works_section.subtitle')}
           />
 
-          <ol className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          <ol className="grid grid-cols-1 gap-5 md:grid-cols-3">
             {steps.map((item) => (
-              <li key={item.step} className="border-t-2 border-indigo-600 pt-5">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-sm font-bold tabular-nums text-white">
+              <SpotlightCard key={item.step} as="li" className={`${CARD} p-7`}>
+                <div className="flex items-center gap-4">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-indigo-500 text-base font-bold tabular-nums text-white shadow-lg shadow-indigo-500/40">
                     {item.step}
                   </span>
-                  <item.Icon className="h-5 w-5 text-indigo-600" />
+                  <item.Icon className="h-5 w-5 text-indigo-300" />
                 </div>
-                <h3 className="mt-3 text-lg font-semibold tracking-tight text-slate-900">{item.title}</h3>
-                <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{item.desc}</p>
-              </li>
+                <h3 className="mt-6 text-lg font-semibold tracking-tight text-white">{item.title}</h3>
+                <p className="mt-2 text-[15px] leading-relaxed text-slate-400">{item.desc}</p>
+              </SpotlightCard>
             ))}
           </ol>
         </div>
       </section>
 
       {/* ============================================================ */}
-      {/* AI INSIGHTS — tiap kartu membawa sparkline agar pembaca       */}
-      {/* melihat arah perubahannya, bukan hanya angka akhirnya.        */}
+      {/* AI INSIGHTS — kurva tren                                      */}
       {/* ============================================================ */}
       {insights.length > 0 && (
-        <section className="border-y border-slate-200 bg-slate-50 py-24">
-          <div className="mx-auto max-w-6xl px-6 lg:px-8">
-            <div className="mb-12 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <section className="relative overflow-hidden border-y border-white/10 bg-[#0B0B12] py-28">
+          <SectionArt src={ART.insights} opacity={0.5} position="bottom" fade={false} />
+          <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
+            <div className="mb-14 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
               <SectionHead
                 align="left"
                 className=""
@@ -437,7 +436,7 @@ const PublicHomePage = () => {
                 subtitle={text(pick('insights_section.subtitle'), t, 'insights_section.subtitle')}
               />
               <Link to="/insights"
-                className="inline-flex shrink-0 items-center gap-2 pb-1 text-[15px] font-medium text-indigo-700 underline-offset-4 hover:underline">
+                className="inline-flex shrink-0 items-center gap-2 pb-1 text-[15px] font-medium text-indigo-400 underline-offset-4 hover:underline">
                 {text(pick('insights_section.cta_label'), t, 'insights_section.cta_label')}
                 <ArrowRight className="h-4 w-4" />
               </Link>
@@ -445,48 +444,50 @@ const PublicHomePage = () => {
 
             <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
               {insights.map((ins) => {
-                const color     = sdgColorById[ins.sdg] || '#64748b';
+                const color     = sdgColorById[ins.sdg] || '#818cf8';
                 const series    = Array.isArray(ins.series) ? ins.series : [];
                 const direction = readDirection(series, ins.trend);
                 const start     = ins.series_start;
                 const end       = start && series.length ? start + series.length - 1 : null;
 
                 return (
-                  <article key={ins.id} className="flex flex-col rounded-xl border border-slate-200 bg-white p-6">
+                  <SpotlightCard key={ins.id} as="article" className={`${CARD} flex flex-col p-6`}
+                    glow={`${color}2E`}>
                     <div className="flex items-center gap-2.5">
-                      <span aria-hidden className="h-3 w-3 rounded-[3px]" style={{ backgroundColor: color }} />
-                      <span className="font-mono text-xs tabular-nums text-slate-400">
+                      <span aria-hidden className="h-3 w-3 rounded-[3px]"
+                        style={{ backgroundColor: color, boxShadow: `0 0 12px 0 ${color}` }} />
+                      <span className="font-mono text-xs tabular-nums text-slate-500">
                         SDG {String(ins.sdg).padStart(2, '0')}
                       </span>
                       {ins.category && (
-                        <span className="ml-auto rounded-full border border-slate-200 px-2 py-0.5 text-xs font-medium text-slate-500">
+                        <span className="ml-auto rounded-full bg-white/[0.06] px-2.5 py-0.5 text-xs font-medium text-slate-400 ring-1 ring-white/10">
                           {ins.category}
                         </span>
                       )}
                     </div>
 
-                    <h3 className="mt-4 text-base font-semibold leading-snug text-slate-900">{ins.title}</h3>
-                    <p className="mt-2 flex-1 text-[15px] leading-relaxed text-slate-600">{ins.text}</p>
+                    <h3 className="mt-5 text-[17px] font-semibold leading-snug text-white">{ins.title}</h3>
+                    <p className="mt-2 flex-1 text-[15px] leading-relaxed text-slate-400">{ins.text}</p>
 
-                    <div className="mt-5 flex items-end justify-between border-t border-slate-100 pt-4">
+                    <div className="mt-6 flex items-end justify-between border-t border-white/10 pt-5">
                       <div>
                         {ins.trend && (
-                          <p className={`text-xl font-semibold tabular-nums ${
-                            direction === 'down' ? 'text-red-600'
-                              : direction === 'up' ? 'text-indigo-700' : 'text-slate-700'
+                          <p className={`text-2xl font-bold tabular-nums ${
+                            direction === 'down' ? 'text-rose-400'
+                              : direction === 'up' ? 'text-indigo-300' : 'text-slate-300'
                           }`}>
                             {ins.trend}
                           </p>
                         )}
                         {start && end && (
-                          <p className="font-mono text-xs tabular-nums text-slate-400">{start}–{end}</p>
+                          <p className="font-mono text-xs tabular-nums text-slate-500">{start}–{end}</p>
                         )}
                       </div>
                       {series.length > 1 && (
                         <Sparkline values={series} direction={direction} className="h-12 w-28" />
                       )}
                     </div>
-                  </article>
+                  </SpotlightCard>
                 );
               })}
             </div>
@@ -495,11 +496,12 @@ const PublicHomePage = () => {
       )}
 
       {/* ============================================================ */}
-      {/* PARTNERS                                                      */}
+      {/* MITRA                                                         */}
       {/* ============================================================ */}
       {partners.length > 0 && (
-        <section className="bg-white py-20">
-          <div className="mx-auto max-w-6xl px-6 lg:px-8">
+        <section className="relative overflow-hidden py-24">
+          <SectionArt src={ART.features} opacity={0.22} position="top" />
+          <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
             <SectionHead
               eyebrow={t('partners_section.eyebrow')}
               title={text(pick('partners_section.title'), t, 'partners_section.title')}
@@ -508,16 +510,16 @@ const PublicHomePage = () => {
 
             <div className="flex flex-wrap items-center justify-center gap-3">
               {partners.map((p) => (
-                <span key={p.id ?? p.name}
-                  className="rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-[15px] font-medium text-slate-600">
+                <SpotlightCard key={p.id ?? p.name} as="span" radius={160}
+                  className="rounded-lg bg-white/[0.04] px-5 py-3 text-[15px] font-medium text-slate-300 ring-1 ring-white/10 transition-colors hover:text-white">
                   {p.name}
-                </span>
+                </SpotlightCard>
               ))}
             </div>
 
-            <div className="mt-8 text-center">
+            <div className="mt-10 text-center">
               <Link to="/partners"
-                className="inline-flex items-center gap-1 text-[15px] font-medium text-indigo-700 underline-offset-4 hover:underline">
+                className="inline-flex items-center gap-1 text-[15px] font-medium text-indigo-400 underline-offset-4 hover:underline">
                 {text(pick('partners_section.cta_label'), t, 'partners_section.cta_label')}
                 <ChevronRight className="h-4 w-4" />
               </Link>
@@ -527,37 +529,40 @@ const PublicHomePage = () => {
       )}
 
       {/* ============================================================ */}
-      {/* CTA — panel gelap pekat, tanpa gradien maupun orb blur.       */}
+      {/* PENUTUP                                                       */}
       {/* ============================================================ */}
-      <section className="bg-indigo-700 py-24 text-white">
-        <div className="mx-auto max-w-4xl px-6 text-center lg:px-8">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-[15px] font-medium text-white">
+      <section className="relative overflow-hidden border-t border-white/10 bg-[#0B0B12] py-28">
+        <SectionArt src={ART.coverage} opacity={0.4} />
+        <span aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 h-[26rem] w-[46rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-600/20 blur-[110px]" />
+
+        <div className="relative mx-auto max-w-4xl px-6 text-center lg:px-8">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/[0.06] px-4 py-1.5 text-[15px] font-medium text-slate-300 ring-1 ring-white/15">
             {text(pick('cta_section.badge'), t, 'cta_section.badge')}
           </span>
 
-          <h2 className="mt-6 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
+          <h2 className="mt-7 text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl">
             {text(pick('cta_section.title'), t, 'cta_section.title')}
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-indigo-100">
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-400">
             {text(pick('cta_section.subtitle'), t, 'cta_section.subtitle')}
           </p>
 
-          <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link to="/register"
-              className="inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3 text-[15px] font-semibold text-indigo-700 shadow-sm transition-colors hover:bg-indigo-50">
+              className="inline-flex items-center gap-2 rounded-lg bg-indigo-500 px-7 py-3.5 text-[15px] font-semibold text-white shadow-lg shadow-indigo-500/30 transition-all hover:-translate-y-0.5 hover:bg-indigo-400">
               {text(pick('cta_section.cta_primary'), t, 'cta_section.cta_primary')}
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link to="/login"
-              className="inline-flex items-center gap-2 rounded-lg border border-white/20 px-6 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-white/10">
+              className="inline-flex items-center gap-2 rounded-lg bg-white/[0.06] px-7 py-3.5 text-[15px] font-semibold text-white ring-1 ring-white/15 transition-colors hover:bg-white/[0.12]">
               {text(pick('cta_section.cta_secondary'), t, 'cta_section.cta_secondary')}
             </Link>
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[15px] text-indigo-200">
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-x-7 gap-y-3 text-[15px] text-slate-400">
             {(Array.isArray(trustSignals) ? trustSignals : []).map((label, i) => (
-              <span key={i} className="flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-white" strokeWidth={3} />
+              <span key={i} className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-indigo-400" strokeWidth={3} />
                 {label}
               </span>
             ))}

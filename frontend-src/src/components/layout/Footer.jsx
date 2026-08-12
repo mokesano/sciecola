@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { SectionArt } from '../shared/Spotlight';
 
 /* ─── Configuration ───────────────────────────────────────────────────────── */
 
@@ -27,42 +28,47 @@ const DATA_SOURCES = [
 /* ─── Component ───────────────────────────────────────────────────────────── */
 
 /*
- * Structured after the Sangia Publishing footer — Sciecola's parent imprint —
- * so the two sites read as one house: a flat warm-grey field, wordmark and
- * secondary links on one row, a hairline, then serif column headings over
- * sans links, closing on a darker legal bar.
+ * Struktur kolomnya mengikuti footer Sangia Publishing — induk Sciecola —
+ * tetapi bidangnya disamakan dengan landing gelap, bukan abu rata yang mati:
+ * garis aksen bercahaya di tepi atas, latar jaringan simpul yang samar, dan
+ * tautan yang menyala saat disentuh kursor.
  */
 const Footer = () => {
   const { t } = useTranslation('footer');
 
   return (
-    <footer className="mt-16 bg-[#3d3d3d] text-slate-300">
-      <div className="mx-auto max-w-7xl px-4 pt-14 sm:px-6 lg:px-8">
+    <footer className="relative mt-16 overflow-hidden bg-[#08080C] text-slate-400">
+      {/* Garis aksen yang memisahkan footer dari isi halaman */}
+      <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-indigo-500/70" />
+      <div aria-hidden className="pointer-events-none absolute left-1/2 top-0 h-64 w-[46rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-600/15 blur-[100px]" />
+      <SectionArt src="/assets/img/sections/network.svg" opacity={0.25} position="top" />
+
+      <div className="relative mx-auto max-w-7xl px-4 pt-16 sm:px-6 lg:px-8">
 
         {/* ── Row 1: wordmark, secondary links, social ─────────────────── */}
         <div className="flex flex-col gap-6 pb-8 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <Link to="/" className="inline-flex items-baseline gap-3">
-              <span className="text-3xl font-black tracking-tight text-white">SCIECOLA</span>
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+            <Link to="/" className="group inline-flex items-baseline gap-3">
+              <span className="text-3xl font-black tracking-tight text-white transition-colors group-hover:text-indigo-300">SCIECOLA</span>
+              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-indigo-400">
                 {t('brand_tagline')}
               </span>
             </Link>
           </div>
 
           <div className="flex flex-wrap items-center gap-x-7 gap-y-3">
-            <Link to="/about"   className="text-base text-slate-200 underline-offset-4 hover:underline">
+            <Link to="/about"   className="text-base text-slate-300 underline-offset-4 transition-colors hover:text-white hover:underline">
               {t('links.about')}
             </Link>
-            <Link to="/contact" className="text-base text-slate-200 underline-offset-4 hover:underline">
+            <Link to="/contact" className="text-base text-slate-300 underline-offset-4 transition-colors hover:text-white hover:underline">
               {t('links.contact', 'Kontak')}
             </Link>
             <div className="flex items-center gap-4">
               {SOCIAL_LINKS.map(s => (
                 <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
                   aria-label={s.label}
-                  className="text-slate-300 transition-colors hover:text-white">
-                  <svg className="h-[18px] w-[18px]" fill="currentColor" viewBox="0 0 24 24">
+                  className="grid h-9 w-9 place-items-center rounded-full bg-white/[0.06] text-slate-300 ring-1 ring-white/10 transition-all hover:bg-indigo-500 hover:text-white hover:ring-indigo-400">
+                  <svg className="h-[17px] w-[17px]" fill="currentColor" viewBox="0 0 24 24">
                     <path d={s.path} />
                   </svg>
                 </a>
@@ -71,7 +77,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-white/15" />
+        <div className="border-t border-white/10" />
 
         {/* ── Row 2: link columns ──────────────────────────────────────── */}
         <div className="grid grid-cols-2 gap-x-8 gap-y-10 py-12 md:grid-cols-4">
@@ -89,7 +95,7 @@ const Footer = () => {
             {DATA_SOURCES.map(({ href, label }) => (
               <li key={href}>
                 <a href={href} target="_blank" rel="noopener noreferrer"
-                  className="text-base leading-relaxed text-slate-300 underline-offset-4 transition-colors hover:text-white hover:underline">
+                  className="text-base leading-relaxed text-slate-400 underline-offset-4 transition-colors hover:text-indigo-300 hover:underline">
                   {label}
                 </a>
               </li>
@@ -115,13 +121,13 @@ const Footer = () => {
       </div>
 
       {/* ── Row 3: legal bar ───────────────────────────────────────────── */}
-      <div className="bg-[#333333]">
+      <div className="relative border-t border-white/10 bg-[#050508]">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-[15px] text-slate-400 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
           <p>© {new Date().getFullYear()} Sciecola. {t('copyright.rights')}</p>
           <p>
             {t('copyright.developed_by')}{' '}
             <a href="https://sangia.org" target="_blank" rel="noopener noreferrer"
-              className="text-slate-200 underline-offset-4 hover:underline">
+              className="text-indigo-300 underline-offset-4 transition-colors hover:text-indigo-200 hover:underline">
               Sangia Research Media &amp; Publishing
             </a>
           </p>
@@ -135,7 +141,10 @@ const Footer = () => {
 
 const FooterColumn = ({ title, children }) => (
   <div>
-    <h4 className="mb-4 text-base font-bold text-white">{title}</h4>
+    <h4 className="mb-5 text-base font-bold text-white">
+      {title}
+      <span aria-hidden className="mt-2 block h-px w-8 bg-indigo-500/70" />
+    </h4>
     <ul className="space-y-2.5">{children}</ul>
   </div>
 );
@@ -143,7 +152,7 @@ const FooterColumn = ({ title, children }) => (
 const FooterLink = ({ to, children }) => (
   <li>
     <Link to={to}
-      className="text-base leading-relaxed text-slate-300 underline-offset-4 transition-colors hover:text-white hover:underline">
+      className="text-base leading-relaxed text-slate-400 underline-offset-4 transition-colors hover:text-indigo-300 hover:underline">
       {children}
     </Link>
   </li>
