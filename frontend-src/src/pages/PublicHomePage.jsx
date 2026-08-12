@@ -5,6 +5,7 @@ import {
   Search, BarChart2, Users, ArrowRight, CheckCircle, ChevronRight,
   FlaskConical, Brain, Handshake,
 } from 'lucide-react';
+import SectionBackdrop from '../components/shared/SectionBackdrop';
 
 // =====================================================================
 // SUSUNAN WARNA
@@ -23,6 +24,18 @@ import {
    terjadi di pita bawah yang memang kosong. Sebelumnya gradien sudah memutih
    di tengah isi, sehingga teks putih di bawah hero tidak terbaca sama sekali. */
 const HERO_GRADIENT = 'linear-gradient(180deg, #C2410C 0%, #DC4C0A 30%, #EA580C 60%, #F97316 84%, #FDBA74 94%, #FFFFFF 100%)';
+
+/* Latar bergambar tiap seksi. Warnanya menyesuaikan bidangnya: oranye pekat
+   di atas putih, oranye muda di atas pita gelap, putih di atas hero. */
+const ART = {
+  grid:  '/assets/img/sections/hero-grid.svg',
+  globe: '/assets/img/sections/globe.svg',
+  net:   '/assets/img/sections/network.svg',
+  flow:  '/assets/img/sections/flow.svg',
+  waves: '/assets/img/sections/waves.svg',
+  about: '/assets/img/sections/about.svg',
+  world: '/assets/img/world.svg',
+};
 
 const SURFACE = {
   white: 'bg-white',
@@ -194,6 +207,7 @@ const PublicHomePage = () => {
 
       {/* ══ HERO — satu-satunya tempat gradasi berada ═════════════════ */}
       <section className="relative overflow-hidden" style={{ background: HERO_GRADIENT }}>
+        <SectionBackdrop src={ART.world} color="#FFFFFF" opacity={0.20} motion="pan" reach={82} />
         <div className="relative mx-auto max-w-4xl px-6 pb-28 pt-20 text-center lg:px-8">
           <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-[15px] font-medium text-white ring-1 ring-white/30">
             {text(pick('hero.badge'), t, 'hero.badge')}
@@ -232,8 +246,9 @@ const PublicHomePage = () => {
       </section>
 
       {/* ══ KEMAMPUAN — putih ════════════════════════════════════════ */}
-      <section className={`${SURFACE.white} py-20`}>
-        <div className="mx-auto max-w-6xl px-6 lg:px-8">
+      <section className={`relative overflow-hidden ${SURFACE.white} py-20`}>
+        <SectionBackdrop src={ART.net} color="#EA580C" opacity={0.22} motion="drift" reach={76} />
+        <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
           <SectionHead
             title={text(pick('features_section.title'), t, 'features_section.title')}
             subtitle={text(pick('features_section.subtitle'), t, 'features_section.subtitle')} />
@@ -253,8 +268,9 @@ const PublicHomePage = () => {
 
       {/* ══ ANGKA PLATFORM — pita gelap pertama ══════════════════════ */}
       {stats.length > 0 && (
-        <section className={SURFACE.dark}>
-          <div className="mx-auto max-w-6xl px-6 py-16 lg:px-8">
+        <section className={`relative overflow-hidden ${SURFACE.dark}`}>
+          <SectionBackdrop src={ART.globe} color="#FDBA74" opacity={0.30} motion="breathe" reach={70} />
+          <div className="relative mx-auto max-w-6xl px-6 py-16 lg:px-8">
             <dl className="grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-4">
               {stats.map((s, i) => (
                 <div key={i} className="text-center">
@@ -271,8 +287,9 @@ const PublicHomePage = () => {
 
       {/* ══ 17 SDG — abu muda ════════════════════════════════════════ */}
       {sdgList.length > 0 && (
-        <section className={`${SURFACE.tint} border-y border-slate-200 py-20`}>
-          <div className="mx-auto max-w-6xl px-6 lg:px-8">
+        <section className={`relative overflow-hidden ${SURFACE.tint} border-y border-slate-200 py-20`}>
+          <SectionBackdrop src={ART.grid} color="#C2410C" opacity={0.18} motion="drift" reach={80} />
+          <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
             <SectionHead
               title={text(pick('sdg_section.title'), t, 'sdg_section.title')}
               subtitle={text(pick('sdg_section.subtitle'), t, 'sdg_section.subtitle')} />
@@ -308,8 +325,9 @@ const PublicHomePage = () => {
       )}
 
       {/* ══ ALUR KERJA — putih ═══════════════════════════════════════ */}
-      <section className={`${SURFACE.white} py-20`}>
-        <div className="mx-auto max-w-6xl px-6 lg:px-8">
+      <section className={`relative overflow-hidden ${SURFACE.white} py-20`}>
+        <SectionBackdrop src={ART.flow} color="#EA580C" opacity={0.24} motion="pan" reach={78} />
+        <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
           <SectionHead
             title={text(pick('how_it_works_section.title'), t, 'how_it_works_section.title')}
             subtitle={text(pick('how_it_works_section.subtitle'), t, 'how_it_works_section.subtitle')} />
@@ -333,8 +351,9 @@ const PublicHomePage = () => {
 
       {/* ══ AI INSIGHTS — pita gelap kedua ═══════════════════════════ */}
       {insights.length > 0 && (
-        <section className={`${SURFACE.dark} py-20`}>
-          <div className="mx-auto max-w-6xl px-6 lg:px-8">
+        <section className={`relative overflow-hidden ${SURFACE.dark} py-20`}>
+          <SectionBackdrop src={ART.waves} color="#FB923C" opacity={0.34} motion="pan" reach={72} />
+          <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
             <div className="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div className="max-w-2xl">
                 <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
@@ -379,8 +398,9 @@ const PublicHomePage = () => {
 
       {/* ══ MITRA — abu muda ═════════════════════════════════════════ */}
       {partners.length > 0 && (
-        <section className={`${SURFACE.tint} border-y border-slate-200 py-16`}>
-          <div className="mx-auto max-w-6xl px-6 lg:px-8">
+        <section className={`relative overflow-hidden ${SURFACE.tint} border-y border-slate-200 py-16`}>
+          <SectionBackdrop src={ART.net} color="#C2410C" opacity={0.17} motion="breathe" reach={78} />
+          <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
             <SectionHead
               title={text(pick('partners_section.title'), t, 'partners_section.title')}
               subtitle={text(pick('partners_section.subtitle'), t, 'partners_section.subtitle')} />
@@ -404,8 +424,9 @@ const PublicHomePage = () => {
       )}
 
       {/* ══ PENUTUP — putih ══════════════════════════════════════════ */}
-      <section className={`${SURFACE.white} py-20`}>
-        <div className="mx-auto max-w-4xl px-6 text-center lg:px-8">
+      <section className={`relative overflow-hidden ${SURFACE.white} py-20`}>
+        <SectionBackdrop src={ART.about} color="#EA580C" opacity={0.22} motion="drift" reach={76} />
+        <div className="relative mx-auto max-w-4xl px-6 text-center lg:px-8">
           <span className="inline-flex items-center gap-2 rounded-full bg-orange-50 px-4 py-1.5 text-[15px] font-semibold text-orange-800 ring-1 ring-orange-200">
             {text(pick('cta_section.badge'), t, 'cta_section.badge')}
           </span>
