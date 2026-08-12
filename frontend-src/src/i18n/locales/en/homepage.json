@@ -7,7 +7,13 @@
     "cta_primary": "Start Analysis",
     "cta_secondary": "Sign Up Free",
     "orcid_hint_prefix": "Already have an ORCID?",
-    "orcid_hint_link": "Sign in & analyze your profile →"
+    "orcid_hint_link": "Sign in & analyze your profile →",
+    "highlights": [
+      "Automatic SDG classification for every publication",
+      "Coverage across ORCID, Scopus, SINTA and Crossref",
+      "A Wizdam Impact Score you can trace to its sources",
+      "Profile lookup with no sign-in required"
+    ]
   },
   "search": {
     "placeholder": "ORCID · Scopus · SINTA · ResearcherID · DOI",
@@ -18,6 +24,7 @@
     "no_login": "No sign-in required. You only need an account to manage your own ORCID record."
   },
   "features_section": {
+    "eyebrow": "Platform capabilities",
     "title": "Everything You Need",
     "subtitle": "From automated classification to impact analysis — one platform for every SDG research need."
   },
@@ -48,11 +55,13 @@
     }
   ],
   "sdg_section": {
+    "eyebrow": "SDG framework",
     "title": "17 Sustainable Development Goals",
     "subtitle": "Our platform covers every UN 2030 SDG — each publication is precisely mapped to the relevant goal.",
     "cta_label": "Explore All SDGs"
   },
   "how_it_works_section": {
+    "eyebrow": "How it works",
     "title": "How Sciecola Works",
     "subtitle": "Three simple steps to map your research impact against the global SDGs."
   },
@@ -71,11 +80,13 @@
     }
   ],
   "insights_section": {
+    "eyebrow": "Latest findings",
     "title": "Latest AI Insights",
     "subtitle": "Automated insights based on global research data — refreshed every week.",
     "cta_label": "View All Insights"
   },
   "partners_section": {
+    "eyebrow": "Institutional network",
     "title": "Trusted by Leading Institutions",
     "subtitle": "Join hundreds of universities, research institutions, and industry partners.",
     "cta_label": "See all partners & sponsors"
@@ -91,5 +102,16 @@
       "Available in Bahasa Indonesia",
       "Researcher data protected"
     ]
+  },
+  "feature_labels": [
+    "Classification",
+    "Discovery",
+    "Analytics",
+    "Researchers",
+    "AI",
+    "Collaboration"
+  ],
+  "stats_section": {
+    "eyebrow": "Platform coverage"
   }
 }

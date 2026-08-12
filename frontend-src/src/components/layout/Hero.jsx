@@ -39,7 +39,7 @@ const Hero = () => {
             {t('hero.badge')}
           </span>
 
-          <h1 className="mb-6 text-4xl font-semibold leading-[1.15] tracking-tight text-slate-900 md:text-5xl">
+          <h1 className="mb-6 font-serif text-4xl font-semibold leading-[1.15] tracking-tight text-slate-900 md:text-5xl">
             {t('hero.title_1')} <br className="hidden lg:block" />
             {t('hero.title_2')}{' '}
             <span className="text-indigo-600">{t('hero.title_highlight')}</span>

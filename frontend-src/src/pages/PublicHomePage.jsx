@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
   Search, BarChart2, Users, ArrowRight, Check, ChevronRight,
-  FlaskConical, Building2, FileText, Target, Brain, Handshake,
+  FlaskConical, Brain, Handshake,
 } from 'lucide-react';
 import Sparkline, { readDirection } from '../components/shared/Sparkline';
 
@@ -21,7 +21,6 @@ import Sparkline, { readDirection } from '../components/shared/Sparkline';
 
 const FEATURE_ICONS = [FlaskConical, Search, BarChart2, Users, Brain, Handshake];
 const STEP_ICONS    = [Search, Brain, BarChart2];
-const STAT_ICONS    = [FileText, Users, Building2, Target];
 
 // Deteksi identifier yang sama dengan HeroSearch, tapi tanpa memaksa login.
 // Siapa pun bisa menelusuri keempat ID peneliti yang didukung (atau DOI).
@@ -114,7 +113,7 @@ const SectionHead = ({ eyebrow, title, subtitle, align = 'center', className = '
     {eyebrow && (
       <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-indigo-700">{eyebrow}</p>
     )}
-    <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">{title}</h2>
+    <h2 className="mt-3 font-serif text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">{title}</h2>
     {subtitle && <p className="mt-4 text-[15px] leading-relaxed text-slate-600">{subtitle}</p>}
     {children}
   </div>
@@ -152,11 +151,7 @@ const PublicHomePage = () => {
       .then(r => r.json())
       .then(json => {
         if (json.status === 'success' && Array.isArray(json.data)) {
-          setStats(json.data.slice(0, 4).map((s, i) => ({
-            label: s.label,
-            value: s.value,
-            icon:  STAT_ICONS[i] ?? STAT_ICONS[0],
-          })));
+          setStats(json.data.slice(0, 4).map((s) => ({ label: s.label, value: s.value })));
         }
       })
       .catch(() => {});
@@ -187,10 +182,17 @@ const PublicHomePage = () => {
 
   const sdgColorById = sdgList.reduce((acc, s) => { acc[s.sdg] = s.color; return acc; }, {});
 
+  const heroHighlights = Array.isArray(pick('hero.highlights'))
+    ? pick('hero.highlights') : t('hero.highlights', { returnObjects: true });
+
   const featureTexts = Array.isArray(pick('features'))
     ? pick('features') : t('features', { returnObjects: true });
+  const featureLabels = t('feature_labels', { returnObjects: true });
   const features = FEATURE_ICONS.map((Icon, i) => ({
     Icon,
+    // Admin content may carry its own micro-label; otherwise fall back to the
+    // locale list. Missing on both sides simply renders no label.
+    label: featureTexts?.[i]?.label ?? (Array.isArray(featureLabels) ? featureLabels[i] : undefined),
     title: featureTexts?.[i]?.title ?? '',
     desc:  featureTexts?.[i]?.desc  ?? '',
   }));
@@ -236,7 +238,7 @@ const PublicHomePage = () => {
             {text(pick('hero.badge'), t, 'hero.badge')}
           </span>
 
-          <h1 className="mt-7 text-4xl font-semibold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+          <h1 className="mt-7 font-serif text-4xl font-semibold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
             {text(pick('hero.title_1'), t, 'hero.title_1')}{' '}
             <span className="text-indigo-600">
               {text(pick('hero.title_2'), t, 'hero.title_2')}
@@ -246,6 +248,19 @@ const PublicHomePage = () => {
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
             {text(pick('hero.subtitle'), t, 'hero.subtitle')}
           </p>
+
+          {/* Ringkasan kemampuan sebagai checklist — pembaca institusional
+              menilai cakupan lebih dulu sebelum mencoba. */}
+          {Array.isArray(heroHighlights) && heroHighlights.length > 0 && (
+            <ul className="mx-auto mt-8 grid max-w-2xl gap-x-8 gap-y-2.5 text-left sm:grid-cols-2">
+              {heroHighlights.map((item, i) => (
+                <li key={i} className="flex items-start gap-2.5 text-sm leading-snug text-slate-700">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-indigo-600" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          )}
 
           <PublicSearch t={t} />
 
@@ -275,18 +290,19 @@ const PublicHomePage = () => {
       {/* PLATFORM STATS                                                */}
       {/* ============================================================ */}
       {stats.length > 0 && (
-        <section className="border-b border-slate-200 bg-slate-50">
+        <section className="bg-slate-900 py-16 text-white">
           <div className="mx-auto max-w-6xl px-6 lg:px-8">
-            <dl className="grid grid-cols-2 divide-slate-200 sm:divide-x md:grid-cols-4">
+            <p className="text-center text-[11px] font-semibold uppercase tracking-[0.16em] text-indigo-400">
+              {t('stats_section.eyebrow')}
+            </p>
+            <dl className="mt-10 grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-4">
               {stats.map((s, i) => (
-                <div key={i} className="flex items-center gap-4 px-2 py-8 sm:px-6">
-                  <s.icon className="h-5 w-5 shrink-0 text-slate-400" />
-                  <div className="min-w-0">
-                    <dd className="text-2xl font-semibold tabular-nums tracking-tight text-slate-900">
-                      {s.value}
-                    </dd>
-                    <dt className="mt-0.5 text-[13px] leading-snug text-slate-500">{s.label}</dt>
-                  </div>
+                <div key={i} className="text-center">
+                  <dd className="text-4xl font-semibold tabular-nums tracking-tight sm:text-5xl">
+                    {s.value}
+                  </dd>
+                  <div aria-hidden className="mx-auto mt-4 h-px w-10 bg-indigo-500" />
+                  <dt className="mt-4 text-[13px] leading-snug text-slate-400">{s.label}</dt>
                 </div>
               ))}
             </dl>
@@ -300,18 +316,24 @@ const PublicHomePage = () => {
       <section className="bg-white py-24">
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
           <SectionHead
+            eyebrow={t('features_section.eyebrow')}
             title={text(pick('features_section.title'), t, 'features_section.title')}
             subtitle={text(pick('features_section.subtitle'), t, 'features_section.subtitle')}
           />
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f, i) => (
               <div key={i}
-                className="rounded-xl border border-slate-200 bg-white p-6 transition-colors hover:border-slate-300 hover:bg-slate-50">
-                <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
-                  <f.Icon className="h-5 w-5" />
+                className="group rounded-xl border border-slate-200 bg-white p-6 transition-colors hover:border-slate-300">
+                <div className="flex items-start justify-between gap-3">
+                  {f.label && (
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-indigo-700">
+                      {f.label}
+                    </span>
+                  )}
+                  <f.Icon className="h-4 w-4 shrink-0 text-slate-300 transition-colors group-hover:text-indigo-600" />
                 </div>
-                <h3 className="mt-4 text-[15px] font-semibold text-slate-900">{f.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{f.desc}</p>
+                <h3 className="mt-5 font-serif text-lg font-semibold tracking-tight text-slate-900">{f.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">{f.desc}</p>
               </div>
             ))}
           </div>
@@ -326,6 +348,7 @@ const PublicHomePage = () => {
         <section className="border-y border-slate-200 bg-slate-50 py-24">
           <div className="mx-auto max-w-6xl px-6 lg:px-8">
             <SectionHead
+              eyebrow={t('sdg_section.eyebrow')}
               title={text(pick('sdg_section.title'), t, 'sdg_section.title')}
               subtitle={text(pick('sdg_section.subtitle'), t, 'sdg_section.subtitle')}
             />
@@ -372,6 +395,7 @@ const PublicHomePage = () => {
       <section className="bg-white py-24">
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
           <SectionHead
+            eyebrow={t('how_it_works_section.eyebrow')}
             title={text(pick('how_it_works_section.title'), t, 'how_it_works_section.title')}
             subtitle={text(pick('how_it_works_section.subtitle'), t, 'how_it_works_section.subtitle')}
           />
@@ -404,6 +428,7 @@ const PublicHomePage = () => {
               <SectionHead
                 align="left"
                 className=""
+                eyebrow={t('insights_section.eyebrow')}
                 title={text(pick('insights_section.title'), t, 'insights_section.title')}
                 subtitle={text(pick('insights_section.subtitle'), t, 'insights_section.subtitle')}
               />
@@ -472,6 +497,7 @@ const PublicHomePage = () => {
         <section className="bg-white py-20">
           <div className="mx-auto max-w-6xl px-6 lg:px-8">
             <SectionHead
+              eyebrow={t('partners_section.eyebrow')}
               title={text(pick('partners_section.title'), t, 'partners_section.title')}
               subtitle={text(pick('partners_section.subtitle'), t, 'partners_section.subtitle')}
             />
@@ -505,7 +531,7 @@ const PublicHomePage = () => {
             {text(pick('cta_section.badge'), t, 'cta_section.badge')}
           </span>
 
-          <h2 className="mt-6 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
+          <h2 className="mt-6 font-serif text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
             {text(pick('cta_section.title'), t, 'cta_section.title')}
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-relaxed text-slate-300">

@@ -7,7 +7,13 @@
     "cta_primary": "Mulai Analisis",
     "cta_secondary": "Daftar Gratis",
     "orcid_hint_prefix": "Sudah punya ORCID?",
-    "orcid_hint_link": "Masuk & analisis profil Anda →"
+    "orcid_hint_link": "Masuk & analisis profil Anda →",
+    "highlights": [
+      "Klasifikasi SDG otomatis untuk setiap publikasi",
+      "Cakupan ORCID, Scopus, SINTA, dan Crossref",
+      "Wizdam Impact Score yang dapat ditelusuri sumbernya",
+      "Penelusuran profil tanpa perlu login"
+    ]
   },
   "search": {
     "placeholder": "ORCID · Scopus · SINTA · ResearcherID · DOI",
@@ -18,6 +24,7 @@
     "no_login": "Tidak perlu login. Login hanya dibutuhkan bila Anda ingin mengelola akun ORCID Anda sendiri."
   },
   "features_section": {
+    "eyebrow": "Kemampuan Platform",
     "title": "Semua yang Anda Butuhkan",
     "subtitle": "Dari klasifikasi otomatis hingga analisis dampak — satu platform untuk seluruh kebutuhan riset SDG Anda."
   },
@@ -48,11 +55,13 @@
     }
   ],
   "sdg_section": {
+    "eyebrow": "Kerangka SDG",
     "title": "17 Tujuan Pembangunan Berkelanjutan",
     "subtitle": "Platform kami mencakup seluruh SDG PBB 2030 — setiap publikasi dipetakan secara presisi ke tujuan yang relevan.",
     "cta_label": "Jelajahi Semua SDG"
   },
   "how_it_works_section": {
+    "eyebrow": "Alur Kerja",
     "title": "Cara Kerja Sciecola",
     "subtitle": "Tiga langkah sederhana untuk memetakan dampak penelitian Anda terhadap SDG global."
   },
@@ -71,11 +80,13 @@
     }
   ],
   "insights_section": {
+    "eyebrow": "Temuan Terkini",
     "title": "AI Insights Terkini",
     "subtitle": "Wawasan otomatis berbasis data riset global — diperbarui setiap minggu.",
     "cta_label": "Lihat Semua Insights"
   },
   "partners_section": {
+    "eyebrow": "Jaringan Institusi",
     "title": "Dipercaya oleh Institusi Terkemuka",
     "subtitle": "Bergabung bersama ratusan universitas, lembaga riset, dan mitra industri.",
     "cta_label": "Lihat semua partner & sponsor"
@@ -91,5 +102,16 @@
       "Tersedia dalam Bahasa Indonesia",
       "Data peneliti dilindungi"
     ]
+  },
+  "feature_labels": [
+    "Klasifikasi",
+    "Penelusuran",
+    "Analitik",
+    "Peneliti",
+    "AI",
+    "Kolaborasi"
+  ],
+  "stats_section": {
+    "eyebrow": "Cakupan Platform"
   }
 }
