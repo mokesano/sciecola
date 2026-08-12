@@ -7,19 +7,7 @@
     "cta_primary": "Mulai Analisis",
     "cta_secondary": "Daftar Gratis",
     "orcid_hint_prefix": "Sudah punya ORCID?",
-    "orcid_hint_link": "Masuk & analisis profil Anda →",
-    "highlights": [
-      "Klasifikasi SDG otomatis untuk setiap publikasi",
-      "Cakupan ORCID, Scopus, SINTA, dan Crossref",
-      "Wizdam Impact Score yang dapat ditelusuri sumbernya",
-      "Penelusuran profil tanpa perlu login"
-    ],
-    "field": {
-      "publications": "publikasi",
-      "share": "dari total",
-      "hint": "Sorot penanda untuk melihat datanya"
-    },
-    "tutorial_link": "Baca panduan analisis ORCID"
+    "orcid_hint_link": "Masuk & analisis profil Anda →"
   },
   "search": {
     "placeholder": "ORCID · Scopus · SINTA · ResearcherID · DOI",
@@ -107,50 +95,6 @@
       "Tidak perlu kartu kredit",
       "Tersedia dalam Bahasa Indonesia",
       "Data peneliti dilindungi"
-    ]
-  },
-  "feature_labels": [
-    "Klasifikasi",
-    "Penelusuran",
-    "Analitik",
-    "Peneliti",
-    "AI",
-    "Kolaborasi"
-  ],
-  "stats_section": {
-    "eyebrow": "Cakupan Platform"
-  },
-  "search_section": {
-    "eyebrow": "Penelusuran Profil",
-    "title": "Cek jejak riset siapa pun, tanpa login",
-    "subtitle": "Masukkan ORCID, Scopus ID, SINTA ID, ResearcherID, atau DOI. Login hanya diperlukan bila Anda ingin mengelola akun ORCID Anda sendiri."
-  },
-  "sources_section": {
-    "eyebrow": "Sumber Data",
-    "title": "Dibaca dari sumber yang sudah dipercaya dunia",
-    "subtitle": "Setiap angka pada platform ini dapat ditelusuri kembali ke sumber aslinya. Tidak ada skor yang muncul tanpa jejak."
-  },
-  "audience_section": {
-    "eyebrow": "Untuk Siapa",
-    "title": "Satu platform, empat kebutuhan berbeda",
-    "subtitle": "Peneliti, institusi, pemberi dana, dan pembuat kebijakan membaca data yang sama dari sudut yang berbeda.",
-    "items": [
-      {
-        "title": "Peneliti",
-        "desc": "Melihat SDG mana yang paling terwakili dalam karya Anda, dan di mana celahnya masih terbuka."
-      },
-      {
-        "title": "Institusi",
-        "desc": "Memetakan kontribusi seluruh sivitas terhadap agenda 2030 dalam satu tampilan."
-      },
-      {
-        "title": "Pemberi Dana",
-        "desc": "Menilai dampak pendanaan berdasarkan bukti publikasi dan sitasi, bukan laporan naratif."
-      },
-      {
-        "title": "Pembuat Kebijakan",
-        "desc": "Menemukan bidang riset yang kurang tergarap sebelum menyusun prioritas nasional."
-      }
     ]
   }
 }

@@ -2,64 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
-  Search, BarChart2, Users, ArrowRight, Check, ChevronRight,
-  FlaskConical, Brain, Handshake, Building2, Landmark, Coins, GraduationCap,
+  Search, BarChart2, Users, ArrowRight, CheckCircle, ChevronRight,
+  FlaskConical, Brain, Handshake,
 } from 'lucide-react';
-import Sparkline, { readDirection } from '../components/shared/Sparkline';
-import { AmbientSection, SpotlightCard, ART, CARD, PANEL } from '../components/shared/Ambient';
-import HeroDataField from '../components/shared/HeroDataField';
-import SvgCarousel from '../components/shared/SvgCarousel';
 
 // =====================================================================
-// GRADASI HALAMAN
+// SUSUNAN WARNA
 //
-// Sebelumnya tiap seksi punya warna latarnya sendiri, menurun satu arah.
-// Itu bukan gradasi — itu tetap zebra, hanya searah: batas antar seksi masih
-// terlihat sebagai garis warna yang berpindah.
+// Mengikuti pola ketiga situs rujukan: dasarnya putih. Gradasi hanya ada di
+// hero — oranye turun ke putih, dan ekor putihnya sengaja menyambung ke seksi
+// kemampuan yang juga putih, supaya tidak ada sekat — lalu halaman berselang
+// dengan abu sangat muda untuk memisahkan seksi, dan dua pita gelap dipakai
+// sebagai tanda baca. Satu warna aksen untuk tombol, angka, dan ikon.
 //
-// Gradasi yang sebenarnya adalah satu peralihan menyatu. Jadi warnanya kini
-// hidup di satu tempat saja: sebuah linear-gradient pada wadah halaman, dari
-// oranye tua mendekati merah di puncak sampai putih tepat sebelum footer.
-// Seluruh seksi transparan di atasnya, sehingga tidak ada satu pun batas
-// warna yang bisa ditunjuk.
-//
-// Satu seksi sengaja menembus gradien itu — AI Insights memakai bidang pekat
-// sebagai tanda baca. Karena gradiennya milik wadah, ia tetap berjalan di
-// bawah bidang pekat tadi, dan seksi sesudahnya melanjutkan persis pada
-// warna yang seharusnya.
+// Sapuan warna sepanjang halaman sudah dicoba dan ditarik: rujukannya tidak
+// melakukan itu.
 // =====================================================================
 
-const PAGE_GRADIENT =
-  'linear-gradient(180deg,' +
-  ' #7C2D12 0%,'   +
-  ' #8C3617 8%,'   +
-  ' #A04424 18%,'  +
-  ' #B85A38 29%,'  +
-  ' #CE7854 40%,'  +
-  ' #DF9A78 51%,'  +
-  ' #EBB89D 62%,'  +
-  ' #F4D2BF 72%,'  +
-  ' #FAE6DA 82%,'  +
-  ' #FDF5F0 91%,'  +
-  ' #FFFFFF 100%)';
+/* Oranyenya ditahan sampai seluruh isi hero terlewati; peralihan ke putih
+   terjadi di pita bawah yang memang kosong. Sebelumnya gradien sudah memutih
+   di tengah isi, sehingga teks putih di bawah hero tidak terbaca sama sekali. */
+const HERO_GRADIENT = 'linear-gradient(180deg, #C2410C 0%, #DC4C0A 30%, #EA580C 60%, #F97316 84%, #FDBA74 94%, #FFFFFF 100%)';
 
-/* Ambang tempat tinta berganti. Di bagian atas gradien teks putih, di bagian
-   bawah teks slate pekat — dipilih dari posisinya pada gradien, bukan dari
-   warna latar seksi, karena seksinya sendiri sudah tidak berwarna. */
-const ON_DARK  = { art: '#FFD9C2', lit: 'rgba(255,255,255,0.95)' };
-const ON_LIGHT = { art: '#9A3412', lit: 'rgba(154,52,18,0.85)'  };
+const SURFACE = {
+  white: 'bg-white',
+  tint:  'bg-[#FAF7F4]',   // abu-hangat sangat muda, pemisah antar seksi
+  dark:  'bg-[#1C1917]',   // pita gelap, dipakai dua kali saja
+};
 
-const ink = (dark) => (dark
-  ? { head: 'text-white',     body: 'text-white/85',  eyebrow: 'text-amber-300' }
-  : { head: 'text-slate-900', body: 'text-slate-700', eyebrow: 'text-orange-800' });
+const FEATURE_ICONS = [FlaskConical, Search, BarChart2, Users, Brain, Handshake];
+const STEP_ICONS    = [Search, Brain, BarChart2];
 
-const FEATURE_ICONS  = [FlaskConical, Search, BarChart2, Users, Brain, Handshake];
-const STEP_ICONS     = [Search, Brain, BarChart2];
-const AUDIENCE_ICONS = [GraduationCap, Building2, Coins, Landmark];
+/* Kartu putih berbingkai — bentuk kartu yang dipakai ketiga rujukan. */
+const CARD = 'rounded-xl border border-slate-200 bg-white transition-all duration-200 hover:border-orange-300 hover:shadow-lg hover:shadow-orange-100/60';
 
-const DATA_SOURCES = ['ORCID', 'Scopus', 'SINTA', 'Crossref', 'OpenCitations', 'DataCite', 'Dimensions', 'Semantic Scholar'];
-
-// Deteksi identifier yang sama dengan HeroSearch, tapi tanpa memaksa login.
 const PATTERNS = {
   orcid:        /^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/i,
   researcherid: /^[A-Z]{1,3}-\d{4}-\d{4}$/i,
@@ -67,7 +43,7 @@ const PATTERNS = {
   numeric:      /^\d{4,12}$/,
 };
 
-const PublicSearch = ({ t }) => {
+const PublicSearch = () => {
   const [q, setQ] = useState('');
   const [ambiguousId, setAmbiguousId] = useState(null);
   const [err, setErr] = useState('');
@@ -85,64 +61,68 @@ const PublicSearch = ({ t }) => {
     if (PATTERNS.researcherid.test(v))  return go(`/researcherid/${v.toUpperCase()}`);
     if (PATTERNS.doi.test(v))           return go(`/doi/${encodeURIComponent(v)}`);
     if (PATTERNS.numeric.test(v))       return setAmbiguousId(v);
-    setErr(t('search.error'));
+    setErr('Format tidak dikenali. Coba ORCID, Scopus ID, SINTA ID, ResearcherID, atau DOI.');
   };
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto mt-9 max-w-2xl">
       <form onSubmit={submit} className="flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder={t('search.placeholder')}
-            className="w-full rounded-lg bg-white py-3.5 pl-11 pr-3 text-base text-slate-900 shadow-sm ring-1 ring-black/10 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            placeholder="ORCID · Scopus · SINTA · ResearcherID · DOI"
+            className="w-full rounded-lg border border-white/40 bg-white py-3.5 pl-11 pr-3 text-base text-slate-900 shadow-lg shadow-black/5 placeholder:text-slate-400 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-300"
           />
         </div>
         <button type="submit"
-          className="shrink-0 rounded-lg bg-amber-400 px-7 py-3.5 text-[15px] font-bold text-[#4A1A08] shadow-lg shadow-black/20 transition-all hover:bg-amber-300">
-          {t('search.submit')}
+          className="shrink-0 rounded-lg bg-slate-900 px-7 py-3.5 text-[15px] font-semibold text-white shadow-lg shadow-black/15 transition-colors hover:bg-slate-800">
+          Cek Profil
         </button>
       </form>
 
-      {err && <p className="mt-3 text-[15px] font-medium text-amber-200">{err}</p>}
+      {err && <p className="mt-3 text-[15px] font-medium text-amber-100">{err}</p>}
 
       {ambiguousId && (
-        <div className={`${CARD} mt-3 p-4 text-left`}>
-          <p className="mb-2.5 text-[15px] text-white/80">{t('search.ambiguous', { id: ambiguousId })}</p>
+        <div className="mt-3 rounded-lg border border-slate-200 bg-white p-4 text-left shadow-lg">
+          <p className="mb-2.5 text-[15px] text-slate-600">
+            ID <span className="font-mono text-slate-900">{ambiguousId}</span> numerik — pilih sumber:
+          </p>
           <div className="flex flex-wrap gap-2">
             <button type="button" onClick={() => go(`/scopus/${ambiguousId}`)}
-              className="rounded-lg bg-white/10 px-3.5 py-2 text-[15px] font-medium text-white ring-1 ring-white/20 transition-colors hover:bg-white/20">
-              Scopus
-            </button>
+              className="rounded-lg border border-slate-300 px-3.5 py-2 text-[15px] font-medium text-slate-700 hover:border-orange-400 hover:text-orange-700">Scopus</button>
             <button type="button" onClick={() => go(`/sinta/${ambiguousId}`)}
-              className="rounded-lg bg-white/10 px-3.5 py-2 text-[15px] font-medium text-white ring-1 ring-white/20 transition-colors hover:bg-white/20">
-              SINTA
-            </button>
+              className="rounded-lg border border-slate-300 px-3.5 py-2 text-[15px] font-medium text-slate-700 hover:border-orange-400 hover:text-orange-700">SINTA</button>
             <button type="button" onClick={() => setAmbiguousId(null)}
-              className="rounded-lg px-3.5 py-2 text-[15px] font-medium text-white/60 transition-colors hover:text-white">
-              {t('search.cancel')}
-            </button>
+              className="rounded-lg px-3.5 py-2 text-[15px] font-medium text-slate-500 hover:text-slate-900">Batal</button>
           </div>
         </div>
       )}
+
+      <p className="mt-4 text-[15px] text-white/80">
+        Tidak perlu login. Login hanya dibutuhkan bila Anda ingin mengelola akun ORCID Anda sendiri.
+      </p>
     </div>
   );
 };
 
 const text = (override, t, key, options) => override ?? t(key, options);
 
-const SectionHead = ({ eyebrow, title, subtitle, dark = true, align = 'center', className = 'mb-14' }) => {
-  const c = ink(dark);
-  return (
-    <div className={`${className} ${align === 'center' ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl'}`}>
-      {eyebrow && <p className={`text-xs font-bold uppercase tracking-[0.2em] ${c.eyebrow}`}>{eyebrow}</p>}
-      <h2 className={`mt-4 text-3xl font-bold tracking-tight sm:text-4xl ${c.head}`}>{title}</h2>
-      {subtitle && <p className={`mt-4 text-base leading-relaxed ${c.body}`}>{subtitle}</p>}
-    </div>
-  );
-};
+/* Kepala seksi: judul tebal terpusat dengan sub-judul senyap di bawahnya —
+   bentuk yang sama dipakai ketiga rujukan. */
+const SectionHead = ({ title, subtitle, onDark = false }) => (
+  <div className="mx-auto mb-12 max-w-2xl text-center">
+    <h2 className={`text-3xl font-bold tracking-tight sm:text-4xl ${onDark ? 'text-white' : 'text-slate-900'}`}>
+      {title}
+    </h2>
+    {subtitle && (
+      <p className={`mt-4 text-base leading-relaxed ${onDark ? 'text-slate-300' : 'text-slate-600'}`}>
+        {subtitle}
+      </p>
+    )}
+  </div>
+);
 
 // =====================================================================
 const PublicHomePage = () => {
@@ -190,187 +170,118 @@ const PublicHomePage = () => {
 
   const sdgColorById = sdgList.reduce((acc, s) => { acc[s.sdg] = s.color; return acc; }, {});
 
-  const heroHighlights = Array.isArray(pick('hero.highlights'))
-    ? pick('hero.highlights') : t('hero.highlights', { returnObjects: true });
-
-  const featureTexts  = Array.isArray(pick('features')) ? pick('features') : t('features', { returnObjects: true });
-  const featureLabels = t('feature_labels', { returnObjects: true });
+  const featureTexts = Array.isArray(pick('features'))
+    ? pick('features') : t('features', { returnObjects: true });
   const features = FEATURE_ICONS.map((Icon, i) => ({
     Icon,
-    label: featureTexts?.[i]?.label ?? (Array.isArray(featureLabels) ? featureLabels[i] : undefined),
     title: featureTexts?.[i]?.title ?? '',
     desc:  featureTexts?.[i]?.desc  ?? '',
   }));
 
-  const stepTexts = Array.isArray(pick('how_it_works')) ? pick('how_it_works') : t('how_it_works', { returnObjects: true });
+  const stepTexts = Array.isArray(pick('how_it_works'))
+    ? pick('how_it_works') : t('how_it_works', { returnObjects: true });
   const steps = STEP_ICONS.map((Icon, i) => ({
     Icon, step: i + 1,
     title: stepTexts?.[i]?.title ?? '',
     desc:  stepTexts?.[i]?.desc  ?? '',
   }));
 
-  const audience = (t('audience_section.items', { returnObjects: true }) || []).map((a, i) => ({
-    ...a, Icon: AUDIENCE_ICONS[i] ?? AUDIENCE_ICONS[0],
-  }));
-
   const trustSignals = Array.isArray(pick('cta_section.trust_signals'))
     ? pick('cta_section.trust_signals') : t('cta_section.trust_signals', { returnObjects: true });
 
-  /* Slide korsel hero: tiap gambar mewakili satu hal yang dikerjakan
-     aplikasi, bukan hiasan yang berganti-ganti. */
-  const heroSlides = [
-    { src: ART.world,    caption: t('stats_section.eyebrow') },
-    { src: ART.network,  caption: t('features_section.eyebrow') },
-    { src: ART.waves,    caption: t('insights_section.eyebrow') },
-    { src: ART.flow,     caption: t('how_it_works_section.eyebrow') },
-  ];
-
   return (
-    <main className="min-h-screen" style={{ background: PAGE_GRADIENT }}>
+    <main className="min-h-screen bg-white pt-20">
 
-      {/* ══ 1 · HERO — rata kiri, korsel di kanan, statistik platform ══ */}
-      <AmbientSection surfaceColor="transparent" {...ON_DARK} blob={false}
-        art={ART.hero} artOpacity={0.35} artPosition="right">
-        {/* Penanda data dikurung di paruh kanan, di ruang yang sama dengan
-            korsel. Dibiarkan menutupi seluruh hero, penandanya akan duduk di
-            atas judul dan menghalangi teks — dan penanda itu bisa diklik,
-            jadi ia benar-benar merebut pointer dari teks di bawahnya. */}
-        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[45%] lg:block">
-          <HeroDataField items={sdgList} labels={t('hero.field', { returnObjects: true })} />
-        </div>
+      {/* ══ HERO — satu-satunya tempat gradasi berada ═════════════════ */}
+      <section className="relative overflow-hidden" style={{ background: HERO_GRADIENT }}>
+        <div className="relative mx-auto max-w-4xl px-6 pb-28 pt-20 text-center lg:px-8">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-[15px] font-medium text-white ring-1 ring-white/30">
+            {text(pick('hero.badge'), t, 'hero.badge')}
+          </span>
 
-        <div className="relative mx-auto max-w-7xl px-6 pb-20 pt-32 lg:px-8 lg:pt-36">
-          <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
+          <h1 className="mt-7 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
+            {text(pick('hero.title_1'), t, 'hero.title_1')}{' '}
+            <span className="text-amber-200">{text(pick('hero.title_2'), t, 'hero.title_2')}</span>
+          </h1>
 
-            {/* — kolom kiri: pesan — */}
-            <div className="text-left">
-              <span className="inline-flex items-center gap-2.5 rounded-full bg-white/10 px-4 py-1.5 text-[15px] font-medium text-white ring-1 ring-white/25">
-                <span className="h-1.5 w-1.5 rounded-full bg-amber-300 shadow-[0_0_8px_2px_rgba(252,211,77,0.9)]" />
-                {text(pick('hero.badge'), t, 'hero.badge')}
-              </span>
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/85">
+            {text(pick('hero.subtitle'), t, 'hero.subtitle')}
+          </p>
 
-              <h1 id="hero-title" className="mt-8 text-4xl font-bold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
-                {text(pick('hero.title_1'), t, 'hero.title_1')}{' '}
-                <span className="text-amber-300">{text(pick('hero.title_2'), t, 'hero.title_2')}</span>
-              </h1>
+          <PublicSearch />
 
-              <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/85">
-                {text(pick('hero.subtitle'), t, 'hero.subtitle')}
-              </p>
-
-              {Array.isArray(heroHighlights) && heroHighlights.length > 0 && (
-                <ul className="mt-8 grid gap-x-8 gap-y-3 sm:grid-cols-2">
-                  {heroHighlights.map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-[15px] leading-snug text-white/90">
-                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-400 text-[#4A1A08]">
-                        <Check className="h-3 w-3" strokeWidth={3.5} />
-                      </span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              )}
-
-              <div className="mt-10 flex flex-col items-start gap-3 sm:flex-row">
-                <Link to="/register"
-                  className="inline-flex items-center gap-2 rounded-lg bg-amber-400 px-7 py-3.5 text-[15px] font-bold text-[#4A1A08] shadow-lg shadow-black/25 transition-all hover:-translate-y-0.5 hover:bg-amber-300">
-                  {text(pick('hero.cta_secondary'), t, 'hero.cta_secondary')}
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-                {/* Teksnya mengajak masuk, jadi tujuannya halaman masuk —
-                    sebelumnya tautan ini mendarat di halaman panduan. */}
-                <Link to="/login"
-                  className="inline-flex items-center gap-2 rounded-lg bg-white/10 px-7 py-3.5 text-[15px] font-semibold text-white ring-1 ring-white/30 transition-colors hover:bg-white/20">
-                  {text(pick('hero.cta_primary'), t, 'hero.cta_primary')}
-                </Link>
-              </div>
-
-              <p className="mt-6 text-[15px] text-white/70">
-                {text(pick('hero.orcid_hint_prefix'), t, 'hero.orcid_hint_prefix')}{' '}
-                <Link to="/tutorial-orcid" className="font-semibold text-amber-300 underline-offset-4 hover:underline">
-                  {t('hero.tutorial_link')}
-                </Link>
-              </p>
-            </div>
-
-            {/* — kolom kanan: korsel SVG — */}
-            <div className="relative z-10 hidden lg:block">
-              <SvgCarousel slides={heroSlides} color="rgba(255,255,255,0.92)"
-                className="h-[26rem]" labelledBy="hero-title" />
-            </div>
+          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link to="/register"
+              className="inline-flex items-center gap-2 rounded-lg bg-white px-7 py-3.5 text-[15px] font-semibold text-orange-700 shadow-lg shadow-black/10 transition-transform hover:-translate-y-0.5">
+              {text(pick('hero.cta_secondary'), t, 'hero.cta_secondary')}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link to="/login"
+              className="inline-flex items-center gap-2 rounded-lg px-7 py-3.5 text-[15px] font-semibold text-white ring-2 ring-white/60 transition-colors hover:bg-white/10">
+              {text(pick('hero.cta_primary'), t, 'hero.cta_primary')}
+            </Link>
           </div>
 
-          {/* — statistik platform, seperti pada beranda pengguna — */}
-          {stats.length > 0 && (
-            <dl className="mt-20 grid grid-cols-2 gap-x-8 gap-y-10 border-t border-white/20 pt-12 md:grid-cols-4">
-              {stats.map((s, i) => (
-                <div key={i}>
-                  <dd className="text-4xl font-bold tabular-nums tracking-tight text-amber-300">{s.value}</dd>
-                  <dt className="mt-2 text-[15px] leading-snug text-white/75">{s.label}</dt>
-                </div>
-              ))}
-            </dl>
-          )}
+          <p className="mt-6 text-[15px] text-white/75">
+            {text(pick('hero.orcid_hint_prefix'), t, 'hero.orcid_hint_prefix')}{' '}
+            <Link to="/tutorial-orcid" className="font-semibold text-white underline underline-offset-4">
+              {text(pick('hero.orcid_hint_link'), t, 'hero.orcid_hint_link')}
+            </Link>
+          </p>
         </div>
-      </AmbientSection>
+      </section>
 
-      {/* ══ 2 · PENELUSURAN — ajakan tindakan pindah ke seksinya sendiri ══ */}
-      <AmbientSection surfaceColor="transparent" {...ON_DARK} blob={false}
-        art={ART.coverage} artOpacity={0.25} className="py-24">
-        <div className="mx-auto max-w-4xl px-6 lg:px-8">
-          <SectionHead dark className="mb-10"
-            eyebrow={t('search_section.eyebrow')}
-            title={t('search_section.title')}
-            subtitle={t('search_section.subtitle')} />
-          <PublicSearch t={t} />
-        </div>
-      </AmbientSection>
-
-      {/* ══ 3 · KEMAMPUAN ══════════════════════════════════════════════ */}
-      <AmbientSection surfaceColor="transparent" {...ON_DARK} blob={false}
-        art={ART.network} artOpacity={0.22} className="py-24">
+      {/* ══ KEMAMPUAN — putih ════════════════════════════════════════ */}
+      <section className={`${SURFACE.white} py-20`}>
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
-          <SectionHead dark
-            eyebrow={t('features_section.eyebrow')}
+          <SectionHead
             title={text(pick('features_section.title'), t, 'features_section.title')}
             subtitle={text(pick('features_section.subtitle'), t, 'features_section.subtitle')} />
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f, i) => (
-              <SpotlightCard key={i} glow="rgba(255,220,190,0.16)"
-                className={`${CARD} p-6 hover:ring-amber-300/45`}>
-                <div className="flex items-start justify-between gap-3">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-amber-400/15 text-amber-300 ring-1 ring-amber-400/30">
-                    <f.Icon className="h-5 w-5" />
-                  </span>
-                  {f.label && (
-                    <span className="rounded-full bg-white/[0.08] px-2.5 py-1 text-xs font-bold uppercase tracking-[0.12em] text-amber-300 ring-1 ring-white/10">
-                      {f.label}
-                    </span>
-                  )}
-                </div>
-                <h3 className="mt-6 text-lg font-semibold tracking-tight text-white">{f.title}</h3>
-                <p className="mt-2 text-[15px] leading-relaxed text-white/70">{f.desc}</p>
-              </SpotlightCard>
+              <div key={i} className={`${CARD} p-6`}>
+                <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-orange-50 text-orange-600 ring-1 ring-orange-100">
+                  <f.Icon className="h-5 w-5" />
+                </span>
+                <h3 className="mt-5 text-lg font-semibold tracking-tight text-slate-900">{f.title}</h3>
+                <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{f.desc}</p>
+              </div>
             ))}
           </div>
         </div>
-      </AmbientSection>
+      </section>
 
-      {/* ══ 4 · 17 SDG ═════════════════════════════════════════════════ */}
+      {/* ══ ANGKA PLATFORM — pita gelap pertama ══════════════════════ */}
+      {stats.length > 0 && (
+        <section className={SURFACE.dark}>
+          <div className="mx-auto max-w-6xl px-6 py-16 lg:px-8">
+            <dl className="grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-4">
+              {stats.map((s, i) => (
+                <div key={i} className="text-center">
+                  <dd className="text-4xl font-bold tabular-nums tracking-tight text-orange-400 sm:text-5xl">
+                    {s.value}
+                  </dd>
+                  <dt className="mt-2 text-[15px] leading-snug text-slate-400">{s.label}</dt>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+      )}
+
+      {/* ══ 17 SDG — abu muda ════════════════════════════════════════ */}
       {sdgList.length > 0 && (
-        <AmbientSection surfaceColor="transparent" {...ON_DARK} blob={false}
-          art={ART.hero} artOpacity={0.18} artPosition="bottom" className="py-24">
+        <section className={`${SURFACE.tint} border-y border-slate-200 py-20`}>
           <div className="mx-auto max-w-6xl px-6 lg:px-8">
-            <SectionHead dark
-              eyebrow={t('sdg_section.eyebrow')}
+            <SectionHead
               title={text(pick('sdg_section.title'), t, 'sdg_section.title')}
               subtitle={text(pick('sdg_section.subtitle'), t, 'sdg_section.subtitle')} />
 
             <div className="grid grid-cols-4 gap-4 sm:grid-cols-6 lg:grid-cols-9">
               {sdgList.map((sdg) => (
                 <Link key={sdg.sdg} to="/sdgs" className="group flex flex-col items-center">
-                  <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-xl ring-1 ring-white/25 transition-all duration-300 group-hover:-translate-y-1.5 group-hover:ring-white/70"
-                    style={{ backgroundColor: sdg.color, boxShadow: `0 8px 26px -8px ${sdg.color}` }}>
+                  <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-xl shadow-sm transition-all duration-200 group-hover:-translate-y-1 group-hover:shadow-lg"
+                    style={{ backgroundColor: sdg.color }}>
                     <img src={`/assets/sdgs/icons/sdg-${sdg.sdg}.svg`} alt={`SDG ${sdg.sdg}`}
                       className="h-14 w-14 object-contain"
                       onError={(e) => {
@@ -378,63 +289,63 @@ const PublicHomePage = () => {
                         e.target.parentElement.innerHTML = `<span class="text-white font-bold text-xl">${sdg.sdg}</span>`;
                       }} />
                   </div>
-                  <span className="mt-2.5 text-center text-xs font-medium leading-tight text-white/70 transition-colors group-hover:text-white">
+                  <span className="mt-2.5 text-center text-xs font-medium leading-tight text-slate-500 transition-colors group-hover:text-slate-900">
                     {sdg.name}
                   </span>
                 </Link>
               ))}
             </div>
 
-            <div className="mt-14 text-center">
+            <div className="mt-12 text-center">
               <Link to="/sdgs"
-                className="inline-flex items-center gap-2 rounded-lg bg-white/10 px-6 py-3 text-[15px] font-semibold text-white ring-1 ring-white/30 transition-colors hover:bg-white/20">
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-3 text-[15px] font-semibold text-slate-700 transition-colors hover:border-orange-400 hover:text-orange-700">
                 {text(pick('sdg_section.cta_label'), t, 'sdg_section.cta_label')}
                 <ChevronRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
-        </AmbientSection>
+        </section>
       )}
 
-      {/* ══ 5 · ALUR KERJA ═════════════════════════════════════════════ */}
-      <AmbientSection surfaceColor="transparent" {...ON_LIGHT} blob={false}
-        art={ART.flow} artOpacity={0.28} className="py-24">
+      {/* ══ ALUR KERJA — putih ═══════════════════════════════════════ */}
+      <section className={`${SURFACE.white} py-20`}>
         <div className="mx-auto max-w-6xl px-6 lg:px-8">
-          <SectionHead dark={false}
-            eyebrow={t('how_it_works_section.eyebrow')}
+          <SectionHead
             title={text(pick('how_it_works_section.title'), t, 'how_it_works_section.title')}
             subtitle={text(pick('how_it_works_section.subtitle'), t, 'how_it_works_section.subtitle')} />
 
           <ol className="grid grid-cols-1 gap-5 md:grid-cols-3">
             {steps.map((item) => (
-              <SpotlightCard key={item.step} as="li" tone="light" accent="orange"
-                className={`${PANEL} p-7 hover:ring-orange-300`}>
+              <li key={item.step} className={`${CARD} p-7`}>
                 <div className="flex items-center gap-4">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-orange-600 text-base font-bold tabular-nums text-white shadow-sm">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-orange-600 text-base font-bold tabular-nums text-white">
                     {item.step}
                   </span>
-                  <item.Icon className="h-5 w-5 text-orange-700" />
+                  <item.Icon className="h-5 w-5 text-orange-600" />
                 </div>
                 <h3 className="mt-6 text-lg font-semibold tracking-tight text-slate-900">{item.title}</h3>
-                <p className="mt-2 text-[15px] leading-relaxed text-slate-700">{item.desc}</p>
-              </SpotlightCard>
+                <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{item.desc}</p>
+              </li>
             ))}
           </ol>
         </div>
-      </AmbientSection>
+      </section>
 
-      {/* ══ 6 · AI INSIGHTS — satu-satunya bidang pekat ════════════════ */}
+      {/* ══ AI INSIGHTS — pita gelap kedua ═══════════════════════════ */}
       {insights.length > 0 && (
-        <AmbientSection surfaceColor="#16100E" {...ON_DARK} blob={false}
-          art={ART.waves} artOpacity={0.4} artPosition="bottom" fade={false} className="py-24">
+        <section className={`${SURFACE.dark} py-20`}>
           <div className="mx-auto max-w-6xl px-6 lg:px-8">
-            <div className="mb-14 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-              <SectionHead align="left" className="" dark
-                eyebrow={t('insights_section.eyebrow')}
-                title={text(pick('insights_section.title'), t, 'insights_section.title')}
-                subtitle={text(pick('insights_section.subtitle'), t, 'insights_section.subtitle')} />
+            <div className="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div className="max-w-2xl">
+                <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                  {text(pick('insights_section.title'), t, 'insights_section.title')}
+                </h2>
+                <p className="mt-4 text-base leading-relaxed text-slate-300">
+                  {text(pick('insights_section.subtitle'), t, 'insights_section.subtitle')}
+                </p>
+              </div>
               <Link to="/insights"
-                className="inline-flex shrink-0 items-center gap-2 pb-1 text-[15px] font-semibold text-amber-300 underline-offset-4 hover:underline">
+                className="inline-flex shrink-0 items-center gap-2 text-[15px] font-semibold text-orange-400 underline-offset-4 hover:underline">
                 {text(pick('insights_section.cta_label'), t, 'insights_section.cta_label')}
                 <ArrowRight className="h-4 w-4" />
               </Link>
@@ -442,107 +353,43 @@ const PublicHomePage = () => {
 
             <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
               {insights.map((ins) => {
-                const color     = sdgColorById[ins.sdg] || '#FBBF24';
-                const series    = Array.isArray(ins.series) ? ins.series : [];
-                const direction = readDirection(series, ins.trend);
-                const start     = ins.series_start;
-                const end       = start && series.length ? start + series.length - 1 : null;
-
+                const color = sdgColorById[ins.sdg] || '#FB923C';
                 return (
-                  <SpotlightCard key={ins.id} as="article" glow={`${color}2E`}
-                    className={`${CARD} flex flex-col p-6 hover:ring-amber-300/45`}>
+                  <article key={ins.id} className="flex flex-col rounded-xl border border-white/10 bg-[#292524] p-6">
                     <div className="flex items-center gap-2.5">
-                      <span aria-hidden className="h-3 w-3 rounded-[3px]"
-                        style={{ backgroundColor: color, boxShadow: `0 0 12px 0 ${color}` }} />
-                      <span className="font-mono text-xs tabular-nums text-white/50">
+                      <span aria-hidden className="h-3 w-3 rounded-[3px]" style={{ backgroundColor: color }} />
+                      <span className="font-mono text-xs tabular-nums text-slate-400">
                         SDG {String(ins.sdg).padStart(2, '0')}
                       </span>
-                      {ins.category && (
-                        <span className="ml-auto rounded-full bg-white/[0.08] px-2.5 py-0.5 text-xs font-medium text-white/70 ring-1 ring-white/10">
-                          {ins.category}
+                      {ins.trend && (
+                        <span className="ml-auto rounded-full bg-orange-500/15 px-2.5 py-0.5 text-xs font-bold tabular-nums text-orange-300">
+                          {ins.trend}
                         </span>
                       )}
                     </div>
                     <h3 className="mt-5 text-[17px] font-semibold leading-snug text-white">{ins.title}</h3>
-                    <p className="mt-2 flex-1 text-[15px] leading-relaxed text-white/70">{ins.text}</p>
-                    <div className="mt-6 flex items-end justify-between border-t border-white/10 pt-5">
-                      <div>
-                        {ins.trend && (
-                          <p className={`text-2xl font-bold tabular-nums ${
-                            direction === 'down' ? 'text-rose-400' : direction === 'up' ? 'text-amber-300' : 'text-white/80'
-                          }`}>{ins.trend}</p>
-                        )}
-                        {start && end && (
-                          <p className="font-mono text-xs tabular-nums text-white/50">{start}–{end}</p>
-                        )}
-                      </div>
-                      {series.length > 1 && <Sparkline values={series} direction={direction} className="h-12 w-28" />}
-                    </div>
-                  </SpotlightCard>
+                    <p className="mt-2 flex-1 text-[15px] leading-relaxed text-slate-300">{ins.text}</p>
+                  </article>
                 );
               })}
             </div>
           </div>
-        </AmbientSection>
+        </section>
       )}
 
-      {/* ══ 7 · SUMBER DATA — seksi baru ═══════════════════════════════ */}
-      <AmbientSection surfaceColor="transparent" {...ON_LIGHT} blob={false}
-        art={ART.world} artOpacity={0.14} className="py-24">
-        <div className="mx-auto max-w-6xl px-6 lg:px-8">
-          <SectionHead dark={false}
-            eyebrow={t('sources_section.eyebrow')}
-            title={t('sources_section.title')}
-            subtitle={t('sources_section.subtitle')} />
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {DATA_SOURCES.map((name) => (
-              <SpotlightCard key={name} as="span" tone="light" accent="orange" radius={150}
-                className={`${PANEL} px-5 py-3 text-[15px] font-semibold text-slate-800 hover:ring-orange-300`}>
-                {name}
-              </SpotlightCard>
-            ))}
-          </div>
-        </div>
-      </AmbientSection>
-
-      {/* ══ 8 · UNTUK SIAPA — seksi baru ═══════════════════════════════ */}
-      <AmbientSection surfaceColor="transparent" {...ON_LIGHT} blob={false}
-        art={ART.about} artOpacity={0.16} className="py-24">
-        <div className="mx-auto max-w-6xl px-6 lg:px-8">
-          <SectionHead dark={false}
-            eyebrow={t('audience_section.eyebrow')}
-            title={t('audience_section.title')}
-            subtitle={t('audience_section.subtitle')} />
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {audience.map((a, i) => (
-              <SpotlightCard key={i} tone="light" accent="orange"
-                className={`${PANEL} p-6 hover:ring-orange-300`}>
-                <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-orange-50 text-orange-700 ring-1 ring-orange-200">
-                  <a.Icon className="h-5 w-5" />
-                </span>
-                <h3 className="mt-5 text-lg font-semibold tracking-tight text-slate-900">{a.title}</h3>
-                <p className="mt-2 text-[15px] leading-relaxed text-slate-700">{a.desc}</p>
-              </SpotlightCard>
-            ))}
-          </div>
-        </div>
-      </AmbientSection>
-
-      {/* ══ 9 · MITRA ══════════════════════════════════════════════════ */}
+      {/* ══ MITRA — abu muda ═════════════════════════════════════════ */}
       {partners.length > 0 && (
-        <AmbientSection surfaceColor="transparent" {...ON_LIGHT} blob={false}
-          art={ART.network} artOpacity={0.12} artPosition="top" className="py-20">
+        <section className={`${SURFACE.tint} border-y border-slate-200 py-16`}>
           <div className="mx-auto max-w-6xl px-6 lg:px-8">
-            <SectionHead dark={false}
-              eyebrow={t('partners_section.eyebrow')}
+            <SectionHead
               title={text(pick('partners_section.title'), t, 'partners_section.title')}
               subtitle={text(pick('partners_section.subtitle'), t, 'partners_section.subtitle')} />
             <div className="flex flex-wrap items-center justify-center gap-3">
               {partners.map((p) => (
-                <SpotlightCard key={p.id ?? p.name} as="span" tone="light" accent="orange" radius={150}
-                  className={`${PANEL} px-5 py-3 text-[15px] font-medium text-slate-700 hover:ring-orange-300`}>
+                <span key={p.id ?? p.name}
+                  className="rounded-lg border border-slate-200 bg-white px-5 py-3 text-[15px] font-medium text-slate-700 shadow-sm">
                   {p.name}
-                </SpotlightCard>
+                </span>
               ))}
             </div>
             <div className="mt-10 text-center">
@@ -553,12 +400,12 @@ const PublicHomePage = () => {
               </Link>
             </div>
           </div>
-        </AmbientSection>
+        </section>
       )}
 
-      {/* ══ 10 · PENUTUP — putih, artwork diberi ruang sendiri ═════════ */}
-      <section className="relative py-24">
-        <div className="mx-auto max-w-5xl px-6 text-center lg:px-8">
+      {/* ══ PENUTUP — putih ══════════════════════════════════════════ */}
+      <section className={`${SURFACE.white} py-20`}>
+        <div className="mx-auto max-w-4xl px-6 text-center lg:px-8">
           <span className="inline-flex items-center gap-2 rounded-full bg-orange-50 px-4 py-1.5 text-[15px] font-semibold text-orange-800 ring-1 ring-orange-200">
             {text(pick('cta_section.badge'), t, 'cta_section.badge')}
           </span>
@@ -566,35 +413,26 @@ const PublicHomePage = () => {
           <h2 className="mt-7 text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl">
             {text(pick('cta_section.title'), t, 'cta_section.title')}
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-700">
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate-600">
             {text(pick('cta_section.subtitle'), t, 'cta_section.subtitle')}
           </p>
 
-          {/*
-            Artwork penutup berdiri di jalurnya sendiri, di bawah teks dan di
-            atas tombol, bukan sebagai lapisan di belakang keduanya. Aset dari
-            /assets ditampilkan apa adanya di ruang kosong, sehingga gambarnya
-            terbaca utuh tanpa tertimpa warna seksi maupun SVG lain.
-          */}
-          <img src={ART.world} alt="" aria-hidden
-            className="mx-auto my-14 h-40 w-full max-w-3xl object-contain opacity-25 sm:h-52" />
-
-          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link to="/register"
-              className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-7 py-3.5 text-[15px] font-bold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-orange-700">
+              className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-7 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-orange-700">
               {text(pick('cta_section.cta_primary'), t, 'cta_section.cta_primary')}
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link to="/login"
-              className="inline-flex items-center gap-2 rounded-lg bg-white px-7 py-3.5 text-[15px] font-semibold text-slate-800 ring-1 ring-slate-300 transition-colors hover:bg-slate-50">
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-7 py-3.5 text-[15px] font-semibold text-slate-700 transition-colors hover:border-slate-400 hover:bg-slate-50">
               {text(pick('cta_section.cta_secondary'), t, 'cta_section.cta_secondary')}
             </Link>
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-7 gap-y-3 text-[15px] text-slate-700">
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-7 gap-y-3 text-[15px] text-slate-600">
             {(Array.isArray(trustSignals) ? trustSignals : []).map((label, i) => (
               <span key={i} className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-orange-600" strokeWidth={3} />
+                <CheckCircle className="h-4 w-4 text-orange-600" />
                 {label}
               </span>
             ))}
