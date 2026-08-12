@@ -156,7 +156,6 @@ const Partners = () => {
 
   return (
     <>
-      <Navbar />
       <main className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
 
         {/* Breadcrumb */}
@@ -316,7 +315,6 @@ const Partners = () => {
         </div>
 
       </main>
-      <Footer />
     </>
   );
 };
