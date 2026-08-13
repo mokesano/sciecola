@@ -219,9 +219,9 @@ const Monitoring = () => {
     const customIcon = L.divIcon({
       className: 'leaflet-div-icon-transparent',
       html: `
-        <div class="pulse-wrapper">
-          <div class="pulse-ring" style="background-color: ${color};"></div>
-          <div class="pulse-core" style="background-color: ${color};"></div>
+        <div className="pulse-wrapper">
+          <div className="pulse-ring" style="background-color: ${color};"></div>
+          <div className="pulse-core" style="background-color: ${color};"></div>
         </div>
       `,
       iconSize: [size, size],

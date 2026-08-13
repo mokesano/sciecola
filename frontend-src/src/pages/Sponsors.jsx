@@ -168,7 +168,7 @@ const Sponsors = () => {
   const showSection = (tier) => byTier[tier].length > 0;
 
   return (
-      <main className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+      <main className="pt-[68px] pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
 
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-8">

@@ -66,7 +66,7 @@ export default function DocsPage() {
   const slugLabel = (key) => t(`sidebar.${key}`, { defaultValue: key.replace(/-/g, ' ') });
 
   return (
-    <main className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+    <main className="pt-[68px] pb-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-8">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>

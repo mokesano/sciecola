@@ -184,7 +184,7 @@ const ProjectManagement = () => {
   });
 
   return (
-    <main className="min-h-screen pt-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <main className="min-h-screen pt-[60px] bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white py-28 overflow-hidden">

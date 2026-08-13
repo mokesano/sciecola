@@ -277,7 +277,7 @@ const PublicHomePage = () => {
     ? pick('cta_section.trust_signals') : t('cta_section.trust_signals', { returnObjects: true });
 
   return (
-    <main className="min-h-screen bg-white pt-20">
+    <main className="min-h-screen bg-white pt-[60px]">
 
       {/* ══ HERO — satu-satunya tempat gradasi berada ═════════════════ */}
       <section className="relative overflow-hidden bg-white">
@@ -378,7 +378,7 @@ const PublicHomePage = () => {
                       className="h-14 w-14 object-contain"
                       onError={(e) => {
                         e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = `<span class="text-white font-bold text-xl">${sdg.sdg}</span>`;
+                        e.target.parentElement.innerHTML = `<span className="text-white font-bold text-xl">${sdg.sdg}</span>`;
                       }} />
                   </div>
                   <span className="mt-2.5 text-center text-xs font-medium leading-tight text-slate-500 transition-colors group-hover:text-slate-900">

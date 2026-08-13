@@ -151,7 +151,7 @@ const AdminPanel = () => {
   };
 
   return (
-    <main className="min-h-screen pt-20 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <main className="min-h-screen pt-[60px] bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-slate-700 to-slate-900 text-white py-12">
         <div className="container max-w-7xl mx-auto px-8">

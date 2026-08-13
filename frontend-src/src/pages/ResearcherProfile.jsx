@@ -30,7 +30,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 const LoadingState = () => {
   const { t } = useTranslation('researcher');
   return (
-    <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+    <main className="pt-[76px] pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       <div className="flex flex-col items-center justify-center py-32 gap-4">
         <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
         <p className="text-gray-600 font-medium">{t('loading.title')}</p>
@@ -43,7 +43,7 @@ const LoadingState = () => {
 const ErrorState = ({ orcid, message, onRetry }) => {
   const { t } = useTranslation('researcher');
   return (
-    <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+    <main className="pt-[76px] pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       <div className="text-center py-20">
         <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -108,7 +108,7 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
 
   if (unsupported) {
     return (
-      <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto w-full text-center">
+      <main className="pt-[76px] pb-20 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto w-full text-center">
         <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <svg className="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01M4.93 19h14.14a2 2 0 001.73-3L13.73 4.5a2 2 0 00-3.46 0L3.2 16a2 2 0 001.73 3z" />
@@ -181,7 +181,7 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
   ];
 
   return (
-    <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+    <main className="pt-[76px] pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
 
       {/* ── Header ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">

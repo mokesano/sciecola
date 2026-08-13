@@ -108,7 +108,7 @@ const Fact = ({ label, children, mono = false }) => (
 );
 
 const NotFound = ({ slug, t }) => (
-  <main className="min-h-screen bg-white px-4 pb-24 pt-32 sm:px-6 lg:px-8">
+  <main className="min-h-screen bg-white px-4 pb-24 pt-[76px] sm:px-6 lg:px-8">
     <div className="mx-auto max-w-3xl rounded-xl border border-slate-200 bg-white px-6 py-16 text-center shadow-sm">
       <h2 className="text-2xl font-semibold tracking-tight text-slate-900">{t('not_found.title')}</h2>
       <p className="mt-2 text-[15px] text-slate-500">
@@ -148,7 +148,7 @@ const TeamMemberProfile = () => {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-white px-4 pb-24 pt-32 sm:px-6 lg:px-8">
+      <main className="min-h-screen bg-white px-4 pb-24 pt-[76px] sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-3xl items-center justify-center gap-3 py-16 text-[15px] text-slate-500">
           <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-200 border-t-indigo-500" />
           {t('loading')}
@@ -178,7 +178,7 @@ const TeamMemberProfile = () => {
   const aboutText = m.long_bio || shortBio;
 
   return (
-    <main className="min-h-screen bg-white pb-24 pt-20">
+    <main className="min-h-screen bg-white pb-24 pt-[60px]">
 
       {/* ============================================================ */}
       {/* Identity band — full-bleed, portrait beside the name and a    */}

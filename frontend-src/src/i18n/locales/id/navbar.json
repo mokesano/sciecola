@@ -1,21 +1,80 @@
 {
   "brand_tagline": "Klasifikasi & Analitik Dampak",
   "nav": {
-    "home":        "Beranda",
+    "home": "Beranda",
     "researchers": "Peneliti",
-    "articles":    "Artikel",
-    "sdgs":        "SDGs",
-    "analytics":   "Analitik",
-    "teams":       "Tim",
-    "about":       "Tentang"
+    "articles": "Artikel",
+    "sdgs": "SDGs",
+    "analytics": "Analitik",
+    "teams": "Tim",
+    "about": "Tentang"
   },
   "lang": {
-    "id": { "flag": "🇮🇩", "code": "ID", "country": "Indonesia" },
-    "en": { "flag": "🇬🇧", "code": "EN", "country": "English" }
+    "id": {
+      "flag": "🇮🇩",
+      "code": "ID",
+      "country": "Indonesia"
+    },
+    "en": {
+      "flag": "🇬🇧",
+      "code": "EN",
+      "country": "English"
+    }
   },
   "auth": {
-    "login":    "Masuk",
+    "login": "Masuk",
     "register": "Daftar",
-    "profile":  "Profil Saya"
+    "profile": "Profil Saya"
+  },
+  "menu": {
+    "home": "Beranda",
+    "groups": {
+      "research": {
+        "label": "Riset",
+        "items": {
+          "researchers": "Peneliti",
+          "articles": "Artikel",
+          "journals": "Jurnal",
+          "institutions": "Institusi"
+        }
+      },
+      "sdg": {
+        "label": "SDG",
+        "items": {
+          "explorer": "Jelajah SDG",
+          "impact": "Dampak Artikel",
+          "distribution": "Distribusi Peneliti"
+        }
+      },
+      "analytics": {
+        "label": "Analitik",
+        "items": {
+          "dashboard": "Dasbor Analitik",
+          "trends": "Tren & Perbandingan",
+          "insights": "AI Insights",
+          "leaderboard": "Papan Peringkat"
+        }
+      },
+      "collab": {
+        "label": "Kolaborasi",
+        "items": {
+          "matching": "Pencocokan Riset",
+          "projects": "Proyek Bersama",
+          "marketplace": "Peluang Inovasi",
+          "sponsor": "Jadi Sponsor"
+        }
+      },
+      "about": {
+        "label": "Tentang",
+        "items": {
+          "about": "Tentang Kami",
+          "teams": "Tim Kami",
+          "partners": "Mitra",
+          "docs": "Dokumentasi",
+          "api": "API Reference",
+          "contact": "Kontak"
+        }
+      }
+    }
   }
 }

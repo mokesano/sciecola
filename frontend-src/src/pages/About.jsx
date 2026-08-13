@@ -50,7 +50,7 @@ const About = () => {
 
   return (
     <>
-      <main className="min-h-screen bg-white pt-20">
+      <main className="min-h-screen bg-white pt-[60px]">
       <AmbientSection tone="light" accent="blue" art={ART.about} artOpacity={0.5}>
         <div className="mx-auto w-full max-w-7xl px-4 pb-16 pt-12 sm:px-6 lg:px-8">
 

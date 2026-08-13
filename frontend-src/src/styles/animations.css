@@ -1,0 +1,65 @@
+/*
+ * Gerakan latar seksi.
+ *
+ * Sebelumnya keyframes ini disuntikkan ke document.head lewat
+ * document.createElement('style') saat komponen pertama kali dipasang.
+ * Cara itu memindahkan gaya ke runtime: tidak ikut terbundel, tidak bisa
+ * di-minify, tidak terlihat alat apa pun, dan menambah kerja pada paint
+ * pertama. Vite membundel impor CSS biasa, jadi tempatnya memang di sini.
+ *
+ * Nilai yang berubah-ubah (berkas mask, warna, opasitas) tetap dioper dari
+ * komponen sebagai custom property — itu memang tugas komponen. Yang tetap
+ * hidup di CSS adalah aturannya.
+ */
+
+@keyframes sc-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1.06); }
+  100% { transform: translate3d(-2.5%, 1.8%, 0) scale(1.12); }
+}
+
+@keyframes sc-pan {
+  0%   { transform: translate3d(-3.5%, 0, 0) scale(1.08); }
+  100% { transform: translate3d(3.5%, 0, 0) scale(1.08); }
+}
+
+@keyframes sc-breathe {
+  0%   { transform: scale(1.02); opacity: .55; }
+  100% { transform: scale(1.12); opacity: 1; }
+}
+
+/* Lapisan latar. Bentuk mask, warna, dan opasitas datang dari custom
+   property yang dipasang komponen; sisanya tetap di sini. */
+.sc-layer {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: var(--sc-mask);
+          mask-image: var(--sc-mask);
+  -webkit-mask-size: var(--sc-mask-size);
+          mask-size: var(--sc-mask-size);
+  -webkit-mask-position: var(--sc-mask-pos);
+          mask-position: var(--sc-mask-pos);
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-composite: source-in;
+          mask-composite: intersect;
+}
+
+.sc-layer--art {
+  background-color: var(--sc-color);
+  opacity: var(--sc-opacity);
+  animation: var(--sc-motion);
+  will-change: transform;
+}
+
+/* Lapisan yang menyala mengikuti pointer. Titik pusatnya dibawa --mx/--my,
+   yang ditulis komponen langsung ke node tanpa render ulang. */
+.sc-layer--lit {
+  background: radial-gradient(
+    var(--sc-lit-radius) circle at var(--mx, -999px) var(--my, -999px),
+    var(--sc-lit-color), transparent 68%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-layer--art { animation: none; }
+  .sc-layer--lit { display: none; }
+}

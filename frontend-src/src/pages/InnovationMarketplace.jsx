@@ -153,7 +153,7 @@ const InnovationMarketplace = () => {
   };
 
   return (
-    <main className="min-h-screen pt-20 bg-gradient-to-br from-slate-50 via-orange-50 to-yellow-50">
+    <main className="min-h-screen pt-[60px] bg-gradient-to-br from-slate-50 via-orange-50 to-yellow-50">
       
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-orange-600 via-yellow-600 to-amber-600 text-white py-28 overflow-hidden">

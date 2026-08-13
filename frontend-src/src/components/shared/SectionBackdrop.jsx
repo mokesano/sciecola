@@ -14,41 +14,17 @@ import React, { useEffect, useRef, useCallback } from 'react';
  *    tempat teks berada, lalu menguat ke arah tepi. Teks selalu duduk di atas
  *    bidang bersih, berapa pun terangnya artwork di pinggir.
  *
- * 3. Gerakannya lambat dan tidak berulang persis: drift, pan, atau denyut.
- *    Dimatikan sepenuhnya bila pengguna meminta gerak minimal.
+ * 3. Gerakannya lambat dan tidak berulang persis. Aturannya hidup di
+ *    styles/animations.css dan ikut terbundel; komponen ini hanya mengoper
+ *    nilai yang memang berubah per seksi lewat custom property.
  */
 
-const KEYFRAMES = `
-@keyframes sc-drift {
-  0%   { transform: translate3d(0, 0, 0) scale(1.06); }
-  100% { transform: translate3d(-2.5%, 1.8%, 0) scale(1.12); }
-}
-@keyframes sc-pan {
-  0%   { transform: translate3d(-3.5%, 0, 0) scale(1.08); }
-  100% { transform: translate3d(3.5%, 0, 0) scale(1.08); }
-}
-@keyframes sc-breathe {
-  0%   { transform: scale(1.02); opacity: .55; }
-  100% { transform: scale(1.12); opacity: 1; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .sc-backdrop { animation: none !important; }
-}
-`;
-
-/* Keyframes disuntikkan sekali untuk seluruh halaman. Merender <style> di
-   dalam komponen akan menghasilkan satu salinan per seksi. */
-let injected = false;
-function useKeyframesOnce() {
-  useEffect(() => {
-    if (injected || typeof document === 'undefined') return;
-    injected = true;
-    const el = document.createElement('style');
-    el.dataset.scBackdrop = '';
-    el.textContent = KEYFRAMES;
-    document.head.appendChild(el);
-  }, []);
-}
+const MOTION = {
+  drift:   'sc-drift 34s ease-in-out infinite alternate',
+  pan:     'sc-pan 46s ease-in-out infinite alternate',
+  breathe: 'sc-breathe 22s ease-in-out infinite alternate',
+  none:    'none',
+};
 
 /*
  * Lubang tempat teks duduk. Transparan di tengah — di situ artwork tidak
@@ -58,13 +34,6 @@ function useKeyframesOnce() {
 const clearing = (reach) =>
   `radial-gradient(ellipse ${reach}% ${Math.round(reach * 0.82)}% at 50% 50%,` +
   ' rgba(0,0,0,0) 0%, rgba(0,0,0,0) 38%, rgba(0,0,0,0.35) 58%, #000 82%)';
-
-const MOTION = {
-  drift:   'sc-drift 34s ease-in-out infinite alternate',
-  pan:     'sc-pan 46s ease-in-out infinite alternate',
-  breathe: 'sc-breathe 22s ease-in-out infinite alternate',
-  none:    undefined,
-};
 
 const SectionBackdrop = ({
   src,
@@ -78,8 +47,6 @@ const SectionBackdrop = ({
   litColor = 'rgba(234,88,12,0.85)',
   litRadius = 320,
 }) => {
-  useKeyframesOnce();
-
   /* Posisi pointer ditulis ke custom property lewat ref, bukan lewat state.
      Menyimpannya di state akan memicu render ulang puluhan kali per detik
      untuk sesuatu yang tidak mengubah struktur apa pun. */
@@ -92,13 +59,12 @@ const SectionBackdrop = ({
     el.style.setProperty('--my', `${e.clientY - r.top}px`);
   }, []);
 
-  /* Lapisan interaktif harus menerima pointer, tapi tidak boleh merebutnya
-     dari tombol dan tautan di atasnya — pengait dipasang di lapisan latar,
-     yang selalu berada di bawah isi seksi. */
+  /* Pengait dipasang di elemen seksi, sementara lapisan latarnya sendiri
+     tetap pointer-transparent — kalau tidak, ia akan merebut klik dari tombol
+     dan tautan yang ada di atasnya. */
   useEffect(() => {
     if (!interactive) return undefined;
-    const host = hostRef.current;
-    const section = host?.parentElement;
+    const section = hostRef.current?.parentElement;
     if (!section) return undefined;
     section.addEventListener('pointermove', onPointerMove);
     return () => section.removeEventListener('pointermove', onPointerMove);
@@ -106,41 +72,24 @@ const SectionBackdrop = ({
 
   if (!src) return null;
 
-  const maskFor = (r) => ({
-    WebkitMaskImage:    `url('${src}'), ${clearing(r)}`,
-    maskImage:          `url('${src}'), ${clearing(r)}`,
-    WebkitMaskSize:     `${size}, cover`,
-    maskSize:           `${size}, cover`,
-    WebkitMaskPosition: `${position}, center`,
-    maskPosition:       `${position}, center`,
-    WebkitMaskRepeat:   'no-repeat',
-    maskRepeat:         'no-repeat',
-    WebkitMaskComposite: 'source-in',
-    maskComposite:       'intersect',
-  });
+  /* Hanya nilai yang benar-benar berbeda per seksi yang dioper ke DOM.
+     Aturan mask, animasi, dan reduced-motion hidup di berkas CSS. */
+  const vars = {
+    '--sc-mask':      `url('${src}'), ${clearing(reach)}`,
+    '--sc-mask-size': `${size}, cover`,
+    '--sc-mask-pos':  `${position}, center`,
+    '--sc-color':     color,
+    '--sc-opacity':   opacity,
+    '--sc-motion':    MOTION[motion] ?? MOTION.drift,
+    '--sc-lit-color': litColor,
+    '--sc-lit-radius': `${litRadius}px`,
+  };
 
   return (
-    <span ref={hostRef} aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-      {/* Artwork dasar — bentuknya sendiri ∩ lubang teks. */}
-      <span
-        className="sc-backdrop absolute inset-0"
-        style={{ backgroundColor: color, opacity, animation: MOTION[motion],
-                 willChange: 'transform', ...maskFor(reach) }}
-      />
-
-      {/* Lapisan yang menyala mengikuti kursor. Mask-nya sama persis, jadi
-          yang menyala benar-benar gambarnya — bukan lingkaran cahaya di
-          atasnya — dan lubang teks tetap berlaku, sehingga sorotan tidak
-          pernah masuk ke area baca. */}
-      {interactive && (
-        <span
-          className="absolute inset-0 motion-reduce:hidden"
-          style={{
-            ...maskFor(reach),
-            background: `radial-gradient(${litRadius}px circle at var(--mx, -999px) var(--my, -999px), ${litColor}, transparent 68%)`,
-          }}
-        />
-      )}
+    <span ref={hostRef} aria-hidden
+      className="pointer-events-none absolute inset-0 overflow-hidden" style={vars}>
+      <span className="sc-layer sc-layer--art" />
+      {interactive && <span className="sc-layer sc-layer--lit" />}
     </span>
   );
 };
