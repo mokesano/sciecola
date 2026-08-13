@@ -43,9 +43,9 @@ const ART = {
 const SHOT = {
   explore:   '/assets/img/capturing-users.svg',
   analytics: '/assets/img/ai-infrastructure.png',
-  directory: '/assets/img/Hero-Illustration.png',
-  collab:    '/assets/img/Hero-Illustrated.png',
-  footer:    '/assets/img/Footer-Hero.png',
+  directory: '/assets/img/Hero-Illustrated.png',
+  collab:    '/assets/img/globalmap.png',
+  footer:    '/assets/img/cta.jpg',
 };
 
 /* Seksi dua kolom: teks di satu sisi, ilustrasi di sisi lain, berganti arah
