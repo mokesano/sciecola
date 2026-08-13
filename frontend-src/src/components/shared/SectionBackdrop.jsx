@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 
 /**
  * Latar bergambar untuk sebuah seksi.
@@ -74,32 +74,73 @@ const SectionBackdrop = ({
   reach   = 74,        // lebar lubang teks, dalam persen lebar seksi
   position = 'center',
   size     = 'cover',
+  interactive = false, // gambarnya menyala mengikuti kursor
+  litColor = 'rgba(234,88,12,0.85)',
+  litRadius = 320,
 }) => {
   useKeyframesOnce();
+
+  /* Posisi pointer ditulis ke custom property lewat ref, bukan lewat state.
+     Menyimpannya di state akan memicu render ulang puluhan kali per detik
+     untuk sesuatu yang tidak mengubah struktur apa pun. */
+  const hostRef = useRef(null);
+  const onPointerMove = useCallback((e) => {
+    const el = hostRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    el.style.setProperty('--my', `${e.clientY - r.top}px`);
+  }, []);
+
+  /* Lapisan interaktif harus menerima pointer, tapi tidak boleh merebutnya
+     dari tombol dan tautan di atasnya — pengait dipasang di lapisan latar,
+     yang selalu berada di bawah isi seksi. */
+  useEffect(() => {
+    if (!interactive) return undefined;
+    const host = hostRef.current;
+    const section = host?.parentElement;
+    if (!section) return undefined;
+    section.addEventListener('pointermove', onPointerMove);
+    return () => section.removeEventListener('pointermove', onPointerMove);
+  }, [interactive, onPointerMove]);
+
   if (!src) return null;
 
+  const maskFor = (r) => ({
+    WebkitMaskImage:    `url('${src}'), ${clearing(r)}`,
+    maskImage:          `url('${src}'), ${clearing(r)}`,
+    WebkitMaskSize:     `${size}, cover`,
+    maskSize:           `${size}, cover`,
+    WebkitMaskPosition: `${position}, center`,
+    maskPosition:       `${position}, center`,
+    WebkitMaskRepeat:   'no-repeat',
+    maskRepeat:         'no-repeat',
+    WebkitMaskComposite: 'source-in',
+    maskComposite:       'intersect',
+  });
+
   return (
-    <span aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+    <span ref={hostRef} aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      {/* Artwork dasar — bentuknya sendiri ∩ lubang teks. */}
       <span
         className="sc-backdrop absolute inset-0"
-        style={{
-          backgroundColor: color,
-          opacity,
-          animation: MOTION[motion],
-          willChange: 'transform',
-          // Bentuk artwork ∩ lubang teks.
-          WebkitMaskImage:    `url('${src}'), ${clearing(reach)}`,
-          maskImage:          `url('${src}'), ${clearing(reach)}`,
-          WebkitMaskSize:     `${size}, cover`,
-          maskSize:           `${size}, cover`,
-          WebkitMaskPosition: `${position}, center`,
-          maskPosition:       `${position}, center`,
-          WebkitMaskRepeat:   'no-repeat',
-          maskRepeat:         'no-repeat',
-          WebkitMaskComposite: 'source-in',
-          maskComposite:       'intersect',
-        }}
+        style={{ backgroundColor: color, opacity, animation: MOTION[motion],
+                 willChange: 'transform', ...maskFor(reach) }}
       />
+
+      {/* Lapisan yang menyala mengikuti kursor. Mask-nya sama persis, jadi
+          yang menyala benar-benar gambarnya — bukan lingkaran cahaya di
+          atasnya — dan lubang teks tetap berlaku, sehingga sorotan tidak
+          pernah masuk ke area baca. */}
+      {interactive && (
+        <span
+          className="absolute inset-0 motion-reduce:hidden"
+          style={{
+            ...maskFor(reach),
+            background: `radial-gradient(${litRadius}px circle at var(--mx, -999px) var(--my, -999px), ${litColor}, transparent 68%)`,
+          }}
+        />
+      )}
     </span>
   );
 };

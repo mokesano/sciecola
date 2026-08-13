@@ -20,10 +20,10 @@ import SectionBackdrop from '../components/shared/SectionBackdrop';
 // melakukan itu.
 // =====================================================================
 
-/* Oranyenya ditahan sampai seluruh isi hero terlewati; peralihan ke putih
-   terjadi di pita bawah yang memang kosong. Sebelumnya gradien sudah memutih
-   di tengah isi, sehingga teks putih di bawah hero tidak terbaca sama sekali. */
-const HERO_GRADIENT = 'linear-gradient(180deg, #C2410C 0%, #DC4C0A 30%, #EA580C 60%, #F97316 84%, #FDBA74 94%, #FFFFFF 100%)';
+/* Hero tidak lagi memakai sapuan gradien. Seperti pada rujukan Gcore,
+   bidangnya terang dan yang hidup adalah gambarnya: kisi data yang bergerak
+   pelan dan menyala tepat di bawah kursor. Warna dibawa oleh judul dan
+   tombol, bukan oleh latar. */
 
 /* Latar bergambar tiap seksi. Warnanya menyesuaikan bidangnya: oranye pekat
    di atas putih, oranye muda di atas pita gelap, putih di atas hero. */
@@ -160,16 +160,16 @@ const PublicSearch = () => {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="ORCID · Scopus · SINTA · ResearcherID · DOI"
-            className="w-full rounded-lg border border-white/40 bg-white py-3.5 pl-11 pr-3 text-base text-slate-900 shadow-lg shadow-black/5 placeholder:text-slate-400 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-300"
+            className="w-full rounded-lg border border-slate-300 bg-white py-3.5 pl-11 pr-3 text-base text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200"
           />
         </div>
         <button type="submit"
-          className="shrink-0 rounded-lg bg-slate-900 px-7 py-3.5 text-[15px] font-semibold text-white shadow-lg shadow-black/15 transition-colors hover:bg-slate-800">
+          className="shrink-0 rounded-lg bg-slate-900 px-7 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-colors hover:bg-slate-800">
           Cek Profil
         </button>
       </form>
 
-      {err && <p className="mt-3 text-[15px] font-medium text-amber-100">{err}</p>}
+      {err && <p className="mt-3 text-[15px] font-medium text-red-600">{err}</p>}
 
       {ambiguousId && (
         <div className="mt-3 rounded-lg border border-slate-200 bg-white p-4 text-left shadow-lg">
@@ -187,7 +187,7 @@ const PublicSearch = () => {
         </div>
       )}
 
-      <p className="mt-4 text-[15px] text-white/80">
+      <p className="mt-4 text-[15px] text-slate-500">
         Tidak perlu login. Login hanya dibutuhkan bila Anda ingin mengelola akun ORCID Anda sendiri.
       </p>
     </div>
@@ -280,19 +280,20 @@ const PublicHomePage = () => {
     <main className="min-h-screen bg-white pt-20">
 
       {/* ══ HERO — satu-satunya tempat gradasi berada ═════════════════ */}
-      <section className="relative overflow-hidden" style={{ background: HERO_GRADIENT }}>
-        <SectionBackdrop src={ART.world} color="#FFFFFF" opacity={0.20} motion="pan" reach={82} />
+      <section className="relative overflow-hidden bg-white">
+        <SectionBackdrop src={ART.grid} color="#F0BE9C" opacity={0.95} motion="drift" reach={56}
+          interactive litColor="rgba(234,88,12,1)" litRadius={300} />
         <div className="relative mx-auto max-w-4xl px-6 pb-28 pt-20 text-center lg:px-8">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-[15px] font-medium text-white ring-1 ring-white/30">
+          <span className="inline-flex items-center gap-2 rounded-full bg-orange-50 px-4 py-1.5 text-[15px] font-semibold text-orange-800 ring-1 ring-orange-200">
             {text(pick('hero.badge'), t, 'hero.badge')}
           </span>
 
-          <h1 className="mt-7 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
+          <h1 className="mt-7 text-4xl font-bold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
             {text(pick('hero.title_1'), t, 'hero.title_1')}{' '}
-            <span className="text-amber-200">{text(pick('hero.title_2'), t, 'hero.title_2')}</span>
+            <span className="text-orange-600">{text(pick('hero.title_2'), t, 'hero.title_2')}</span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/85">
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
             {text(pick('hero.subtitle'), t, 'hero.subtitle')}
           </p>
 
@@ -300,19 +301,19 @@ const PublicHomePage = () => {
 
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link to="/register"
-              className="inline-flex items-center gap-2 rounded-lg bg-white px-7 py-3.5 text-[15px] font-semibold text-orange-700 shadow-lg shadow-black/10 transition-transform hover:-translate-y-0.5">
+              className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-7 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-orange-700">
               {text(pick('hero.cta_secondary'), t, 'hero.cta_secondary')}
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link to="/login"
-              className="inline-flex items-center gap-2 rounded-lg px-7 py-3.5 text-[15px] font-semibold text-white ring-2 ring-white/60 transition-colors hover:bg-white/10">
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-7 py-3.5 text-[15px] font-semibold text-slate-700 transition-colors hover:border-orange-400 hover:text-orange-700">
               {text(pick('hero.cta_primary'), t, 'hero.cta_primary')}
             </Link>
           </div>
 
-          <p className="mt-6 text-[15px] text-white/75">
+          <p className="mt-6 text-[15px] text-slate-600">
             {text(pick('hero.orcid_hint_prefix'), t, 'hero.orcid_hint_prefix')}{' '}
-            <Link to="/tutorial-orcid" className="font-semibold text-white underline underline-offset-4">
+            <Link to="/tutorial-orcid" className="font-semibold text-orange-700 underline underline-offset-4 hover:text-orange-800">
               {text(pick('hero.orcid_hint_link'), t, 'hero.orcid_hint_link')}
             </Link>
           </p>
