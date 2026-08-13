@@ -283,7 +283,7 @@ const PublicHomePage = () => {
       <section className="relative overflow-hidden bg-white">
         <SectionBackdrop src={ART.grid} color="#F0BE9C" opacity={0.95} motion="drift" reach={56}
           interactive litColor="rgba(234,88,12,1)" litRadius={300} />
-        <div className="relative mx-auto max-w-4xl px-6 pb-28 pt-20 text-center lg:px-8">
+        <div className="relative mx-auto max-w-6xl px-6 pb-28 pt-20 text-center lg:px-8">
           <span className="inline-flex items-center gap-2 rounded-full bg-orange-50 px-4 py-1.5 text-[15px] font-semibold text-orange-800 ring-1 ring-orange-200">
             {text(pick('hero.badge'), t, 'hero.badge')}
           </span>
