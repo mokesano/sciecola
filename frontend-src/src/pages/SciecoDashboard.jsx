@@ -34,7 +34,7 @@ const SciecoDashboard = () => {
   const COLORS = DASHBOARD_COLORS;
 
   return (
-    <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+    <main className="pt-[68px] pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
 
       {/* Sub-Navigation */}
       <nav className="bg-white shadow-sm border-b">

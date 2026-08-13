@@ -37,7 +37,7 @@ const MyStatistics = () => {
 
   if (!user?.orcid && !loading) {
     return (
-      <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+      <main className="pt-[68px] pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
         <div className="text-center py-20">
           <h2 className="text-xl font-bold text-gray-900 mb-4">{t('no_orcid.title')}</h2>
           <Link to="/settings" className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold">{t('no_orcid.cta')}</Link>
@@ -48,7 +48,7 @@ const MyStatistics = () => {
 
   if (loading) {
     return (
-      <main className="pt-28 pb-12 px-4 flex items-center justify-center py-32">
+      <main className="pt-[68px] pb-12 px-4 flex items-center justify-center py-32">
         <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mr-3" />
         <span className="text-gray-600">{t('loading')}</span>
       </main>
@@ -57,7 +57,7 @@ const MyStatistics = () => {
 
   if (error) {
     return (
-      <main className="pt-28 pb-12 px-4">
+      <main className="pt-[68px] pb-12 px-4">
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-center">{error}</div>
       </main>
     );
@@ -109,7 +109,7 @@ const MyStatistics = () => {
   ];
 
   return (
-    <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+    <main className="pt-[68px] pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-6">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>

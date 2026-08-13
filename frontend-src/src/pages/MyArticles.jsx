@@ -109,7 +109,7 @@ const MyArticles = () => {
 
   if (!user?.orcid && !loading) {
     return (
-      <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+      <main className="pt-[68px] pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
         <div className="text-center py-20">
           <h2 className="text-xl font-bold text-gray-900 mb-4">{t('no_orcid.title')}</h2>
           <p className="text-gray-600 mb-6">{t('no_orcid.subtitle')}</p>
@@ -129,7 +129,7 @@ const MyArticles = () => {
   ];
 
   return (
-    <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+    <main className="pt-[68px] pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-6">
         <Link to="/" className="hover:text-indigo-600">{t('breadcrumb.home')}</Link>

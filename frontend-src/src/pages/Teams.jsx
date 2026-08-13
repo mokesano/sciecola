@@ -123,7 +123,7 @@ const Teams = () => {
   const hasFilter = activeDept !== 'all' || search.trim() !== '';
 
   return (
-    <main className="min-h-screen bg-white pt-20">
+    <main className="min-h-screen bg-white pt-[60px]">
 
       {/* ══ MASTHEAD — biru ═════════════════════════════════════════ */}
       <AmbientSection tone="light" accent="blue" art={ART.team} artOpacity={0.45}>

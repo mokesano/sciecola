@@ -169,7 +169,7 @@ const ChangePassword = () => {
   // Redirect unauthenticated users right away.
   if (!user) {
     return (
-      <main className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-lg mx-auto text-center">
+      <main className="pt-[68px] pb-16 px-4 sm:px-6 lg:px-8 max-w-lg mx-auto text-center">
         <p className="text-gray-600 mb-4">{t('errors.not_authenticated')}</p>
         <Link to="/login" className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-[15px] font-semibold hover:bg-indigo-700 transition-colors">
           {t('breadcrumb.home')}
@@ -179,7 +179,7 @@ const ChangePassword = () => {
   }
 
   return (
-    <main className="pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full">
+    <main className="pt-[68px] pb-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full">
 
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-6">

@@ -259,7 +259,7 @@ const SdgsCluster = () => {
     const size   = radius * 2;
     const icon   = L.divIcon({
       className:   'leaflet-div-icon-sdg',
-      html:        `<div class="sdg-pw"><div class="sdg-pr" style="background:#3f7e44"></div><div class="sdg-pc" style="background:#3f7e44"></div></div>`,
+      html:        `<div className="sdg-pw"><div className="sdg-pr" style="background:#3f7e44"></div><div className="sdg-pc" style="background:#3f7e44"></div></div>`,
       iconSize:    [size, size],
       iconAnchor:  [size / 2, size / 2],
       tooltipAnchor: [0, -size / 2],
@@ -277,7 +277,7 @@ const SdgsCluster = () => {
   };
 
   return (
-    <main className="pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+    <main className="pt-[68px] pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
 
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-[15px] text-gray-600 mb-12">

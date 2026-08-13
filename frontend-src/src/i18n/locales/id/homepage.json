@@ -96,5 +96,61 @@
       "Tersedia dalam Bahasa Indonesia",
       "Data peneliti dilindungi"
     ]
+  },
+  "sections": {
+    "explore": {
+      "eyebrow": "Penelusuran",
+      "title": "Telusuri peneliti dan artikel dalam satu tempat",
+      "body": "Cari berdasarkan nama, institusi, atau bidang. Setiap profil membawa distribusi SDG, tren sitasi, dan jaringan kolaborasinya sendiri.",
+      "cta": "Jelajahi Peneliti",
+      "cta2": "Lihat Artikel",
+      "points": [
+        "Profil dari ORCID, Scopus, SINTA, dan ResearcherID",
+        "Distribusi SDG per peneliti",
+        "Jaringan ko-penulis lintas institusi"
+      ]
+    },
+    "analytics": {
+      "eyebrow": "Analitik",
+      "title": "Lihat arah riset bergerak, bukan hanya posisinya hari ini",
+      "body": "Tren publikasi dan sitasi per tahun, pergeseran fokus SDG, dan celah riset yang belum tergarap — disajikan sebagai grafik yang bisa ditelusuri.",
+      "cta": "Buka Analitik",
+      "cta2": "Tren & Perbandingan",
+      "points": [
+        "Evolusi distribusi SDG per tahun",
+        "Wizdam Impact Score yang dapat ditelusuri",
+        "Perbandingan antar institusi dan negara"
+      ]
+    },
+    "directory": {
+      "eyebrow": "Direktori",
+      "title": "Jurnal dan institusi, lengkap dengan metriknya",
+      "body": "Periksa peringkat jurnal, skor SINTA, dan metrik Scopus sebelum memutuskan ke mana naskah dikirim. Institusi punya halamannya sendiri.",
+      "cta": "Direktori Jurnal",
+      "cta2": "Daftar Institusi",
+      "points": [
+        "Metrik jurnal dari Scopus dan SINTA",
+        "Profil institusi beserta capaian SDG-nya",
+        "Papan peringkat peneliti dan lembaga"
+      ]
+    },
+    "collab": {
+      "eyebrow": "Kolaborasi",
+      "title": "Temukan mitra riset yang fokusnya sejalan",
+      "body": "Pencocokan berbasis kesamaan fokus SDG dan bidang keahlian, ditambah papan peluang untuk proyek, pendanaan, dan kemitraan industri.",
+      "cta": "Cari Mitra Riset",
+      "cta2": "Peluang Inovasi",
+      "points": [
+        "Pencocokan peneliti berdasar fokus SDG",
+        "Papan peluang riset dan pendanaan",
+        "Ruang proyek bersama lintas lembaga"
+      ]
+    },
+    "api": {
+      "eyebrow": "Untuk Pengembang",
+      "title": "Semua yang ada di sini juga tersedia lewat API",
+      "body": "Klasifikasi SDG, profil peneliti, metrik jurnal, dan skor dampak — satu REST API dengan kunci HMAC.",
+      "cta": "Baca API Reference"
+    }
   }
 }

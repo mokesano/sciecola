@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
   Search, BarChart2, Users, ArrowRight, CheckCircle, ChevronRight,
-  FlaskConical, Brain, Handshake,
+  FlaskConical, Brain, Handshake, Check, Code2,
 } from 'lucide-react';
 import SectionBackdrop from '../components/shared/SectionBackdrop';
 
@@ -20,10 +20,10 @@ import SectionBackdrop from '../components/shared/SectionBackdrop';
 // melakukan itu.
 // =====================================================================
 
-/* Oranyenya ditahan sampai seluruh isi hero terlewati; peralihan ke putih
-   terjadi di pita bawah yang memang kosong. Sebelumnya gradien sudah memutih
-   di tengah isi, sehingga teks putih di bawah hero tidak terbaca sama sekali. */
-const HERO_GRADIENT = 'linear-gradient(180deg, #C2410C 0%, #DC4C0A 30%, #EA580C 60%, #F97316 84%, #FDBA74 94%, #FFFFFF 100%)';
+/* Hero tidak lagi memakai sapuan gradien. Seperti pada rujukan Gcore,
+   bidangnya terang dan yang hidup adalah gambarnya: kisi data yang bergerak
+   pelan dan menyala tepat di bawah kursor. Warna dibawa oleh judul dan
+   tombol, bukan oleh latar. */
 
 /* Latar bergambar tiap seksi. Warnanya menyesuaikan bidangnya: oranye pekat
    di atas putih, oranye muda di atas pita gelap, putih di atas hero. */
@@ -36,6 +36,80 @@ const ART = {
   about: '/assets/img/sections/about.svg',
   world: '/assets/img/world.svg',
 };
+
+/* Ilustrasi di dalam seksi — memakai aset yang sudah tersedia di aplikasi.
+   Dipasang dengan mask memudar di tepi, cara yang sama dipakai hero beranda
+   pengguna untuk menyatukan gambar dengan bidang di belakangnya. */
+const SHOT = {
+  explore:   '/assets/img/capturing-users.svg',
+  analytics: '/assets/img/ai-infrastructure.png',
+  directory: '/assets/img/Hero-Illustration.png',
+  collab:    '/assets/img/Hero-Illustrated.png',
+  footer:    '/assets/img/Footer-Hero.png',
+};
+
+/* Seksi dua kolom: teks di satu sisi, ilustrasi di sisi lain, berganti arah
+   tiap seksi. Tidak semua seksi harus terpusat — halaman jadi berirama dan
+   gambarnya punya ruang sendiri alih-alih ditumpuk di belakang teks. */
+const SplitSection = ({
+  eyebrow, title, body, points = [], image, imageAlt = '',
+  reverse = false, primary, secondary, surface = 'bg-white', backdrop,
+}) => (
+  <section className={`relative overflow-hidden ${surface} py-20`}>
+    {backdrop}
+    <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
+      <div className={`grid items-center gap-12 lg:grid-cols-2 lg:gap-16 ${reverse ? 'lg:[&>*:first-child]:order-2' : ''}`}>
+
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-orange-700">{eyebrow}</p>
+          <h2 className="mt-4 text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl">
+            {title}
+          </h2>
+          <p className="mt-5 text-base leading-relaxed text-slate-600">{body}</p>
+
+          {points.length > 0 && (
+            <ul className="mt-7 space-y-3">
+              {points.map((pt, i) => (
+                <li key={i} className="flex items-start gap-3 text-[15px] leading-snug text-slate-700">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-700">
+                    <Check className="h-3 w-3" strokeWidth={3.5} />
+                  </span>
+                  {pt}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div className="mt-9 flex flex-wrap items-center gap-3">
+            {primary && (
+              <Link to={primary.to}
+                className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-6 py-3 text-[15px] font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-orange-700">
+                {primary.label}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
+            {secondary && (
+              <Link to={secondary.to}
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-6 py-3 text-[15px] font-semibold text-slate-700 transition-colors hover:border-orange-400 hover:text-orange-700">
+                {secondary.label}
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            )}
+          </div>
+        </div>
+
+        <div className="relative">
+          <img src={image} alt={imageAlt} loading="lazy"
+            className="w-full max-w-xl object-contain"
+            style={{
+              WebkitMaskImage: 'radial-gradient(ellipse 76% 76% at 50% 50%, #000 34%, transparent 88%)',
+              maskImage:       'radial-gradient(ellipse 76% 76% at 50% 50%, #000 34%, transparent 88%)',
+            }} />
+        </div>
+      </div>
+    </div>
+  </section>
+);
 
 const SURFACE = {
   white: 'bg-white',
@@ -86,16 +160,16 @@ const PublicSearch = () => {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="ORCID · Scopus · SINTA · ResearcherID · DOI"
-            className="w-full rounded-lg border border-white/40 bg-white py-3.5 pl-11 pr-3 text-base text-slate-900 shadow-lg shadow-black/5 placeholder:text-slate-400 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-300"
+            className="w-full rounded-lg border border-slate-300 bg-white py-3.5 pl-11 pr-3 text-base text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200"
           />
         </div>
         <button type="submit"
-          className="shrink-0 rounded-lg bg-slate-900 px-7 py-3.5 text-[15px] font-semibold text-white shadow-lg shadow-black/15 transition-colors hover:bg-slate-800">
+          className="shrink-0 rounded-lg bg-slate-900 px-7 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-colors hover:bg-slate-800">
           Cek Profil
         </button>
       </form>
 
-      {err && <p className="mt-3 text-[15px] font-medium text-amber-100">{err}</p>}
+      {err && <p className="mt-3 text-[15px] font-medium text-red-600">{err}</p>}
 
       {ambiguousId && (
         <div className="mt-3 rounded-lg border border-slate-200 bg-white p-4 text-left shadow-lg">
@@ -113,7 +187,7 @@ const PublicSearch = () => {
         </div>
       )}
 
-      <p className="mt-4 text-[15px] text-white/80">
+      <p className="mt-4 text-[15px] text-slate-500">
         Tidak perlu login. Login hanya dibutuhkan bila Anda ingin mengelola akun ORCID Anda sendiri.
       </p>
     </div>
@@ -203,22 +277,23 @@ const PublicHomePage = () => {
     ? pick('cta_section.trust_signals') : t('cta_section.trust_signals', { returnObjects: true });
 
   return (
-    <main className="min-h-screen bg-white pt-20">
+    <main className="min-h-screen bg-white pt-[60px]">
 
       {/* ══ HERO — satu-satunya tempat gradasi berada ═════════════════ */}
-      <section className="relative overflow-hidden" style={{ background: HERO_GRADIENT }}>
-        <SectionBackdrop src={ART.world} color="#FFFFFF" opacity={0.20} motion="pan" reach={82} />
+      <section className="relative overflow-hidden bg-white">
+        <SectionBackdrop src={ART.grid} color="#F0BE9C" opacity={0.95} motion="drift" reach={56}
+          interactive litColor="rgba(234,88,12,1)" litRadius={300} />
         <div className="relative mx-auto max-w-4xl px-6 pb-28 pt-20 text-center lg:px-8">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-[15px] font-medium text-white ring-1 ring-white/30">
+          <span className="inline-flex items-center gap-2 rounded-full bg-orange-50 px-4 py-1.5 text-[15px] font-semibold text-orange-800 ring-1 ring-orange-200">
             {text(pick('hero.badge'), t, 'hero.badge')}
           </span>
 
-          <h1 className="mt-7 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
+          <h1 className="mt-7 text-4xl font-bold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
             {text(pick('hero.title_1'), t, 'hero.title_1')}{' '}
-            <span className="text-amber-200">{text(pick('hero.title_2'), t, 'hero.title_2')}</span>
+            <span className="text-orange-600">{text(pick('hero.title_2'), t, 'hero.title_2')}</span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/85">
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
             {text(pick('hero.subtitle'), t, 'hero.subtitle')}
           </p>
 
@@ -226,19 +301,19 @@ const PublicHomePage = () => {
 
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link to="/register"
-              className="inline-flex items-center gap-2 rounded-lg bg-white px-7 py-3.5 text-[15px] font-semibold text-orange-700 shadow-lg shadow-black/10 transition-transform hover:-translate-y-0.5">
+              className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-7 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-orange-700">
               {text(pick('hero.cta_secondary'), t, 'hero.cta_secondary')}
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link to="/login"
-              className="inline-flex items-center gap-2 rounded-lg px-7 py-3.5 text-[15px] font-semibold text-white ring-2 ring-white/60 transition-colors hover:bg-white/10">
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-7 py-3.5 text-[15px] font-semibold text-slate-700 transition-colors hover:border-orange-400 hover:text-orange-700">
               {text(pick('hero.cta_primary'), t, 'hero.cta_primary')}
             </Link>
           </div>
 
-          <p className="mt-6 text-[15px] text-white/75">
+          <p className="mt-6 text-[15px] text-slate-600">
             {text(pick('hero.orcid_hint_prefix'), t, 'hero.orcid_hint_prefix')}{' '}
-            <Link to="/tutorial-orcid" className="font-semibold text-white underline underline-offset-4">
+            <Link to="/tutorial-orcid" className="font-semibold text-orange-700 underline underline-offset-4 hover:text-orange-800">
               {text(pick('hero.orcid_hint_link'), t, 'hero.orcid_hint_link')}
             </Link>
           </p>
@@ -303,7 +378,7 @@ const PublicHomePage = () => {
                       className="h-14 w-14 object-contain"
                       onError={(e) => {
                         e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = `<span class="text-white font-bold text-xl">${sdg.sdg}</span>`;
+                        e.target.parentElement.innerHTML = `<span className="text-white font-bold text-xl">${sdg.sdg}</span>`;
                       }} />
                   </div>
                   <span className="mt-2.5 text-center text-xs font-medium leading-tight text-slate-500 transition-colors group-hover:text-slate-900">
@@ -374,7 +449,8 @@ const PublicHomePage = () => {
               {insights.map((ins) => {
                 const color = sdgColorById[ins.sdg] || '#FB923C';
                 return (
-                  <article key={ins.id} className="flex flex-col rounded-xl border border-white/10 bg-[#292524] p-6">
+                  <Link key={ins.id} to="/insights"
+                    className="group flex flex-col rounded-xl border border-white/10 bg-[#292524] p-6 transition-all duration-200 hover:-translate-y-1 hover:border-orange-400/50 hover:bg-[#332B27] hover:shadow-xl hover:shadow-black/40">
                     <div className="flex items-center gap-2.5">
                       <span aria-hidden className="h-3 w-3 rounded-[3px]" style={{ backgroundColor: color }} />
                       <span className="font-mono text-xs tabular-nums text-slate-400">
@@ -386,15 +462,99 @@ const PublicHomePage = () => {
                         </span>
                       )}
                     </div>
-                    <h3 className="mt-5 text-[17px] font-semibold leading-snug text-white">{ins.title}</h3>
+                    <h3 className="mt-5 text-[17px] font-semibold leading-snug text-white transition-colors group-hover:text-orange-200">
+                      {ins.title}
+                    </h3>
                     <p className="mt-2 flex-1 text-[15px] leading-relaxed text-slate-300">{ins.text}</p>
-                  </article>
+
+                    {/* Ajakan baca hanya muncul saat kartunya disentuh — tidak
+                        mengambil ruang saat diam, tapi memberi tahu bahwa
+                        kartunya memang bisa diklik. */}
+                    <span className="mt-5 inline-flex items-center gap-1.5 text-[15px] font-semibold text-orange-400 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                      {text(pick('insights_section.cta_label'), t, 'insights_section.cta_label')}
+                      <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                    </span>
+                  </Link>
                 );
               })}
             </div>
           </div>
         </section>
       )}
+
+      {/* ══ PENELUSURAN — teks kiri, ilustrasi kanan ════════════════ */}
+      <SplitSection
+        eyebrow={t('sections.explore.eyebrow')}
+        title={t('sections.explore.title')}
+        body={t('sections.explore.body')}
+        points={t('sections.explore.points', { returnObjects: true })}
+        image={SHOT.explore}
+        surface={SURFACE.white}
+        backdrop={<SectionBackdrop src={ART.net} color="#EA580C" opacity={0.16} motion="drift" reach={86} />}
+        primary={{ to: '/researchers', label: t('sections.explore.cta') }}
+        secondary={{ to: '/articles',  label: t('sections.explore.cta2') }} />
+
+      {/* ══ ANALITIK — ilustrasi kiri, teks kanan ═══════════════════ */}
+      <SplitSection reverse
+        eyebrow={t('sections.analytics.eyebrow')}
+        title={t('sections.analytics.title')}
+        body={t('sections.analytics.body')}
+        points={t('sections.analytics.points', { returnObjects: true })}
+        image={SHOT.analytics}
+        surface={`${SURFACE.tint} border-y border-slate-200`}
+        backdrop={<SectionBackdrop src={ART.waves} color="#C2410C" opacity={0.16} motion="pan" reach={86} />}
+        primary={{ to: '/analytics',       label: t('sections.analytics.cta') }}
+        secondary={{ to: '/trends-analysis', label: t('sections.analytics.cta2') }} />
+
+      {/* ══ DIREKTORI ═══════════════════════════════════════════════ */}
+      <SplitSection
+        eyebrow={t('sections.directory.eyebrow')}
+        title={t('sections.directory.title')}
+        body={t('sections.directory.body')}
+        points={t('sections.directory.points', { returnObjects: true })}
+        image={SHOT.directory}
+        surface={SURFACE.white}
+        backdrop={<SectionBackdrop src={ART.globe} color="#EA580C" opacity={0.15} motion="breathe" reach={86} />}
+        primary={{ to: '/journals',     label: t('sections.directory.cta') }}
+        secondary={{ to: '/institutions', label: t('sections.directory.cta2') }} />
+
+      {/* ══ KOLABORASI ══════════════════════════════════════════════ */}
+      <SplitSection reverse
+        eyebrow={t('sections.collab.eyebrow')}
+        title={t('sections.collab.title')}
+        body={t('sections.collab.body')}
+        points={t('sections.collab.points', { returnObjects: true })}
+        image={SHOT.collab}
+        surface={`${SURFACE.tint} border-y border-slate-200`}
+        backdrop={<SectionBackdrop src={ART.flow} color="#C2410C" opacity={0.16} motion="drift" reach={86} />}
+        primary={{ to: '/research-matching',      label: t('sections.collab.cta') }}
+        secondary={{ to: '/innovation-marketplace', label: t('sections.collab.cta2') }} />
+
+      {/* ══ API — pita ringkas, bukan seksi penuh ═══════════════════ */}
+      <section className={`relative overflow-hidden ${SURFACE.white} py-14`}>
+        <SectionBackdrop src={ART.grid} color="#EA580C" opacity={0.14} motion="pan" reach={84} />
+        <div className="relative mx-auto flex max-w-6xl flex-col items-start gap-6 px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+          <div className="flex items-start gap-5">
+            <span className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-orange-600 ring-1 ring-orange-100 sm:flex">
+              <Code2 className="h-6 w-6" />
+            </span>
+            <div className="max-w-2xl">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-orange-700">
+                {t('sections.api.eyebrow')}
+              </p>
+              <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
+                {t('sections.api.title')}
+              </h2>
+              <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{t('sections.api.body')}</p>
+            </div>
+          </div>
+          <Link to="/docs/api-reference"
+            className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-slate-300 px-6 py-3 text-[15px] font-semibold text-slate-700 transition-colors hover:border-orange-400 hover:text-orange-700">
+            {t('sections.api.cta')}
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </section>
 
       {/* ══ MITRA — abu muda ═════════════════════════════════════════ */}
       {partners.length > 0 && (
@@ -460,6 +620,21 @@ const PublicHomePage = () => {
           </div>
         </div>
       </section>
+
+      {/*
+        Pita gambar yang berdiri di antara seksi terakhir dan footer. Ia bukan
+        bagian dari seksi mana pun — tidak membawa teks, tidak membawa aksi —
+        hanya jeda visual sebelum footer, memakai aset yang memang disiapkan
+        untuk posisi ini.
+      */}
+      <div aria-hidden className="relative h-48 w-full overflow-hidden bg-white sm:h-64 lg:h-72">
+        <img src={SHOT.footer} alt="" loading="lazy"
+          className="h-full w-full object-cover object-center"
+          style={{
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, #000 30%, #000 100%)',
+            maskImage:       'linear-gradient(to bottom, transparent 0%, #000 30%, #000 100%)',
+          }} />
+      </div>
 
     </main>
   );

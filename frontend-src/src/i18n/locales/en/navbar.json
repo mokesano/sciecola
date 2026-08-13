@@ -1,21 +1,80 @@
 {
   "brand_tagline": "Impact Classification & Analytics",
   "nav": {
-    "home":        "Home",
+    "home": "Home",
     "researchers": "Researchers",
-    "articles":    "Articles",
-    "sdgs":        "SDGs",
-    "analytics":   "Analytics",
-    "teams":       "Teams",
-    "about":       "About"
+    "articles": "Articles",
+    "sdgs": "SDGs",
+    "analytics": "Analytics",
+    "teams": "Teams",
+    "about": "About"
   },
   "lang": {
-    "id": { "flag": "🇮🇩", "code": "ID", "country": "Indonesia" },
-    "en": { "flag": "🇬🇧", "code": "EN", "country": "English" }
+    "id": {
+      "flag": "🇮🇩",
+      "code": "ID",
+      "country": "Indonesia"
+    },
+    "en": {
+      "flag": "🇬🇧",
+      "code": "EN",
+      "country": "English"
+    }
   },
   "auth": {
-    "login":    "Login",
+    "login": "Login",
     "register": "Register",
-    "profile":  "My Profile"
+    "profile": "My Profile"
+  },
+  "menu": {
+    "home": "Home",
+    "groups": {
+      "research": {
+        "label": "Research",
+        "items": {
+          "researchers": "Researchers",
+          "articles": "Articles",
+          "journals": "Journals",
+          "institutions": "Institutions"
+        }
+      },
+      "sdg": {
+        "label": "SDGs",
+        "items": {
+          "explorer": "SDG Explorer",
+          "impact": "Article Impact",
+          "distribution": "Researcher Distribution"
+        }
+      },
+      "analytics": {
+        "label": "Analytics",
+        "items": {
+          "dashboard": "Analytics Dashboard",
+          "trends": "Trends & Comparison",
+          "insights": "AI Insights",
+          "leaderboard": "Leaderboard"
+        }
+      },
+      "collab": {
+        "label": "Collaboration",
+        "items": {
+          "matching": "Research Matching",
+          "projects": "Shared Projects",
+          "marketplace": "Innovation Opportunities",
+          "sponsor": "Become a Sponsor"
+        }
+      },
+      "about": {
+        "label": "About",
+        "items": {
+          "about": "About Us",
+          "teams": "Our Team",
+          "partners": "Partners",
+          "docs": "Documentation",
+          "api": "API Reference",
+          "contact": "Contact"
+        }
+      }
+    }
   }
 }

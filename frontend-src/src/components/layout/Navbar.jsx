@@ -1,21 +1,64 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { NavLink, Link, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { ChevronDown, Menu, X, Bell } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 // Bahasa yang didukung — data di-drive dari locale navbar.json
 const SUPPORTED_LANGS = ['id', 'en'];
 
+/*
+ * Kelompok menu. Rutenya di sini, labelnya di locale — jadi tidak ada teks
+ * yang ter-hardcode dan satu kelompok bisa ditambah tanpa menyentuh markup.
+ * Pengelompokannya mengikuti bagaimana aplikasinya benar-benar terbagi, bukan
+ * urutan rute di router.
+ */
+const MENU = [
+  { key: 'research', items: [
+      { key: 'researchers',  to: '/researchers' },
+      { key: 'articles',     to: '/articles' },
+      { key: 'journals',     to: '/journals' },
+      { key: 'institutions', to: '/institutions' },
+  ]},
+  { key: 'sdg', items: [
+      { key: 'explorer',     to: '/sdgs' },
+      { key: 'impact',       to: '/article-impact' },
+      { key: 'distribution', to: '/researcher-distribution' },
+  ]},
+  { key: 'analytics', items: [
+      { key: 'dashboard',   to: '/analytics' },
+      { key: 'trends',      to: '/trends-analysis' },
+      { key: 'insights',    to: '/insights' },
+      { key: 'leaderboard', to: '/leaderboard' },
+  ]},
+  { key: 'collab', items: [
+      { key: 'matching',    to: '/research-matching' },
+      { key: 'projects',    to: '/projects' },
+      { key: 'marketplace', to: '/innovation-marketplace' },
+      { key: 'sponsor',     to: '/become-sponsor' },
+  ]},
+  { key: 'about', items: [
+      { key: 'about',    to: '/about' },
+      { key: 'teams',    to: '/teams' },
+      { key: 'partners', to: '/partners' },
+      { key: 'docs',     to: '/docs/documentation' },
+      { key: 'api',      to: '/docs/api-reference' },
+      { key: 'contact',  to: '/contact' },
+  ]},
+];
+
 const Navbar = () => {
-  const location  = useLocation();
+  const location = useLocation();
   const { t, i18n } = useTranslation('navbar');
   const { user, logout } = useAuth();
 
-  const [langOpen, setLangOpen]   = useState(false);
-  const [menuOpen, setMenuOpen]   = useState(false);
+  const [langOpen, setLangOpen]       = useState(false);
+  const [menuOpen, setMenuOpen]       = useState(false);
+  const [openGroup, setOpenGroup]     = useState(null);
+  const [mobileGroup, setMobileGroup] = useState(null);
   const langRef = useRef(null);
+  const navRef  = useRef(null);
 
-  // Sync state lokal dengan nilai i18n saat ini
   const currentLang = SUPPORTED_LANGS.includes(i18n.language) ? i18n.language : 'id';
 
   const switchLang = useCallback((lang) => {
@@ -24,119 +67,138 @@ const Navbar = () => {
     setLangOpen(false);
   }, [i18n]);
 
-  // Tutup dropdown bahasa saat klik di luar
+  /* Satu pengait untuk menutup apa pun yang sedang terbuka saat klik jatuh di
+     luar wilayahnya, plus Escape. Dua listener terpisah akan saling menimpa. */
   useEffect(() => {
-    const handler = (e) => {
-      if (langRef.current && !langRef.current.contains(e.target)) {
-        setLangOpen(false);
-      }
+    const onDown = (e) => {
+      if (langRef.current && !langRef.current.contains(e.target)) setLangOpen(false);
+      if (navRef.current  && !navRef.current.contains(e.target))  setOpenGroup(null);
     };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    const onEsc = (e) => {
+      if (e.key !== 'Escape') return;
+      setLangOpen(false); setOpenGroup(null); setMenuOpen(false);
+    };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onEsc);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onEsc);
+    };
   }, []);
 
-  // Tutup menu mobile saat navigasi
-  useEffect(() => { setMenuOpen(false); }, [location]);
+  // Tutup semua yang terbuka saat navigasi
+  useEffect(() => {
+    setMenuOpen(false); setOpenGroup(null); setMobileGroup(null);
+  }, [location]);
 
+  /* Sebuah kelompok menyala bila salah satu rutenya sedang dibuka — termasuk
+     rute turunannya, supaya /orcid/xxx dan /doi/xxx tetap menyalakan Riset. */
+  const groupIsActive = (group) =>
+    group.items.some(it => location.pathname === it.to || location.pathname.startsWith(`${it.to}/`))
+    || (group.key === 'research' &&
+        (location.pathname.startsWith('/orcid/') || location.pathname.startsWith('/doi/')));
 
-  // Helpers active state
-  const isResearchersActive = location.pathname === '/researchers' || location.pathname.startsWith('/orcid/');
-  const isArticlesActive    = location.pathname === '/articles'    || location.pathname.startsWith('/doi/');
-
-  const activeClass   = 'text-indigo-600 font-bold border-b-[4px] border-indigo-600 pb-7 transition-all';
-  const inactiveClass = 'text-gray-500 group-hover:text-indigo-600 font-medium border-b-[4px] border-transparent group-hover:border-indigo-600 pb-7 transition-all';
-
-  // Data bahasa dari locale — fallback inline jika namespace belum muat
   const langData = {
     id: t('lang.id', { returnObjects: true }),
     en: t('lang.en', { returnObjects: true }),
   };
-  const activeLang = langData[currentLang] || { flag: '🌐', code: currentLang.toUpperCase(), country: currentLang };
+  const activeLang = langData[currentLang]
+    || { flag: '🌐', code: currentLang.toUpperCase(), country: currentLang };
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+    <nav className="fixed top-0 z-50 w-full border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur-md">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Bilah dipendekkan dari 80px ke 60px. Kedalaman navigasi sekarang
+            dipikul menu turunannya, jadi bilahnya sendiri tidak perlu
+            setinggi itu — dan isi halaman naik 20px. */}
+        <div className="flex h-[60px] items-center justify-between">
 
-          {/* ── Logo ── */}
-          <NavLink to="/" className="flex items-center gap-3 cursor-pointer group">
-            <div className="flex flex-col">
-              <div className="text-3xl font-black text-indigo-600 group-hover:text-indigo-700">
-                SCIECOLA
-              </div>
-            </div>
+          <NavLink to="/" className="group flex shrink-0 items-center">
+            <span className="text-2xl font-black text-orange-600 transition-colors group-hover:text-orange-700">
+              SCIECOLA
+            </span>
           </NavLink>
 
-          {/* ── Navigasi Desktop ── */}
-          <div className="hidden lg:flex space-x-1">
-            {[
-              { to: '/',             label: t('nav.home'),        exact: true },
-              { to: '/researchers',  label: t('nav.researchers'), active: isResearchersActive },
-              { to: '/articles',     label: t('nav.articles'),    active: isArticlesActive },
-              { to: '/sdgs',         label: t('nav.sdgs') },
-              { to: '/analytics',    label: t('nav.analytics') },
-              { to: '/teams',        label: t('nav.teams') },
-              { to: '/about',        label: t('nav.about') },
-            ].map(({ to, label, exact, active }) => (
-              <NavLink key={to} to={to} end={exact} className="px-3 py-2 group">
-                {({ isActive }) => (
-                  <span className={(active !== undefined ? active : isActive) ? activeClass : inactiveClass}>
-                    {label}
-                  </span>
-                )}
-              </NavLink>
-            ))}
+          {/* ── Navigasi desktop ── */}
+          <div ref={navRef} className="hidden items-center gap-1 lg:flex">
+            <NavLink to="/" end
+              className={({ isActive }) =>
+                `rounded-lg px-3 py-2 text-[15px] font-medium transition-colors ${
+                  isActive ? 'text-orange-700' : 'text-slate-600 hover:bg-orange-50 hover:text-orange-700'
+                }`
+              }>
+              {t('menu.home')}
+            </NavLink>
+
+            {MENU.map((group) => {
+              const open   = openGroup === group.key;
+              const active = groupIsActive(group);
+              return (
+                <div key={group.key} className="relative">
+                  <button type="button"
+                    onClick={() => setOpenGroup(open ? null : group.key)}
+                    aria-expanded={open}
+                    aria-haspopup="true"
+                    className={`flex items-center gap-1 rounded-lg px-3 py-2 text-[15px] font-medium transition-colors ${
+                      active || open
+                        ? 'bg-orange-50 text-orange-700'
+                        : 'text-slate-600 hover:bg-orange-50 hover:text-orange-700'
+                    }`}>
+                    {t(`menu.groups.${group.key}.label`)}
+                    <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {open && (
+                    <div className="absolute left-0 top-full z-50 mt-1.5 w-60 overflow-hidden rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl">
+                      {group.items.map((item) => (
+                        <NavLink key={item.to} to={item.to}
+                          className={({ isActive }) =>
+                            `block px-4 py-2.5 text-[15px] transition-colors ${
+                              isActive
+                                ? 'bg-orange-50 font-semibold text-orange-700'
+                                : 'text-slate-600 hover:bg-orange-50 hover:text-orange-700'
+                            }`
+                          }>
+                          {t(`menu.groups.${group.key}.items.${item.key}`)}
+                        </NavLink>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
-          {/* ── Kanan: Language + Auth ── */}
-          <div className="flex items-center gap-3">
+          {/* ── Kanan: bahasa + auth ── */}
+          <div className="flex items-center gap-2">
 
-            {/* ── Flag Language Picker ── */}
             <div ref={langRef} className="relative hidden sm:block">
               <button
                 onClick={() => setLangOpen(prev => !prev)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg font-medium transition-all text-[15px] text-gray-600 hover:text-indigo-600 hover:bg-indigo-50"
+                className="flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-[15px] font-medium text-slate-600 transition-colors hover:bg-orange-50 hover:text-orange-700"
                 aria-label="Select language"
                 aria-expanded={langOpen}
               >
                 <span className="text-base leading-none">{activeLang.flag}</span>
                 <span className="font-bold tracking-wide">{activeLang.code}</span>
-                <span className="hidden md:inline text-gray-400">—</span>
-                <span className="hidden md:inline">{activeLang.country}</span>
-                <svg
-                  className={`w-3 h-3 text-gray-400 transition-transform duration-200 ${langOpen ? 'rotate-180' : ''}`}
-                  fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
-                </svg>
+                <ChevronDown className={`h-3 w-3 text-slate-400 transition-transform duration-200 ${langOpen ? 'rotate-180' : ''}`} />
               </button>
 
-              {/* Dropdown */}
               {langOpen && (
-                <div className="absolute right-0 top-full mt-1 w-44 bg-white border border-gray-100 rounded-xl shadow-lg overflow-hidden z-50">
+                <div className="absolute right-0 top-full z-50 mt-1.5 w-44 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl">
                   {SUPPORTED_LANGS.map((lang) => {
                     const ld = langData[lang] || { flag: '🌐', code: lang.toUpperCase(), country: lang };
                     const isActive = currentLang === lang;
                     return (
-                      <button
-                        key={lang}
-                        onClick={() => switchLang(lang)}
-                        className={`w-full flex items-center gap-3 px-4 py-3 text-[15px] text-left font-medium transition-colors ${
-                          isActive
-                            ? 'text-indigo-600 bg-indigo-50'
-                            : 'text-gray-600 hover:bg-gray-50 hover:text-indigo-600'
-                        }`}
-                      >
+                      <button key={lang} onClick={() => switchLang(lang)}
+                        className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-[15px] font-medium transition-colors ${
+                          isActive ? 'bg-orange-50 text-orange-700' : 'text-slate-600 hover:bg-orange-50 hover:text-orange-700'
+                        }`}>
                         <span className="text-lg leading-none">{ld.flag}</span>
                         <span>
                           <span className="font-bold">{ld.code}</span>
-                          <span className="text-gray-400 font-normal"> — {ld.country}</span>
+                          <span className="font-normal text-slate-400"> — {ld.country}</span>
                         </span>
-                        {isActive && (
-                          <svg className="ml-auto w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                          </svg>
-                        )}
                       </button>
                     );
                   })}
@@ -144,91 +206,93 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* ── Auth ── */}
             {user ? (
-              <div className="flex items-center gap-3">
-                <Link to="/notifications" className="relative p-2 text-gray-500 hover:text-indigo-600 transition-colors">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                  </svg>
+              <div className="flex items-center gap-2">
+                <Link to="/notifications"
+                  className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-orange-50 hover:text-orange-700">
+                  <Bell className="h-5 w-5" />
                 </Link>
-                <Link to="/my-profile" className="flex items-center gap-2 pl-3 border-l border-gray-200">
+                <Link to="/my-profile" className="flex items-center gap-2 border-l border-slate-200 pl-2">
                   <img
-                    src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'U')}&background=4f46e5&color=fff`}
+                    src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'U')}&background=ea580c&color=fff`}
                     alt={user.name || t('auth.profile')}
-                    className="w-8 h-8 rounded-full object-cover border border-gray-200"
+                    className="h-8 w-8 rounded-full border border-slate-200 object-cover"
                     onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
                   />
-                  <span className="hidden md:block text-[15px] font-medium text-gray-700 hover:text-indigo-600 max-w-[120px] truncate">
+                  <span className="hidden max-w-[120px] truncate text-[15px] font-medium text-slate-700 md:block">
                     {user.name || t('auth.profile')}
                   </span>
                 </Link>
+                <button onClick={logout}
+                  className="hidden rounded-lg px-3 py-2 text-[15px] font-medium text-slate-500 transition-colors hover:bg-orange-50 hover:text-orange-700 md:block">
+                  {t('auth.logout', 'Keluar')}
+                </button>
               </div>
             ) : (
-              <Link
-                to="/login"
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl font-medium shadow-md shadow-indigo-200 transition-all text-[15px]"
-              >
+              <Link to="/login"
+                className="rounded-lg bg-orange-600 px-5 py-2 text-[15px] font-semibold text-white shadow-sm transition-colors hover:bg-orange-700">
                 {t('auth.login')}
               </Link>
             )}
 
-            {/* ── Mobile hamburger ── */}
             <button
-              className="lg:hidden p-2 text-gray-500 hover:text-indigo-600"
+              className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-orange-50 hover:text-orange-700 lg:hidden"
               onClick={() => setMenuOpen(prev => !prev)}
               aria-label="Toggle menu"
+              aria-expanded={menuOpen}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {menuOpen
-                  ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                  : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                }
-              </svg>
+              {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
 
-        {/* ── Mobile Menu ── */}
+        {/* ── Menu mobile: kelompok yang sama, dilipat ── */}
         {menuOpen && (
-          <div className="lg:hidden py-3 border-t border-gray-100">
-            {[
-              { to: '/',            label: t('nav.home') },
-              { to: '/researchers', label: t('nav.researchers') },
-              { to: '/articles',    label: t('nav.articles') },
-              { to: '/sdgs',        label: t('nav.sdgs') },
-              { to: '/analytics',   label: t('nav.analytics') },
-              { to: '/teams',       label: t('nav.teams') },
-              { to: '/about',       label: t('nav.about') },
-            ].map(({ to, label }) => (
-              <NavLink
-                key={to}
-                to={to}
-                end={to === '/'}
-                className={({ isActive }) =>
-                  `block px-4 py-2.5 text-[15px] font-medium rounded-lg mx-1 transition-colors ${
-                    isActive ? 'text-indigo-600 bg-indigo-50' : 'text-gray-600 hover:text-indigo-600 hover:bg-gray-50'
-                  }`
-                }
-              >
-                {label}
-              </NavLink>
-            ))}
+          <div className="max-h-[70vh] overflow-y-auto border-t border-slate-200 py-3 lg:hidden">
+            <NavLink to="/" end
+              className="block rounded-lg px-4 py-2.5 text-[15px] font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-700">
+              {t('menu.home')}
+            </NavLink>
 
-            {/* Language switch in mobile menu */}
-            <div className="flex gap-2 px-4 pt-3 mt-2 border-t border-gray-100">
+            {MENU.map((group) => {
+              const open = mobileGroup === group.key;
+              return (
+                <div key={group.key}>
+                  <button type="button"
+                    onClick={() => setMobileGroup(open ? null : group.key)}
+                    aria-expanded={open}
+                    className="flex w-full items-center justify-between rounded-lg px-4 py-2.5 text-[15px] font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-700">
+                    {t(`menu.groups.${group.key}.label`)}
+                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+                  </button>
+                  {open && (
+                    <div className="mb-1 ml-3 border-l border-slate-200 pl-3">
+                      {group.items.map((item) => (
+                        <NavLink key={item.to} to={item.to}
+                          className={({ isActive }) =>
+                            `block rounded-lg px-4 py-2 text-[15px] transition-colors ${
+                              isActive ? 'font-semibold text-orange-700' : 'text-slate-600 hover:text-orange-700'
+                            }`
+                          }>
+                          {t(`menu.groups.${group.key}.items.${item.key}`)}
+                        </NavLink>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            <div className="mt-2 flex gap-2 border-t border-slate-200 px-4 pt-3">
               {SUPPORTED_LANGS.map((lang) => {
-                const ld = langData[lang] || { flag: '🌐', code: lang.toUpperCase(), country: lang };
+                const ld = langData[lang] || { flag: '🌐', code: lang.toUpperCase() };
                 return (
-                  <button
-                    key={lang}
-                    onClick={() => switchLang(lang)}
-                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[15px] font-medium transition-all ${
+                  <button key={lang} onClick={() => switchLang(lang)}
+                    className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-[15px] font-medium transition-colors ${
                       currentLang === lang
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
+                        ? 'bg-orange-600 text-white'
+                        : 'bg-slate-100 text-slate-600 hover:bg-orange-50 hover:text-orange-700'
+                    }`}>
                     <span>{ld.flag}</span>
                     <span>{ld.code}</span>
                   </button>
