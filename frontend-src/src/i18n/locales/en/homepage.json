@@ -96,5 +96,61 @@
       "Available in Bahasa Indonesia",
       "Researcher data protected"
     ]
+  },
+  "sections": {
+    "explore": {
+      "eyebrow": "Discovery",
+      "title": "Search researchers and articles in one place",
+      "body": "Search by name, institution or field. Every profile carries its own SDG distribution, citation trend and collaboration network.",
+      "cta": "Explore Researchers",
+      "cta2": "Browse Articles",
+      "points": [
+        "Profiles from ORCID, Scopus, SINTA and ResearcherID",
+        "SDG distribution per researcher",
+        "Co-author networks across institutions"
+      ]
+    },
+    "analytics": {
+      "eyebrow": "Analytics",
+      "title": "See where research is heading, not just where it stands",
+      "body": "Publication and citation trends by year, shifts in SDG focus, and the gaps nobody has filled — drawn as charts you can trace back to their source.",
+      "cta": "Open Analytics",
+      "cta2": "Trends & Comparison",
+      "points": [
+        "SDG distribution evolving year by year",
+        "A Wizdam Impact Score you can trace",
+        "Comparison across institutions and countries"
+      ]
+    },
+    "directory": {
+      "eyebrow": "Directories",
+      "title": "Journals and institutions, with their metrics attached",
+      "body": "Check journal ranking, SINTA score and Scopus metrics before deciding where a manuscript goes. Institutions get their own page.",
+      "cta": "Journal Directory",
+      "cta2": "Institution List",
+      "points": [
+        "Journal metrics from Scopus and SINTA",
+        "Institution profiles with their SDG record",
+        "Leaderboards for researchers and organisations"
+      ]
+    },
+    "collab": {
+      "eyebrow": "Collaboration",
+      "title": "Find research partners whose focus already aligns",
+      "body": "Matching based on shared SDG focus and expertise, alongside an opportunity board for projects, funding and industry partnerships.",
+      "cta": "Find Research Partners",
+      "cta2": "Innovation Opportunities",
+      "points": [
+        "Researcher matching by SDG focus",
+        "A board of research and funding opportunities",
+        "Shared project spaces across organisations"
+      ]
+    },
+    "api": {
+      "eyebrow": "For Developers",
+      "title": "Everything here is available through the API as well",
+      "body": "SDG classification, researcher profiles, journal metrics and impact scores — one REST API with HMAC keys.",
+      "cta": "Read the API Reference"
+    }
   }
 }
