@@ -109,6 +109,16 @@ const bleedFade = (reverse, over = null) => {
 };
 
 /*
+ * Pembungkus isi seluruh seksi.
+ *
+ * Sebelumnya tiap seksi dijepit max-w-6xl — 1152px, berapa pun lebar layarnya.
+ * Di layar 1920px itu menyisakan 384px kosong di kiri dan kanan, dan seluruh
+ * isi halaman mengkerut di tengah. Yang membatasi sekarang hanya padding tepi;
+ * lebar isi mengikuti lebar layar.
+ */
+const SHELL = 'mx-auto w-full px-6 sm:px-10 lg:px-14 xl:px-20 2xl:px-28';
+
+/*
  * Halo di sekeliling huruf: satu-satunya peredaman yang dipakai saat gambar
  * seksi melintas ke wilayah teks. Ditulis sebagai kelas Tailwind bernilai
  * sembarang, bukan aturan CSS tersendiri, dan warnanya mengikuti bidang
@@ -155,7 +165,7 @@ const SplitSection = ({
       </div>
     )}
 
-    <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
+    <div className={`relative ${SHELL}`}>
       {/* Saat gambarnya melintang, kolom kedua tidak lagi menampung apa pun
           di layar lebar, jadi grid ditinggalkan dan teks cukup dibatasi
           lebarnya lalu didorong ke sisinya sendiri. */}
@@ -282,7 +292,7 @@ const PublicSearch = () => {
   };
 
   return (
-    <div className="mt-9 max-w-2xl">
+    <div className="mt-10 max-w-3xl">
       <form onSubmit={submit} className="flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -329,7 +339,7 @@ const text = (override, t, key, options) => override ?? t(key, options);
 /* Kepala seksi: judul tebal terpusat dengan sub-judul senyap di bawahnya —
    bentuk yang sama dipakai ketiga rujukan. */
 const SectionHead = ({ title, subtitle, onDark = false }) => (
-  <div className="mx-auto mb-12 max-w-2xl text-center">
+  <div className="mx-auto mb-12 max-w-4xl text-center">
     <h2 className={`text-3xl font-bold tracking-tight sm:text-4xl ${onDark ? 'text-white' : 'text-slate-900'}`}>
       {title}
     </h2>
@@ -416,22 +426,22 @@ const PublicHomePage = () => {
             kolom teks berakhir: tidak ada tindihan yang perlu diredam, dan
             gambarnya leluasa memakai sisa bidang di kanan. */}
         <div aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 hidden w-[52%] lg:block">
+          className="pointer-events-none absolute inset-y-0 right-0 hidden w-[44%] xl:w-[46%] lg:block">
           <HeroWorld />
         </div>
 
-        <div className="relative mx-auto max-w-6xl px-6 pb-24 pt-16 lg:px-8">
-          <div className="max-w-2xl text-left lg:w-[46%] lg:max-w-none">
+        <div className={`relative ${SHELL} pb-28 pt-20`}>
+          <div className="text-left lg:w-[56%] xl:w-[54%]">
           <span className="inline-flex items-center gap-2 rounded-full bg-orange-50 px-4 py-1.5 text-[15px] font-semibold text-orange-800 ring-1 ring-orange-200">
             {text(pick('hero.badge'), t, 'hero.badge')}
           </span>
 
-          <h1 className="mt-7 text-4xl font-bold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+          <h1 className="mt-8 text-5xl font-bold leading-[1.05] tracking-tight text-slate-900 sm:text-6xl lg:text-7xl xl:text-[5.25rem]">
             {text(pick('hero.title_1'), t, 'hero.title_1')}{' '}
             <span className="text-orange-600">{text(pick('hero.title_2'), t, 'hero.title_2')}</span>
           </h1>
 
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
+          <p className="mt-7 max-w-3xl text-xl leading-relaxed text-slate-600 lg:text-[1.375rem]">
             {text(pick('hero.subtitle'), t, 'hero.subtitle')}
           </p>
 
@@ -449,7 +459,7 @@ const PublicHomePage = () => {
             </Link>
           </div>
 
-          <p className="mt-6 text-[15px] text-slate-600">
+          <p className="mt-7 text-base text-slate-600">
             {text(pick('hero.orcid_hint_prefix'), t, 'hero.orcid_hint_prefix')}{' '}
             <Link to="/tutorial-orcid" className="font-semibold text-orange-700 underline underline-offset-4 hover:text-orange-800">
               {text(pick('hero.orcid_hint_link'), t, 'hero.orcid_hint_link')}
@@ -462,7 +472,7 @@ const PublicHomePage = () => {
       {/* ══ KEMAMPUAN — putih ════════════════════════════════════════ */}
       <section className={`relative overflow-hidden ${SURFACE.white} py-20`}>
         <SectionBackdrop src={ART.net} color="#EA580C" opacity={0.22} motion="drift" reach={76} />
-        <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
+        <div className={`relative ${SHELL}`}>
           <SectionHead
             title={text(pick('features_section.title'), t, 'features_section.title')}
             subtitle={text(pick('features_section.subtitle'), t, 'features_section.subtitle')} />
@@ -484,7 +494,7 @@ const PublicHomePage = () => {
       {stats.length > 0 && (
         <section className={`relative overflow-hidden ${SURFACE.dark}`}>
           <SectionBackdrop src={ART.globe} color="#FDBA74" opacity={0.30} motion="breathe" reach={70} />
-          <div className="relative mx-auto max-w-6xl px-6 py-16 lg:px-8">
+          <div className={`relative ${SHELL} py-16`}>
             <dl className="grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-4">
               {stats.map((s, i) => (
                 <div key={i} className="text-center">
@@ -503,7 +513,7 @@ const PublicHomePage = () => {
       {sdgList.length > 0 && (
         <section className={`relative overflow-hidden ${SURFACE.tint} border-y border-slate-200 py-20`}>
           <SectionBackdrop src={ART.grid} color="#C2410C" opacity={0.18} motion="drift" reach={80} />
-          <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
+          <div className={`relative ${SHELL}`}>
             <SectionHead
               title={text(pick('sdg_section.title'), t, 'sdg_section.title')}
               subtitle={text(pick('sdg_section.subtitle'), t, 'sdg_section.subtitle')} />
@@ -541,7 +551,7 @@ const PublicHomePage = () => {
       {/* ══ ALUR KERJA — putih ═══════════════════════════════════════ */}
       <section className={`relative overflow-hidden ${SURFACE.white} py-20`}>
         <SectionBackdrop src={ART.flow} color="#EA580C" opacity={0.24} motion="pan" reach={78} />
-        <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
+        <div className={`relative ${SHELL}`}>
           <SectionHead
             title={text(pick('how_it_works_section.title'), t, 'how_it_works_section.title')}
             subtitle={text(pick('how_it_works_section.subtitle'), t, 'how_it_works_section.subtitle')} />
@@ -568,7 +578,7 @@ const PublicHomePage = () => {
         <section className={`relative overflow-hidden ${SURFACE.dark} py-20`}>
           <SectionBackdrop src={ART.waves} color="#FB923C" opacity={0.34} motion="pan" reach={72}
             interactive litColor="rgba(251,146,60,0.55)" litRadius={380} />
-          <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
+          <div className={`relative ${SHELL}`}>
             <div className="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div className="max-w-2xl">
                 <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
@@ -678,7 +688,7 @@ const PublicHomePage = () => {
       <section className={`relative overflow-hidden ${SURFACE.dark} py-16`}>
         <SectionBackdrop src={ART.grid} color="#7C3E1D" opacity={0.85} motion="pan" reach={70}
           interactive litColor="rgba(234,88,12,0.9)" litRadius={340} />
-        <div className="relative mx-auto flex max-w-6xl flex-col items-start gap-8 px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+        <div className={`relative flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between ${SHELL}`}>
           <div className="flex items-start gap-5">
             <span className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-500/15 text-orange-300 ring-1 ring-orange-400/25 sm:flex">
               <Code2 className="h-6 w-6" />
@@ -705,7 +715,7 @@ const PublicHomePage = () => {
       {partners.length > 0 && (
         <section className={`relative overflow-hidden ${SURFACE.tint} border-y border-slate-200 py-16`}>
           <SectionBackdrop src={ART.net} color="#C2410C" opacity={0.17} motion="breathe" reach={78} />
-          <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
+          <div className={`relative ${SHELL}`}>
             <SectionHead
               title={text(pick('partners_section.title'), t, 'partners_section.title')}
               subtitle={text(pick('partners_section.subtitle'), t, 'partners_section.subtitle')} />
@@ -731,7 +741,7 @@ const PublicHomePage = () => {
       {/* ══ PENUTUP — putih ══════════════════════════════════════════ */}
       <section className={`relative overflow-hidden ${SURFACE.white} py-20`}>
         <SectionBackdrop src={ART.about} color="#EA580C" opacity={0.22} motion="drift" reach={76} />
-        <div className="relative mx-auto max-w-4xl px-6 text-center lg:px-8">
+        <div className={`relative text-center ${SHELL}`}>
           <span className="inline-flex items-center gap-2 rounded-full bg-orange-50 px-4 py-1.5 text-[15px] font-semibold text-orange-800 ring-1 ring-orange-200">
             {text(pick('cta_section.badge'), t, 'cta_section.badge')}
           </span>
