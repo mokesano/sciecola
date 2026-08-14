@@ -107,7 +107,9 @@ const Navbar = () => {
 
   return (
     <nav className="fixed top-0 z-50 w-full border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur-md">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* Padding tepinya disamakan dengan pembungkus isi halaman, supaya
+          wordmark dan menu sejajar dengan tepi seksi di bawahnya. */}
+      <div className="mx-auto w-full px-6 sm:px-10 lg:px-14 xl:px-20 2xl:px-28">
         {/* Bilah dipendekkan dari 80px ke 60px. Kedalaman navigasi sekarang
             dipikul menu turunannya, jadi bilahnya sendiri tidak perlu
             setinggi itu — dan isi halaman naik 20px. */}

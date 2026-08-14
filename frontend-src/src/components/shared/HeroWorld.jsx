@@ -114,13 +114,13 @@ const MAP =
   '[&_path]:fill-[#FBE3D2] [&_path]:stroke-[#EFC4A4] [&_path]:[stroke-width:0.4] ' +
   '[&_path]:[vector-effect:non-scaling-stroke]';
 
-/* Titik negara peneliti, dan titik latar yang lebih kecil untuk negara lain.
-   Titik latar sengaja jauh lebih kecil: pada peta selebar 750px, titik 7px
-   menutupi seluruh negara kecil, dan sebarannya terbaca sebagai gumpalan
-   alih-alih sebagai titik-titik. */
-const DOT      = 'absolute -ml-[3.5px] -mt-[3.5px] h-[7px] w-[7px] rounded-full';
-const DOT_TINY = 'absolute -ml-[2px] -mt-[2px] h-1 w-1 rounded-full';
-const RING     = 'absolute inset-0 rounded-full border';
+/* Titik negara peneliti, dan titik latar untuk negara lain. Titik negara
+   peneliti dibuat cukup besar untuk terbaca dari jarak baca biasa — ia
+   penanda data, bukan hiasan; titik latar setingkat lebih kecil supaya
+   keduanya tetap bisa dibedakan sekilas. */
+const DOT      = 'absolute -ml-[7px] -mt-[7px] h-[14px] w-[14px] rounded-full';
+const DOT_TINY = 'absolute -ml-[4px] -mt-[4px] h-2 w-2 rounded-full';
+const RING     = 'absolute inset-0 rounded-full border-2';
 
 /* Sorotan kursor: kotak seukuran sorotan dengan mask diam, digeser transform.
    Isinya digeser balik dengan transform kebalikannya, jadi titik tetap berada
@@ -390,16 +390,20 @@ const HeroWorld = () => {
           terbaca. Yang berdenyut hanya satu — sorot yang berkeliling. */}
       <div className="absolute inset-0">
         {active.map((m) => (
-          <span key={`on-${m.id}`} style={at(m)} className={`${DOT} bg-orange-700/90`} />
+          <span key={`on-${m.id}`} style={at(m)} className={`${DOT} bg-orange-600 ring-2 ring-white/70`} />
         ))}
       </div>
 
       {/* Sorot yang berkeliling. Denyutnya animate-ping bawaan Tailwind. */}
       {active.length > 0 && (
         <div ref={roamRef}
-          className={'absolute left-[var(--rx,-100%)] top-[var(--ry,-100%)] -ml-[5.5px] -mt-[5.5px] '
-            + 'h-[11px] w-[11px] rounded-full bg-orange-700 ring-4 ring-orange-500/20 will-change-[left,top]'}>
-          <span className="absolute inset-0 animate-ping rounded-full border-2 border-orange-700/70" />
+          className={'absolute left-[var(--rx,-100%)] top-[var(--ry,-100%)] -ml-[10px] -mt-[10px] '
+            + 'h-5 w-5 rounded-full bg-orange-600 shadow-lg shadow-orange-600/40 '
+            + 'ring-[6px] ring-orange-500/25 will-change-[left,top]'}>
+          {/* Dua gelang dengan jeda berbeda: yang kedua menyusul saat yang
+              pertama sedang memudar, jadi denyutnya terbaca menerus. */}
+          <span className="absolute -inset-2 animate-ping rounded-full border-2 border-orange-600/70" />
+          <span className="absolute -inset-4 animate-ping rounded-full border-2 border-orange-500/40 [animation-delay:600ms]" />
         </div>
       )}
 
@@ -408,12 +412,12 @@ const HeroWorld = () => {
       <div className={SPOT_BOX}>
         <div className={SPOT_INNER}>
           {active.map((m) => (
-            <span key={`hot-${m.id}`} style={at(m)} className={`${DOT} bg-amber-600`} />
+            <span key={`hot-${m.id}`} style={at(m)} className={`${DOT} bg-amber-500 ring-2 ring-white/70`} />
           ))}
           <div ref={idleWrapRef} className="absolute inset-0">
             {rest.map((m) => (
-              <span key={`idle-${m.id}`} style={at(m)} className={`${DOT_TINY} group bg-orange-600/40`}>
-                <span className={`${RING} border-orange-600/35 opacity-0 group-[.is-near]:animate-ping group-[.is-near]:opacity-100`} />
+              <span key={`idle-${m.id}`} style={at(m)} className={`${DOT_TINY} group bg-orange-600/70`}>
+                <span className={`${RING} -inset-1 border-orange-600/50 opacity-0 group-[.is-near]:animate-ping group-[.is-near]:opacity-100`} />
               </span>
             ))}
           </div>
