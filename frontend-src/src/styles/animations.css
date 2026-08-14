@@ -77,6 +77,12 @@
   position: absolute;
   inset: 0;
   display: block;
+  /* Peta didorong ke lapisan compositor sendiri. Tanpa ini, sorotan kursor
+     yang bergerak di atasnya memaksa SVG dengan ratusan path itu diraster
+     ulang tiap frame: terukur 25,6ms per frame saat kursor bergerak, turun
+     ke 17,2ms begitu petanya punya lapisan sendiri. */
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .sc-world__svg {
@@ -158,22 +164,57 @@
   inset: 0;
   border-radius: 9999px;
   border: 1.5px solid var(--sc-pulse-ring);
-  animation: sc-pulse-wave 3s cubic-bezier(.22, .61, .36, 1) infinite;
-  animation-delay: inherit;
+  animation: none;
+  opacity: 0;
 }
 
-/* Negara dengan peneliti terdaftar: warna yang sama, hanya dipekatkan. */
+/* Negara dengan peneliti terdaftar: warna yang sama, hanya dipekatkan.
+   Titiknya diam — yang berdenyut hanya satu sorot yang berkeliling. */
 .sc-pulse--on   { --sc-pulse-core: rgba(194,65,12,.92); --sc-pulse-ring: rgba(194,65,12,.75); }
 /* Titik yang sama dalam warna sorot. Karena persis bertumpuk di atas yang
-   di atas, yang berubah saat kursor lewat hanya warnanya — bukan ukurannya. */
+   di bawahnya, yang berubah saat kursor lewat hanya warnanya — bukan
+   ukurannya. */
 .sc-pulse--hot  { --sc-pulse-core: rgba(217,119,6,.98);  --sc-pulse-ring: rgba(217,119,6,.85); }
 /* Negara lain: muda, dan hanya muncul di sekitar kursor. Gelangnya diam
    sampai betul-betul masuk sorotan — animasi yang tertutup mask tetap
-   dihitung browser, dan 190 di antaranya cukup untuk menjatuhkan laju frame. */
+   dihitung browser, dan ratusan di antaranya cukup untuk menjatuhkan laju
+   frame. */
 .sc-pulse--idle { --sc-pulse-core: rgba(234,88,12,.45);  --sc-pulse-ring: rgba(234,88,12,.34); }
-.sc-pulse--idle::after          { animation: none; opacity: 0; }
 .sc-pulse--idle.is-near::after  { animation: sc-pulse-wave 3s cubic-bezier(.22, .61, .36, 1) infinite;
-                                  animation-delay: inherit; opacity: 1; }
+                                  opacity: 1; }
+
+/*
+ * Sorot yang berkeliling.
+ *
+ * Denyut tidak menyala serentak di semua negara: satu sorot berhenti di satu
+ * negara, berdenyut, lalu meluncur ke negara berikutnya. Posisinya ditulis
+ * per frame sebagai transform — dilandaikan di kedua ujung oleh komponennya —
+ * jadi perpindahannya terbaca sebagai luncuran, bukan lompatan.
+ */
+.sc-roam {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 11px;
+  height: 11px;
+  margin: -5.5px 0 0 -5.5px;
+  border-radius: 9999px;
+  background-color: rgba(194,65,12,1);
+  box-shadow: 0 0 0 3px rgba(234,88,12,.22);
+  will-change: transform;
+}
+
+.sc-roam__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid rgba(194,65,12,.8);
+  opacity: 0;
+}
+
+.sc-roam__ring.is-beat {
+  animation: sc-pulse-wave 1.6s cubic-bezier(.22, .61, .36, 1) 2;
+}
 
 @keyframes sc-pulse-wave {
   0%   { transform: scale(1);   opacity: .9; }
@@ -189,12 +230,13 @@
  */
 .sc-punch {
   text-shadow:
-    0 0 3px #fff, 0 0 3px #fff,
-    0 0 6px #fff, 0 0 6px #fff,
-    0 0 9px #fff;
+    0 0 3px var(--sc-punch, #fff), 0 0 3px var(--sc-punch, #fff),
+    0 0 6px var(--sc-punch, #fff), 0 0 6px var(--sc-punch, #fff),
+    0 0 9px var(--sc-punch, #fff);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sc-pulse::after { animation: none; opacity: 0; }
-  .sc-spot         { display: none; }
+  .sc-pulse::after   { animation: none; opacity: 0; }
+  .sc-roam__ring     { animation: none; opacity: 0; }
+  .sc-spot           { display: none; }
 }
