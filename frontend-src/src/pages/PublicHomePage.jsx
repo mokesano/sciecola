@@ -6,7 +6,7 @@ import {
   FlaskConical, Brain, Handshake, Check, Code2,
 } from 'lucide-react';
 import SectionBackdrop from '../components/shared/SectionBackdrop';
-import HeroGrid from '../components/shared/HeroGrid';
+import HeroWorld from '../components/shared/HeroWorld';
 
 // =====================================================================
 // SUSUNAN WARNA
@@ -400,16 +400,10 @@ const PublicHomePage = () => {
 
       {/* ══ HERO — satu-satunya tempat gradasi berada ═════════════════ */}
       <section className="relative overflow-hidden bg-white">
-        {/* Kisi menempati paruh kanan, seperti pada rujukan Gcore. Teksnya di
-            kiri, jadi sorotan kursor punya ruang penuh untuk bekerja. */}
-        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/2 lg:block">
-          <HeroGrid />
-        </div>
-        {/* Di layar sempit teks memenuhi lebar, jadi kisinya dipasang di
-            belakang teks dengan warna jauh lebih senyap. */}
-        <div className="pointer-events-none absolute inset-0 lg:hidden">
-          <HeroGrid gap={22} line="rgba(234,88,12,0.06)" dot="rgba(234,88,12,0.16)" />
-        </div>
+        {/* Peta selebar seksi, sejajar dengannya — bukan dijepit satu kolom.
+            Teks duduk di atasnya dan keduanya boleh bertindih; yang diredam
+            hanya sekeliling huruf, lewat halo di kelas sc-punch. */}
+        <HeroWorld />
 
         <div className="relative mx-auto max-w-6xl px-6 pb-24 pt-16 lg:px-8">
           <div className="max-w-2xl text-left">
@@ -417,12 +411,12 @@ const PublicHomePage = () => {
             {text(pick('hero.badge'), t, 'hero.badge')}
           </span>
 
-          <h1 className="mt-7 text-4xl font-bold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+          <h1 className="sc-punch mt-7 text-4xl font-bold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
             {text(pick('hero.title_1'), t, 'hero.title_1')}{' '}
             <span className="text-orange-600">{text(pick('hero.title_2'), t, 'hero.title_2')}</span>
           </h1>
 
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
+          <p className="sc-punch mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
             {text(pick('hero.subtitle'), t, 'hero.subtitle')}
           </p>
 
@@ -440,7 +434,7 @@ const PublicHomePage = () => {
             </Link>
           </div>
 
-          <p className="mt-6 text-[15px] text-slate-600">
+          <p className="sc-punch mt-6 text-[15px] text-slate-600">
             {text(pick('hero.orcid_hint_prefix'), t, 'hero.orcid_hint_prefix')}{' '}
             <Link to="/tutorial-orcid" className="font-semibold text-orange-700 underline underline-offset-4 hover:text-orange-800">
               {text(pick('hero.orcid_hint_link'), t, 'hero.orcid_hint_link')}
