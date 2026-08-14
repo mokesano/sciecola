@@ -67,3 +67,57 @@
   .sc-layer--art { animation: none; }
   .sc-layer--art.is-lit { background-image: none; }
 }
+
+/* =====================================================================
+   KISI HERO
+   =====================================================================
+   Garis dan titik digambar gradien berulang, bukan diambil dari berkas
+   SVG. Konsekuensinya: setiap perpotongan garis punya titik — titiknya
+   lahir dari pola yang sama, bukan dari beberapa titik yang kebetulan
+   ikut tergambar di dalam berkas.
+
+   Titik menempati tengah tiap petak, garis digeser setengah petak, jadi
+   garis lewat tepat di pusat titik. */
+.sc-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at center, var(--sc-dot) 1.35px, transparent 1.75px),
+    repeating-linear-gradient(to right,  var(--sc-line) 0 1px, transparent 1px var(--sc-gap)),
+    repeating-linear-gradient(to bottom, var(--sc-line) 0 1px, transparent 1px var(--sc-gap));
+  background-size: var(--sc-gap) var(--sc-gap), 100% 100%, 100% 100%;
+  background-position: 0 0, var(--sc-half) 0, 0 var(--sc-half);
+  animation: sc-grid-breathe 19s ease-in-out infinite alternate;
+}
+
+/*
+ * Lapisan sorotan. Isinya kisi yang sama persis — sejajar petak demi petak
+ * dengan lapisan dasar — hanya titiknya sedikit lebih besar dan warnanya
+ * pekat. Dua mask dipotong saling-iris: pola titik dan sorotan bundar di
+ * posisi kursor. Yang tampak karena itu bukan lingkaran cahaya menimpa kisi,
+ * melainkan titik kisi itu sendiri yang menyala di sekitar kursor.
+ */
+.sc-grid--glow {
+  background-image: radial-gradient(circle at center, var(--sc-glow) 2.1px, transparent 2.6px);
+  background-size: var(--sc-gap) var(--sc-gap);
+  background-position: 0 0;
+  animation: none;
+
+  -webkit-mask-image: radial-gradient(
+    var(--sc-radius) circle at var(--gx, -9999px) var(--gy, -9999px),
+    #000 0%, rgba(0, 0, 0, 0.45) 52%, transparent 76%);
+          mask-image: radial-gradient(
+    var(--sc-radius) circle at var(--gx, -9999px) var(--gy, -9999px),
+    #000 0%, rgba(0, 0, 0, 0.45) 52%, transparent 76%);
+  will-change: mask-image;
+}
+
+@keyframes sc-grid-breathe {
+  0%   { opacity: .72; }
+  100% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-grid { animation: none; }
+  .sc-grid--glow { display: none; }
+}
