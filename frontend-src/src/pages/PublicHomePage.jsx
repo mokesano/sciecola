@@ -72,7 +72,7 @@ const tintStyle = (src, tint) => ({
  * gambarnya jadi buram jauh sebelum menyentuh huruf apa pun, dan tepi atas
  * bawahnya larut sampai bentuknya hilang. Yang perlu diredam hanya tempat
  * gambar benar-benar bertemu huruf, dan itu dikerjakan halo di sekeliling
- * teks (kelas sc-punch), bukan oleh gambarnya.
+ * teks (kelas HALO_*), bukan oleh gambarnya.
  *
  * Yang tersisa di sini cuma pelunakan tepi setipis mungkin — secukupnya
  * untuk menyembunyikan bahwa berkasnya berbentuk kotak. Sisi luar tidak
@@ -108,12 +108,21 @@ const bleedFade = (reverse, over = null) => {
   };
 };
 
+/*
+ * Halo di sekeliling huruf: satu-satunya peredaman yang dipakai saat gambar
+ * seksi melintas ke wilayah teks. Ditulis sebagai kelas Tailwind bernilai
+ * sembarang, bukan aturan CSS tersendiri, dan warnanya mengikuti bidang
+ * seksinya — halo putih di atas bidang krem justru terlihat sebagai noda.
+ */
+const HALO_WHITE = '[text-shadow:0_0_3px_#fff,0_0_3px_#fff,0_0_6px_#fff,0_0_6px_#fff,0_0_9px_#fff]';
+const HALO_TINT  = '[text-shadow:0_0_3px_#FAF7F4,0_0_3px_#FAF7F4,0_0_6px_#FAF7F4,0_0_6px_#FAF7F4,0_0_9px_#FAF7F4]';
+
 /* Seksi dua kolom: teks di satu sisi, ilustrasi di sisi lain, berganti arah
    tiap seksi. Tidak semua seksi harus terpusat — halaman jadi berirama dan
    gambarnya punya ruang sendiri alih-alih ditumpuk di belakang teks. */
 const SplitSection = ({
   eyebrow, title, body, points = [], image, imageAlt = '', tint, wide = false,
-  reverse = false, primary, secondary, surface = 'bg-white', punch = '#fff', backdrop,
+  reverse = false, primary, secondary, surface = 'bg-white', halo = HALO_WHITE, backdrop,
 }) => (
   <section className={`relative overflow-hidden ${surface} py-20`}>
     {backdrop}
@@ -155,19 +164,18 @@ const SplitSection = ({
         : `grid items-center gap-12 lg:grid-cols-2 lg:gap-16 ${
             reverse ? 'lg:[&>*:first-child]:order-2' : ''}`}>
 
-        {/* Halo hanya dipasang saat memang ada gambar yang melintas di
-            belakangnya; warnanya mengikuti bidang seksinya, kalau tidak
-            halonya justru terlihat sebagai noda terang. */}
-        <div className={wide ? `relative z-10 lg:w-[47%] ${reverse ? 'lg:ml-auto' : ''}` : ''}
-          style={wide ? { '--sc-punch': punch } : undefined}>
-          <p className={`text-xs font-bold uppercase tracking-[0.18em] text-orange-700 ${wide ? 'sc-punch' : ''}`}>{eyebrow}</p>
-          <h2 className={`mt-4 text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl ${wide ? 'sc-punch' : ''}`}>
+        {/* Halo hanya dipasang pada blok teksnya, bukan pada pembungkusnya:
+            kalau dipasang di pembungkus, label tombol ikut berhalo dan
+            tulisannya terlihat berkabut. */}
+        <div className={wide ? `relative z-10 lg:w-[47%] ${reverse ? 'lg:ml-auto' : ''}` : ''}>
+          <p className={`text-xs font-bold uppercase tracking-[0.18em] text-orange-700 ${wide ? halo : ''}`}>{eyebrow}</p>
+          <h2 className={`mt-4 text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl ${wide ? halo : ''}`}>
             {title}
           </h2>
-          <p className={`mt-5 text-base leading-relaxed text-slate-600 ${wide ? 'sc-punch' : ''}`}>{body}</p>
+          <p className={`mt-5 text-base leading-relaxed text-slate-600 ${wide ? halo : ''}`}>{body}</p>
 
           {points.length > 0 && (
-            <ul className={`mt-7 space-y-3 ${wide ? 'sc-punch' : ''}`}>
+            <ul className={`mt-7 space-y-3 ${wide ? halo : ''}`}>
               {points.map((pt, i) => (
                 <li key={i} className="flex items-start gap-3 text-[15px] leading-snug text-slate-700">
                   <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-700">
@@ -403,27 +411,27 @@ const PublicHomePage = () => {
 
       {/* ══ HERO — satu-satunya tempat gradasi berada ═════════════════ */}
       <section className="relative overflow-hidden bg-white">
-        {/* Peta ditaruh persis seperti gambar di seksi Direktori dan
-            Kolaborasi: lapisan lepas di dalam seksi, di sisinya sendiri,
-            bukan bentangan penuh di belakang teks. Ia tetap boleh melintas
-            ke wilayah teks, dan yang meredam hanya halo di sekeliling huruf. */}
+        {/* Peta berdiri di paruh kanan seksi dengan ruangnya sendiri. Lebar
+            lapisannya dipilih supaya tepi kirinya berhenti tepat setelah
+            kolom teks berakhir: tidak ada tindihan yang perlu diredam, dan
+            gambarnya leluasa memakai sisa bidang di kanan. */}
         <div aria-hidden
-          className="pointer-events-none absolute inset-y-8 right-0 hidden w-[78%] lg:block">
+          className="pointer-events-none absolute inset-y-0 right-0 hidden w-[52%] lg:block">
           <HeroWorld />
         </div>
 
         <div className="relative mx-auto max-w-6xl px-6 pb-24 pt-16 lg:px-8">
-          <div className="max-w-2xl text-left lg:w-[47%] lg:max-w-none">
+          <div className="max-w-2xl text-left lg:w-[46%] lg:max-w-none">
           <span className="inline-flex items-center gap-2 rounded-full bg-orange-50 px-4 py-1.5 text-[15px] font-semibold text-orange-800 ring-1 ring-orange-200">
             {text(pick('hero.badge'), t, 'hero.badge')}
           </span>
 
-          <h1 className="sc-punch mt-7 text-4xl font-bold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+          <h1 className="mt-7 text-4xl font-bold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
             {text(pick('hero.title_1'), t, 'hero.title_1')}{' '}
             <span className="text-orange-600">{text(pick('hero.title_2'), t, 'hero.title_2')}</span>
           </h1>
 
-          <p className="sc-punch mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
             {text(pick('hero.subtitle'), t, 'hero.subtitle')}
           </p>
 
@@ -441,7 +449,7 @@ const PublicHomePage = () => {
             </Link>
           </div>
 
-          <p className="sc-punch mt-6 text-[15px] text-slate-600">
+          <p className="mt-6 text-[15px] text-slate-600">
             {text(pick('hero.orcid_hint_prefix'), t, 'hero.orcid_hint_prefix')}{' '}
             <Link to="/tutorial-orcid" className="font-semibold text-orange-700 underline underline-offset-4 hover:text-orange-800">
               {text(pick('hero.orcid_hint_link'), t, 'hero.orcid_hint_link')}
@@ -660,7 +668,7 @@ const PublicHomePage = () => {
         image={SHOT.collab}
         tint={{ color: '#EA580C', ratio: '909 / 428' }}
         wide
-        punch="#FAF7F4"
+        halo={HALO_TINT}
         surface={`${SURFACE.tint} border-y border-slate-200`}
         backdrop={<SectionBackdrop src={ART.flow} color="#C2410C" opacity={0.16} motion="drift" reach={86} />}
         primary={{ to: '/research-matching',      label: t('sections.collab.cta') }}
