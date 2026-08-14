@@ -3,17 +3,17 @@ import React, { useEffect, useRef, useState } from 'react';
 /**
  * Peta dunia untuk hero, dengan denyut berkeliling di negara peneliti.
  *
- * Soal gaya: seluruh tampilan komponen ini ditulis sebagai kelas Tailwind —
- * termasuk mask, promosi lapisan, warna isian negara, dan bentuk titiknya.
- * Yang tersisa sebagai nilai dari JavaScript hanyalah tiga hal yang memang
- * tidak bisa jadi nama kelas, karena baru diketahui saat halaman berjalan:
+ * Soal gaya: seluruh tampilannya hidup di styles/homepage.css sebagai kelas
+ * bernama — mask, promosi lapisan, warna isian negara, bentuk titiknya. Yang
+ * tersisa sebagai nilai dari JavaScript hanyalah tiga hal yang memang tidak
+ * bisa jadi nama kelas, karena baru diketahui saat halaman berjalan:
  *
  *   1. letak tiap negara — hasil pengukuran berkasnya sendiri;
  *   2. posisi sorot yang berkeliling — berubah tiap frame;
  *   3. posisi sorotan kursor — berubah tiap frame.
  *
- * Ketiganya dioper lewat custom property, dan yang membacanya tetap kelas
- * Tailwind. Jadi tidak ada aturan tampilan yang disuntikkan ke DOM; yang
+ * Ketiganya dioper lewat custom property, dan yang membacanya tetap kelas di
+ * stylesheet. Jadi tidak ada aturan tampilan yang disuntikkan ke DOM; yang
  * lewat DOM hanya angka.
  *
  * Petanya sendiri disisipkan sebagai SVG sebenarnya, bukan lewat <img>.
@@ -25,8 +25,9 @@ import React, { useEffect, useRef, useState } from 'react';
 const SRC = '/assets/img/world.svg';
 const ENDPOINT = '/api/researcher_distribution.php?groupBy=country';
 
-const SPOT = 230;      // jari-jari sorotan kursor, dalam piksel
-const MIN_SPAN = 7;    // wilayah lebih kecil dari ini tidak diberi titik latar
+/* Wilayah lebih kecil dari ini tidak diberi titik latar: berkasnya memuat
+   256 wilayah, banyak di antaranya pulau sebesar beberapa piksel. */
+const MIN_SPAN = 7;
 
 /* Nama negara di berkas peta dan di basis data disederhanakan ke bentuk yang
    sama sebelum dibandingkan. */
@@ -102,39 +103,6 @@ const insidePoint = (path) => {
    luncuran, bukan lompatan. */
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - ((-2 * t + 2) ** 3) / 2);
 
-/* ── Kelas ────────────────────────────────────────────────────────────────
-   Dikumpulkan di sini supaya baris JSX-nya tetap terbaca. Semuanya kelas
-   Tailwind biasa, termasuk yang memakai nilai sembarang. */
-
-const MAP =
-  'absolute inset-0 transform-gpu will-change-transform ' +
-  // peta didorong ke lapisan compositor sendiri; tanpa itu sorotan kursor
-  // yang bergerak memaksa ratusan path diraster ulang tiap frame
-  '[&_svg]:block [&_svg]:h-full [&_svg]:w-full ' +
-  '[&_path]:fill-[#FBE3D2] [&_path]:stroke-[#EFC4A4] [&_path]:[stroke-width:0.4] ' +
-  '[&_path]:[vector-effect:non-scaling-stroke]';
-
-/* Titik negara peneliti, dan titik latar untuk negara lain. Titik negara
-   peneliti dibuat cukup besar untuk terbaca dari jarak baca biasa — ia
-   penanda data, bukan hiasan; titik latar setingkat lebih kecil supaya
-   keduanya tetap bisa dibedakan sekilas. */
-const DOT      = 'absolute -ml-[7px] -mt-[7px] h-[14px] w-[14px] rounded-full';
-const DOT_TINY = 'absolute -ml-[4px] -mt-[4px] h-2 w-2 rounded-full';
-
-/* Sorotan kursor: kotak seukuran sorotan dengan mask diam, digeser transform.
-   Isinya digeser balik dengan transform kebalikannya, jadi titik tetap berada
-   di koordinat petanya. Keduanya ditangani compositor — mask yang berpindah
-   tiap frame akan memaksa seluruh lapisan dicat ulang. */
-const SPOT_BOX =
-  'absolute left-0 top-0 h-[460px] w-[460px] will-change-transform ' +
-  '[transform:translate3d(calc(var(--gx,-9999px)-230px),calc(var(--gy,-9999px)-230px),0)] ' +
-  '[mask-image:radial-gradient(circle_at_center,#000_0%,rgba(0,0,0,0.55)_54%,transparent_78%)] ' +
-  '[-webkit-mask-image:radial-gradient(circle_at_center,#000_0%,rgba(0,0,0,0.55)_54%,transparent_78%)]';
-
-const SPOT_INNER =
-  'absolute left-0 top-0 h-[var(--sc-h,100%)] w-[var(--sc-w,100%)] will-change-transform ' +
-  '[transform:translate3d(calc(230px-var(--gx,-9999px)),calc(230px-var(--gy,-9999px)),0)]';
-
 const HeroWorld = () => {
   const hostRef = useRef(null);
   const mapRef  = useRef(null);
@@ -203,8 +171,8 @@ const HeroWorld = () => {
     const host = hostRef.current;
     if (host) {
       sizeRef.current = { w: box.width, h: box.height };
-      host.style.setProperty('--sc-w', `${box.width}px`);
-      host.style.setProperty('--sc-h', `${box.height}px`);
+      host.style.setProperty('--sc-mw', `${box.width}px`);
+      host.style.setProperty('--sc-mh', `${box.height}px`);
     }
 
     const seen = new Set();
@@ -252,8 +220,8 @@ const HeroWorld = () => {
     if (!roam || list.length === 0) return undefined;
 
     const put = (x, y) => {
-      roam.style.setProperty('--rx', `${x}%`);
-      roam.style.setProperty('--ry', `${y}%`);
+      roam.style.setProperty('--sc-rx', `${x}%`);
+      roam.style.setProperty('--sc-ry', `${y}%`);
     };
 
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
@@ -321,8 +289,8 @@ const HeroWorld = () => {
       if (p.x < -9000) { p.x = t.x; p.y = t.y; }
       p.x += (t.x - p.x) * 0.18;
       p.y += (t.y - p.y) * 0.18;
-      el.style.setProperty('--gx', `${p.x.toFixed(1)}px`);
-      el.style.setProperty('--gy', `${p.y.toFixed(1)}px`);
+      el.style.setProperty('--sc-gx', `${p.x.toFixed(1)}px`);
+      el.style.setProperty('--sc-gy', `${p.y.toFixed(1)}px`);
       const settled = Math.abs(t.x - p.x) < 0.4 && Math.abs(t.y - p.y) < 0.4;
       rafRef.current = settled ? 0 : requestAnimationFrame(step);
     };
@@ -351,49 +319,40 @@ const HeroWorld = () => {
   const at = (m) => ({ left: `${m.x}%`, top: `${m.y}%` });
 
   return (
-    <div ref={hostRef} aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div ref={mapRef} className={MAP} />
+    <div ref={hostRef} aria-hidden className="sc-world">
+      <div ref={mapRef} className="sc-world__frame" />
 
-      {/* Titik latar: diam, samar, sekadar menandai bahwa negaranya ada.
-          Sebelumnya masing-masing diberi gelang denyut yang menyala saat
-          kursor lewat — di sekitar Eropa dan Afrika itu berarti puluhan
-          cincin menyala serentak, dan yang terbaca cuma keruwetan. Yang
-          berdenyut sekarang hanya satu: sorot yang berkeliling. */}
-      <div className="absolute inset-0">
+      {/* Titik latar: diam dan samar, sekadar menandai negaranya ada. */}
+      <div className="sc-world__pins">
         {rest.map((m) => (
-          <span key={`bg-${m.id}`} style={at(m)} className={`${DOT_TINY} bg-orange-600/35`} />
+          <span key={`bg-${m.id}`} style={at(m)} className="sc-pin sc-pin_faint" />
         ))}
       </div>
 
-      {/* Negara peneliti: titiknya tetap terlihat semua supaya sebarannya
-          terbaca sekaligus. */}
-      <div className="absolute inset-0">
+      {/* Negara peneliti: titiknya terlihat semua supaya sebarannya terbaca
+          sekaligus. Yang berdenyut hanya satu — sorot yang berkeliling. */}
+      <div className="sc-world__pins">
         {active.map((m) => (
-          <span key={`on-${m.id}`} style={at(m)} className={`${DOT} bg-orange-600 ring-2 ring-white/70`} />
+          <span key={`on-${m.id}`} style={at(m)} className="sc-pin" />
         ))}
       </div>
 
-      {/* Sorot yang berkeliling. Denyutnya animate-ping bawaan Tailwind. */}
       {active.length > 0 && (
-        <div ref={roamRef}
-          className={'absolute left-[var(--rx,-100%)] top-[var(--ry,-100%)] -ml-[10px] -mt-[10px] '
-            + 'h-5 w-5 rounded-full bg-orange-600 shadow-lg shadow-orange-600/40 '
-            + 'ring-[6px] ring-orange-500/25 will-change-[left,top]'}>
-          {/* Dua gelang dengan jeda berbeda: yang kedua menyusul saat yang
-              pertama sedang memudar, jadi denyutnya terbaca menerus. */}
-          <span className="absolute -inset-2 animate-ping rounded-full border-2 border-orange-600/70" />
-          <span className="absolute -inset-4 animate-ping rounded-full border-2 border-orange-500/40 [animation-delay:600ms]" />
+        <div ref={roamRef} className="sc-roam">
+          {/* Dua gelang berjeda beda: yang kedua menyusul saat yang pertama
+              sedang memudar, jadi denyutnya terbaca menerus. */}
+          <span className="sc-roam__wave sc-roam__wave_a" />
+          <span className="sc-roam__wave sc-roam__wave_b" />
         </div>
       )}
 
-      {/* Titik negara peneliti sekali lagi, dalam warna sorot, hanya tampak di
+      {/* Titik negara peneliti sekali lagi dalam warna sorot, hanya tampak di
           sekitar kursor. Karena persis bertumpuk di atas yang di bawahnya,
-          yang berubah saat kursor lewat hanya warnanya — bukan ukurannya,
-          dan tidak ada gelang tambahan yang menyala. */}
-      <div className={SPOT_BOX}>
-        <div className={SPOT_INNER}>
+          yang berubah saat kursor lewat hanya warnanya. */}
+      <div className="sc-spot">
+        <div className="sc-spot__inner">
           {active.map((m) => (
-            <span key={`hot-${m.id}`} style={at(m)} className={`${DOT} bg-amber-500 ring-2 ring-white/70`} />
+            <span key={`hot-${m.id}`} style={at(m)} className="sc-pin sc-pin_lit" />
           ))}
         </div>
       </div>
