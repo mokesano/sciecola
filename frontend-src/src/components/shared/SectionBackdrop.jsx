@@ -59,25 +59,29 @@ const SectionBackdrop = ({
     el.style.setProperty('--my', `${e.clientY - r.top}px`);
   }, []);
 
-  /* Pengait dipasang di elemen seksi, sementara lapisan latarnya sendiri
-     tetap pointer-transparent — kalau tidak, ia akan merebut klik dari tombol
-     dan tautan yang ada di atasnya. */
+  /* Pengait dipasang di window, bukan di elemen induk. Lapisan latar ini —
+     dan sering kali pembungkusnya — sengaja pointer-transparent supaya tidak
+     merebut klik dari tombol di atasnya, dan elemen pointer-transparent tidak
+     pernah menerima pointermove. Posisinya tetap dihitung relatif terhadap
+     kotak lapisan ini sendiri, jadi hasilnya sama. */
   useEffect(() => {
     if (!interactive) return undefined;
-    const section = hostRef.current?.parentElement;
-    if (!section) return undefined;
-    section.addEventListener('pointermove', onPointerMove);
-    return () => section.removeEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    return () => window.removeEventListener('pointermove', onPointerMove);
   }, [interactive, onPointerMove]);
 
   if (!src) return null;
 
   /* Hanya nilai yang benar-benar berbeda per seksi yang dioper ke DOM.
      Aturan mask, animasi, dan reduced-motion hidup di berkas CSS. */
+  /* reach 0 berarti tidak ada lubang: dipakai saat lapisannya memang berdiri
+     di kolomnya sendiri — seperti kisi di paruh kanan hero — sehingga tidak
+     ada teks yang perlu dihindari. Melubanginya di situ justru menelan
+     sorotan kursor, karena bagian tengahnya tidak digambar sama sekali. */
   const vars = {
-    '--sc-mask':      `url('${src}'), ${clearing(reach)}`,
-    '--sc-mask-size': `${size}, cover`,
-    '--sc-mask-pos':  `${position}, center`,
+    '--sc-mask':      reach ? `url('${src}'), ${clearing(reach)}` : `url('${src}')`,
+    '--sc-mask-size': reach ? `${size}, cover` : size,
+    '--sc-mask-pos':  reach ? `${position}, center` : position,
     '--sc-color':     color,
     '--sc-opacity':   opacity,
     '--sc-motion':    MOTION[motion] ?? MOTION.drift,
@@ -88,8 +92,10 @@ const SectionBackdrop = ({
   return (
     <span ref={hostRef} aria-hidden
       className="pointer-events-none absolute inset-0 overflow-hidden" style={vars}>
-      <span className="sc-layer sc-layer--art" />
-      {interactive && <span className="sc-layer sc-layer--lit" />}
+      {/* Satu lapisan saja. Saat interaktif, sorotannya menempel pada
+          lapisan yang sama sebagai background-image di atas warna dasarnya —
+          gambar yang sudah ada menguat, tidak digambar ulang. */}
+      <span className={`sc-layer sc-layer--art${interactive ? ' is-lit' : ''}`} />
     </span>
   );
 };

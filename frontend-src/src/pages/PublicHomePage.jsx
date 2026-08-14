@@ -52,7 +52,7 @@ const SHOT = {
    tiap seksi. Tidak semua seksi harus terpusat — halaman jadi berirama dan
    gambarnya punya ruang sendiri alih-alih ditumpuk di belakang teks. */
 const SplitSection = ({
-  eyebrow, title, body, points = [], image, imageAlt = '',
+  eyebrow, title, body, points = [], image, imageAlt = '', tint,
   reverse = false, primary, secondary, surface = 'bg-white', backdrop,
 }) => (
   <section className={`relative overflow-hidden ${surface} py-20`}>
@@ -98,13 +98,41 @@ const SplitSection = ({
           </div>
         </div>
 
-        <div className="relative">
-          <img src={image} alt={imageAlt} loading="lazy"
-            className="w-full max-w-xl object-contain"
-            style={{
-              WebkitMaskImage: 'radial-gradient(ellipse 76% 76% at 50% 50%, #000 34%, transparent 88%)',
-              maskImage:       'radial-gradient(ellipse 76% 76% at 50% 50%, #000 34%, transparent 88%)',
-            }} />
+        {/*
+          Satu perlakuan untuk semua gambar seksi — yang dipakai seksi
+          Analitik: gambar berdiri sendiri tanpa bingkai, lebarnya dibatasi,
+          rasionya utuh, dan tepinya dilebur mask lembut supaya menyatu dengan
+          bidang di belakangnya alih-alih terpotong kotak.
+
+          `tint` untuk aset garis yang warnanya nyaris putih — globalmap.png
+          hanya titik abu sangat muda, jadi di atas bidang terang ia praktis
+          tak terlihat. Berkasnya punya kanal alfa, jadi ia dipasang sebagai
+          mask dan diberi warna aksen halaman; penempatannya tetap sama.
+        */}
+        <div className="relative flex items-center justify-center">
+          {tint ? (
+            <span role="img" aria-label={imageAlt}
+              className="block w-full max-w-xl"
+              style={{
+                aspectRatio:        tint.ratio,
+                backgroundColor:    tint.color,
+                WebkitMaskImage:   `url('${image}')`,
+                maskImage:         `url('${image}')`,
+                WebkitMaskSize:     'contain',
+                maskSize:           'contain',
+                WebkitMaskRepeat:   'no-repeat',
+                maskRepeat:         'no-repeat',
+                WebkitMaskPosition: 'center',
+                maskPosition:       'center',
+              }} />
+          ) : (
+            <img src={image} alt={imageAlt} loading="lazy"
+              className="w-full max-w-xl object-contain"
+              style={{
+                WebkitMaskImage: 'radial-gradient(ellipse 82% 82% at 50% 50%, #000 46%, transparent 92%)',
+                maskImage:       'radial-gradient(ellipse 82% 82% at 50% 50%, #000 46%, transparent 92%)',
+              }} />
+          )}
         </div>
       </div>
     </div>
@@ -152,7 +180,7 @@ const PublicSearch = () => {
   };
 
   return (
-    <div className="mx-auto mt-9 max-w-2xl">
+    <div className="mt-9 max-w-2xl">
       <form onSubmit={submit} className="flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -281,9 +309,21 @@ const PublicHomePage = () => {
 
       {/* ══ HERO — satu-satunya tempat gradasi berada ═════════════════ */}
       <section className="relative overflow-hidden bg-white">
-        <SectionBackdrop src={ART.grid} color="#F0BE9C" opacity={0.95} motion="drift" reach={56}
-          interactive litColor="rgba(234,88,12,1)" litRadius={300} />
-        <div className="relative mx-auto max-w-6xl px-6 pb-28 pt-20 text-center lg:px-8">
+        {/* Dots hanya menempati paruh kanan, seperti pada rujukan Gcore.
+            Teksnya di kiri, jadi gambar tidak perlu dilubangi lebar-lebar dan
+            sorotan kursor punya ruang penuh untuk bekerja. */}
+        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/2 lg:block">
+          <SectionBackdrop src={ART.grid} color="#F0BE9C" opacity={0.95} motion="drift" reach={0}
+            interactive litColor="rgba(194,65,12,1)" litRadius={420} />
+        </div>
+        {/* Di layar sempit teks memenuhi lebar, jadi dots dipasang di
+            belakangnya dengan lubang teks yang lebar. */}
+        <div className="pointer-events-none absolute inset-0 lg:hidden">
+          <SectionBackdrop src={ART.grid} color="#F5D2BB" opacity={0.8} motion="drift" reach={74} />
+        </div>
+
+        <div className="relative mx-auto max-w-6xl px-6 pb-24 pt-16 lg:px-8">
+          <div className="max-w-2xl text-left">
           <span className="inline-flex items-center gap-2 rounded-full bg-orange-50 px-4 py-1.5 text-[15px] font-semibold text-orange-800 ring-1 ring-orange-200">
             {text(pick('hero.badge'), t, 'hero.badge')}
           </span>
@@ -293,13 +333,13 @@ const PublicHomePage = () => {
             <span className="text-orange-600">{text(pick('hero.title_2'), t, 'hero.title_2')}</span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
             {text(pick('hero.subtitle'), t, 'hero.subtitle')}
           </p>
 
           <PublicSearch />
 
-          <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-9 flex flex-col items-start gap-3 sm:flex-row">
             <Link to="/register"
               className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-7 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-orange-700">
               {text(pick('hero.cta_secondary'), t, 'hero.cta_secondary')}
@@ -317,6 +357,7 @@ const PublicHomePage = () => {
               {text(pick('hero.orcid_hint_link'), t, 'hero.orcid_hint_link')}
             </Link>
           </p>
+          </div>
         </div>
       </section>
 
@@ -427,7 +468,8 @@ const PublicHomePage = () => {
       {/* ══ AI INSIGHTS — pita gelap kedua ═══════════════════════════ */}
       {insights.length > 0 && (
         <section className={`relative overflow-hidden ${SURFACE.dark} py-20`}>
-          <SectionBackdrop src={ART.waves} color="#FB923C" opacity={0.34} motion="pan" reach={72} />
+          <SectionBackdrop src={ART.waves} color="#FB923C" opacity={0.34} motion="pan" reach={72}
+            interactive litColor="rgba(251,146,60,0.55)" litRadius={380} />
           <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
             <div className="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div className="max-w-2xl">
@@ -525,31 +567,33 @@ const PublicHomePage = () => {
         body={t('sections.collab.body')}
         points={t('sections.collab.points', { returnObjects: true })}
         image={SHOT.collab}
+        tint={{ color: '#EA580C', ratio: '909 / 428' }}
         surface={`${SURFACE.tint} border-y border-slate-200`}
         backdrop={<SectionBackdrop src={ART.flow} color="#C2410C" opacity={0.16} motion="drift" reach={86} />}
         primary={{ to: '/research-matching',      label: t('sections.collab.cta') }}
         secondary={{ to: '/innovation-marketplace', label: t('sections.collab.cta2') }} />
 
-      {/* ══ API — pita ringkas, bukan seksi penuh ═══════════════════ */}
-      <section className={`relative overflow-hidden ${SURFACE.white} py-14`}>
-        <SectionBackdrop src={ART.grid} color="#EA580C" opacity={0.14} motion="pan" reach={84} />
-        <div className="relative mx-auto flex max-w-6xl flex-col items-start gap-6 px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+      {/* ══ API — pita gelap ketiga, latarnya menyala mengikuti kursor ═ */}
+      <section className={`relative overflow-hidden ${SURFACE.dark} py-16`}>
+        <SectionBackdrop src={ART.grid} color="#7C3E1D" opacity={0.85} motion="pan" reach={70}
+          interactive litColor="rgba(234,88,12,0.9)" litRadius={340} />
+        <div className="relative mx-auto flex max-w-6xl flex-col items-start gap-8 px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
           <div className="flex items-start gap-5">
-            <span className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-orange-600 ring-1 ring-orange-100 sm:flex">
+            <span className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-500/15 text-orange-300 ring-1 ring-orange-400/25 sm:flex">
               <Code2 className="h-6 w-6" />
             </span>
             <div className="max-w-2xl">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-orange-700">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-orange-400">
                 {t('sections.api.eyebrow')}
               </p>
-              <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
+              <h2 className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">
                 {t('sections.api.title')}
               </h2>
-              <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{t('sections.api.body')}</p>
+              <p className="mt-3 text-[15px] leading-relaxed text-slate-300">{t('sections.api.body')}</p>
             </div>
           </div>
           <Link to="/docs/api-reference"
-            className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-slate-300 px-6 py-3 text-[15px] font-semibold text-slate-700 transition-colors hover:border-orange-400 hover:text-orange-700">
+            className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-6 py-3 text-[15px] font-semibold text-white transition-colors hover:border-orange-400/60 hover:bg-orange-500/10 hover:text-orange-200">
             {t('sections.api.cta')}
             <ArrowRight className="h-4 w-4" />
           </Link>
@@ -627,12 +671,16 @@ const PublicHomePage = () => {
         hanya jeda visual sebelum footer, memakai aset yang memang disiapkan
         untuk posisi ini.
       */}
-      <div aria-hidden className="relative h-48 w-full overflow-hidden bg-white sm:h-64 lg:h-72">
+      {/* cta.jpg berukuran 1200×314 — sebuah pita lebar. Sebelumnya ia
+          dipaksa masuk kotak setinggi 288px dengan object-cover, jadi bagian
+          atas dan bawahnya terpotong. Tingginya sekarang mengikuti rasio
+          gambarnya sendiri, jadi tidak ada yang hilang. */}
+      <div aria-hidden className="w-full overflow-hidden bg-white">
         <img src={SHOT.footer} alt="" loading="lazy"
-          className="h-full w-full object-cover object-center"
+          className="block h-auto w-full"
           style={{
-            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, #000 30%, #000 100%)',
-            maskImage:       'linear-gradient(to bottom, transparent 0%, #000 30%, #000 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, #000 22%, #000 100%)',
+            maskImage:       'linear-gradient(to bottom, transparent 0%, #000 22%, #000 100%)',
           }} />
       </div>
 

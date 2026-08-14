@@ -51,15 +51,19 @@
   will-change: transform;
 }
 
-/* Lapisan yang menyala mengikuti pointer. Titik pusatnya dibawa --mx/--my,
-   yang ditulis komponen langsung ke node tanpa render ulang. */
-.sc-layer--lit {
-  background: radial-gradient(
+/*
+ * Sorotan pointer hidup di elemen yang sama, sebagai background-image di atas
+ * background-color-nya. Di mana gradiennya transparan, warna dasar tembus —
+ * jadi yang terjadi adalah gambar yang sama menguat, bukan salinan kedua
+ * digambar di atasnya. Satu lapisan, satu mask.
+ */
+.sc-layer--art.is-lit {
+  background-image: radial-gradient(
     var(--sc-lit-radius) circle at var(--mx, -999px) var(--my, -999px),
-    var(--sc-lit-color), transparent 68%);
+    var(--sc-lit-color) 0%, var(--sc-lit-color) 18%, transparent 62%);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .sc-layer--art { animation: none; }
-  .sc-layer--lit { display: none; }
+  .sc-layer--art.is-lit { background-image: none; }
 }
