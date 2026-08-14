@@ -52,13 +52,24 @@ const SHOT = {
    tiap seksi. Tidak semua seksi harus terpusat — halaman jadi berirama dan
    gambarnya punya ruang sendiri alih-alih ditumpuk di belakang teks. */
 const SplitSection = ({
-  eyebrow, title, body, points = [], image, imageAlt = '', tint,
+  eyebrow, title, body, points = [], image, imageAlt = '', tint, wide = false,
   reverse = false, primary, secondary, surface = 'bg-white', backdrop,
 }) => (
   <section className={`relative overflow-hidden ${surface} py-20`}>
     {backdrop}
     <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
-      <div className={`grid items-center gap-12 lg:grid-cols-2 lg:gap-16 ${reverse ? 'lg:[&>*:first-child]:order-2' : ''}`}>
+      {/* Kolom gambar dilebarkan untuk aset melintang. Kolom teks yang
+          menyempit tetap nyaman karena paragraf di seksi-seksi ini pendek,
+          sementara gambarnya mendapat bidang yang sepadan dengan seksi
+          bergambar tegak. Sisi mana yang dilebarkan mengikuti `reverse`,
+          sebab urutan kolom di sini bersifat fisik. */}
+      <div className={`grid items-center gap-12 lg:gap-16 ${
+        wide
+          ? (reverse
+              ? 'lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]'
+              : 'lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]')
+          : 'lg:grid-cols-2'
+      } ${reverse ? 'lg:[&>*:first-child]:order-2' : ''}`}>
 
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-orange-700">{eyebrow}</p>
@@ -108,11 +119,20 @@ const SplitSection = ({
           hanya titik abu sangat muda, jadi di atas bidang terang ia praktis
           tak terlihat. Berkasnya punya kanal alfa, jadi ia dipasang sebagai
           mask dan diberi warna aksen halaman; penempatannya tetap sama.
+
+          `wide` untuk aset melintang. Di kolom selebar ±512px, gambar 1,78:1
+          hanya setinggi 288px sementara gambar 0,94:1 di seksi Analitik
+          setinggi 543px — itulah sebabnya dua seksi terakhir terlihat jauh
+          lebih kecil meski perlakuannya sama. Aset melintang karena itu
+          diberi kolom yang lebih lebar, lalu sedikit dilebihkan keluar kolom
+          ke arah tepi halaman — bukan ke arah teks — mulai lebar layar yang
+          memang punya sisa ruang di tepi, sehingga tidak ada yang terpotong.
         */}
-        <div className="relative flex items-center justify-center">
+        <div className={`relative flex items-center justify-center ${
+          wide ? (reverse ? 'xl:justify-end' : 'xl:justify-start') : ''}`}>
           {tint ? (
             <span role="img" aria-label={imageAlt}
-              className="block w-full max-w-xl"
+              className={`block w-full ${wide ? 'shrink-0 xl:w-[115%] xl:max-w-none' : 'max-w-xl'}`}
               style={{
                 aspectRatio:        tint.ratio,
                 backgroundColor:    tint.color,
@@ -127,7 +147,7 @@ const SplitSection = ({
               }} />
           ) : (
             <img src={image} alt={imageAlt} loading="lazy"
-              className="w-full max-w-xl object-contain"
+              className={`w-full object-contain ${wide ? 'shrink-0 xl:w-[115%] xl:max-w-none' : 'max-w-xl'}`}
               style={{
                 WebkitMaskImage: 'radial-gradient(ellipse 82% 82% at 50% 50%, #000 46%, transparent 92%)',
                 maskImage:       'radial-gradient(ellipse 82% 82% at 50% 50%, #000 46%, transparent 92%)',
@@ -163,6 +183,9 @@ const PublicSearch = () => {
   const [ambiguousId, setAmbiguousId] = useState(null);
   const [err, setErr] = useState('');
   const navigate = useNavigate();
+  /* Seluruh teks di sini datang dari berkas locale — kuncinya memang sudah
+     ada di homepage.json untuk id maupun en, hanya belum dipakai. */
+  const { t } = useTranslation('homepage');
 
   const go = (path) => { setErr(''); setAmbiguousId(null); navigate(path); };
 
@@ -176,7 +199,7 @@ const PublicSearch = () => {
     if (PATTERNS.researcherid.test(v))  return go(`/researcherid/${v.toUpperCase()}`);
     if (PATTERNS.doi.test(v))           return go(`/doi/${encodeURIComponent(v)}`);
     if (PATTERNS.numeric.test(v))       return setAmbiguousId(v);
-    setErr('Format tidak dikenali. Coba ORCID, Scopus ID, SINTA ID, ResearcherID, atau DOI.');
+    setErr(t('search.error'));
   };
 
   return (
@@ -187,13 +210,13 @@ const PublicSearch = () => {
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="ORCID · Scopus · SINTA · ResearcherID · DOI"
+            placeholder={t('search.placeholder')}
             className="w-full rounded-lg border border-slate-300 bg-white py-3.5 pl-11 pr-3 text-base text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200"
           />
         </div>
         <button type="submit"
           className="shrink-0 rounded-lg bg-slate-900 px-7 py-3.5 text-[15px] font-semibold text-white shadow-sm transition-colors hover:bg-slate-800">
-          Cek Profil
+          {t('search.submit')}
         </button>
       </form>
 
@@ -202,7 +225,7 @@ const PublicSearch = () => {
       {ambiguousId && (
         <div className="mt-3 rounded-lg border border-slate-200 bg-white p-4 text-left shadow-lg">
           <p className="mb-2.5 text-[15px] text-slate-600">
-            ID <span className="font-mono text-slate-900">{ambiguousId}</span> numerik — pilih sumber:
+            {t('search.ambiguous', { id: ambiguousId })}
           </p>
           <div className="flex flex-wrap gap-2">
             <button type="button" onClick={() => go(`/scopus/${ambiguousId}`)}
@@ -210,13 +233,13 @@ const PublicSearch = () => {
             <button type="button" onClick={() => go(`/sinta/${ambiguousId}`)}
               className="rounded-lg border border-slate-300 px-3.5 py-2 text-[15px] font-medium text-slate-700 hover:border-orange-400 hover:text-orange-700">SINTA</button>
             <button type="button" onClick={() => setAmbiguousId(null)}
-              className="rounded-lg px-3.5 py-2 text-[15px] font-medium text-slate-500 hover:text-slate-900">Batal</button>
+              className="rounded-lg px-3.5 py-2 text-[15px] font-medium text-slate-500 hover:text-slate-900">{t('search.cancel')}</button>
           </div>
         </div>
       )}
 
       <p className="mt-4 text-[15px] text-slate-500">
-        Tidak perlu login. Login hanya dibutuhkan bila Anda ingin mengelola akun ORCID Anda sendiri.
+        {t('search.no_login')}
       </p>
     </div>
   );
@@ -555,6 +578,7 @@ const PublicHomePage = () => {
         body={t('sections.directory.body')}
         points={t('sections.directory.points', { returnObjects: true })}
         image={SHOT.directory}
+        wide
         surface={SURFACE.white}
         backdrop={<SectionBackdrop src={ART.globe} color="#EA580C" opacity={0.15} motion="breathe" reach={86} />}
         primary={{ to: '/journals',     label: t('sections.directory.cta') }}
@@ -568,6 +592,7 @@ const PublicHomePage = () => {
         points={t('sections.collab.points', { returnObjects: true })}
         image={SHOT.collab}
         tint={{ color: '#EA580C', ratio: '909 / 428' }}
+        wide
         surface={`${SURFACE.tint} border-y border-slate-200`}
         backdrop={<SectionBackdrop src={ART.flow} color="#C2410C" opacity={0.16} motion="drift" reach={86} />}
         primary={{ to: '/research-matching',      label: t('sections.collab.cta') }}
