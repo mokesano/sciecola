@@ -43,7 +43,7 @@ const Footer = () => {
       <div aria-hidden className="pointer-events-none absolute left-1/2 top-0 h-64 w-[46rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-600/15 blur-[100px]" />
       <SectionArt src="/assets/img/sections/network.svg" opacity={0.25} position="top" />
 
-      <div className="relative mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
+      <div className="relative mx-auto w-full px-6 sm:px-10 lg:px-14 xl:px-20 2xl:px-28 pt-8">
 
         {/* ── Row 1: wordmark, secondary links, social ─────────────────── */}
         <div className="flex flex-col gap-6 pb-8 lg:flex-row lg:items-center lg:justify-between">
@@ -119,7 +119,7 @@ const Footer = () => {
 
       {/* ── Row 3: legal bar ───────────────────────────────────────────── */}
       <div className="relative border-t border-white/10 bg-[#050508]">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-[15px] text-slate-400 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+        <div className="flex flex-col gap-3 py-6 text-[15px] text-slate-400 md:flex-row md:items-center md:justify-between mx-auto w-full px-6 sm:px-10 lg:px-14 xl:px-20 2xl:px-28">
           <p>© {new Date().getFullYear()} Sciecola. {t('copyright.rights')}</p>
           <p>
             {t('copyright.developed_by')}{' '}
