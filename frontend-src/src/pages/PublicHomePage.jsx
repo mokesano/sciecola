@@ -6,6 +6,7 @@ import {
   FlaskConical, Brain, Handshake, Check, Code2,
 } from 'lucide-react';
 import SectionBackdrop from '../components/shared/SectionBackdrop';
+import HeroGrid from '../components/shared/HeroGrid';
 
 // =====================================================================
 // SUSUNAN WARNA
@@ -48,6 +49,66 @@ const SHOT = {
   footer:    '/assets/img/cta.jpg',
 };
 
+/* Aset garis pucat dipasang sebagai mask lalu diberi warna, bukan ditampilkan
+   apa adanya. Dipakai di dua tempat — sel grid untuk layar sempit dan lapisan
+   lepas untuk layar lebar — jadi aturannya ditulis sekali di sini. */
+const tintStyle = (src, tint) => ({
+  backgroundColor:    tint.color,
+  WebkitMaskImage:   `url('${src}')`,
+  maskImage:         `url('${src}')`,
+  WebkitMaskSize:     'contain',
+  maskSize:           'contain',
+  WebkitMaskRepeat:   'no-repeat',
+  maskRepeat:         'no-repeat',
+  WebkitMaskPosition: 'center',
+  maskPosition:       'center',
+});
+
+/*
+ * Peredupan untuk gambar yang melintas ke wilayah teks.
+ *
+ * Teks memang duduk di lapisan atas, tapi di antara baris dan di sela huruf
+ * gambarnya masih menyembul dan bikin teks susah dibaca. Jadi gambarnya
+ * dipudarkan habis ke arah teks: pekat di sisi tepi halaman, hilang sama
+ * sekali sebelum sampai ke kolom teks.
+ *
+ * Peredupan tegak ikut dipasang karena tidak semua aset berlatar tembus.
+ * Hero-Illustrated.png punya latar lavender pekat sampai ke tepi berkasnya;
+ * tanpa peredupan tegak, lapisan ini terbaca sebagai panel yang ditempel —
+ * bertepi lurus di atas dan di bawah — bukan sebagai ilustrasi yang menyatu
+ * dengan bidang seksinya.
+ *
+ * `over` diisi saat lapisannya sudah memakai mask untuk aset bertinta;
+ * peredupan lalu diiriskan dengan mask aset itu.
+ */
+const bleedFade = (reverse, over = null) => {
+  const dir  = reverse ? 'to left' : 'to right';
+  const side = `linear-gradient(${dir}, transparent 0%, rgba(0,0,0,0.18) 42%, #000 66%)`;
+  const top  = 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.55) 17%, #000 35%,'
+             + ' #000 65%, rgba(0,0,0,0.55) 83%, transparent 100%)';
+
+  if (!over) {
+    return {
+      WebkitMaskImage:    `${side}, ${top}`,
+      maskImage:          `${side}, ${top}`,
+      WebkitMaskComposite: 'source-in',
+      maskComposite:       'intersect',
+    };
+  }
+  return {
+    WebkitMaskImage:     `url('${over}'), ${side}, ${top}`,
+    maskImage:           `url('${over}'), ${side}, ${top}`,
+    WebkitMaskSize:       'contain, 100% 100%, 100% 100%',
+    maskSize:             'contain, 100% 100%, 100% 100%',
+    WebkitMaskRepeat:     'no-repeat, no-repeat, no-repeat',
+    maskRepeat:           'no-repeat, no-repeat, no-repeat',
+    WebkitMaskPosition:   'center, center, center',
+    maskPosition:         'center, center, center',
+    WebkitMaskComposite:  'source-in, source-in',
+    maskComposite:        'intersect, intersect',
+  };
+};
+
 /* Seksi dua kolom: teks di satu sisi, ilustrasi di sisi lain, berganti arah
    tiap seksi. Tidak semua seksi harus terpusat — halaman jadi berirama dan
    gambarnya punya ruang sendiri alih-alih ditumpuk di belakang teks. */
@@ -57,21 +118,45 @@ const SplitSection = ({
 }) => (
   <section className={`relative overflow-hidden ${surface} py-20`}>
     {backdrop}
-    <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
-      {/* Kolom gambar dilebarkan untuk aset melintang. Kolom teks yang
-          menyempit tetap nyaman karena paragraf di seksi-seksi ini pendek,
-          sementara gambarnya mendapat bidang yang sepadan dengan seksi
-          bergambar tegak. Sisi mana yang dilebarkan mengikuti `reverse`,
-          sebab urutan kolom di sini bersifat fisik. */}
-      <div className={`grid items-center gap-12 lg:gap-16 ${
-        wide
-          ? (reverse
-              ? 'lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]'
-              : 'lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]')
-          : 'lg:grid-cols-2'
-      } ${reverse ? 'lg:[&>*:first-child]:order-2' : ''}`}>
 
-        <div>
+    {/*
+      Aset melintang tidak ikut grid. Selama ia jadi sel grid, lebarnya
+      dipotong kolom — dan aset 2:1 di kolom 512px hanya setinggi 241px,
+      sekecil apa pun perlakuannya diperbaiki. Di sini ia berdiri langsung
+      di dalam seksi: tingginya mengikuti tinggi seksi, lebarnya bebas, dan
+      ia boleh melintas ke wilayah teks. Bagian yang melintas itu ditutup
+      teks — teks duduk di lapisan atas, dan gambarnya sendiri sudah pudar
+      habis sebelum sampai ke sana.
+    */}
+    {wide && (
+      <div aria-hidden
+        className={`pointer-events-none absolute inset-y-8 hidden w-[78%] items-center lg:flex ${
+          reverse ? 'left-0 justify-start' : 'right-0 justify-end'}`}>
+        {/* Kotak elemen gambar dibuat memeluk gambarnya — tinggi penuh, lebar
+            mengikuti rasio — supaya sisi luarnya benar-benar menempel tepi
+            halaman. Kalau kotaknya lebih lebar dari gambarnya, latar aset yang
+            pekat berhenti sebelum tepi dan menyisakan garis lurus. */}
+        {tint ? (
+          <span className="h-full w-full"
+            style={{ backgroundColor: tint.color, ...bleedFade(reverse, image) }} />
+        ) : (
+          <img src={image} alt="" loading="lazy"
+            className="h-full w-auto max-w-none object-contain"
+            style={bleedFade(reverse)} />
+        )}
+      </div>
+    )}
+
+    <div className="relative mx-auto max-w-6xl px-6 lg:px-8">
+      {/* Saat gambarnya melintang, kolom kedua tidak lagi menampung apa pun
+          di layar lebar, jadi grid ditinggalkan dan teks cukup dibatasi
+          lebarnya lalu didorong ke sisinya sendiri. */}
+      <div className={wide
+        ? ''
+        : `grid items-center gap-12 lg:grid-cols-2 lg:gap-16 ${
+            reverse ? 'lg:[&>*:first-child]:order-2' : ''}`}>
+
+        <div className={wide ? `relative z-10 lg:w-[47%] ${reverse ? 'lg:ml-auto' : ''}` : ''}>
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-orange-700">{eyebrow}</p>
           <h2 className="mt-4 text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl">
             {title}
@@ -110,44 +195,27 @@ const SplitSection = ({
         </div>
 
         {/*
-          Satu perlakuan untuk semua gambar seksi — yang dipakai seksi
-          Analitik: gambar berdiri sendiri tanpa bingkai, lebarnya dibatasi,
-          rasionya utuh, dan tepinya dilebur mask lembut supaya menyatu dengan
-          bidang di belakangnya alih-alih terpotong kotak.
+          Perlakuan gambar seksi — yang dipakai seksi Analitik: gambar berdiri
+          sendiri tanpa bingkai, rasionya utuh, dan tepinya dilebur mask lembut
+          supaya menyatu dengan bidang di belakangnya alih-alih terpotong
+          kotak.
 
           `tint` untuk aset garis yang warnanya nyaris putih — globalmap.png
           hanya titik abu sangat muda, jadi di atas bidang terang ia praktis
           tak terlihat. Berkasnya punya kanal alfa, jadi ia dipasang sebagai
-          mask dan diberi warna aksen halaman; penempatannya tetap sama.
+          mask dan diberi warna aksen halaman.
 
-          `wide` untuk aset melintang. Di kolom selebar ±512px, gambar 1,78:1
-          hanya setinggi 288px sementara gambar 0,94:1 di seksi Analitik
-          setinggi 543px — itulah sebabnya dua seksi terakhir terlihat jauh
-          lebih kecil meski perlakuannya sama. Aset melintang karena itu
-          diberi kolom yang lebih lebar, lalu sedikit dilebihkan keluar kolom
-          ke arah tepi halaman — bukan ke arah teks — mulai lebar layar yang
-          memang punya sisa ruang di tepi, sehingga tidak ada yang terpotong.
+          Untuk aset melintang, sel ini hanya melayani layar sempit; di layar
+          lebar gambarnya sudah berdiri di dalam seksi, di luar grid.
         */}
-        <div className={`relative flex items-center justify-center ${
-          wide ? (reverse ? 'xl:justify-end' : 'xl:justify-start') : ''}`}>
+        <div className={`relative flex items-center justify-center ${wide ? 'mt-12 lg:hidden' : ''}`}>
           {tint ? (
             <span role="img" aria-label={imageAlt}
-              className={`block w-full ${wide ? 'shrink-0 xl:w-[115%] xl:max-w-none' : 'max-w-xl'}`}
-              style={{
-                aspectRatio:        tint.ratio,
-                backgroundColor:    tint.color,
-                WebkitMaskImage:   `url('${image}')`,
-                maskImage:         `url('${image}')`,
-                WebkitMaskSize:     'contain',
-                maskSize:           'contain',
-                WebkitMaskRepeat:   'no-repeat',
-                maskRepeat:         'no-repeat',
-                WebkitMaskPosition: 'center',
-                maskPosition:       'center',
-              }} />
+              className="block w-full max-w-xl"
+              style={{ aspectRatio: tint.ratio, ...tintStyle(image, tint) }} />
           ) : (
             <img src={image} alt={imageAlt} loading="lazy"
-              className={`w-full object-contain ${wide ? 'shrink-0 xl:w-[115%] xl:max-w-none' : 'max-w-xl'}`}
+              className="w-full max-w-xl object-contain"
               style={{
                 WebkitMaskImage: 'radial-gradient(ellipse 82% 82% at 50% 50%, #000 46%, transparent 92%)',
                 maskImage:       'radial-gradient(ellipse 82% 82% at 50% 50%, #000 46%, transparent 92%)',
@@ -332,17 +400,15 @@ const PublicHomePage = () => {
 
       {/* ══ HERO — satu-satunya tempat gradasi berada ═════════════════ */}
       <section className="relative overflow-hidden bg-white">
-        {/* Dots hanya menempati paruh kanan, seperti pada rujukan Gcore.
-            Teksnya di kiri, jadi gambar tidak perlu dilubangi lebar-lebar dan
-            sorotan kursor punya ruang penuh untuk bekerja. */}
+        {/* Kisi menempati paruh kanan, seperti pada rujukan Gcore. Teksnya di
+            kiri, jadi sorotan kursor punya ruang penuh untuk bekerja. */}
         <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/2 lg:block">
-          <SectionBackdrop src={ART.grid} color="#F0BE9C" opacity={0.95} motion="drift" reach={0}
-            interactive litColor="rgba(194,65,12,1)" litRadius={420} />
+          <HeroGrid />
         </div>
-        {/* Di layar sempit teks memenuhi lebar, jadi dots dipasang di
-            belakangnya dengan lubang teks yang lebar. */}
+        {/* Di layar sempit teks memenuhi lebar, jadi kisinya dipasang di
+            belakang teks dengan warna jauh lebih senyap. */}
         <div className="pointer-events-none absolute inset-0 lg:hidden">
-          <SectionBackdrop src={ART.grid} color="#F5D2BB" opacity={0.8} motion="drift" reach={74} />
+          <HeroGrid gap={22} line="rgba(234,88,12,0.06)" dot="rgba(234,88,12,0.16)" />
         </div>
 
         <div className="relative mx-auto max-w-6xl px-6 pb-24 pt-16 lg:px-8">
