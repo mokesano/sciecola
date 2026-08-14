@@ -26,18 +26,6 @@ import HeroWorld from '../components/shared/HeroWorld';
    pelan dan menyala tepat di bawah kursor. Warna dibawa oleh judul dan
    tombol, bukan oleh latar. */
 
-/* Latar bergambar tiap seksi. Warnanya menyesuaikan bidangnya: oranye pekat
-   di atas putih, oranye muda di atas pita gelap, putih di atas hero. */
-const ART = {
-  grid:  '/assets/img/sections/hero-grid.svg',
-  globe: '/assets/img/sections/globe.svg',
-  net:   '/assets/img/sections/network.svg',
-  flow:  '/assets/img/sections/flow.svg',
-  waves: '/assets/img/sections/waves.svg',
-  about: '/assets/img/sections/about.svg',
-  world: '/assets/img/world.svg',
-};
-
 /* Ilustrasi di dalam seksi — memakai aset yang sudah tersedia di aplikasi.
    Dipasang dengan mask memudar di tepi, cara yang sama dipakai hero beranda
    pengguna untuk menyatukan gambar dengan bidang di belakangnya. */
@@ -49,63 +37,77 @@ const SHOT = {
   footer:    '/assets/img/cta.jpg',
 };
 
-/* Aset garis pucat dipasang sebagai mask lalu diberi warna, bukan ditampilkan
-   apa adanya. Dipakai di dua tempat — sel grid untuk layar sempit dan lapisan
-   lepas untuk layar lebar — jadi aturannya ditulis sekali di sini. */
-const tintStyle = (src, tint) => ({
-  backgroundColor:    tint.color,
-  WebkitMaskImage:   `url('${src}')`,
-  maskImage:         `url('${src}')`,
-  WebkitMaskSize:     'contain',
-  maskSize:           'contain',
-  WebkitMaskRepeat:   'no-repeat',
-  maskRepeat:         'no-repeat',
-  WebkitMaskPosition: 'center',
-  maskPosition:       'center',
-});
+/*
+ * Perlakuan gambar seksi, seluruhnya sebagai kelas.
+ *
+ * ART   — tepi dilebur mask lembut supaya gambarnya menyatu dengan bidang di
+ *         belakangnya alih-alih terpotong kotak.
+ * BLEED — pelunakan tepi untuk gambar yang berdiri lepas di dalam seksi:
+ *         setipis mungkin, secukupnya menyembunyikan bahwa berkasnya kotak.
+ *         Sisi luar tidak dilunakkan; di sana gambarnya menempel tepi halaman.
+ * TINT  — aset garis yang warnanya nyaris putih dipasang sebagai mask lalu
+ *         diberi warna aksen, bukan ditampilkan apa adanya.
+ */
+const ART_MASK = '[mask-image:radial-gradient(ellipse_82%_82%_at_50%_50%,#000_46%,transparent_92%)] [-webkit-mask-image:radial-gradient(ellipse_82%_82%_at_50%_50%,#000_46%,transparent_92%)]';
+
+const BLEED = {
+  right: '[mask-image:linear-gradient(to_right,transparent_0%,#000_9%),linear-gradient(to_bottom,transparent_0%,#000_8%,#000_92%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,#000_9%),linear-gradient(to_bottom,transparent_0%,#000_8%,#000_92%,transparent_100%)] [mask-composite:intersect] [-webkit-mask-composite:source-in]',
+  left:  '[mask-image:linear-gradient(to_left,transparent_0%,#000_9%),linear-gradient(to_bottom,transparent_0%,#000_8%,#000_92%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_left,transparent_0%,#000_9%),linear-gradient(to_bottom,transparent_0%,#000_8%,#000_92%,transparent_100%)] [mask-composite:intersect] [-webkit-mask-composite:source-in]',
+};
+
+const BLEED_TINT = {
+  right: '[mask-image:url(/assets/img/globalmap.png),linear-gradient(to_right,transparent_0%,#000_9%),linear-gradient(to_bottom,transparent_0%,#000_8%,#000_92%,transparent_100%)] [-webkit-mask-image:url(/assets/img/globalmap.png),linear-gradient(to_right,transparent_0%,#000_9%),linear-gradient(to_bottom,transparent_0%,#000_8%,#000_92%,transparent_100%)] [mask-size:contain,100%_100%,100%_100%] [-webkit-mask-size:contain,100%_100%,100%_100%] [mask-repeat:no-repeat,no-repeat,no-repeat] [-webkit-mask-repeat:no-repeat,no-repeat,no-repeat] [mask-position:center,center,center] [-webkit-mask-position:center,center,center] [mask-composite:intersect,intersect] [-webkit-mask-composite:source-in,source-in]',
+  left:  '[mask-image:url(/assets/img/globalmap.png),linear-gradient(to_left,transparent_0%,#000_9%),linear-gradient(to_bottom,transparent_0%,#000_8%,#000_92%,transparent_100%)] [-webkit-mask-image:url(/assets/img/globalmap.png),linear-gradient(to_left,transparent_0%,#000_9%),linear-gradient(to_bottom,transparent_0%,#000_8%,#000_92%,transparent_100%)] [mask-size:contain,100%_100%,100%_100%] [-webkit-mask-size:contain,100%_100%,100%_100%] [mask-repeat:no-repeat,no-repeat,no-repeat] [-webkit-mask-repeat:no-repeat,no-repeat,no-repeat] [mask-position:center,center,center] [-webkit-mask-position:center,center,center] [mask-composite:intersect,intersect] [-webkit-mask-composite:source-in,source-in]',
+};
+
+const TINT_MASK = '[mask-image:url(/assets/img/globalmap.png)] [-webkit-mask-image:url(/assets/img/globalmap.png)] [mask-size:contain] [-webkit-mask-size:contain] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-position:center] [-webkit-mask-position:center]';
 
 /*
- * Peleburan tepi untuk gambar yang berdiri lepas di dalam seksi.
+ * Latar bergambar tiap seksi, seluruhnya sebagai kelas Tailwind.
  *
- * Sebelumnya gambarnya dipudarkan habis ke arah teks — dari 42% sampai 66%
- * lebarnya — dan tegak lurus dari 17% sampai 83% tingginya. Itu keliru:
- * gambarnya jadi buram jauh sebelum menyentuh huruf apa pun, dan tepi atas
- * bawahnya larut sampai bentuknya hilang. Yang perlu diredam hanya tempat
- * gambar benar-benar bertemu huruf, dan itu dikerjakan halo di sekeliling
- * teks (kelas HALO_*), bukan oleh gambarnya.
+ * Sebelumnya nilai-nilai ini dioper sebagai custom property lalu berakhir
+ * sebagai atribut style sepanjang satu paragraf di dalam DOM — berkas mask,
+ * ukuran, posisi, warna, opasitas, dan aturan animasinya sekaligus. Semua itu
+ * sudah diketahui saat menulis kode, jadi semuanya bisa dan seharusnya jadi
+ * kelas. Yang tersisa lewat DOM hanya --mx dan --my: posisi kursor, yang
+ * berubah puluhan kali per detik.
  *
- * Yang tersisa di sini cuma pelunakan tepi setipis mungkin — secukupnya
- * untuk menyembunyikan bahwa berkasnya berbentuk kotak. Sisi luar tidak
- * dilunakkan sama sekali: di sana gambarnya menempel tepi halaman.
- *
- * `over` diisi saat lapisannya sudah memakai mask untuk aset bertinta;
- * pelunakan lalu diiriskan dengan mask aset itu.
+ * Keyframes-nya sendiri hidup di styles/animations.css: Tailwind tidak bisa
+ * mendefinisikan keyframes tanpa berkas konfigurasi, dan proyek ini memuat
+ * Tailwind dari CDN tanpa konfig.
  */
-const bleedFade = (reverse, over = null) => {
-  const dir  = reverse ? 'to left' : 'to right';
-  const side = `linear-gradient(${dir}, transparent 0%, #000 9%)`;
-  const top  = 'linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%)';
+const BACKDROP = {
+  features:   
+    '[mask-image:url(/assets/img/sections/network.svg),radial-gradient(ellipse_76%_62%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [-webkit-mask-image:url(/assets/img/sections/network.svg),radial-gradient(ellipse_76%_62%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [mask-size:cover,cover] [-webkit-mask-size:cover,cover] [mask-position:center,center] [-webkit-mask-position:center,center] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-composite:intersect] [-webkit-mask-composite:source-in] bg-[#EA580C] opacity-[0.22] will-change-transform [animation:sc-drift_34s_ease-in-out_infinite_alternate]',
+  sdg:        
+    '[mask-image:url(/assets/img/sections/globe.svg),radial-gradient(ellipse_70%_57%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [-webkit-mask-image:url(/assets/img/sections/globe.svg),radial-gradient(ellipse_70%_57%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [mask-size:cover,cover] [-webkit-mask-size:cover,cover] [mask-position:center,center] [-webkit-mask-position:center,center] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-composite:intersect] [-webkit-mask-composite:source-in] bg-[#FDBA74] opacity-[0.3] will-change-transform [animation:sc-breathe_22s_ease-in-out_infinite_alternate]',
+  workflow:   
+    '[mask-image:url(/assets/img/sections/hero-grid.svg),radial-gradient(ellipse_80%_66%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [-webkit-mask-image:url(/assets/img/sections/hero-grid.svg),radial-gradient(ellipse_80%_66%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [mask-size:cover,cover] [-webkit-mask-size:cover,cover] [mask-position:center,center] [-webkit-mask-position:center,center] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-composite:intersect] [-webkit-mask-composite:source-in] bg-[#C2410C] opacity-[0.18] will-change-transform [animation:sc-drift_34s_ease-in-out_infinite_alternate]',
+  stats:      
+    '[mask-image:url(/assets/img/sections/flow.svg),radial-gradient(ellipse_78%_64%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [-webkit-mask-image:url(/assets/img/sections/flow.svg),radial-gradient(ellipse_78%_64%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [mask-size:cover,cover] [-webkit-mask-size:cover,cover] [mask-position:center,center] [-webkit-mask-position:center,center] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-composite:intersect] [-webkit-mask-composite:source-in] bg-[#EA580C] opacity-[0.24] will-change-transform [animation:sc-pan_46s_ease-in-out_infinite_alternate]',
+  insights:   
+    '[mask-image:url(/assets/img/sections/waves.svg),radial-gradient(ellipse_72%_59%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [-webkit-mask-image:url(/assets/img/sections/waves.svg),radial-gradient(ellipse_72%_59%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [mask-size:cover,cover] [-webkit-mask-size:cover,cover] [mask-position:center,center] [-webkit-mask-position:center,center] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-composite:intersect] [-webkit-mask-composite:source-in] bg-[#FB923C] opacity-[0.34] will-change-transform [animation:sc-pan_46s_ease-in-out_infinite_alternate]',
+  explore:    
+    '[mask-image:url(/assets/img/sections/network.svg),radial-gradient(ellipse_86%_71%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [-webkit-mask-image:url(/assets/img/sections/network.svg),radial-gradient(ellipse_86%_71%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [mask-size:cover,cover] [-webkit-mask-size:cover,cover] [mask-position:center,center] [-webkit-mask-position:center,center] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-composite:intersect] [-webkit-mask-composite:source-in] bg-[#EA580C] opacity-[0.16] will-change-transform [animation:sc-drift_34s_ease-in-out_infinite_alternate]',
+  analytics:  
+    '[mask-image:url(/assets/img/sections/waves.svg),radial-gradient(ellipse_86%_71%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [-webkit-mask-image:url(/assets/img/sections/waves.svg),radial-gradient(ellipse_86%_71%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [mask-size:cover,cover] [-webkit-mask-size:cover,cover] [mask-position:center,center] [-webkit-mask-position:center,center] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-composite:intersect] [-webkit-mask-composite:source-in] bg-[#C2410C] opacity-[0.16] will-change-transform [animation:sc-pan_46s_ease-in-out_infinite_alternate]',
+  directory:  
+    '[mask-image:url(/assets/img/sections/globe.svg),radial-gradient(ellipse_86%_71%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [-webkit-mask-image:url(/assets/img/sections/globe.svg),radial-gradient(ellipse_86%_71%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [mask-size:cover,cover] [-webkit-mask-size:cover,cover] [mask-position:center,center] [-webkit-mask-position:center,center] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-composite:intersect] [-webkit-mask-composite:source-in] bg-[#EA580C] opacity-[0.15] will-change-transform [animation:sc-breathe_22s_ease-in-out_infinite_alternate]',
+  collab:     
+    '[mask-image:url(/assets/img/sections/flow.svg),radial-gradient(ellipse_86%_71%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [-webkit-mask-image:url(/assets/img/sections/flow.svg),radial-gradient(ellipse_86%_71%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [mask-size:cover,cover] [-webkit-mask-size:cover,cover] [mask-position:center,center] [-webkit-mask-position:center,center] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-composite:intersect] [-webkit-mask-composite:source-in] bg-[#C2410C] opacity-[0.16] will-change-transform [animation:sc-drift_34s_ease-in-out_infinite_alternate]',
+  api:        
+    '[mask-image:url(/assets/img/sections/hero-grid.svg),radial-gradient(ellipse_70%_57%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [-webkit-mask-image:url(/assets/img/sections/hero-grid.svg),radial-gradient(ellipse_70%_57%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [mask-size:cover,cover] [-webkit-mask-size:cover,cover] [mask-position:center,center] [-webkit-mask-position:center,center] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-composite:intersect] [-webkit-mask-composite:source-in] bg-[#7C3E1D] opacity-[0.85] will-change-transform [animation:sc-pan_46s_ease-in-out_infinite_alternate]',
+  partners:   
+    '[mask-image:url(/assets/img/sections/network.svg),radial-gradient(ellipse_78%_64%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [-webkit-mask-image:url(/assets/img/sections/network.svg),radial-gradient(ellipse_78%_64%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [mask-size:cover,cover] [-webkit-mask-size:cover,cover] [mask-position:center,center] [-webkit-mask-position:center,center] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-composite:intersect] [-webkit-mask-composite:source-in] bg-[#C2410C] opacity-[0.17] will-change-transform [animation:sc-breathe_22s_ease-in-out_infinite_alternate]',
+  closing:    
+    '[mask-image:url(/assets/img/sections/about.svg),radial-gradient(ellipse_76%_62%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [-webkit-mask-image:url(/assets/img/sections/about.svg),radial-gradient(ellipse_76%_62%_at_50%_50%,rgba(0,0,0,0)_0%,rgba(0,0,0,0)_38%,rgba(0,0,0,0.35)_58%,#000_82%)] [mask-size:cover,cover] [-webkit-mask-size:cover,cover] [mask-position:center,center] [-webkit-mask-position:center,center] [mask-repeat:no-repeat] [-webkit-mask-repeat:no-repeat] [mask-composite:intersect] [-webkit-mask-composite:source-in] bg-[#EA580C] opacity-[0.22] will-change-transform [animation:sc-drift_34s_ease-in-out_infinite_alternate]',
+};
 
-  if (!over) {
-    return {
-      WebkitMaskImage:    `${side}, ${top}`,
-      maskImage:          `${side}, ${top}`,
-      WebkitMaskComposite: 'source-in',
-      maskComposite:       'intersect',
-    };
-  }
-  return {
-    WebkitMaskImage:     `url('${over}'), ${side}, ${top}`,
-    maskImage:           `url('${over}'), ${side}, ${top}`,
-    WebkitMaskSize:       'contain, 100% 100%, 100% 100%',
-    maskSize:             'contain, 100% 100%, 100% 100%',
-    WebkitMaskRepeat:     'no-repeat, no-repeat, no-repeat',
-    maskRepeat:           'no-repeat, no-repeat, no-repeat',
-    WebkitMaskPosition:   'center, center, center',
-    maskPosition:         'center, center, center',
-    WebkitMaskComposite:  'source-in, source-in',
-    maskComposite:        'intersect, intersect',
-  };
+/* Sorotan yang mengikuti kursor: gambar yang sudah ada menguat di sekitar
+   pointer, bukan salinan kedua digambar di atasnya. */
+const LIT = {
+  insights: '[background-image:radial-gradient(380px_circle_at_var(--mx,-999px)_var(--my,-999px),rgba(251,146,60,0.55)_0%,rgba(251,146,60,0.55)_18%,transparent_62%)]',
+  api:      '[background-image:radial-gradient(340px_circle_at_var(--mx,-999px)_var(--my,-999px),rgba(234,88,12,0.9)_0%,rgba(234,88,12,0.9)_18%,transparent_62%)]',
 };
 
 /*
@@ -155,12 +157,10 @@ const SplitSection = ({
             halaman. Kalau kotaknya lebih lebar dari gambarnya, latar aset yang
             pekat berhenti sebelum tepi dan menyisakan garis lurus. */}
         {tint ? (
-          <span className="h-full w-full"
-            style={{ backgroundColor: tint.color, ...bleedFade(reverse, image) }} />
+          <span className={`h-full w-full ${tint} ${reverse ? BLEED_TINT.left : BLEED_TINT.right}`} />
         ) : (
           <img src={image} alt="" loading="lazy"
-            className="h-full w-auto max-w-none object-contain"
-            style={bleedFade(reverse)} />
+            className={`h-full w-auto max-w-none object-contain ${reverse ? BLEED.left : BLEED.right}`} />
         )}
       </div>
     )}
@@ -232,15 +232,10 @@ const SplitSection = ({
         <div className={`relative flex items-center justify-center ${wide ? 'mt-12 lg:hidden' : ''}`}>
           {tint ? (
             <span role="img" aria-label={imageAlt}
-              className="block w-full max-w-xl"
-              style={{ aspectRatio: tint.ratio, ...tintStyle(image, tint) }} />
+              className={`block w-full max-w-xl aspect-[909/428] ${tint} ${TINT_MASK}`} />
           ) : (
             <img src={image} alt={imageAlt} loading="lazy"
-              className="w-full max-w-xl object-contain"
-              style={{
-                WebkitMaskImage: 'radial-gradient(ellipse 82% 82% at 50% 50%, #000 46%, transparent 92%)',
-                maskImage:       'radial-gradient(ellipse 82% 82% at 50% 50%, #000 46%, transparent 92%)',
-              }} />
+              className={`w-full max-w-xl object-contain ${ART_MASK}`} />
           )}
         </div>
       </div>
@@ -471,7 +466,7 @@ const PublicHomePage = () => {
 
       {/* ══ KEMAMPUAN — putih ════════════════════════════════════════ */}
       <section className={`relative overflow-hidden ${SURFACE.white} py-20`}>
-        <SectionBackdrop src={ART.net} color="#EA580C" opacity={0.22} motion="drift" reach={76} />
+        <SectionBackdrop className={BACKDROP.features} />
         <div className={`relative ${SHELL}`}>
           <SectionHead
             title={text(pick('features_section.title'), t, 'features_section.title')}
@@ -493,7 +488,7 @@ const PublicHomePage = () => {
       {/* ══ ANGKA PLATFORM — pita gelap pertama ══════════════════════ */}
       {stats.length > 0 && (
         <section className={`relative overflow-hidden ${SURFACE.dark}`}>
-          <SectionBackdrop src={ART.globe} color="#FDBA74" opacity={0.30} motion="breathe" reach={70} />
+          <SectionBackdrop className={BACKDROP.sdg} />
           <div className={`relative ${SHELL} py-16`}>
             <dl className="grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-4">
               {stats.map((s, i) => (
@@ -512,7 +507,7 @@ const PublicHomePage = () => {
       {/* ══ 17 SDG — abu muda ════════════════════════════════════════ */}
       {sdgList.length > 0 && (
         <section className={`relative overflow-hidden ${SURFACE.tint} border-y border-slate-200 py-20`}>
-          <SectionBackdrop src={ART.grid} color="#C2410C" opacity={0.18} motion="drift" reach={80} />
+          <SectionBackdrop className={BACKDROP.workflow} />
           <div className={`relative ${SHELL}`}>
             <SectionHead
               title={text(pick('sdg_section.title'), t, 'sdg_section.title')}
@@ -550,7 +545,7 @@ const PublicHomePage = () => {
 
       {/* ══ ALUR KERJA — putih ═══════════════════════════════════════ */}
       <section className={`relative overflow-hidden ${SURFACE.white} py-20`}>
-        <SectionBackdrop src={ART.flow} color="#EA580C" opacity={0.24} motion="pan" reach={78} />
+        <SectionBackdrop className={BACKDROP.stats} />
         <div className={`relative ${SHELL}`}>
           <SectionHead
             title={text(pick('how_it_works_section.title'), t, 'how_it_works_section.title')}
@@ -576,8 +571,7 @@ const PublicHomePage = () => {
       {/* ══ AI INSIGHTS — pita gelap kedua ═══════════════════════════ */}
       {insights.length > 0 && (
         <section className={`relative overflow-hidden ${SURFACE.dark} py-20`}>
-          <SectionBackdrop src={ART.waves} color="#FB923C" opacity={0.34} motion="pan" reach={72}
-            interactive litColor="rgba(251,146,60,0.55)" litRadius={380} />
+          <SectionBackdrop className={BACKDROP.insights} litClassName={LIT.insights} interactive />
           <div className={`relative ${SHELL}`}>
             <div className="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div className="max-w-2xl">
@@ -640,7 +634,7 @@ const PublicHomePage = () => {
         points={t('sections.explore.points', { returnObjects: true })}
         image={SHOT.explore}
         surface={SURFACE.white}
-        backdrop={<SectionBackdrop src={ART.net} color="#EA580C" opacity={0.16} motion="drift" reach={86} />}
+        backdrop={<SectionBackdrop className={BACKDROP.explore} />}
         primary={{ to: '/researchers', label: t('sections.explore.cta') }}
         secondary={{ to: '/articles',  label: t('sections.explore.cta2') }} />
 
@@ -652,7 +646,7 @@ const PublicHomePage = () => {
         points={t('sections.analytics.points', { returnObjects: true })}
         image={SHOT.analytics}
         surface={`${SURFACE.tint} border-y border-slate-200`}
-        backdrop={<SectionBackdrop src={ART.waves} color="#C2410C" opacity={0.16} motion="pan" reach={86} />}
+        backdrop={<SectionBackdrop className={BACKDROP.analytics} />}
         primary={{ to: '/analytics',       label: t('sections.analytics.cta') }}
         secondary={{ to: '/trends-analysis', label: t('sections.analytics.cta2') }} />
 
@@ -665,7 +659,7 @@ const PublicHomePage = () => {
         image={SHOT.directory}
         wide
         surface={SURFACE.white}
-        backdrop={<SectionBackdrop src={ART.globe} color="#EA580C" opacity={0.15} motion="breathe" reach={86} />}
+        backdrop={<SectionBackdrop className={BACKDROP.directory} />}
         primary={{ to: '/journals',     label: t('sections.directory.cta') }}
         secondary={{ to: '/institutions', label: t('sections.directory.cta2') }} />
 
@@ -676,18 +670,17 @@ const PublicHomePage = () => {
         body={t('sections.collab.body')}
         points={t('sections.collab.points', { returnObjects: true })}
         image={SHOT.collab}
-        tint={{ color: '#EA580C', ratio: '909 / 428' }}
+        tint="bg-[#EA580C]"
         wide
         halo={HALO_TINT}
         surface={`${SURFACE.tint} border-y border-slate-200`}
-        backdrop={<SectionBackdrop src={ART.flow} color="#C2410C" opacity={0.16} motion="drift" reach={86} />}
+        backdrop={<SectionBackdrop className={BACKDROP.collab} />}
         primary={{ to: '/research-matching',      label: t('sections.collab.cta') }}
         secondary={{ to: '/innovation-marketplace', label: t('sections.collab.cta2') }} />
 
       {/* ══ API — pita gelap ketiga, latarnya menyala mengikuti kursor ═ */}
       <section className={`relative overflow-hidden ${SURFACE.dark} py-16`}>
-        <SectionBackdrop src={ART.grid} color="#7C3E1D" opacity={0.85} motion="pan" reach={70}
-          interactive litColor="rgba(234,88,12,0.9)" litRadius={340} />
+        <SectionBackdrop className={BACKDROP.api} litClassName={LIT.api} interactive />
         <div className={`relative flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between ${SHELL}`}>
           <div className="flex items-start gap-5">
             <span className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-500/15 text-orange-300 ring-1 ring-orange-400/25 sm:flex">
@@ -714,7 +707,7 @@ const PublicHomePage = () => {
       {/* ══ MITRA — abu muda ═════════════════════════════════════════ */}
       {partners.length > 0 && (
         <section className={`relative overflow-hidden ${SURFACE.tint} border-y border-slate-200 py-16`}>
-          <SectionBackdrop src={ART.net} color="#C2410C" opacity={0.17} motion="breathe" reach={78} />
+          <SectionBackdrop className={BACKDROP.partners} />
           <div className={`relative ${SHELL}`}>
             <SectionHead
               title={text(pick('partners_section.title'), t, 'partners_section.title')}
@@ -740,7 +733,7 @@ const PublicHomePage = () => {
 
       {/* ══ PENUTUP — putih ══════════════════════════════════════════ */}
       <section className={`relative overflow-hidden ${SURFACE.white} py-20`}>
-        <SectionBackdrop src={ART.about} color="#EA580C" opacity={0.22} motion="drift" reach={76} />
+        <SectionBackdrop className={BACKDROP.closing} />
         <div className={`relative text-center ${SHELL}`}>
           <span className="inline-flex items-center gap-2 rounded-full bg-orange-50 px-4 py-1.5 text-[15px] font-semibold text-orange-800 ring-1 ring-orange-200">
             {text(pick('cta_section.badge'), t, 'cta_section.badge')}
@@ -788,11 +781,9 @@ const PublicHomePage = () => {
           gambarnya sendiri, jadi tidak ada yang hilang. */}
       <div aria-hidden className="w-full overflow-hidden bg-white">
         <img src={SHOT.footer} alt="" loading="lazy"
-          className="block h-auto w-full"
-          style={{
-            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, #000 22%, #000 100%)',
-            maskImage:       'linear-gradient(to bottom, transparent 0%, #000 22%, #000 100%)',
-          }} />
+          className={'block h-auto w-full '
+            + '[mask-image:linear-gradient(to_bottom,transparent_0%,#000_22%,#000_100%)] '
+            + '[-webkit-mask-image:linear-gradient(to_bottom,transparent_0%,#000_22%,#000_100%)]'} />
       </div>
 
     </main>
