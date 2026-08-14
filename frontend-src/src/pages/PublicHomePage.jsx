@@ -421,7 +421,11 @@ const PublicHomePage = () => {
             kolom teks berakhir: tidak ada tindihan yang perlu diredam, dan
             gambarnya leluasa memakai sisa bidang di kanan. */}
         <div aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 hidden w-[44%] xl:w-[46%] lg:block">
+          className={'pointer-events-none absolute inset-y-10 hidden lg:block '
+            /* tepi kanannya berhenti di garis padding yang sama dengan navbar,
+               isi seksi, dan footer — bukan menempel tepi jendela */
+            + 'right-6 sm:right-10 lg:right-14 xl:right-20 2xl:right-28 '
+            + 'w-[46%] xl:w-[48%]'}>
           <HeroWorld />
         </div>
 
