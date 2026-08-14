@@ -3,30 +3,37 @@ import React, { useEffect, useRef, useState } from 'react';
 /**
  * Peta dunia untuk hero, dengan denyut berkeliling di negara peneliti.
  *
- * Petanya disisipkan sebagai SVG sebenarnya, bukan dipasang lewat <img>.
- * Alasannya bukan selera: setiap negara di berkas itu adalah <path> ber-id,
- * dan kita perlu membaca posisi tiap negara di layar untuk menaruh denyut
- * tepat di atasnya. Lewat <img>, isi berkas tidak bisa dijangkau sama sekali,
- * jadi koordinat setiap negara harus ditulis tangan — daftar yang pasti
- * melenceng begitu petanya diganti.
+ * Soal gaya: seluruh tampilan komponen ini ditulis sebagai kelas Tailwind —
+ * termasuk mask, promosi lapisan, warna isian negara, dan bentuk titiknya.
+ * Yang tersisa sebagai nilai dari JavaScript hanyalah tiga hal yang memang
+ * tidak bisa jadi nama kelas, karena baru diketahui saat halaman berjalan:
  *
- * Denyutnya tidak menyala serentak di semua negara. Satu sorot berjalan
- * berkeliling: berhenti di satu negara, berdenyut, lalu meluncur ke negara
- * berikutnya yang dipilih acak. Perpindahannya diinterpolasi per frame dengan
- * pelandaian di kedua ujung, jadi yang terlihat adalah luncuran, bukan
- * lompatan.
+ *   1. letak tiap negara — hasil pengukuran berkasnya sendiri;
+ *   2. posisi sorot yang berkeliling — berubah tiap frame;
+ *   3. posisi sorotan kursor — berubah tiap frame.
+ *
+ * Ketiganya dioper lewat custom property, dan yang membacanya tetap kelas
+ * Tailwind. Jadi tidak ada aturan tampilan yang disuntikkan ke DOM; yang
+ * lewat DOM hanya angka.
+ *
+ * Petanya sendiri disisipkan sebagai SVG sebenarnya, bukan lewat <img>.
+ * Alasannya bukan selera: tiap negara di berkas itu adalah <path> ber-nama,
+ * dan posisinya perlu dibaca untuk menaruh denyut tepat di atasnya. Lewat
+ * <img>, isi berkas tidak terjangkau sama sekali.
  */
 
-const SRC = '/assets/img/world-map.svg';
+const SRC = '/assets/img/world.svg';
 const ENDPOINT = '/api/researcher_distribution.php?groupBy=country';
 
-/* Id di dalam berkas peta memakai tanda hubung ("Antigua-and-Barbuda"),
-   sedangkan kolom country di basis data berisi nama biasa. Keduanya
-   disederhanakan ke bentuk yang sama sebelum dibandingkan. */
+const SPOT = 230;      // jari-jari sorotan kursor, dalam piksel
+const MIN_SPAN = 7;    // wilayah lebih kecil dari ini tidak diberi titik latar
+
+/* Nama negara di berkas peta dan di basis data disederhanakan ke bentuk yang
+   sama sebelum dibandingkan. */
 const slug = (s) => String(s).toLowerCase().replace(/[^a-z]+/g, '-').replace(/^-|-$/g, '');
 
-/* Nama yang lazim berbeda antara data dan berkas peta. Tabel ini dipakai pada
-   kedua sisi, jadi selama keduanya menuju bentuk yang sama, cocok. */
+/* Nama yang lazim berbeda antara keduanya. Tabel ini dipakai pada kedua sisi,
+   jadi selama keduanya menuju bentuk yang sama, cocok. */
 const ALIAS = {
   'united-states': 'united-states-of-america',
   'usa': 'united-states-of-america',
@@ -34,6 +41,7 @@ const ALIAS = {
   'uk': 'united-kingdom',
   'great-britain': 'united-kingdom',
   'south-korea': 'republic-of-korea',
+  'korea-south': 'republic-of-korea',
   'north-korea': 'dem-rep-korea',
   'russia': 'russian-federation',
   'vietnam': 'viet-nam',
@@ -89,32 +97,59 @@ const insidePoint = (path) => {
   return best ?? { x: cx, y: cy };
 };
 
-/* Pelandaian di kedua ujung. Luncurannya berangkat pelan, cepat di tengah,
-   lalu melambat sebelum berhenti — itu yang membuatnya tidak terbaca sebagai
-   perpindahan mendadak. */
+/* Pelandaian di kedua ujung: berangkat pelan, cepat di tengah, melambat
+   sebelum berhenti — itu yang membuat perpindahannya terbaca sebagai
+   luncuran, bukan lompatan. */
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - ((-2 * t + 2) ** 3) / 2);
 
-const HeroWorld = ({ radius = 230 }) => {
-  const hostRef  = useRef(null);
-  const mapRef   = useRef(null);
-  const roamRef  = useRef(null);   // sorot yang berkeliling
-  const ringRef  = useRef(null);   // gelang denyutnya
+/* ── Kelas ────────────────────────────────────────────────────────────────
+   Dikumpulkan di sini supaya baris JSX-nya tetap terbaca. Semuanya kelas
+   Tailwind biasa, termasuk yang memakai nilai sembarang. */
+
+const MAP =
+  'absolute inset-0 transform-gpu will-change-transform ' +
+  // peta didorong ke lapisan compositor sendiri; tanpa itu sorotan kursor
+  // yang bergerak memaksa ratusan path diraster ulang tiap frame
+  '[&_svg]:block [&_svg]:h-full [&_svg]:w-full ' +
+  '[&_path]:fill-[#FBE3D2] [&_path]:stroke-[#EFC4A4] [&_path]:[stroke-width:0.4] ' +
+  '[&_path]:[vector-effect:non-scaling-stroke]';
+
+/* Titik negara peneliti, dan titik latar yang lebih kecil untuk negara lain.
+   Titik latar sengaja jauh lebih kecil: pada peta selebar 750px, titik 7px
+   menutupi seluruh negara kecil, dan sebarannya terbaca sebagai gumpalan
+   alih-alih sebagai titik-titik. */
+const DOT      = 'absolute -ml-[3.5px] -mt-[3.5px] h-[7px] w-[7px] rounded-full';
+const DOT_TINY = 'absolute -ml-[2px] -mt-[2px] h-1 w-1 rounded-full';
+const RING     = 'absolute inset-0 rounded-full border';
+
+/* Sorotan kursor: kotak seukuran sorotan dengan mask diam, digeser transform.
+   Isinya digeser balik dengan transform kebalikannya, jadi titik tetap berada
+   di koordinat petanya. Keduanya ditangani compositor — mask yang berpindah
+   tiap frame akan memaksa seluruh lapisan dicat ulang. */
+const SPOT_BOX =
+  'absolute left-0 top-0 h-[460px] w-[460px] will-change-transform ' +
+  '[transform:translate3d(calc(var(--gx,-9999px)-230px),calc(var(--gy,-9999px)-230px),0)] ' +
+  '[mask-image:radial-gradient(circle_at_center,#000_0%,rgba(0,0,0,0.55)_54%,transparent_78%)] ' +
+  '[-webkit-mask-image:radial-gradient(circle_at_center,#000_0%,rgba(0,0,0,0.55)_54%,transparent_78%)]';
+
+const SPOT_INNER =
+  'absolute left-0 top-0 h-[var(--sc-h,100%)] w-[var(--sc-w,100%)] will-change-transform ' +
+  '[transform:translate3d(calc(230px-var(--gx,-9999px)),calc(230px-var(--gy,-9999px)),0)]';
+
+const HeroWorld = () => {
+  const hostRef = useRef(null);
+  const mapRef  = useRef(null);
+  const roamRef = useRef(null);
 
   const targetRef = useRef({ x: -9999, y: -9999 });
   const posRef    = useRef({ x: -9999, y: -9999 });
   const rafRef    = useRef(0);
+  const sizeRef   = useRef({ w: 0, h: 0 });
 
   const [markers, setMarkers] = useState([]);
   const countriesRef = useRef(new Set());
-  const markersRef   = useRef([]);
   const idleRef      = useRef([]);
   const idleWrapRef  = useRef(null);
-  /* Ukuran lapisan disimpan, tidak dibaca ulang tiap frame. Dua gelung rAF
-     berjalan bersamaan di sini — sorot berkeliling dan sorotan kursor — dan
-     masing-masing memanggil getBoundingClientRect() memaksa hitung tata letak
-     dua kali per frame. Terukur, itu saja menaikkan frame dari 16,7ms ke
-     22,8ms saat kursor bergerak. */
-  const sizeRef      = useRef({ w: 0, h: 0 });
 
   /* ── Peta ──────────────────────────────────────────────────────────── */
   useEffect(() => {
@@ -128,8 +163,8 @@ const HeroWorld = ({ radius = 230 }) => {
         if (el) {
           el.removeAttribute('width');
           el.removeAttribute('height');
+          el.removeAttribute('class');
           el.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-          el.classList.add('sc-world__svg');
         }
         measure();
       })
@@ -158,13 +193,9 @@ const HeroWorld = ({ radius = 230 }) => {
 
   /*
    * Posisi diambil dalam koordinat gambar, lalu dipetakan ke layar lewat
-   * getScreenCTM(). Berkas peta memakai transform pada grup induknya, jadi
-   * koordinat lokal saja akan meleset; CTM sudah membawa seluruh transform
-   * yang berlaku sampai ke layar.
-   *
-   * Hasilnya disimpan sebagai persen terhadap kotak SVG — bukan terhadap
-   * seksi — supaya denyutnya tetap menempel di negaranya berapa pun lebar
-   * lapisan petanya.
+   * getScreenCTM() — koordinat lokal saja akan meleset kalau berkasnya
+   * memakai transform. Hasilnya disimpan sebagai persen terhadap kotak SVG,
+   * jadi tetap menempel di negaranya berapa pun lebar lapisan petanya.
    */
   const measure = () => {
     const svg = mapRef.current?.querySelector('svg');
@@ -172,32 +203,39 @@ const HeroWorld = ({ radius = 230 }) => {
     const box = svg.getBoundingClientRect();
     if (!box.width || !box.height) return;
 
-    const ctm = svg.getScreenCTM();
-    if (!ctm) return;
-
-    const hb = hostRef.current?.getBoundingClientRect();
-    if (hb) sizeRef.current = { w: hb.width, h: hb.height };
+    const host = hostRef.current;
+    if (host) {
+      sizeRef.current = { w: box.width, h: box.height };
+      host.style.setProperty('--sc-w', `${box.width}px`);
+      host.style.setProperty('--sc-h', `${box.height}px`);
+    }
 
     const seen = new Set();
     const next = [];
-    svg.querySelectorAll('path[id]').forEach((path) => {
-      const id = canon(path.id);
+    svg.querySelectorAll('path').forEach((path) => {
+      const id = canon(path.getAttribute('name') || path.id);
       if (!id || seen.has(id)) return;
       const local = insidePoint(path);
       if (!local) return;
       const m = path.getScreenCTM();
       if (!m) return;
       const p = new DOMPoint(local.x, local.y).matrixTransform(m);
+      const bb = path.getBBox();
       seen.add(id);
       next.push({
         id,
         x: ((p.x - box.left) / box.width)  * 100,
         y: ((p.y - box.top)  / box.height) * 100,
         active: countriesRef.current.has(id),
+        /* Berkas ini memuat 256 wilayah, banyak di antaranya pulau sebesar
+           beberapa piksel. Kalau semuanya diberi titik, yang muncul di
+           sekitar kursor bukan sebaran negara melainkan gumpalan. Yang
+           tersaring hanya titik latar; negara yang punya peneliti selalu
+           ditampilkan, sekecil apa pun wilayahnya. */
+        tiny: bb.width < MIN_SPAN || bb.height < MIN_SPAN,
       });
     });
 
-    markersRef.current = next;
     setMarkers(next);
   };
 
@@ -210,10 +248,12 @@ const HeroWorld = ({ radius = 230 }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /* Elemen titik dikumpulkan sekali setiap daftar negara berubah, supaya
+     gelung rAF tidak perlu menyentuh DOM untuk mencarinya tiap frame. */
   useEffect(() => {
     const wrap = idleWrapRef.current;
     idleRef.current = wrap
-      ? markers.filter((m) => !m.active).map((m, i) => ({
+      ? markers.filter((m) => !m.active && !m.tiny).map((m, i) => ({
           el: wrap.children[i], x: m.x / 100, y: m.y / 100, on: false,
         })).filter((d) => d.el)
       : [];
@@ -222,13 +262,16 @@ const HeroWorld = ({ radius = 230 }) => {
   /* ── Sorot yang berkeliling ────────────────────────────────────────── */
   useEffect(() => {
     const roam = roamRef.current;
-    const ring = ringRef.current;
-    const host = hostRef.current;
     const list = markers.filter((m) => m.active);
-    if (!roam || !ring || !host || list.length === 0) return undefined;
+    if (!roam || list.length === 0) return undefined;
+
+    const put = (x, y) => {
+      roam.style.setProperty('--rx', `${x}%`);
+      roam.style.setProperty('--ry', `${y}%`);
+    };
+
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
-      /* Tanpa gerak, sorotnya cukup berhenti di negara pertama. */
-      roam.style.transform = `translate3d(${list[0].x}%, ${list[0].y}%, 0)`;
+      put(list[0].x, list[0].y);
       return undefined;
     }
 
@@ -237,32 +280,16 @@ const HeroWorld = ({ radius = 230 }) => {
     let to   = list.length > 1 ? list[1] : list[0];
     let start = 0;
     let dur = 1;
-    let phase = 'dwell';        // 'dwell' | 'travel'
+    let phase = 'dwell';
     const DWELL = 1700;
-
-    const place = (x, y) => {
-      /* Persen tidak bisa dipakai langsung: ia akan relatif terhadap kotak
-         sorot itu sendiri, bukan terhadap peta. Jadi dihitung ke piksel dari
-         ukuran lapisan yang sudah disimpan. */
-      const { w, h } = sizeRef.current;
-      roam.style.transform = `translate3d(${(x / 100) * w}px, ${(y / 100) * h}px, 0)`;
-    };
 
     const pick = () => {
       if (list.length < 2) return list[0];
       let n = to;
-      /* Acak, tapi tidak boleh negara yang barusan. */
       for (let i = 0; i < 8 && n.id === to.id; i += 1) {
         n = list[Math.floor(Math.random() * list.length)];
       }
       return n;
-    };
-
-    const beat = () => {
-      ring.classList.remove('is-beat');
-      // memaksa alur ulang supaya animasinya benar-benar diputar dari awal
-      void ring.offsetWidth;
-      ring.classList.add('is-beat');
     };
 
     const tick = (now) => {
@@ -276,27 +303,22 @@ const HeroWorld = ({ radius = 230 }) => {
           /* Lama luncuran mengikuti jaraknya, dengan batas atas dan bawah:
              negara bertetangga tidak melesat, negara seberang benua tidak
              berjalan terlalu lama. */
-          const dx = to.x - from.x;
-          const dy = to.y - from.y;
-          const d = Math.sqrt(dx * dx + dy * dy);
+          const d = Math.hypot(to.x - from.x, to.y - from.y);
           dur = Math.min(2400, Math.max(900, d * 26));
           phase = 'travel';
           start = now;
-        } else {
-          place(to.x, to.y);
         }
       } else {
         const k = Math.min(1, t / dur);
         const e = ease(k);
-        place(from.x + (to.x - from.x) * e, from.y + (to.y - from.y) * e);
-        if (k >= 1) { phase = 'dwell'; start = now; beat(); }
+        put(from.x + (to.x - from.x) * e, from.y + (to.y - from.y) * e);
+        if (k >= 1) { phase = 'dwell'; start = now; }
       }
 
       raf = requestAnimationFrame(tick);
     };
 
-    place(to.x, to.y);
-    beat();
+    put(to.x, to.y);
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [markers]);
@@ -308,16 +330,14 @@ const HeroWorld = ({ radius = 230 }) => {
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
 
     /* Denyut negara lain hanya dinyalakan saat benar-benar berada di dalam
-       sorotan. Gelang yang beranimasi di balik mask tetap dibayar meski tak
-       terlihat, dan ratusan di antaranya cukup untuk menjatuhkan laju frame.
-       Penyalaannya lewat kelas, bukan state React: himpunan yang tersorot
-       berubah hampir setiap frame, dan merender ulang komponen setiap frame
-       justru memindahkan ongkosnya. */
+       sorotan. Gelang yang beranimasi di balik mask tetap dibayar browser
+       meski tak terlihat, dan ratusan di antaranya cukup untuk menjatuhkan
+       laju frame. */
     const near = () => {
       const { w, h } = sizeRef.current;
       if (!w) return;
       const { x, y } = posRef.current;
-      const r2 = radius * radius;
+      const r2 = SPOT * SPOT;
       for (const d of idleRef.current) {
         const dx = d.x * w - x;
         const dy = d.y * h - y;
@@ -339,11 +359,9 @@ const HeroWorld = ({ radius = 230 }) => {
       rafRef.current = settled ? 0 : requestAnimationFrame(step);
     };
 
-    /* Kotak dibaca di sini, sekali per gerakan pointer, bukan di dalam gelung
-       rAF — dan sekalian dipakai menyegarkan ukuran yang disimpan. */
+    /* Kotak dibaca sekali per gerakan pointer, bukan di dalam gelung rAF. */
     const onMove = (e) => {
       const r = el.getBoundingClientRect();
-      sizeRef.current = { w: r.width, h: r.height };
       targetRef.current = { x: e.clientX - r.left, y: e.clientY - r.top };
       if (!rafRef.current) rafRef.current = requestAnimationFrame(step);
     };
@@ -354,40 +372,54 @@ const HeroWorld = ({ radius = 230 }) => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       rafRef.current = 0;
     };
-  }, [radius]);
+  }, []);
 
   const active = markers.filter((m) => m.active);
-  const rest   = markers.filter((m) => !m.active);
+  const rest   = markers.filter((m) => !m.active && !m.tiny);
 
-  const dots = (list, kind) => list.map((m) => (
-    <span key={`${kind}-${m.id}`} className={`sc-pulse sc-pulse--${kind}`}
-      style={{ left: `${m.x}%`, top: `${m.y}%` }} />
-  ));
+  /* Letak tiap negara adalah hasil pengukuran, bukan nilai yang bisa ditulis
+     jadi nama kelas — inilah satu-satunya tempat gaya sebaris di komponen
+     ini, dan isinya memang koordinat, bukan aturan tampilan. */
+  const at = (m) => ({ left: `${m.x}%`, top: `${m.y}%` });
 
   return (
-    <span ref={hostRef} aria-hidden
-      className="pointer-events-none absolute inset-0 overflow-hidden"
-      style={{ '--sc-radius': `${radius}px` }}>
+    <div ref={hostRef} aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div ref={mapRef} className={MAP} />
 
-      <span ref={mapRef} className="sc-world" />
-
-      {/* Negara peneliti: titiknya tetap terlihat semua, supaya sebarannya
+      {/* Negara peneliti: titiknya tetap terlihat semua supaya sebarannya
           terbaca. Yang berdenyut hanya satu — sorot yang berkeliling. */}
-      <span className="sc-pulses">{dots(active, 'on')}</span>
+      <div className="absolute inset-0">
+        {active.map((m) => (
+          <span key={`on-${m.id}`} style={at(m)} className={`${DOT} bg-orange-700/90`} />
+        ))}
+      </div>
 
-      <span ref={roamRef} className="sc-roam">
-        <span ref={ringRef} className="sc-roam__ring" />
-      </span>
+      {/* Sorot yang berkeliling. Denyutnya animate-ping bawaan Tailwind. */}
+      {active.length > 0 && (
+        <div ref={roamRef}
+          className={'absolute left-[var(--rx,-100%)] top-[var(--ry,-100%)] -ml-[5.5px] -mt-[5.5px] '
+            + 'h-[11px] w-[11px] rounded-full bg-orange-700 ring-4 ring-orange-500/20 will-change-[left,top]'}>
+          <span className="absolute inset-0 animate-ping rounded-full border-2 border-orange-700/70" />
+        </div>
+      )}
 
       {/* Titik yang sama dalam warna sorot, dan negara lain dalam warna muda.
           Keduanya hanya tampak di dalam sorotan yang mengikuti kursor. */}
-      <span className="sc-spot">
-        <span className="sc-spot__inner">
-          {dots(active, 'hot')}
-          <span ref={idleWrapRef} className="sc-pulses">{dots(rest, 'idle')}</span>
-        </span>
-      </span>
-    </span>
+      <div className={SPOT_BOX}>
+        <div className={SPOT_INNER}>
+          {active.map((m) => (
+            <span key={`hot-${m.id}`} style={at(m)} className={`${DOT} bg-amber-600`} />
+          ))}
+          <div ref={idleWrapRef} className="absolute inset-0">
+            {rest.map((m) => (
+              <span key={`idle-${m.id}`} style={at(m)} className={`${DOT_TINY} group bg-orange-600/40`}>
+                <span className={`${RING} border-orange-600/35 opacity-0 group-[.is-near]:animate-ping group-[.is-near]:opacity-100`} />
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
