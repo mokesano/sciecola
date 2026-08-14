@@ -65,27 +65,26 @@ const tintStyle = (src, tint) => ({
 });
 
 /*
- * Peredupan untuk gambar yang melintas ke wilayah teks.
+ * Peleburan tepi untuk gambar yang berdiri lepas di dalam seksi.
  *
- * Teks memang duduk di lapisan atas, tapi di antara baris dan di sela huruf
- * gambarnya masih menyembul dan bikin teks susah dibaca. Jadi gambarnya
- * dipudarkan habis ke arah teks: pekat di sisi tepi halaman, hilang sama
- * sekali sebelum sampai ke kolom teks.
+ * Sebelumnya gambarnya dipudarkan habis ke arah teks — dari 42% sampai 66%
+ * lebarnya — dan tegak lurus dari 17% sampai 83% tingginya. Itu keliru:
+ * gambarnya jadi buram jauh sebelum menyentuh huruf apa pun, dan tepi atas
+ * bawahnya larut sampai bentuknya hilang. Yang perlu diredam hanya tempat
+ * gambar benar-benar bertemu huruf, dan itu dikerjakan halo di sekeliling
+ * teks (kelas sc-punch), bukan oleh gambarnya.
  *
- * Peredupan tegak ikut dipasang karena tidak semua aset berlatar tembus.
- * Hero-Illustrated.png punya latar lavender pekat sampai ke tepi berkasnya;
- * tanpa peredupan tegak, lapisan ini terbaca sebagai panel yang ditempel —
- * bertepi lurus di atas dan di bawah — bukan sebagai ilustrasi yang menyatu
- * dengan bidang seksinya.
+ * Yang tersisa di sini cuma pelunakan tepi setipis mungkin — secukupnya
+ * untuk menyembunyikan bahwa berkasnya berbentuk kotak. Sisi luar tidak
+ * dilunakkan sama sekali: di sana gambarnya menempel tepi halaman.
  *
  * `over` diisi saat lapisannya sudah memakai mask untuk aset bertinta;
- * peredupan lalu diiriskan dengan mask aset itu.
+ * pelunakan lalu diiriskan dengan mask aset itu.
  */
 const bleedFade = (reverse, over = null) => {
   const dir  = reverse ? 'to left' : 'to right';
-  const side = `linear-gradient(${dir}, transparent 0%, rgba(0,0,0,0.18) 42%, #000 66%)`;
-  const top  = 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.55) 17%, #000 35%,'
-             + ' #000 65%, rgba(0,0,0,0.55) 83%, transparent 100%)';
+  const side = `linear-gradient(${dir}, transparent 0%, #000 9%)`;
+  const top  = 'linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%)';
 
   if (!over) {
     return {
@@ -114,7 +113,7 @@ const bleedFade = (reverse, over = null) => {
    gambarnya punya ruang sendiri alih-alih ditumpuk di belakang teks. */
 const SplitSection = ({
   eyebrow, title, body, points = [], image, imageAlt = '', tint, wide = false,
-  reverse = false, primary, secondary, surface = 'bg-white', backdrop,
+  reverse = false, primary, secondary, surface = 'bg-white', punch = '#fff', backdrop,
 }) => (
   <section className={`relative overflow-hidden ${surface} py-20`}>
     {backdrop}
@@ -124,9 +123,9 @@ const SplitSection = ({
       dipotong kolom — dan aset 2:1 di kolom 512px hanya setinggi 241px,
       sekecil apa pun perlakuannya diperbaiki. Di sini ia berdiri langsung
       di dalam seksi: tingginya mengikuti tinggi seksi, lebarnya bebas, dan
-      ia boleh melintas ke wilayah teks. Bagian yang melintas itu ditutup
-      teks — teks duduk di lapisan atas, dan gambarnya sendiri sudah pudar
-      habis sebelum sampai ke sana.
+      ia boleh melintas ke wilayah teks. Bagian yang melintas ditutup teks —
+      teks duduk di lapisan atas dan membawa halo setipis beberapa piksel,
+      jadi yang teredam hanya sekeliling hurufnya, bukan seluruh kolomnya.
     */}
     {wide && (
       <div aria-hidden
@@ -156,15 +155,19 @@ const SplitSection = ({
         : `grid items-center gap-12 lg:grid-cols-2 lg:gap-16 ${
             reverse ? 'lg:[&>*:first-child]:order-2' : ''}`}>
 
-        <div className={wide ? `relative z-10 lg:w-[47%] ${reverse ? 'lg:ml-auto' : ''}` : ''}>
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-orange-700">{eyebrow}</p>
-          <h2 className="mt-4 text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl">
+        {/* Halo hanya dipasang saat memang ada gambar yang melintas di
+            belakangnya; warnanya mengikuti bidang seksinya, kalau tidak
+            halonya justru terlihat sebagai noda terang. */}
+        <div className={wide ? `relative z-10 lg:w-[47%] ${reverse ? 'lg:ml-auto' : ''}` : ''}
+          style={wide ? { '--sc-punch': punch } : undefined}>
+          <p className={`text-xs font-bold uppercase tracking-[0.18em] text-orange-700 ${wide ? 'sc-punch' : ''}`}>{eyebrow}</p>
+          <h2 className={`mt-4 text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl ${wide ? 'sc-punch' : ''}`}>
             {title}
           </h2>
-          <p className="mt-5 text-base leading-relaxed text-slate-600">{body}</p>
+          <p className={`mt-5 text-base leading-relaxed text-slate-600 ${wide ? 'sc-punch' : ''}`}>{body}</p>
 
           {points.length > 0 && (
-            <ul className="mt-7 space-y-3">
+            <ul className={`mt-7 space-y-3 ${wide ? 'sc-punch' : ''}`}>
               {points.map((pt, i) => (
                 <li key={i} className="flex items-start gap-3 text-[15px] leading-snug text-slate-700">
                   <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-orange-100 text-orange-700">
@@ -400,13 +403,17 @@ const PublicHomePage = () => {
 
       {/* ══ HERO — satu-satunya tempat gradasi berada ═════════════════ */}
       <section className="relative overflow-hidden bg-white">
-        {/* Peta selebar seksi, sejajar dengannya — bukan dijepit satu kolom.
-            Teks duduk di atasnya dan keduanya boleh bertindih; yang diredam
-            hanya sekeliling huruf, lewat halo di kelas sc-punch. */}
-        <HeroWorld />
+        {/* Peta ditaruh persis seperti gambar di seksi Direktori dan
+            Kolaborasi: lapisan lepas di dalam seksi, di sisinya sendiri,
+            bukan bentangan penuh di belakang teks. Ia tetap boleh melintas
+            ke wilayah teks, dan yang meredam hanya halo di sekeliling huruf. */}
+        <div aria-hidden
+          className="pointer-events-none absolute inset-y-8 right-0 hidden w-[78%] lg:block">
+          <HeroWorld />
+        </div>
 
         <div className="relative mx-auto max-w-6xl px-6 pb-24 pt-16 lg:px-8">
-          <div className="max-w-2xl text-left">
+          <div className="max-w-2xl text-left lg:w-[47%] lg:max-w-none">
           <span className="inline-flex items-center gap-2 rounded-full bg-orange-50 px-4 py-1.5 text-[15px] font-semibold text-orange-800 ring-1 ring-orange-200">
             {text(pick('hero.badge'), t, 'hero.badge')}
           </span>
@@ -653,6 +660,7 @@ const PublicHomePage = () => {
         image={SHOT.collab}
         tint={{ color: '#EA580C', ratio: '909 / 428' }}
         wide
+        punch="#FAF7F4"
         surface={`${SURFACE.tint} border-y border-slate-200`}
         backdrop={<SectionBackdrop src={ART.flow} color="#C2410C" opacity={0.16} motion="drift" reach={86} />}
         primary={{ to: '/research-matching',      label: t('sections.collab.cta') }}
