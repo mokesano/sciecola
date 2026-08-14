@@ -69,55 +69,132 @@
 }
 
 /* =====================================================================
-   KISI HERO
+   PETA HERO
    =====================================================================
-   Garis dan titik digambar gradien berulang, bukan diambil dari berkas
-   SVG. Konsekuensinya: setiap perpotongan garis punya titik — titiknya
-   lahir dari pola yang sama, bukan dari beberapa titik yang kebetulan
-   ikut tergambar di dalam berkas.
-
-   Titik menempati tengah tiap petak, garis digeser setengah petak, jadi
-   garis lewat tepat di pusat titik. */
-.sc-grid {
+   Peta disisipkan sebagai SVG sungguhan, jadi negaranya bisa diwarnai
+   dari sini — tidak perlu menyimpan salinan berwarna dari berkasnya. */
+.sc-world {
   position: absolute;
   inset: 0;
-  background-image:
-    radial-gradient(circle at center, var(--sc-dot) 1.35px, transparent 1.75px),
-    repeating-linear-gradient(to right,  var(--sc-line) 0 1px, transparent 1px var(--sc-gap)),
-    repeating-linear-gradient(to bottom, var(--sc-line) 0 1px, transparent 1px var(--sc-gap));
-  background-size: var(--sc-gap) var(--sc-gap), 100% 100%, 100% 100%;
-  background-position: 0 0, var(--sc-half) 0, 0 var(--sc-half);
-  animation: sc-grid-breathe 19s ease-in-out infinite alternate;
+  display: block;
+}
+
+.sc-world__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Berkas peta membawa warna isiannya sendiri. Warna itu ditimpa di sini
+   supaya petanya senada dengan halaman: garis batas tipis, isian nyaris
+   putih — cukup untuk terbaca sebagai peta, tidak sampai bersaing dengan
+   teks hero yang duduk di atasnya. */
+.sc-world__svg path {
+  fill: #FBE3D2;
+  stroke: #EFC4A4;
+  stroke-width: .5px;
+}
+
+/* ── Denyut ─────────────────────────────────────────────────────────────
+   Titik dan gelombangnya dipisah: titik diam supaya letak negaranya tetap
+   terbaca, gelombang yang memuai. Ukurannya tetap — jumlah peneliti tidak
+   memperbesar apa pun, hanya warna yang membedakan. */
+.sc-pulses {
+  position: absolute;
+  inset: 0;
 }
 
 /*
- * Lapisan sorotan. Isinya kisi yang sama persis — sejajar petak demi petak
- * dengan lapisan dasar — hanya titiknya sedikit lebih besar dan warnanya
- * pekat. Dua mask dipotong saling-iris: pola titik dan sorotan bundar di
- * posisi kursor. Yang tampak karena itu bukan lingkaran cahaya menimpa kisi,
- * melainkan titik kisi itu sendiri yang menyala di sekitar kursor.
+ * Sorotan kursor sengaja tidak dibuat dengan mask yang posisinya berpindah
+ * tiap frame. Mask yang bergerak memaksa seluruh lapisan — dan semua titik di
+ * dalamnya — dicat ulang setiap frame; diukur di sini, itu menjatuhkan laju
+ * frame ke sekitar 35fps saat kursor bergerak.
+ *
+ * Yang dipakai: satu kotak seukuran sorotan dengan mask diam, digeser dengan
+ * transform. Isinya digeser balik dengan transform kebalikannya, jadi titik
+ * tetap berada di koordinat heronya. Dua transform itu ditangani compositor,
+ * tanpa pengecatan ulang sama sekali.
  */
-.sc-grid--glow {
-  background-image: radial-gradient(circle at center, var(--sc-glow) 2.1px, transparent 2.6px);
-  background-size: var(--sc-gap) var(--sc-gap);
-  background-position: 0 0;
-  animation: none;
-
-  -webkit-mask-image: radial-gradient(
-    var(--sc-radius) circle at var(--gx, -9999px) var(--gy, -9999px),
-    #000 0%, rgba(0, 0, 0, 0.45) 52%, transparent 76%);
-          mask-image: radial-gradient(
-    var(--sc-radius) circle at var(--gx, -9999px) var(--gy, -9999px),
-    #000 0%, rgba(0, 0, 0, 0.45) 52%, transparent 76%);
-  will-change: mask-image;
+.sc-spot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width:  calc(var(--sc-radius) * 2);
+  height: calc(var(--sc-radius) * 2);
+  transform: translate3d(
+    calc(var(--gx, -9999px) - var(--sc-radius)),
+    calc(var(--gy, -9999px) - var(--sc-radius)), 0);
+  -webkit-mask-image: radial-gradient(circle at center,
+    #000 0%, rgba(0, 0, 0, 0.55) 54%, transparent 78%);
+          mask-image: radial-gradient(circle at center,
+    #000 0%, rgba(0, 0, 0, 0.55) 54%, transparent 78%);
+  will-change: transform;
 }
 
-@keyframes sc-grid-breathe {
-  0%   { opacity: .72; }
-  100% { opacity: 1; }
+.sc-spot__inner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width:  var(--sc-w, 100%);
+  height: var(--sc-h, 100%);
+  transform: translate3d(
+    calc(var(--sc-radius) - var(--gx, -9999px)),
+    calc(var(--sc-radius) - var(--gy, -9999px)), 0);
+  will-change: transform;
+}
+
+.sc-pulse {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 9999px;
+  background-color: var(--sc-pulse-core);
+}
+
+.sc-pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 1.5px solid var(--sc-pulse-ring);
+  animation: sc-pulse-wave 3s cubic-bezier(.22, .61, .36, 1) infinite;
+  animation-delay: inherit;
+}
+
+/* Negara dengan peneliti terdaftar: warna yang sama, hanya dipekatkan. */
+.sc-pulse--on   { --sc-pulse-core: rgba(194,65,12,.92); --sc-pulse-ring: rgba(194,65,12,.75); }
+/* Titik yang sama dalam warna sorot. Karena persis bertumpuk di atas yang
+   di atas, yang berubah saat kursor lewat hanya warnanya — bukan ukurannya. */
+.sc-pulse--hot  { --sc-pulse-core: rgba(217,119,6,.98);  --sc-pulse-ring: rgba(217,119,6,.85); }
+/* Negara lain: muda, dan hanya muncul di sekitar kursor. Gelangnya diam
+   sampai betul-betul masuk sorotan — animasi yang tertutup mask tetap
+   dihitung browser, dan 190 di antaranya cukup untuk menjatuhkan laju frame. */
+.sc-pulse--idle { --sc-pulse-core: rgba(234,88,12,.45);  --sc-pulse-ring: rgba(234,88,12,.34); }
+.sc-pulse--idle::after          { animation: none; opacity: 0; }
+.sc-pulse--idle.is-near::after  { animation: sc-pulse-wave 3s cubic-bezier(.22, .61, .36, 1) infinite;
+                                  animation-delay: inherit; opacity: 1; }
+
+@keyframes sc-pulse-wave {
+  0%   { transform: scale(1);   opacity: .9; }
+  70%  { transform: scale(4.2); opacity: 0; }
+  100% { transform: scale(4.2); opacity: 0; }
+}
+
+/*
+ * Teks hero duduk di atas peta tanpa bidangnya sendiri. Yang diredam hanya
+ * sekeliling hurufnya — halo setipis beberapa piksel dalam warna bidang —
+ * jadi petanya tetap utuh terbaca sampai menyentuh teks, bukan hilang satu
+ * kolom penuh.
+ */
+.sc-punch {
+  text-shadow:
+    0 0 3px #fff, 0 0 3px #fff,
+    0 0 6px #fff, 0 0 6px #fff,
+    0 0 9px #fff;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sc-grid { animation: none; }
-  .sc-grid--glow { display: none; }
+  .sc-pulse::after { animation: none; opacity: 0; }
+  .sc-spot         { display: none; }
 }
