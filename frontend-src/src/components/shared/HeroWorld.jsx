@@ -120,7 +120,6 @@ const MAP =
    keduanya tetap bisa dibedakan sekilas. */
 const DOT      = 'absolute -ml-[7px] -mt-[7px] h-[14px] w-[14px] rounded-full';
 const DOT_TINY = 'absolute -ml-[4px] -mt-[4px] h-2 w-2 rounded-full';
-const RING     = 'absolute inset-0 rounded-full border-2';
 
 /* Sorotan kursor: kotak seukuran sorotan dengan mask diam, digeser transform.
    Isinya digeser balik dengan transform kebalikannya, jadi titik tetap berada
@@ -148,8 +147,6 @@ const HeroWorld = () => {
 
   const [markers, setMarkers] = useState([]);
   const countriesRef = useRef(new Set());
-  const idleRef      = useRef([]);
-  const idleWrapRef  = useRef(null);
 
   /* ── Peta ──────────────────────────────────────────────────────────── */
   useEffect(() => {
@@ -248,17 +245,6 @@ const HeroWorld = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* Elemen titik dikumpulkan sekali setiap daftar negara berubah, supaya
-     gelung rAF tidak perlu menyentuh DOM untuk mencarinya tiap frame. */
-  useEffect(() => {
-    const wrap = idleWrapRef.current;
-    idleRef.current = wrap
-      ? markers.filter((m) => !m.active && !m.tiny).map((m, i) => ({
-          el: wrap.children[i], x: m.x / 100, y: m.y / 100, on: false,
-        })).filter((d) => d.el)
-      : [];
-  }, [markers]);
-
   /* ── Sorot yang berkeliling ────────────────────────────────────────── */
   useEffect(() => {
     const roam = roamRef.current;
@@ -329,23 +315,6 @@ const HeroWorld = () => {
     if (!el) return undefined;
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
 
-    /* Denyut negara lain hanya dinyalakan saat benar-benar berada di dalam
-       sorotan. Gelang yang beranimasi di balik mask tetap dibayar browser
-       meski tak terlihat, dan ratusan di antaranya cukup untuk menjatuhkan
-       laju frame. */
-    const near = () => {
-      const { w, h } = sizeRef.current;
-      if (!w) return;
-      const { x, y } = posRef.current;
-      const r2 = SPOT * SPOT;
-      for (const d of idleRef.current) {
-        const dx = d.x * w - x;
-        const dy = d.y * h - y;
-        const on = dx * dx + dy * dy <= r2;
-        if (on !== d.on) { d.on = on; d.el.classList.toggle('is-near', on); }
-      }
-    };
-
     const step = () => {
       const p = posRef.current;
       const t = targetRef.current;
@@ -354,7 +323,6 @@ const HeroWorld = () => {
       p.y += (t.y - p.y) * 0.18;
       el.style.setProperty('--gx', `${p.x.toFixed(1)}px`);
       el.style.setProperty('--gy', `${p.y.toFixed(1)}px`);
-      near();
       const settled = Math.abs(t.x - p.x) < 0.4 && Math.abs(t.y - p.y) < 0.4;
       rafRef.current = settled ? 0 : requestAnimationFrame(step);
     };
@@ -386,8 +354,19 @@ const HeroWorld = () => {
     <div ref={hostRef} aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
       <div ref={mapRef} className={MAP} />
 
+      {/* Titik latar: diam, samar, sekadar menandai bahwa negaranya ada.
+          Sebelumnya masing-masing diberi gelang denyut yang menyala saat
+          kursor lewat — di sekitar Eropa dan Afrika itu berarti puluhan
+          cincin menyala serentak, dan yang terbaca cuma keruwetan. Yang
+          berdenyut sekarang hanya satu: sorot yang berkeliling. */}
+      <div className="absolute inset-0">
+        {rest.map((m) => (
+          <span key={`bg-${m.id}`} style={at(m)} className={`${DOT_TINY} bg-orange-600/35`} />
+        ))}
+      </div>
+
       {/* Negara peneliti: titiknya tetap terlihat semua supaya sebarannya
-          terbaca. Yang berdenyut hanya satu — sorot yang berkeliling. */}
+          terbaca sekaligus. */}
       <div className="absolute inset-0">
         {active.map((m) => (
           <span key={`on-${m.id}`} style={at(m)} className={`${DOT} bg-orange-600 ring-2 ring-white/70`} />
@@ -407,20 +386,15 @@ const HeroWorld = () => {
         </div>
       )}
 
-      {/* Titik yang sama dalam warna sorot, dan negara lain dalam warna muda.
-          Keduanya hanya tampak di dalam sorotan yang mengikuti kursor. */}
+      {/* Titik negara peneliti sekali lagi, dalam warna sorot, hanya tampak di
+          sekitar kursor. Karena persis bertumpuk di atas yang di bawahnya,
+          yang berubah saat kursor lewat hanya warnanya — bukan ukurannya,
+          dan tidak ada gelang tambahan yang menyala. */}
       <div className={SPOT_BOX}>
         <div className={SPOT_INNER}>
           {active.map((m) => (
             <span key={`hot-${m.id}`} style={at(m)} className={`${DOT} bg-amber-500 ring-2 ring-white/70`} />
           ))}
-          <div ref={idleWrapRef} className="absolute inset-0">
-            {rest.map((m) => (
-              <span key={`idle-${m.id}`} style={at(m)} className={`${DOT_TINY} group bg-orange-600/70`}>
-                <span className={`${RING} -inset-1 border-orange-600/50 opacity-0 group-[.is-near]:animate-ping group-[.is-near]:opacity-100`} />
-              </span>
-            ))}
-          </div>
         </div>
       </div>
     </div>
