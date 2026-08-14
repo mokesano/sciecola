@@ -1,0 +1,640 @@
+/* =====================================================================
+   BERANDA PUBLIK
+   =====================================================================
+   Gaya halaman ini ditulis sebagai kelas bernama, bukan rentetan utility
+   di dalam atribut class. Nama kelasnya menyebut peran elemennya —
+   sc-hero__title, sc-card, sc-band_dark — jadi markup-nya bisa dibaca
+   tanpa perlu menerjemahkan singkatan, dan nilai desainnya terkumpul di
+   satu berkas alih-alih tersebar di ratusan atribut.
+
+   Awalan sc- singkatan Sciecola. Pemisah __ untuk bagian, _ untuk varian,
+   pola yang sama dipakai banyak situs berbasis React.
+   ===================================================================== */
+
+:root {
+  --sc-ink:        #0F172A;
+  --sc-ink-soft:   #475569;
+  --sc-ink-faint:  #64748B;
+  --sc-line:       #E2E8F0;
+  --sc-surface:    #FFFFFF;
+  --sc-surface-alt:#FAF7F4;
+  --sc-surface-dark:#1C1917;
+  --sc-accent:     #EA580C;
+  --sc-accent-deep:#C2410C;
+  --sc-accent-soft:#FFF7ED;
+  --sc-accent-line:#FED7AA;
+
+  --sc-pad:        1.5rem;
+  --sc-radius:     .75rem;
+  --sc-radius-lg:  1rem;
+}
+
+@media (min-width: 640px)  { :root { --sc-pad: 2.5rem; } }
+@media (min-width: 1024px) { :root { --sc-pad: 3.5rem; } }
+@media (min-width: 1280px) { :root { --sc-pad: 5rem;   } }
+@media (min-width: 1536px) { :root { --sc-pad: 7rem;   } }
+
+/* ── Dasar ─────────────────────────────────────────────────────────────
+   Beranda ini tidak bergantung pada reset milik pustaka lain: huruf, kotak,
+   dan margin bawaan browser diatur di sini, terbatas pada lingkup halaman
+   supaya tidak mengganggu bagian aplikasi yang lain. */
+
+.sc-page,
+.sc-page *,
+.sc-page *::before,
+.sc-page *::after { box-sizing: border-box; }
+
+.sc-page {
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+               'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.sc-page h1, .sc-page h2, .sc-page h3,
+.sc-page p,  .sc-page dl, .sc-page dd, .sc-page ul, .sc-page ol { margin: 0; }
+.sc-page ul, .sc-page ol { padding: 0; list-style: none; }
+.sc-page a { color: inherit; text-decoration: none; }
+.sc-page img, .sc-page svg { display: block; max-width: 100%; }
+.sc-page button { font: inherit; color: inherit; background: transparent; border: 0; cursor: pointer; }
+.sc-page input  { font: inherit; }
+
+/* ── Kerangka ──────────────────────────────────────────────────────── */
+
+.sc-page { min-height: 100vh; background: var(--sc-surface); padding-top: 60px; }
+
+/* Isi seksi dibatasi padding tepi saja — bukan lebar maksimum. Di layar
+   lebar, isi halaman ikut melebar alih-alih mengkerut di tengah. */
+.sc-shell { width: 100%; margin-inline: auto; padding-inline: var(--sc-pad); }
+
+.sc-section { position: relative; overflow: hidden; padding-block: 5rem; }
+.sc-section_flush { padding-block: 0; }
+.sc-section_band  { padding-block: 4rem; }
+
+.sc-surface_plain { background: var(--sc-surface); }
+.sc-surface_alt   { background: var(--sc-surface-alt); }
+.sc-surface_dark  { background: var(--sc-surface-dark); }
+.sc-rule_y        { border-block: 1px solid var(--sc-line); }
+
+.sc-stack   { position: relative; }
+.sc-hidden-lg-up { display: block; }
+@media (min-width: 1024px) { .sc-hidden-lg-up { display: none; } }
+
+/* ── Tipografi ─────────────────────────────────────────────────────── */
+
+.sc-eyebrow {
+  font-size: .75rem; font-weight: 700; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--sc-accent-deep);
+}
+
+.sc-title    { font-weight: 700; letter-spacing: -.02em; color: var(--sc-ink); line-height: 1.15; }
+.sc-title_xl { font-size: 1.875rem; }
+.sc-title_2xl{ font-size: 2.25rem; }
+@media (min-width: 640px) { .sc-title_xl { font-size: 2.25rem; } .sc-title_2xl { font-size: 2.5rem; } }
+
+.sc-lede { font-size: 1rem; line-height: 1.7; color: var(--sc-ink-soft); }
+.sc-note { font-size: .9375rem; color: var(--sc-ink-faint); }
+
+.sc-on-dark .sc-title,
+.sc-title_light { color: #fff; }
+.sc-on-dark .sc-lede,
+.sc-lede_light  { color: #CBD5E1; }
+
+/* Halo tipis di sekeliling huruf. Dipakai saat gambar seksi melintas ke
+   wilayah teks: yang teredam hanya beberapa piksel di sekitar glif, bukan
+   satu kolom penuh. Warnanya mengikuti bidang seksinya. */
+.sc-halo {
+  text-shadow:
+    0 0 3px var(--sc-halo, #fff), 0 0 3px var(--sc-halo, #fff),
+    0 0 6px var(--sc-halo, #fff), 0 0 6px var(--sc-halo, #fff),
+    0 0 9px var(--sc-halo, #fff);
+}
+.sc-halo_alt { --sc-halo: var(--sc-surface-alt); }
+
+/* ── Tombol ────────────────────────────────────────────────────────── */
+
+.sc-page .sc-btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  border-radius: .5rem; padding: .75rem 1.5rem;
+  font-size: .9375rem; font-weight: 600; white-space: nowrap;
+  transition: background-color .2s, border-color .2s, color .2s, transform .2s;
+}
+.sc-page .sc-btn_primary {
+  background: var(--sc-accent); color: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .06);
+}
+.sc-page .sc-btn_primary:hover { background: var(--sc-accent-deep); transform: translateY(-2px); }
+
+.sc-page .sc-btn_ghost { border: 1px solid #CBD5E1; color: #334155; }
+.sc-page .sc-btn_ghost:hover { border-color: #FB923C; color: var(--sc-accent-deep); }
+
+.sc-page .sc-btn_dark { background: var(--sc-ink); color: #fff; }
+.sc-page .sc-btn_dark:hover { background: #1E293B; }
+
+.sc-page .sc-btn_onDark { border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.05); color: #fff; }
+.sc-page .sc-btn_onDark:hover { border-color: rgba(251,146,60,.6); background: rgba(234,88,12,.1); color: #FED7AA; }
+
+.sc-page .sc-btn_lg { padding: .875rem 1.75rem; }
+
+.sc-link {
+  display: inline-flex; align-items: center; gap: .375rem;
+  font-size: .9375rem; font-weight: 600; color: var(--sc-accent-deep);
+}
+.sc-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+.sc-link_accent { color: #FB923C; }
+
+.sc-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; margin-top: 2.25rem; }
+.sc-actions_center { justify-content: center; }
+
+.sc-pill {
+  display: inline-flex; align-items: center; gap: .5rem;
+  border-radius: 999px; padding: .375rem 1rem;
+  background: var(--sc-accent-soft); color: #9A3412;
+  font-size: .9375rem; font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--sc-accent-line);
+}
+
+.sc-icon { width: 1rem; height: 1rem; flex: none; }
+.sc-icon_sm { width: .75rem; height: .75rem; }
+.sc-icon_lg { width: 1.25rem; height: 1.25rem; }
+.sc-api__mark .sc-icon_lg { width: 1.5rem; height: 1.5rem; }
+
+/* ── Hero ──────────────────────────────────────────────────────────── */
+
+.sc-hero { position: relative; overflow: hidden; background: var(--sc-surface); }
+.sc-hero__inner { position: relative; padding-block: 5rem 7rem; }
+.sc-hero__col { max-width: 42rem; }
+@media (min-width: 1024px) { .sc-hero__col { width: 56%; max-width: none; } }
+
+.sc-hero__title {
+  margin-top: 2rem; font-size: 3rem; font-weight: 700;
+  line-height: 1.05; letter-spacing: -.025em; color: var(--sc-ink);
+}
+.sc-hero__title em { font-style: normal; color: var(--sc-accent); }
+@media (min-width: 640px)  { .sc-hero__title { font-size: 3.75rem; } }
+@media (min-width: 1024px) { .sc-hero__title { font-size: 4.5rem; } }
+@media (min-width: 1280px) { .sc-hero__title { font-size: 5.25rem; } }
+
+.sc-hero__lede {
+  margin-top: 1.75rem; max-width: 48rem;
+  font-size: 1.25rem; line-height: 1.6; color: var(--sc-ink-soft);
+}
+@media (min-width: 1024px) { .sc-hero__lede { font-size: 1.375rem; } }
+
+.sc-hero__hint { margin-top: 1.75rem; font-size: 1rem; color: var(--sc-ink-soft); }
+.sc-hero__hint a { font-weight: 600; color: var(--sc-accent-deep); text-decoration: underline; text-underline-offset: 4px; }
+
+/*
+ * Gambar hero.
+ *
+ * Tingginya mengikuti tinggi seksi, bukan tinggi teks: lapisannya
+ * direntang inset 0 dan gambarnya diberi height 100% dengan lebar
+ * mengikuti rasio. Karena peta dunia jauh lebih lebar daripada tinggi,
+ * lebar itu melampaui separuh kanan dan melintas ke wilayah teks — dan
+ * memang begitu seharusnya. Yang meredam pertemuannya dengan huruf hanya
+ * halo di sekeliling glif, bukan penyempitan gambarnya.
+ */
+.sc-hero__art { position: absolute; inset: 0; pointer-events: none; display: none; }
+@media (min-width: 1024px) { .sc-hero__art { display: block; } }
+
+/* ── Pencarian ─────────────────────────────────────────────────────── */
+
+.sc-search { margin-top: 2.5rem; max-width: 48rem; }
+.sc-search__form { display: flex; flex-direction: column; gap: .5rem; }
+@media (min-width: 640px) { .sc-search__form { flex-direction: row; } }
+
+.sc-search__field { position: relative; flex: 1; }
+.sc-search__icon {
+  position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
+  width: 1rem; height: 1rem; color: #94A3B8; pointer-events: none;
+}
+.sc-search__input {
+  width: 100%; border: 1px solid #CBD5E1; border-radius: .5rem;
+  background: #fff; padding: .875rem .75rem .875rem 2.75rem;
+  font-size: 1rem; color: var(--sc-ink);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .05);
+}
+.sc-search__input::placeholder { color: #94A3B8; }
+.sc-search__input:focus {
+  outline: none; border-color: var(--sc-accent);
+  box-shadow: 0 0 0 3px rgba(254, 215, 170, .8);
+}
+.sc-search__error { margin-top: .75rem; font-size: .9375rem; font-weight: 500; color: #DC2626; }
+.sc-search__note  { margin-top: 1rem; font-size: .9375rem; color: var(--sc-ink-faint); }
+
+.sc-choice {
+  margin-top: .75rem; border: 1px solid var(--sc-line); border-radius: .5rem;
+  background: #fff; padding: 1rem; text-align: left;
+  box-shadow: 0 10px 15px -3px rgba(15, 23, 42, .1);
+}
+.sc-choice__q { margin-bottom: .625rem; font-size: .9375rem; color: var(--sc-ink-soft); }
+.sc-choice__row { display: flex; flex-wrap: wrap; gap: .5rem; }
+.sc-page .sc-choice__btn {
+  border: 1px solid #CBD5E1; border-radius: .5rem; padding: .5rem .875rem;
+  font-size: .9375rem; font-weight: 500; color: #334155;
+}
+.sc-page .sc-choice__btn:hover { border-color: #FB923C; color: var(--sc-accent-deep); }
+.sc-page .sc-choice__btn_plain { border-color: transparent; color: var(--sc-ink-faint); }
+.sc-page .sc-choice__btn_plain:hover { color: var(--sc-ink); }
+
+/* ── Kepala seksi ──────────────────────────────────────────────────── */
+
+.sc-head { margin-inline: auto; margin-bottom: 3rem; max-width: 56rem; text-align: center; }
+.sc-head__title { font-size: 1.875rem; font-weight: 700; letter-spacing: -.02em; color: var(--sc-ink); }
+@media (min-width: 640px) { .sc-head__title { font-size: 2.25rem; } }
+.sc-head__sub { margin-top: 1rem; font-size: 1rem; line-height: 1.7; color: var(--sc-ink-soft); }
+.sc-head_light .sc-head__title { color: #fff; }
+.sc-head_light .sc-head__sub   { color: #CBD5E1; }
+
+/* ── Kartu ─────────────────────────────────────────────────────────── */
+
+.sc-grid { display: grid; gap: 1.25rem; }
+.sc-grid_3 { grid-template-columns: 1fr; }
+@media (min-width: 640px)  { .sc-grid_3 { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .sc-grid_3 { grid-template-columns: repeat(3, 1fr); } }
+
+.sc-card {
+  border: 1px solid var(--sc-line); border-radius: var(--sc-radius);
+  background: #fff; padding: 1.5rem;
+  transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+.sc-card:hover {
+  border-color: #FDBA74;
+  box-shadow: 0 10px 15px -3px rgba(255, 237, 213, .6);
+}
+.sc-card__badge {
+  display: flex; align-items: center; justify-content: center;
+  width: 2.75rem; height: 2.75rem; border-radius: .5rem;
+  background: var(--sc-accent-soft); color: var(--sc-accent);
+  box-shadow: inset 0 0 0 1px #FFEDD5;
+}
+.sc-card__title { margin-top: 1.25rem; font-size: 1.0625rem; font-weight: 600; color: var(--sc-ink); }
+.sc-card__text  { margin-top: .5rem; font-size: .9375rem; line-height: 1.7; color: var(--sc-ink-soft); }
+
+/* ── Pita angka ────────────────────────────────────────────────────── */
+
+.sc-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; text-align: center; }
+@media (min-width: 1024px) { .sc-stats { grid-template-columns: repeat(4, 1fr); } }
+.sc-stats__value { font-size: 2.5rem; font-weight: 700; color: #FB923C; }
+@media (min-width: 640px) { .sc-stats__value { font-size: 3rem; } }
+.sc-stats__label { margin-top: .25rem; font-size: .9375rem; color: #CBD5E1; }
+
+/* ── SDG ───────────────────────────────────────────────────────────── */
+
+.sc-sdg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+@media (min-width: 640px)  { .sc-sdg { grid-template-columns: repeat(5, 1fr); } }
+@media (min-width: 1024px) { .sc-sdg { grid-template-columns: repeat(9, 1fr); } }
+.sc-sdg__item { display: flex; flex-direction: column; align-items: center; gap: .5rem; }
+.sc-sdg__tile {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; aspect-ratio: 1; border-radius: .625rem; color: #fff;
+  transition: transform .2s;
+}
+.sc-sdg__item:hover .sc-sdg__tile { transform: translateY(-3px); }
+.sc-sdg__glyph { width: 70%; height: 70%; object-fit: contain; }
+.sc-sdg__name { text-align: center; font-size: .8125rem; line-height: 1.3; color: var(--sc-ink-soft); }
+
+/* ── Langkah ───────────────────────────────────────────────────────── */
+
+.sc-step__no {
+  display: flex; align-items: center; justify-content: center;
+  width: 2.25rem; height: 2.25rem; border-radius: 999px;
+  background: var(--sc-accent); color: #fff; font-weight: 700;
+}
+.sc-step__head { display: flex; align-items: center; gap: .75rem; }
+.sc-step__head svg { color: var(--sc-accent); }
+.sc-card__badge svg { color: inherit; }
+
+/* ── Wawasan ───────────────────────────────────────────────────────── */
+
+.sc-insight {
+  display: flex; flex-direction: column;
+  border: 1px solid rgba(255,255,255,.1); border-radius: var(--sc-radius);
+  background: #292524; padding: 1.5rem;
+  transition: border-color .2s, background-color .2s, box-shadow .2s, transform .2s;
+}
+.sc-insight:hover {
+  border-color: rgba(251,146,60,.5); background: #332B27; transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0,0,0,.4);
+}
+.sc-insight__meta { display: flex; align-items: center; gap: .625rem; }
+.sc-insight__chip { width: .75rem; height: .75rem; border-radius: 3px; }
+.sc-insight__sdg  { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .75rem; color: #94A3B8; }
+.sc-insight__trend {
+  margin-left: auto; border-radius: 999px; padding: .125rem .625rem;
+  background: rgba(249,115,22,.15); color: #FDBA74;
+  font-size: .75rem; font-weight: 700;
+}
+.sc-insight__title { margin-top: 1.25rem; font-size: 1.0625rem; font-weight: 600; line-height: 1.4; color: #fff; }
+.sc-insight:hover .sc-insight__title { color: #FED7AA; }
+.sc-insight__text  { margin-top: .5rem; flex: 1; font-size: .9375rem; line-height: 1.7; color: #CBD5E1; }
+.sc-insight__more  {
+  margin-top: 1.25rem; display: inline-flex; align-items: center; gap: .375rem;
+  font-size: .9375rem; font-weight: 600; color: #FB923C; opacity: 0; transition: opacity .2s;
+}
+.sc-insight:hover .sc-insight__more { opacity: 1; }
+
+/* ── Seksi dua kolom ───────────────────────────────────────────────── */
+
+.sc-split { display: grid; align-items: center; gap: 3rem; }
+@media (min-width: 1024px) {
+  .sc-split { grid-template-columns: repeat(2, 1fr); gap: 4rem; }
+  .sc-split_flip > *:first-child { order: 2; }
+}
+
+.sc-split__text_wide { position: relative; z-index: 10; }
+@media (min-width: 1024px) {
+  .sc-split__text_wide { width: 47%; }
+  .sc-split__text_wide.sc-split__text_end { margin-left: auto; }
+}
+
+.sc-split__title { margin-top: 1rem; font-size: 1.875rem; font-weight: 700; line-height: 1.2; letter-spacing: -.02em; color: var(--sc-ink); }
+@media (min-width: 640px) { .sc-split__title { font-size: 2.25rem; } }
+.sc-split__body  { margin-top: 1.25rem; font-size: 1rem; line-height: 1.7; color: var(--sc-ink-soft); }
+
+.sc-points { margin-top: 1.75rem; display: flex; flex-direction: column; gap: .75rem; }
+.sc-points__item { display: flex; align-items: flex-start; gap: .75rem; font-size: .9375rem; line-height: 1.4; color: #334155; }
+.sc-points__mark {
+  margin-top: .125rem; display: flex; align-items: center; justify-content: center;
+  width: 1.25rem; height: 1.25rem; flex: none; border-radius: 999px;
+  background: #FFEDD5; color: var(--sc-accent-deep);
+}
+
+.sc-figure { position: relative; display: flex; align-items: center; justify-content: center; }
+.sc-figure__img { width: 100%; max-width: 36rem; object-fit: contain; }
+.sc-figure__img_soft {
+  -webkit-mask-image: radial-gradient(ellipse 82% 82% at 50% 50%, #000 46%, transparent 92%);
+          mask-image: radial-gradient(ellipse 82% 82% at 50% 50%, #000 46%, transparent 92%);
+}
+.sc-figure_narrowOnly { margin-top: 3rem; }
+@media (min-width: 1024px) { .sc-figure_narrowOnly { display: none; } }
+
+/* Aset garis pucat dipasang sebagai mask lalu diberi warna aksen, bukan
+   ditampilkan apa adanya: berkasnya nyaris putih dan di atas bidang terang
+   praktis tak terlihat. */
+.sc-figure__tint {
+  display: block; width: 100%; max-width: 36rem; aspect-ratio: 909 / 428;
+  background: var(--sc-accent);
+  -webkit-mask: url('/assets/img/globalmap.png') center / contain no-repeat;
+          mask: url('/assets/img/globalmap.png') center / contain no-repeat;
+}
+
+/*
+ * Gambar melintang yang berdiri lepas di dalam seksi: tingginya mengikuti
+ * tinggi seksi, lebarnya mengikuti rasio, dan ia melintas ke wilayah teks.
+ * Tepinya hanya dilunakkan setipis mungkin — secukupnya menyembunyikan
+ * bahwa berkasnya berbentuk kotak.
+ */
+.sc-bleed { position: absolute; inset: 2rem 0; display: none; align-items: center; pointer-events: none; }
+@media (min-width: 1024px) { .sc-bleed { display: flex; } }
+.sc-bleed_right { right: 0; left: auto; width: 78%; justify-content: flex-end; }
+.sc-bleed_left  { left: 0; right: auto; width: 78%; justify-content: flex-start; }
+
+.sc-bleed__img { height: 100%; width: auto; max-width: none; object-fit: contain; }
+.sc-bleed__img,
+.sc-bleed__tint {
+  -webkit-mask-composite: source-in;
+          mask-composite: intersect;
+}
+.sc-bleed_right .sc-bleed__img {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 9%),
+                      linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0%, #000 9%),
+                      linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
+}
+.sc-bleed_left .sc-bleed__img {
+  -webkit-mask-image: linear-gradient(to left, transparent 0%, #000 9%),
+                      linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
+          mask-image: linear-gradient(to left, transparent 0%, #000 9%),
+                      linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
+}
+
+.sc-bleed__tint { height: 100%; width: 100%; background: var(--sc-accent); }
+.sc-bleed_left .sc-bleed__tint {
+  -webkit-mask-image: url('/assets/img/globalmap.png'),
+                      linear-gradient(to left, transparent 0%, #000 9%),
+                      linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
+          mask-image: url('/assets/img/globalmap.png'),
+                      linear-gradient(to left, transparent 0%, #000 9%),
+                      linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
+  -webkit-mask-size: contain, 100% 100%, 100% 100%;
+          mask-size: contain, 100% 100%, 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-composite: source-in, source-in;
+          mask-composite: intersect, intersect;
+}
+
+/* ── Pita API ──────────────────────────────────────────────────────── */
+
+.sc-api { display: flex; flex-direction: column; align-items: flex-start; gap: 2rem; }
+@media (min-width: 1024px) { .sc-api { flex-direction: row; align-items: center; justify-content: space-between; } }
+.sc-api__lead { display: flex; align-items: flex-start; gap: 1.25rem; }
+.sc-api__mark {
+  display: none; align-items: center; justify-content: center;
+  width: 3rem; height: 3rem; flex: none; border-radius: var(--sc-radius);
+  background: rgba(249,115,22,.15); color: #FDBA74;
+  box-shadow: inset 0 0 0 1px rgba(251,146,60,.25);
+}
+@media (min-width: 640px) { .sc-api__mark { display: flex; } }
+.sc-api__title { margin-top: .5rem; font-size: 1.5rem; font-weight: 700; letter-spacing: -.02em; color: #fff; }
+@media (min-width: 640px) { .sc-api__title { font-size: 1.875rem; } }
+.sc-api__text  { margin-top: .75rem; font-size: .9375rem; line-height: 1.7; color: #CBD5E1; }
+.sc-api__eyebrow { font-size: .75rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: #FB923C; }
+
+/* ── Mitra ─────────────────────────────────────────────────────────── */
+
+.sc-partners { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .75rem; }
+.sc-partners__item {
+  border: 1px solid var(--sc-line); border-radius: .5rem;
+  background: #fff; padding: .75rem 1.25rem;
+  font-size: .9375rem; font-weight: 500; color: #334155;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .05);
+}
+
+/* ── Penutup ───────────────────────────────────────────────────────── */
+
+.sc-closing { text-align: center; }
+.sc-closing__title { margin-top: 1.75rem; font-size: 1.875rem; font-weight: 700; line-height: 1.2; letter-spacing: -.02em; color: var(--sc-ink); }
+@media (min-width: 640px) { .sc-closing__title { font-size: 2.25rem; } }
+.sc-closing__sub { margin-inline: auto; margin-top: 1rem; max-width: 40rem; font-size: 1rem; line-height: 1.7; color: var(--sc-ink-soft); }
+.sc-trust { margin-top: 2.5rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .75rem 1.75rem; font-size: .9375rem; color: var(--sc-ink-soft); }
+.sc-trust__item { display: flex; align-items: center; gap: .5rem; }
+.sc-trust__item svg { color: var(--sc-accent); }
+
+/* Pita gambar antara seksi terakhir dan footer. Tingginya mengikuti rasio
+   berkasnya sendiri, jadi tidak ada bagian yang terpotong. */
+.sc-outro { width: 100%; overflow: hidden; background: #fff; }
+.sc-outro__img {
+  display: block; width: 100%; height: auto;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 100%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 100%);
+}
+
+/* ── Latar bergambar seksi ─────────────────────────────────────────── */
+
+.sc-backdrop { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.sc-backdrop__layer {
+  position: absolute; inset: 0;
+  -webkit-mask-size: cover, cover;
+          mask-size: cover, cover;
+  -webkit-mask-position: center;
+          mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-composite: source-in;
+          mask-composite: intersect;
+  will-change: transform;
+}
+
+/* Lubang tempat teks duduk: transparan di tengah — di situ artwork tidak
+   digambar — lalu menguat penuh ke tepi. */
+.sc-backdrop__layer_hole70 { --sc-hole: radial-gradient(ellipse 70% 57% at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 38%, rgba(0,0,0,.35) 58%, #000 82%); }
+.sc-backdrop__layer_hole72 { --sc-hole: radial-gradient(ellipse 72% 59% at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 38%, rgba(0,0,0,.35) 58%, #000 82%); }
+.sc-backdrop__layer_hole76 { --sc-hole: radial-gradient(ellipse 76% 62% at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 38%, rgba(0,0,0,.35) 58%, #000 82%); }
+.sc-backdrop__layer_hole78 { --sc-hole: radial-gradient(ellipse 78% 64% at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 38%, rgba(0,0,0,.35) 58%, #000 82%); }
+.sc-backdrop__layer_hole80 { --sc-hole: radial-gradient(ellipse 80% 66% at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 38%, rgba(0,0,0,.35) 58%, #000 82%); }
+.sc-backdrop__layer_hole86 { --sc-hole: radial-gradient(ellipse 86% 71% at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 38%, rgba(0,0,0,.35) 58%, #000 82%); }
+
+.sc-backdrop__layer_grid  { --sc-art: url('/assets/img/sections/hero-grid.svg'); }
+.sc-backdrop__layer_globe { --sc-art: url('/assets/img/sections/globe.svg'); }
+.sc-backdrop__layer_net   { --sc-art: url('/assets/img/sections/network.svg'); }
+.sc-backdrop__layer_flow  { --sc-art: url('/assets/img/sections/flow.svg'); }
+.sc-backdrop__layer_waves { --sc-art: url('/assets/img/sections/waves.svg'); }
+.sc-backdrop__layer_about { --sc-art: url('/assets/img/sections/about.svg'); }
+
+.sc-backdrop__layer {
+  -webkit-mask-image: var(--sc-art), var(--sc-hole);
+          mask-image: var(--sc-art), var(--sc-hole);
+  background-color: var(--sc-tone, var(--sc-accent));
+  opacity: var(--sc-strength, .2);
+  animation: var(--sc-move, none);
+}
+
+.sc-backdrop__layer_tone-accent { --sc-tone: #EA580C; }
+.sc-backdrop__layer_tone-deep   { --sc-tone: #C2410C; }
+.sc-backdrop__layer_tone-sand   { --sc-tone: #FDBA74; }
+.sc-backdrop__layer_tone-amber  { --sc-tone: #FB923C; }
+.sc-backdrop__layer_tone-ember  { --sc-tone: #7C3E1D; }
+
+.sc-backdrop__layer_faint  { --sc-strength: .15; }
+.sc-backdrop__layer_soft   { --sc-strength: .18; }
+.sc-backdrop__layer_medium { --sc-strength: .24; }
+.sc-backdrop__layer_strong { --sc-strength: .34; }
+.sc-backdrop__layer_solid  { --sc-strength: .85; }
+
+.sc-backdrop__layer_drift   { --sc-move: sc-drift 34s ease-in-out infinite alternate; }
+.sc-backdrop__layer_pan     { --sc-move: sc-pan 46s ease-in-out infinite alternate; }
+.sc-backdrop__layer_breathe { --sc-move: sc-breathe 22s ease-in-out infinite alternate; }
+
+/* Sorotan kursor: gambar yang sudah ada menguat di sekitar pointer, bukan
+   salinan kedua digambar di atasnya. */
+.sc-backdrop__layer_lit {
+  background-image: radial-gradient(
+    var(--sc-lit-reach, 340px) circle at var(--mx, -999px) var(--my, -999px),
+    var(--sc-lit-tone, rgba(234,88,12,.9)) 0%,
+    var(--sc-lit-tone, rgba(234,88,12,.9)) 18%, transparent 62%);
+}
+.sc-backdrop__layer_lit-amber { --sc-lit-tone: rgba(251,146,60,.55); --sc-lit-reach: 380px; }
+
+@keyframes sc-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1.06); }
+  100% { transform: translate3d(-2.5%, 1.8%, 0) scale(1.12); }
+}
+@keyframes sc-pan {
+  0%   { transform: translate3d(-3.5%, 0, 0) scale(1.08); }
+  100% { transform: translate3d(3.5%, 0, 0) scale(1.08); }
+}
+@keyframes sc-breathe {
+  0%   { transform: scale(1.02); opacity: .55; }
+  100% { transform: scale(1.12); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-backdrop__layer { animation: none; }
+  .sc-backdrop__layer_lit { background-image: none; }
+}
+
+/* ── Peta hero ─────────────────────────────────────────────────────── */
+
+.sc-world { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+
+/*
+ * Petanya sendiri: tinggi penuh mengikuti tinggi seksi, lebar mengikuti
+ * rasio berkasnya. Karena peta dunia jauh lebih lebar daripada tinggi,
+ * lebar itu melampaui paruh kanan dan melintas ke wilayah teks — memang
+ * begitu maksudnya. Ia diratakan ke kanan supaya sisi timurnya menempel
+ * tepi seksi.
+ */
+.sc-world__frame {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: flex-end;
+  transform: translateZ(0);   /* lapisan compositor sendiri: tanpa ini,
+                                 sorotan kursor yang bergerak memaksa
+                                 ratusan path diraster ulang tiap frame */
+  will-change: transform;
+}
+.sc-world__frame > svg { height: 100%; width: auto; max-width: none; display: block; }
+.sc-world__frame path {
+  fill: #FBE3D2; stroke: #EFC4A4; stroke-width: .4;
+  vector-effect: non-scaling-stroke;
+}
+
+.sc-world__pins { position: absolute; inset: 0; }
+
+.sc-pin {
+  position: absolute; border-radius: 999px;
+  margin-left: -7px; margin-top: -7px; width: 14px; height: 14px;
+  background: var(--sc-accent); box-shadow: 0 0 0 2px rgba(255,255,255,.7);
+}
+.sc-pin_lit { background: #F59E0B; }
+.sc-pin_faint {
+  margin-left: -4px; margin-top: -4px; width: 8px; height: 8px;
+  background: rgba(234,88,12,.35); box-shadow: none;
+}
+
+/* Satu sorot berkeliling: berhenti di satu negara, berdenyut, lalu
+   meluncur ke negara berikutnya. Posisinya dioper lewat --sc-rx/--sc-ry
+   karena berubah tiap frame. */
+.sc-roam {
+  position: absolute; left: var(--sc-rx, -100%); top: var(--sc-ry, -100%);
+  margin-left: -10px; margin-top: -10px; width: 20px; height: 20px;
+  border-radius: 999px; background: var(--sc-accent);
+  box-shadow: 0 0 0 6px rgba(249,115,22,.25), 0 8px 16px rgba(234,88,12,.4);
+  will-change: left, top;
+}
+.sc-roam__wave {
+  position: absolute; border-radius: 999px; border: 2px solid rgba(234,88,12,.7);
+  animation: sc-wave 1.9s cubic-bezier(0, 0, .2, 1) infinite;
+}
+.sc-roam__wave_a { inset: -.5rem; }
+.sc-roam__wave_b { inset: -1rem; border-color: rgba(249,115,22,.4); animation-delay: .6s; }
+
+@keyframes sc-wave {
+  0%        { transform: scale(.55); opacity: .9; }
+  70%, 100% { transform: scale(1.6);  opacity: 0; }
+}
+
+/* Sorotan kursor: kotak seukuran sorotan dengan mask diam, digeser
+   transform. Isinya digeser balik dengan transform kebalikannya, jadi
+   titik tetap berada di koordinat petanya. Mask yang berpindah tiap frame
+   akan memaksa seluruh lapisan dicat ulang; transform tidak. */
+.sc-spot {
+  position: absolute; left: 0; top: 0; width: 460px; height: 460px;
+  transform: translate3d(calc(var(--sc-gx, -9999px) - 230px), calc(var(--sc-gy, -9999px) - 230px), 0);
+  -webkit-mask-image: radial-gradient(circle at center, #000 0%, rgba(0,0,0,.55) 54%, transparent 78%);
+          mask-image: radial-gradient(circle at center, #000 0%, rgba(0,0,0,.55) 54%, transparent 78%);
+  will-change: transform;
+}
+.sc-spot__inner {
+  position: absolute; left: 0; top: 0;
+  width: var(--sc-mw, 100%); height: var(--sc-mh, 100%);
+  transform: translate3d(calc(230px - var(--sc-gx, -9999px)), calc(230px - var(--sc-gy, -9999px)), 0);
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-roam__wave { animation: none; opacity: 0; }
+  .sc-spot { display: none; }
+}
