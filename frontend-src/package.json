@@ -15,7 +15,7 @@
     "fuse.js": "^7.0.0",
     "i18next": "^26.2.0",
     "leaflet": "^1.9.4",
-    "lucide-react": "^1.17.0",
+    "lucide-react": "^1.32.0",
     "react": "^19.2.7",
     "react-datepicker": "^9.1.0",
     "react-dom": "^19.2.7",
