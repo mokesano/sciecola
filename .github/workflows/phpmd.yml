@@ -47,11 +47,12 @@ jobs:
           tools: phpmd
 
       - name: Run PHPMD
-        run: phpmd . sarif codesize --reportfile phpmd-results.sarif
+        run: phpmd . text codesize --reportfile phpmd-results.txt
         continue-on-error: true
 
-      - name: Upload analysis results to GitHub
-        uses: github/codeql-action/upload-sarif@v3
+      - name: Upload PHPMD report artifact
+        if: always() && hashFiles('phpmd-results.txt') != ''
+        uses: actions/upload-artifact@v4
         with:
-          sarif_file: phpmd-results.sarif
-          wait-for-processing: true
+          name: phpmd-report
+          path: phpmd-results.txt
