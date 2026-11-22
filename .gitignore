@@ -11,7 +11,7 @@
 /logs/*.log
 !/logs/.gitkeep
 
-# Cache artikel (dibuat ulang saat runtime)
+# Cache Data
 /cache/*.json.gz
 !/cache/.getkeep
 
