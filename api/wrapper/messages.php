@@ -68,7 +68,7 @@ try {
 
 function getConversations(int $limit, int $offset): array {
     if (!defined('DB_HOST') || !DB_HOST) {
-        return getSampleConversations();
+        return \Sciecola\Support\EmptyData::like(getSampleConversations());
     }
 
     try {
@@ -114,13 +114,13 @@ function getConversations(int $limit, int $offset): array {
         ];
     } catch (Exception $e) {
         error_log($e->getMessage());
-        return getSampleConversations();
+        return \Sciecola\Support\EmptyData::like(getSampleConversations());
     }
 }
 
 function getMessages(int $conversationId, int $limit, int $offset): array {
     if (!defined('DB_HOST') || !DB_HOST) {
-        return getSampleMessages();
+        return \Sciecola\Support\EmptyData::like(getSampleMessages());
     }
 
     try {
@@ -169,7 +169,7 @@ function getMessages(int $conversationId, int $limit, int $offset): array {
         ];
     } catch (Exception $e) {
         error_log($e->getMessage());
-        return getSampleMessages();
+        return \Sciecola\Support\EmptyData::like(getSampleMessages());
     }
 }
 

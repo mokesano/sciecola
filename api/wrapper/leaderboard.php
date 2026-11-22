@@ -56,9 +56,9 @@ function fetchAll(string $type, int $limit, int $sdg, string $country): array
 {
     if (!defined('DB_HOST') || !DB_HOST) {
         return [
-            getSampleLeaderboard($type, $limit),
-            getSampleSummary(),
-            getSampleSdgDist(),
+            \Sciecola\Support\EmptyData::like(getSampleLeaderboard($type, $limit)),
+            \Sciecola\Support\EmptyData::like(getSampleSummary()),
+            \Sciecola\Support\EmptyData::like(getSampleSdgDist()),
             ['Indonesia', 'Malaysia', 'Singapore', 'Thailand', 'Philippines'],
         ];
     }
@@ -79,9 +79,9 @@ function fetchAll(string $type, int $limit, int $sdg, string $country): array
 
     } catch (Exception $e) {
         return [
-            getSampleLeaderboard($type, $limit),
-            getSampleSummary(),
-            getSampleSdgDist(),
+            \Sciecola\Support\EmptyData::like(getSampleLeaderboard($type, $limit)),
+            \Sciecola\Support\EmptyData::like(getSampleSummary()),
+            \Sciecola\Support\EmptyData::like(getSampleSdgDist()),
             ['Indonesia', 'Malaysia', 'Singapore', 'Thailand', 'Philippines'],
         ];
     }
@@ -243,7 +243,7 @@ function fetchLeaderboard(PDO $pdo, string $type, int $limit, int $sdg, string $
         }
     }
 
-    return getSampleLeaderboard($type, $limit);
+    return \Sciecola\Support\EmptyData::like(getSampleLeaderboard($type, $limit));
 }
 
 /* ─── summary stats ──────────────────────────────────────────────────────── */
@@ -264,7 +264,7 @@ function fetchSummary(PDO $pdo): array
             'institutions' => (int)$i,
         ];
     } catch (Exception $e) {
-        return getSampleSummary();
+        return \Sciecola\Support\EmptyData::like(getSampleSummary());
     }
 }
 
@@ -305,7 +305,7 @@ function fetchSdgDistribution(PDO $pdo): array
             ], $rows);
         }
     } catch (Exception $e) { /* fall through */ }
-    return getSampleSdgDist();
+    return \Sciecola\Support\EmptyData::like(getSampleSdgDist());
 }
 
 /* ─── available countries ────────────────────────────────────────────────── */

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Save, CheckCircle, AlertCircle, RotateCcw, Languages } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { adminFetch } from '../utils/adminFetch';
 
 // =====================================================================
 // SCHEMA: field-field naratif yang dapat diedit admin per-bahasa.
@@ -179,7 +180,7 @@ const AdminLandingContent = () => {
   useEffect(() => {
     setLoading(true);
     setMessage(null);
-    fetch(`/api/admin/landing_content.php?lang=${encodeURIComponent(lang)}`)
+    adminFetch(`/api/admin/landing_content.php?lang=${encodeURIComponent(lang)}`)
       .then(r => r.json())
       .then(json => {
         if (json.status === 'success' && json.content && typeof json.content === 'object') {
@@ -205,7 +206,7 @@ const AdminLandingContent = () => {
     setSaving(true);
     setMessage(null);
     try {
-      const res = await fetch('/api/admin/landing_content.php', {
+      const res = await adminFetch('/api/admin/landing_content.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -64,26 +64,9 @@ const MyStatistics = () => {
   }
 
   const impactTrends = data?.impactTrends || [];
-  const sdgData = data?.sdgRadar || [
-    { subject: 'SDG 11\nCities',    A: 78, fullMark: 100 },
-    { subject: 'SDG 7\nEnergy',     A: 65, fullMark: 100 },
-    { subject: 'SDG 4\nEducation',  A: 40, fullMark: 100 },
-    { subject: 'SDG 3\nHealth',     A: 30, fullMark: 100 },
-    { subject: 'SDG 14\nWater',     A: 20, fullMark: 100 },
-  ];
-  const demographics = data?.demographics || [
-    { country: 'Indonesia',   views: 12500 },
-    { country: 'Malaysia',    views: 4200  },
-    { country: 'Singapore',   views: 3100  },
-    { country: 'Thailand',    views: 2400  },
-    { country: 'Philippines', views: 1800  },
-  ];
-  const sources = data?.citationSources || [
-    { source: 'Google Scholar',  count: 4500 },
-    { source: 'Scopus',          count: 2100 },
-    { source: 'Web of Science',  count: 1200 },
-    { source: 'ResearchGate',    count: 800  },
-  ];
+  const sdgData = data?.sdgRadar || [];
+  const demographics = data?.demographics || [];
+  const sources = data?.citationSources || [];
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {

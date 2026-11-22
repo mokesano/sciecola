@@ -48,7 +48,7 @@ try {
 
 function getUserPreferences(string $orcid): array {
     if (!defined('DB_HOST') || !DB_HOST) {
-        return getSampleUserPreferences();
+        return \Sciecola\Support\EmptyData::like(getSampleUserPreferences());
     }
 
     try {
@@ -107,7 +107,7 @@ function getUserPreferences(string $orcid): array {
         ];
     } catch (Exception $e) {
         error_log($e->getMessage());
-        return getSampleUserPreferences();
+        return \Sciecola\Support\EmptyData::like(getSampleUserPreferences());
     }
 }
 

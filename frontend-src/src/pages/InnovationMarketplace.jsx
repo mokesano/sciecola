@@ -47,58 +47,16 @@ const InnovationMarketplace = () => {
         }));
         setOpportunities(normalizedOpportunities);
       } else {
-        setOpportunities(mockOpportunities);
+        setOpportunities([]);
       }
     } catch (error) {
       console.error('Error fetching opportunities:', error);
-      setOpportunities(mockOpportunities);
+      setOpportunities([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Fallback mock data
-  const mockOpportunities = [
-    {
-      id: 1,
-      title: 'Carbon Capture Technology Partnership',
-      organization: 'Tesla Energy',
-      type: 'industry',
-      category: 'Climate Tech',
-      description: 'Seeking academic partners for next-generation carbon capture and storage solutions',
-      sdg_focus: [13, 9, 7],
-      budget_range: '$2M - $3M',
-      deadline: '2025-02-28',
-      required_skills: ['Environmental Science', 'Carbon Capture', 'Lab Experience'],
-      status: 'open'
-    },
-    {
-      id: 2,
-      title: 'AI-Driven Drug Discovery Collaboration',
-      organization: 'Pfizer Research',
-      type: 'industry',
-      category: 'Healthcare',
-      description: 'Revolutionary AI platform for accelerating drug discovery',
-      sdg_focus: [3, 9],
-      budget_range: '$4M - $5M',
-      deadline: '2025-01-31',
-      required_skills: ['Machine Learning', 'Bioinformatics', 'Python'],
-      status: 'open'
-    },
-    {
-      id: 3,
-      title: 'Sustainable Agriculture Innovation Grant',
-      organization: 'Bill & Melinda Gates Foundation',
-      type: 'foundation',
-      category: 'Agriculture',
-      description: 'Supporting breakthrough research in climate-resilient crops',
-      sdg_focus: [2, 1, 13],
-      budget_range: '$1.5M - $2M',
-      deadline: '2025-03-15',
-      required_skills: ['Agricultural Science', 'Field Research', 'Developing Countries'],
-      status: 'open'
-    }
-  ];
 
   const categories = [
     { id: 'all', name: 'All Opportunities', count: opportunities.length, icon: Lightbulb },

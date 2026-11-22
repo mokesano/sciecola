@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
+import { adminFetch } from '../utils/adminFetch';
 
 /* ─── helpers ────────────────────────────────────────────────────────────── */
 
@@ -85,8 +86,8 @@ const AdminTeams = () => {
     setLoading(true);
     try {
       const [mRes, dRes] = await Promise.all([
-        fetch('/api/wrapper/admin_teams.php?action=list'),
-        fetch('/api/wrapper/admin_teams.php?action=departments'),
+        adminFetch('/api/wrapper/admin_teams.php?action=list'),
+        adminFetch('/api/wrapper/admin_teams.php?action=departments'),
       ]);
       const mJson = await mRes.json();
       const dJson = await dRes.json();
@@ -131,7 +132,7 @@ const AdminTeams = () => {
     const action = isEdit ? `update&id=${form.id}` : 'create';
     setSaving(true);
     try {
-      const res = await fetch(`/api/wrapper/admin_teams.php?action=${action}`, {
+      const res = await adminFetch(`/api/wrapper/admin_teams.php?action=${action}`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify(formToPayload(form)),
@@ -156,7 +157,7 @@ const AdminTeams = () => {
   const handleDelete = async (id) => {
     if (!window.confirm(t('actions.confirm_delete'))) return;
     try {
-      const res = await fetch(`/api/wrapper/admin_teams.php?action=delete&id=${id}`, { method: 'POST' });
+      const res = await adminFetch(`/api/wrapper/admin_teams.php?action=delete&id=${id}`, { method: 'POST' });
       const json = await res.json();
       if (json.status !== 'success') throw new Error(json.message);
       toast.success('Deleted');
@@ -168,7 +169,7 @@ const AdminTeams = () => {
 
   const handleToggle = async (id) => {
     try {
-      const res = await fetch(`/api/wrapper/admin_teams.php?action=toggle_visibility&id=${id}`, { method: 'POST' });
+      const res = await adminFetch(`/api/wrapper/admin_teams.php?action=toggle_visibility&id=${id}`, { method: 'POST' });
       const json = await res.json();
       if (json.status !== 'success') throw new Error(json.message);
       loadAll();

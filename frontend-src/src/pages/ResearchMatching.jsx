@@ -42,51 +42,6 @@ const ResearchMatching = () => {
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [aiMatches, setAiMatches] = useState([]);
 
-  // Fallback mock data
-  const mockMatches = [
-    {
-      id: 1,
-      name: 'Dr. Sarah Chen',
-      title: 'Professor of Climate Science',
-      institution: 'MIT',
-      location: 'Cambridge, MA, USA',
-      match_score: 96,
-      match_reasons: ['Similar research focus', 'Complementary expertise', 'Active in SDG 13 & 14'],
-      sdg_focus: [13, 14, 15],
-      h_index: 52,
-      publications: 234,
-      collaborations: 47,
-      availability: 'Available for new projects'
-    },
-    {
-      id: 2,
-      name: 'Prof. Ahmed Hassan',
-      title: 'Director of Renewable Energy Lab',
-      institution: 'Cairo University',
-      location: 'Cairo, Egypt',
-      match_score: 93,
-      match_reasons: ['Expertise in sustainable energy', 'Strong publication record', 'Active network'],
-      sdg_focus: [7, 9, 11],
-      h_index: 48,
-      publications: 189,
-      collaborations: 63,
-      availability: 'Available for new projects'
-    },
-    {
-      id: 3,
-      name: 'Dr. James Wong',
-      title: 'AI & Ethics Researcher',
-      institution: 'Stanford University',
-      location: 'Stanford, CA, USA',
-      match_score: 89,
-      match_reasons: ['AI expertise', 'Ethics alignment', 'High citation impact'],
-      sdg_focus: [9, 10, 16],
-      h_index: 45,
-      publications: 178,
-      collaborations: 52,
-      availability: 'Limited availability'
-    }
-  ];
 
   const sdgColors = {
     1: 'bg-red-500',
@@ -130,11 +85,11 @@ const ResearchMatching = () => {
       if (data.status === 'success' && (data.matches || data.data)) {
         setAiMatches(data.matches || data.data);
       } else {
-        setAiMatches(mockMatches);
+        setAiMatches([]);
       }
     } catch (error) {
       console.error('Error fetching matches:', error);
-      setAiMatches(mockMatches);
+      setAiMatches([]);
     } finally {
       setIsSearching(false);
       setShowResults(true);

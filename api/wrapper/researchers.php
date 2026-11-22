@@ -128,7 +128,7 @@ function fetchResearchersList(int $offset, int $limit, string $sort, string $sea
         }
     }
 
-    $sample = generateSampleResearchers();
+    $sample = \Sciecola\Support\EmptyData::like(generateSampleResearchers());
     if ($search) {
         $sample = array_values(array_filter($sample, fn ($r) =>
             stripos($r['name'], $search) !== false ||

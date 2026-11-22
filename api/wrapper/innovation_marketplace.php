@@ -49,7 +49,7 @@ try {
 
 function getOpportunities(): array {
     if (!defined('DB_HOST') || !DB_HOST) {
-        return getSampleOpportunities();
+        return \Sciecola\Support\EmptyData::like(getSampleOpportunities());
     }
 
     try {
@@ -128,7 +128,7 @@ function getOpportunities(): array {
         ];
     } catch (Exception $e) {
         error_log($e->getMessage());
-        return getSampleOpportunities();
+        return \Sciecola\Support\EmptyData::like(getSampleOpportunities());
     }
 }
 

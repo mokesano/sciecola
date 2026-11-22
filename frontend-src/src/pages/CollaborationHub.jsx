@@ -51,14 +51,14 @@ const CollaborationHub = () => {
           setResearchers(researchersJson.data || []);
         } else {
           // Only fallback on API error, not on empty results
-          setResearchers(defaultResearchers);
+          setResearchers([]);
         }
         if (statsJson.status === 'success') {
           setNetworkStats(statsJson.data);
         }
       } catch (e) {
         console.error('Error fetching collaboration data:', e);
-        setResearchers(defaultResearchers);
+        setResearchers([]);
       } finally {
         setLoading(false);
       }
@@ -67,93 +67,6 @@ const CollaborationHub = () => {
     fetchData();
   }, [activeFilter]);
 
-  // Fallback mock data jika API tidak tersedia
-  const defaultResearchers = [
-    {
-      id: 1,
-      name: 'Dr. Sarah Chen',
-      title: 'Professor of Climate Science',
-      institution: 'MIT',
-      location: 'Cambridge, MA, USA',
-      sdgFocus: [13, 14, 15],
-      collaborations: 47,
-      hIndex: 52,
-      publications: 234,
-      avatar: 'https://i.pravatar.cc/150?img=1',
-      status: 'open',
-      recentProjects: ['Ocean Acidification Study', 'Carbon Capture Tech']
-    },
-    {
-      id: 2,
-      name: 'Prof. Ahmed Hassan',
-      title: 'Director of Renewable Energy Lab',
-      institution: 'Cairo University',
-      location: 'Cairo, Egypt',
-      sdgFocus: [7, 9, 11],
-      collaborations: 63,
-      hIndex: 48,
-      publications: 189,
-      avatar: 'https://i.pravatar.cc/150?img=2',
-      status: 'open',
-      recentProjects: ['Solar Grid Optimization', 'Smart City Initiative']
-    },
-    {
-      id: 3,
-      name: 'Dr. Maria Santos',
-      title: 'Head of Public Health Research',
-      institution: 'University of São Paulo',
-      location: 'São Paulo, Brazil',
-      sdgFocus: [3, 1, 2],
-      collaborations: 38,
-      hIndex: 41,
-      publications: 156,
-      avatar: 'https://i.pravatar.cc/150?img=3',
-      status: 'busy',
-      recentProjects: ['Vaccine Distribution', 'Nutrition Programs']
-    },
-    {
-      id: 4,
-      name: 'Dr. James Wong',
-      title: 'AI & Ethics Researcher',
-      institution: 'Stanford University',
-      location: 'Stanford, CA, USA',
-      sdgFocus: [9, 10, 16],
-      collaborations: 52,
-      hIndex: 45,
-      publications: 178,
-      avatar: 'https://i.pravatar.cc/150?img=4',
-      status: 'open',
-      recentProjects: ['AI Fairness Framework', 'Digital Inclusion']
-    },
-    {
-      id: 5,
-      name: 'Prof. Emma Larsson',
-      title: 'Sustainable Agriculture Expert',
-      institution: 'Swedish University of Agricultural Sciences',
-      location: 'Uppsala, Sweden',
-      sdgFocus: [2, 12, 15],
-      collaborations: 41,
-      hIndex: 39,
-      publications: 142,
-      avatar: 'https://i.pravatar.cc/150?img=5',
-      status: 'open',
-      recentProjects: ['Organic Farming Methods', 'Soil Conservation']
-    },
-    {
-      id: 6,
-      name: 'Dr. Raj Patel',
-      title: 'Water Resources Specialist',
-      institution: 'IIT Delhi',
-      location: 'New Delhi, India',
-      sdgFocus: [6, 11, 13],
-      collaborations: 35,
-      hIndex: 37,
-      publications: 128,
-      avatar: 'https://i.pravatar.cc/150?img=6',
-      status: 'limited',
-      recentProjects: ['Water Purification', 'Urban Water Management']
-    }
-  ];
 
   const statsDisplay = networkStats || {
     totalResearchers: 12847,

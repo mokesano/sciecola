@@ -76,7 +76,7 @@ try {
 
 function getFeedPosts(string $visibility, int $limit, int $offset): array {
     if (!defined('DB_HOST') || !DB_HOST) {
-        return getSampleFeedPosts();
+        return \Sciecola\Support\EmptyData::like(getSampleFeedPosts());
     }
 
     try {
@@ -135,13 +135,13 @@ function getFeedPosts(string $visibility, int $limit, int $offset): array {
         ];
     } catch (Exception $e) {
         error_log($e->getMessage());
-        return getSampleFeedPosts();
+        return \Sciecola\Support\EmptyData::like(getSampleFeedPosts());
     }
 }
 
 function getFeedPost(int $postId): array {
     if (!defined('DB_HOST') || !DB_HOST) {
-        return getSampleFeedPost();
+        return \Sciecola\Support\EmptyData::like(getSampleFeedPost());
     }
 
     try {
@@ -206,7 +206,7 @@ function getFeedPost(int $postId): array {
         ];
     } catch (Exception $e) {
         error_log($e->getMessage());
-        return getSampleFeedPost();
+        return \Sciecola\Support\EmptyData::like(getSampleFeedPost());
     }
 }
 

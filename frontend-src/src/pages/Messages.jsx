@@ -34,11 +34,11 @@ const Messages = () => {
           setConversations(data.conversations);
           if (data.conversations.length > 0) setSelectedChatId(data.conversations[0].id);
         } else {
-          setConversations(getSampleConversations());
+          setConversations([]);
         }
       } catch (err) {
         console.error('Error fetching conversations:', err);
-        setConversations(getSampleConversations());
+        setConversations([]);
       } finally {
         setLoading(false);
       }
@@ -55,20 +55,13 @@ const Messages = () => {
       const response = await fetch(`/api/messages.php?action=list&conversation_id=${conversationId}&limit=50`);
       const data = await response.json();
       if (data.status === 'success') setCurrentMessages(data.messages || []);
-      else                            setCurrentMessages(getSampleMessages());
+      else                            setCurrentMessages([]);
     } catch (err) {
       console.error('Error fetching messages:', err);
-      setCurrentMessages(getSampleMessages());
+      setCurrentMessages([]);
     }
   };
 
-  // Mock fallbacks (kept in-source; real backend will replace).
-  const getSampleConversations = () => [
-    { id: 1, type: 'direct', name: 'Dr. Budi Santoso', created_by: 1, created_at: '2026-05-10T10:30:00Z', message_count: 5, last_message_at: '2026-05-16T08:15:00Z' }
-  ];
-  const getSampleMessages = () => [
-    { id: 1, sender_id: 2, sender_name: 'Dr. Budi Santoso', sender_avatar: 'https://via.placeholder.com/40/6366f1/ffffff?text=BS', message_text: 'Halo, bagaimana progress risetmu?', message_type: 'text', status: 'read', created_at: '2026-05-16T08:15:00Z' }
-  ];
 
   const selectedChat = conversations.find(c => c.id === selectedChatId);
 

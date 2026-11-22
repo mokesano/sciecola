@@ -73,7 +73,7 @@ try {
 
 function getNotifications(string $orcid, string $unreadOnly, string $type, int $limit): array {
     if (!defined('DB_HOST') || !DB_HOST) {
-        return getSampleNotifications();
+        return \Sciecola\Support\EmptyData::like(getSampleNotifications());
     }
 
     try {
@@ -142,7 +142,7 @@ function getNotifications(string $orcid, string $unreadOnly, string $type, int $
         ];
     } catch (Exception $e) {
         error_log($e->getMessage());
-        return getSampleNotifications();
+        return \Sciecola\Support\EmptyData::like(getSampleNotifications());
     }
 }
 

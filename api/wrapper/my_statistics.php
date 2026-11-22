@@ -24,8 +24,8 @@ header('Access-Control-Allow-Headers: Content-Type, X-Auth-Token');
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
 if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
-$configFile = ROOT_PATH . '/config/config.php';
-if (file_exists($configFile)) require_once $configFile;
+if (!defined('DB_DATABASE')) require_once ROOT_PATH . '/config/config.php';
+require_once ROOT_PATH . '/includes/autoload.php';
 
 $orcid = trim($_GET['orcid'] ?? '');
 $range = min(60, max(3, (int)($_GET['range'] ?? 12)));
@@ -36,77 +36,25 @@ if (empty($orcid) || !preg_match('/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/i', $orcid)) {
     exit;
 }
 
-// ── Fetch researcher profile ─────────────────────────────────────────────────
-
-function fetchProfileStats(string $orcid): ?array {
-    $cacheFile = ROOT_PATH . '/cache/orcid_' . preg_replace('/[^a-z0-9_-]/i', '_', $orcid) . '.json';
-    if (file_exists($cacheFile)) {
-        $cached = json_decode(file_get_contents($cacheFile), true);
-        if ($cached && isset($cached['cached_at']) && (time() - strtotime($cached['cached_at'])) < 604800) {
-            return $cached;
-        }
-    }
-
-    $apiFile = __DIR__ . '/researcher_profile.php';
-    if (!file_exists($apiFile)) return null;
-
-    $origGet = $_GET; $origMethod = $_SERVER['REQUEST_METHOD'];
-    $_GET = ['orcid' => $orcid];
-    $_SERVER['REQUEST_METHOD'] = 'GET';
-    ob_start();
-    try { require $apiFile; } catch (Throwable $t) { ob_end_clean(); }
-    $raw = ob_get_clean();
-    $_GET = $origGet; $_SERVER['REQUEST_METHOD'] = $origMethod;
-
-    for ($i = 0, $l = strlen($raw ?? ''); $i < $l; $i++) {
-        if ($raw[$i] === '{' || $raw[$i] === '[') {
-            $data = json_decode(substr($raw, $i), true);
-            if (is_array($data)) return $data;
-        }
-    }
-    return null;
-}
-
-$profileData = fetchProfileStats($orcid);
-if (!$profileData || ($profileData['status'] ?? '') !== 'success') {
+// ── Ambil profil lewat ResearcherProfileService (database dulu, lalu mesin SDG) ──
+@set_time_limit(90);
+ob_start();
+try {
+    $profileData = \Sciecola\Sdg\ResearcherProfileService::build($orcid);
+    ob_end_clean();
+} catch (Throwable $e) {
+    ob_end_clean();
     http_response_code(502);
-    echo json_encode(['status' => 'error', 'message' => 'Gagal mengambil data statistik dari ORCID']);
+    echo json_encode(['status' => 'error', 'message' => 'Gagal mengambil data statistik: ' . $e->getMessage()]);
     exit;
 }
-
 $profile = $profileData['profile'] ?? [];
 
-// ── Build monthly impact trend from publicationTrend + citationTrend ─────────
-
-$pubByYear   = [];
-foreach ($profile['publicationTrend'] ?? [] as $p) {
-    $pubByYear[(int)$p['year']] = (int)$p['count'];
-}
-
-$citByYear = [];
-foreach ($profile['citationTrend'] ?? [] as $c) {
-    $citByYear[(int)$c['year']] = (int)$c['citations'];
-}
-
-$months     = [];
-$monthNames = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-for ($m = $range - 1; $m >= 0; $m--) {
-    $ts   = strtotime("-$m months");
-    $year = (int)date('Y', $ts);
-    $mon  = (int)date('n', $ts) - 1;
-
-    $pubBase  = ($pubByYear[$year] ?? 1);
-    $citBase  = ($citByYear[$year] ?? max(1, $profile['citations'] ?? 0));
-    $factor   = ($mon + 1) / 12;
-
-    $months[] = [
-        'month'     => $monthNames[$mon],
-        'year'      => $year,
-        'views'     => (int)(($profile['views'] ?? rand(800,4000)) * $factor * (0.7 + lcg_value() * 0.6)),
-        'citations' => (int)($citBase * $factor * (0.6 + lcg_value() * 0.8)),
-        'downloads' => (int)($pubBase * 15 * $factor * (0.5 + lcg_value() * 1.0)),
-    ];
-}
+// ── Tren dampak ─────────────────────────────────────────────────────────────
+// Belum ada pelacakan kunjungan/unduhan maupun sitasi per bulan. Dulu bagian ini
+// mengarang angka acak (rand/lcg_value) yang berubah setiap kali halaman dibuka;
+// kini dikirim kosong agar grafik tidak menampilkan data palsu.
+$months = [];
 
 // ── SDG radar data ───────────────────────────────────────────────────────────
 
@@ -122,25 +70,17 @@ foreach (array_slice($sdgFocus, 0, 8) as $s) {
     ];
 }
 
-// ── Top countries (derived from collaborators or defaults) ───────────────────
+// ── Demografi pembaca: belum ada data kunjungan per negara → kosong (dulu persentase karangan).
+$demographics = [];
 
-$demographics = [
-    ['country' => 'Indonesia',    'views' => (int)(($profile['views'] ?? 10000) * 0.55)],
-    ['country' => 'Malaysia',     'views' => (int)(($profile['views'] ?? 10000) * 0.12)],
-    ['country' => 'Singapore',    'views' => (int)(($profile['views'] ?? 10000) * 0.09)],
-    ['country' => 'Thailand',     'views' => (int)(($profile['views'] ?? 10000) * 0.07)],
-    ['country' => 'Philippines',  'views' => (int)(($profile['views'] ?? 10000) * 0.05)],
-];
-
-// ── Citation sources ─────────────────────────────────────────────────────────
-
-$totalCit = max(1, $profile['citations'] ?? 0);
-$sources  = [
-    ['source' => 'Google Scholar', 'count' => (int)($totalCit * 0.55)],
-    ['source' => 'Scopus',         'count' => (int)($totalCit * 0.25)],
-    ['source' => 'Web of Science', 'count' => (int)($totalCit * 0.13)],
-    ['source' => 'ResearchGate',   'count' => (int)($totalCit * 0.07)],
-];
+// ── Sumber sitasi: hanya sumber yang benar-benar dipakai menghitung total sitasi.
+$sources = [];
+if ((int) ($profile['citations'] ?? 0) > 0) {
+    $sources[] = [
+        'source' => !empty($profile['wizdamImpact']) ? 'Scopus (wizdam-apis)' : 'OpenAlex',
+        'count'  => (int) $profile['citations'],
+    ];
+}
 
 echo json_encode([
     'status'        => 'success',

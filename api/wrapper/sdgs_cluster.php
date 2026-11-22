@@ -89,7 +89,7 @@ function fetchSdgClusterTimeline(int $years, int $sdgFilter): array
         }
     }
 
-    return getSampleClusterTimeline($startYear);
+    return \Sciecola\Support\EmptyData::like(getSampleClusterTimeline($startYear));
 }
 
 /**

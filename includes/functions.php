@@ -213,18 +213,23 @@ function route_api_wrapper(): void {
     $filename = basename($m[2]);
 
     static $allowed = [
-        'analytics.php', 'article_profile.php', 'articles.php', 'auth.php',
-        'cache_handler.php', 'cache_migration.php', 'collaboration.php', 'crawl_queue.php', 'innovation_marketplace.php',
-        'journal_profile.php', 'journals.php',
-        'leaderboard.php', 'log_history.php', 'my_activity.php',
+        'analytics.php', 'article_impact.php', 'article_profile.php', 'articles.php', 'auth.php',
+        'admin_teams.php', 'become_sponsor.php',
+        'cache_handler.php', 'cache_migration.php', 'collaboration.php', 'crawl_queue.php',
+        'feeds.php', 'insights.php', 'innovation_marketplace.php', 'institution_profile.php', 'institutions.php',
+        'journal_profile.php', 'journals.php', 'landing_content.php',
+        'leaderboard.php', 'log_history.php', 'messages.php', 'my_activity.php',
         'my_articles.php', 'my_collections.php', 'my_profile.php',
-        'my_statistics.php', 'platform_stats.php', 'projects.php',
+        'monitoring.php', 'my_statistics.php', 'partners.php', 'platform_stats.php', 'platform_timeline.php',
+        'profile_lookup.php', 'projects.php', 'proxy.php',
         'researcher_distribution.php', 'researcher_profile.php', 'researchers.php',
-        'research_matching.php', 'sdg_distribution.php', 'sitemap.php', 'trends.php',
+        'research_matching.php', 'sdg_distribution.php', 'sdgs_cluster.php', 'sitemap.php',
+        'sponsors.php', 'team_member_profile.php', 'teams.php', 'top_researchers.php',
+        'trends_analysis.php',
     ];
 
     static $admin_allowed = [
-        'researchers.php', 'projects.php', 'opportunities.php', 'expertise.php'
+        'researchers.php', 'projects.php', 'opportunities.php', 'expertise.php', 'landing_content.php'
     ];
 
     if ($subdir === 'admin/') {

@@ -25,7 +25,7 @@ declare(strict_types=1);
  * di proses yang sama untuk ORCID (init → batch per 3 karya) atau DOI, lalu setiap
  * hasilnya langsung disimpan ke database lewat CacheMigrator::migrateData().
  * Pekerjaan ORCID yang panjang dilanjutkan pada panggilan berikutnya (progress disimpan).
- * Antrean disimpan di ROOT/cache/crawl_queue.json (diabaikan oleh migrasi cache).
+ * Antrean disimpan di ROOT/cache/crawl_queue.json (src/Sdg/CrawlQueue.php; diabaikan oleh migrasi cache).
  */
 
 ob_start();
@@ -41,9 +41,9 @@ if (!class_exists(\Sciecola\Cache\CacheMigrator::class)) {
 }
 
 use Sciecola\Cache\CacheMigrator;
+use Sciecola\Sdg\CrawlQueue;
+use Sciecola\Sdg\SdgEngine;
 
-const CQ_QUEUE_FILE   = ROOT_PATH . '/cache/crawl_queue.json';
-const CQ_ENGINE_FILE  = ROOT_PATH . '/api/sdgs/SDG_Classification_API.php';
 const CQ_BATCH_LIMIT  = 3;     // karya per langkah batch ORCID
 const CQ_TIME_BUDGET  = 20.0;  // detik per permintaan "process"
 const CQ_MAX_ATTEMPTS = 3;
@@ -88,27 +88,14 @@ if (in_array($action, ['enqueue', 'process', 'clear_finished'], true) && $method
 
 // ── Penyimpanan antrean ──────────────────────────────────────────────────────
 
-/** @return list<array<string,mixed>> */
 function cq_read(): array
 {
-    if (!is_file(CQ_QUEUE_FILE)) {
-        return [];
-    }
-    $data = json_decode((string) file_get_contents(CQ_QUEUE_FILE), true);
-    if (!is_array($data)) {
-        return [];
-    }
-    // Format lama bisa berupa map {job_id: job}; normalisasi ke list.
-    return array_values(array_filter($data, 'is_array'));
+    return CrawlQueue::read();
 }
 
 function cq_write(array $queue): void
 {
-    $dir = dirname(CQ_QUEUE_FILE);
-    if (!is_dir($dir)) {
-        @mkdir($dir, 0750, true);
-    }
-    file_put_contents(CQ_QUEUE_FILE, json_encode(array_values($queue), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
+    CrawlQueue::write($queue);
 }
 
 function cq_counts(array $queue): array
@@ -125,29 +112,6 @@ function cq_counts(array $queue): array
 
 // ── Mesin SDG & database ─────────────────────────────────────────────────────
 
-/** Memuat fungsi-fungsi mesin SDG sekali per permintaan, tanpa menjalankan analisis. */
-function cq_load_engine(): void
-{
-    static $loaded = false;
-    if ($loaded) {
-        return;
-    }
-    if (!is_file(CQ_ENGINE_FILE)) {
-        throw new RuntimeException('Mesin SDG tidak ditemukan: api/sdgs/SDG_Classification_API.php');
-    }
-    $origGet    = $_GET;
-    $origMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-    $_GET = ['_engine_load' => '1'];   // main() mengembalikan error parameter → tidak ada fetch
-    $_SERVER['REQUEST_METHOD'] = 'GET';
-    ob_start();
-    require_once CQ_ENGINE_FILE;
-    ob_end_clean();
-    $_GET = $origGet;
-    $_SERVER['REQUEST_METHOD'] = $origMethod;
-    http_response_code(200);
-    $loaded = true;
-}
-
 function cq_pdo(): PDO
 {
     $driver = defined('DB_DRIVER') ? DB_DRIVER : 'mysql';
@@ -155,17 +119,6 @@ function cq_pdo(): PDO
         ? sprintf('pgsql:host=%s;port=%s;dbname=%s', DB_HOST, DB_PORT, DB_DATABASE)
         : sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', DB_HOST, DB_PORT, DB_DATABASE);
     return new PDO($dsn, DB_USERNAME, DB_PASSWORD, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-}
-
-/** Menjalankan satu fungsi mesin dan memastikan hasilnya sukses. */
-function cq_engine_call(callable $fn): array
-{
-    $result = $fn();
-    http_response_code(200);
-    if (!is_array($result) || ($result['status'] ?? '') !== 'success') {
-        throw new RuntimeException((string) ($result['message'] ?? 'Mesin SDG tidak mengembalikan hasil'));
-    }
-    return $result;
 }
 
 function cq_add_result(array &$job, array $migrated, bool $countPublications = true): void
@@ -189,7 +142,7 @@ function cq_advance(array &$job, CacheMigrator $migrator, float $deadline): bool
     $id = (string) $job['identifier'];
 
     if ($job['type'] === 'doi') {
-        $res = cq_engine_call(static fn () => handleDoiRequest($id, false));
+        $res = SdgEngine::doi($id);
         cq_add_result($job, $migrator->migrateData($res, 'crawl:doi:' . $id));
         $job['status'] = 'completed';
         return true;
@@ -197,7 +150,7 @@ function cq_advance(array &$job, CacheMigrator $migrator, float $deadline): bool
 
     // ORCID: init sekali, lalu batch bertahap
     if (!isset($job['progress']['total'])) {
-        $init = cq_engine_call(static fn () => handleOrcidInitRequest($id, false));
+        $init = SdgEngine::orcidInit($id);
         // Daftar awal (stub) tidak dihitung: karya yang sama dihitung saat batch berSDG-nya tersimpan.
         cq_add_result($job, $migrator->migrateData($init, 'crawl:orcid_init:' . $id), false);
         $job['progress'] = ['offset' => 0, 'total' => (int) ($init['total_works'] ?? 0)];
@@ -208,7 +161,7 @@ function cq_advance(array &$job, CacheMigrator $migrator, float $deadline): bool
             return false; // lanjutkan di panggilan berikutnya
         }
         $offset = (int) $job['progress']['offset'];
-        $batch  = cq_engine_call(static fn () => handleOrcidBatchRequest($id, $offset, CQ_BATCH_LIMIT, false));
+        $batch  = SdgEngine::orcidBatch($id, $offset, CQ_BATCH_LIMIT);
         cq_add_result($job, $migrator->migrateData($batch, "crawl:orcid_batch:{$id}:{$offset}"));
         $next = (int) ($batch['next_offset'] ?? ($offset + CQ_BATCH_LIMIT));
         $job['progress']['offset'] = max($next, $offset + 1);
@@ -257,32 +210,15 @@ switch ($action) {
             cq_respond(['status' => 'error', 'message' => "Tipe '{$type}' tidak didukung. Gunakan orcid atau doi."], 400);
         }
 
-        $queue = cq_read();
-        foreach ($queue as $job) {
-            if (($job['identifier'] ?? '') === $identifier && in_array($job['status'] ?? '', ['pending', 'running'], true)) {
-                cq_respond(['status' => 'success', 'duplicate' => true, 'job_id' => $job['id'],
-                    'message' => "{$identifier} sudah ada di antrean."]);
-            }
-        }
-        $jobId   = 'job-' . substr(bin2hex(random_bytes(8)), 0, 12);
-        $queue[] = [
-            'id'         => $jobId,
-            'type'       => $type,
-            'identifier' => $identifier,
-            'priority'   => (int) ($body['priority'] ?? 5),
-            'status'     => 'pending',
-            'attempts'   => 0,
-            'progress'   => null,
-            'result'     => null,
-            'error'      => null,
-            'created_at' => date('c'),
-            'updated_at' => date('c'),
-        ];
-        usort($queue, static fn ($a, $b) => ($b['priority'] ?? 5) <=> ($a['priority'] ?? 5)
-            ?: strcmp((string) $a['created_at'], (string) $b['created_at']));
-        cq_write($queue);
-        cq_respond(['status' => 'success', 'duplicate' => false, 'job_id' => $jobId,
-            'message' => strtoupper($type) . " {$identifier} ditambahkan ke antrean."]);
+        $r = CrawlQueue::enqueue($type, $identifier, (int) ($body['priority'] ?? 5));
+        cq_respond([
+            'status'    => 'success',
+            'duplicate' => $r['duplicate'],
+            'job_id'    => $r['job_id'],
+            'message'   => $r['duplicate']
+                ? "{$identifier} sudah ada di antrean."
+                : strtoupper($type) . " {$identifier} ditambahkan ke antrean.",
+        ]);
 
     case 'process':
         @set_time_limit(120);
@@ -290,7 +226,7 @@ switch ($action) {
         try {
             $pdo = cq_pdo();
             $migrator = new CacheMigrator($pdo, ROOT_PATH . '/cache');
-            cq_load_engine();
+            SdgEngine::load();
         } catch (Throwable $e) {
             cq_respond(['status' => 'error', 'message' => 'Tidak bisa memulai proses: ' . $e->getMessage()], 503);
         }

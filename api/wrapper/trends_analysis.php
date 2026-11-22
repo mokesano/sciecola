@@ -63,7 +63,7 @@ function fetchTrendsAnalysisData(int $years, int $sdg): array
         }
     }
 
-    return getSampleTrendsData($years);
+    return \Sciecola\Support\EmptyData::like(getSampleTrendsData($years));
 }
 
 function buildTrendsResponseFromDb(PDO $pdo, int $years, int $sdg): array

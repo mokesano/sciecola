@@ -45,7 +45,7 @@ try {
 function fetchMember(int $memberId, string $slug): array
 {
     if (!defined('DB_HOST') || !DB_HOST) {
-        return sampleProfile();
+        return \Sciecola\Support\EmptyData::like(sampleProfile());
     }
 
     try {
@@ -145,7 +145,7 @@ function fetchMember(int $memberId, string $slug): array
             'achievements' => $achievements,
         ];
     } catch (Exception $e) {
-        return sampleProfile();
+        return \Sciecola\Support\EmptyData::like(sampleProfile());
     }
 }
 

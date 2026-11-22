@@ -197,8 +197,9 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
  # index.php → bootstrap.php → route_api_wrapper() → /api/wrapper/*.php
  # ----------------------------------------------------------------
 
+ # Termasuk /api/admin/*.php dan /api/wrapper/*.php (dipakai halaman Admin, Tim, Sponsor).
  RewriteCond %{REQUEST_FILENAME} !-f
- RewriteRule ^api/[^/]+\.php$ index.php [L,QSA]
+ RewriteRule ^api/(admin/|wrapper/)?[^/]+\.php$ index.php [L,QSA]
 
  # ----------------------------------------------------------------
  # BAGIAN 7: KEAMANAN APLIKASI - PROTEKSI FILE SENSITIF

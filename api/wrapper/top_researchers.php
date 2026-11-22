@@ -36,7 +36,7 @@ try {
     $page    = max(1, (int)($_GET['page'] ?? 1));
     $limit   = min(50, max(1, (int)($_GET['limit'] ?? 10)));
     $sort    = in_array($_GET['sort'] ?? 'impact', ['impact', 'citations', 'hindex', 'publications', 'name'], true)
-        ? $_GET['sort'] : 'impact';
+        ? ($_GET['sort'] ?? 'impact') : 'impact';
     $sdg     = max(0, min(17, (int)($_GET['sdg'] ?? 0)));
     $country = trim((string)($_GET['country'] ?? ''));
     $search  = trim((string)($_GET['search']  ?? ''));
@@ -75,7 +75,7 @@ function fetchTopResearchersData(int $page, int $limit, string $sort, int $sdg, 
         }
     }
 
-    return getSampleData($page, $limit, $sort, $sdg, $country);
+    return \Sciecola\Support\EmptyData::like(getSampleData($page, $limit, $sort, $sdg, $country));
 }
 
 // ─── DB path ──────────────────────────────────────────────────────────────────

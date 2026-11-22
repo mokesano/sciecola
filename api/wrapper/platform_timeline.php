@@ -45,7 +45,7 @@ try {
 
 function getPlatformTimeline(int $limit, string $sort): array {
     if (!defined('DB_HOST') || !DB_HOST) {
-        return getSamplePlatformTimeline();
+        return \Sciecola\Support\EmptyData::like(getSamplePlatformTimeline());
     }
 
     try {
@@ -103,7 +103,7 @@ function getPlatformTimeline(int $limit, string $sort): array {
         ];
     } catch (Exception $e) {
         error_log($e->getMessage());
-        return getSamplePlatformTimeline();
+        return \Sciecola\Support\EmptyData::like(getSamplePlatformTimeline());
     }
 }
 

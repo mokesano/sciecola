@@ -38,74 +38,6 @@ const ProjectManagement = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  // Fallback mock data
-  const mockProjects = [
-    {
-      id: 1,
-      title: 'Ocean Acidification Impact Study',
-      description: 'Comprehensive analysis of ocean acidification effects on marine ecosystems across Pacific regions',
-      status: 'active',
-      progress: 67,
-      start_date: '2024-01-15',
-      end_date: '2025-06-30',
-      sdg_focus: [13, 14],
-      budget: 450000,
-      spent: 287500,
-      institution: 'MIT'
-    },
-    {
-      id: 2,
-      title: 'Solar Grid Optimization Initiative',
-      description: 'Developing AI-powered optimization algorithms for renewable energy grid distribution',
-      status: 'active',
-      progress: 45,
-      start_date: '2024-03-01',
-      end_date: '2025-12-31',
-      sdg_focus: [7, 9, 11],
-      budget: 680000,
-      spent: 245000,
-      institution: 'Cairo University'
-    },
-    {
-      id: 3,
-      title: 'Urban Water Management System',
-      description: 'Smart water purification and distribution system for rapidly growing urban areas',
-      status: 'planning',
-      progress: 15,
-      start_date: '2024-06-01',
-      end_date: '2026-05-31',
-      sdg_focus: [6, 11, 13],
-      budget: 520000,
-      spent: 45000,
-      institution: 'IIT Delhi'
-    },
-    {
-      id: 4,
-      title: 'Sustainable Agriculture Methods',
-      description: 'Research on organic farming techniques and soil conservation practices for small-scale farmers',
-      status: 'completed',
-      progress: 100,
-      start_date: '2022-09-01',
-      end_date: '2024-08-31',
-      sdg_focus: [2, 12, 15],
-      budget: 380000,
-      spent: 375000,
-      institution: 'Swedish University of Agricultural Sciences'
-    },
-    {
-      id: 5,
-      title: 'AI Fairness Framework Development',
-      description: 'Creating ethical guidelines and technical frameworks for unbiased AI systems in healthcare',
-      status: 'active',
-      progress: 78,
-      start_date: '2023-11-01',
-      end_date: '2025-04-30',
-      sdg_focus: [9, 10, 16],
-      budget: 590000,
-      spent: 425000,
-      institution: 'Stanford University'
-    }
-  ];
 
   useEffect(() => {
     fetchProjects();
@@ -124,13 +56,13 @@ const ProjectManagement = () => {
         setProjects(normalizedProjects);
         updateStats(normalizedProjects);
       } else {
-        setProjects(mockProjects);
-        updateStats(mockProjects);
+        setProjects([]);
+        updateStats([]);
       }
     } catch (error) {
       console.error('Error fetching projects:', error);
-      setProjects(mockProjects);
-      updateStats(mockProjects);
+      setProjects([]);
+      updateStats([]);
     } finally {
       setLoading(false);
     }

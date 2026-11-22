@@ -54,7 +54,7 @@ function getProjects(): array {
     $search = trim($_GET['search'] ?? '');
 
     if (!defined('DB_HOST') || !DB_HOST) {
-        return getSampleProjects();
+        return \Sciecola\Support\EmptyData::like(getSampleProjects());
     }
 
     try {
@@ -131,7 +131,7 @@ function getProjects(): array {
         ];
     } catch (Exception $e) {
         error_log($e->getMessage());
-        return getSampleProjects();
+        return \Sciecola\Support\EmptyData::like(getSampleProjects());
     }
 }
 

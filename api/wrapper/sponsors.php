@@ -56,7 +56,7 @@ try {
 function fetchSponsors(string $tier, string $search, int $limit): array
 {
     if (!defined('DB_HOST') || !DB_HOST) {
-        return [sampleSponsors(), sampleTierCounts()];
+        return [\Sciecola\Support\EmptyData::like(sampleSponsors()), \Sciecola\Support\EmptyData::like(sampleTierCounts())];
     }
 
     try {
@@ -120,7 +120,7 @@ function fetchSponsors(string $tier, string $search, int $limit): array
         }
     } catch (Exception $e) { /* fall through */ }
 
-    return [sampleSponsors(), sampleTierCounts()];
+    return [\Sciecola\Support\EmptyData::like(sampleSponsors()), \Sciecola\Support\EmptyData::like(sampleTierCounts())];
 }
 
 /* ─── sample data ─────────────────────────────────────────────────────────── */

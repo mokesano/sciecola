@@ -51,7 +51,7 @@ try {
 
 function getCollaborationResearchers(): array {
     if (!defined('DB_HOST') || !DB_HOST) {
-        return getSampleCollaborationResearchers();
+        return \Sciecola\Support\EmptyData::like(getSampleCollaborationResearchers());
     }
 
     try {
@@ -127,7 +127,7 @@ function getCollaborationResearchers(): array {
         ];
     } catch (Exception $e) {
         error_log($e->getMessage());
-        return getSampleCollaborationResearchers();
+        return \Sciecola\Support\EmptyData::like(getSampleCollaborationResearchers());
     }
 }
 

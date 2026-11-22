@@ -59,7 +59,7 @@ try {
 function fetchPartners(string $type, string $search, int $limit): array
 {
     if (!defined('DB_HOST') || !DB_HOST) {
-        return [samplePartners(), sampleTypeCounts()];
+        return [\Sciecola\Support\EmptyData::like(samplePartners()), \Sciecola\Support\EmptyData::like(sampleTypeCounts())];
     }
 
     try {
@@ -128,7 +128,7 @@ function fetchPartners(string $type, string $search, int $limit): array
         }
     } catch (Exception $e) { /* fall through */ }
 
-    return [samplePartners(), sampleTypeCounts()];
+    return [\Sciecola\Support\EmptyData::like(samplePartners()), \Sciecola\Support\EmptyData::like(sampleTypeCounts())];
 }
 
 /* ─── sample data ─────────────────────────────────────────────────────────── */

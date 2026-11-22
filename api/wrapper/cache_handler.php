@@ -21,7 +21,6 @@ declare(strict_types=1);
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, X-Auth-Token');
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
@@ -29,6 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
 $configFile = ROOT_PATH . '/config/config.php';
 if (file_exists($configFile)) require_once $configFile;
+// Endpoint admin: wajib token admin (X-Admin-Token = ADMIN_TOOL_TOKEN di .env)
+require_once ROOT_PATH . '/includes/autoload.php';
+\Sciecola\Auth\AdminGuard::require();
 
 $body = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

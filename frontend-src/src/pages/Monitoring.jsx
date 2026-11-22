@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { MapContainer, Marker, Tooltip, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { adminFetch } from '../utils/adminFetch';
 
 const Monitoring = () => {
   const { t } = useTranslation('monitoring');
@@ -21,7 +22,7 @@ const Monitoring = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`/api/monitoring.php?range=${range}`);
+      const response = await adminFetch(`/api/monitoring.php?range=${range}`);
       if (!response.ok) throw new Error('Failed to fetch monitoring data');
       const result = await response.json();
       if (result.status === 'ok' && result.data) {
@@ -32,7 +33,7 @@ const Monitoring = () => {
     } catch (err) {
       console.error('Monitoring data fetch error:', err);
       setError(err.message);
-      // Keep using default mock data on error
+      // Tidak memakai data contoh saat gagal: tampilan kosong + pesan error
     } finally {
       setLoading(false);
     }
@@ -77,131 +78,20 @@ const Monitoring = () => {
     return null;
   };
 
-  // Default mock geo data for development/fallback
-  const DEFAULT_GEO_DATA = [
-    { id: 1,  lat: -6.21,  lng: 106.85, city: 'Jakarta',        visitors: 247  },
-    { id: 2,  lat: -7.26,  lng: 112.75, city: 'Surabaya',       visitors: 856  },
-    { id: 3,  lat: 1.35,   lng: 103.82, city: 'Singapore',      visitors: 743  },
-    { id: 4,  lat: 3.14,   lng: 101.69, city: 'Kuala Lumpur',   visitors: 698  },
-    { id: 5,  lat: 13.76,  lng: 100.50, city: 'Bangkok',        visitors: 612  },
-    { id: 6,  lat: 14.60,  lng: 121.00, city: 'Manila',         visitors: 534  },
-    { id: 7,  lat: 22.30,  lng: 114.18, city: 'Hong Kong',      visitors: 489  },
-    { id: 8,  lat: 35.68,  lng: 139.69, city: 'Tokyo',          visitors: 456  },
-    { id: 9,  lat: 37.57,  lng: 126.98, city: 'Seoul',          visitors: 421  },
-    { id: 10, lat: 39.91,  lng: 116.39, city: 'Beijing',        visitors: 398  },
-    { id: 11, lat: 31.23,  lng: 121.47, city: 'Shanghai',       visitors: 376  },
-    { id: 12, lat: 28.61,  lng: 77.21,  city: 'New Delhi',      visitors: 345  },
-    { id: 13, lat: 19.08,  lng: 72.88,  city: 'Mumbai',         visitors: 312  },
-    { id: 14, lat: 51.51,  lng: -0.13,  city: 'London',         visitors: 1289 },
-    { id: 15, lat: 48.86,  lng: 2.35,   city: 'Paris',          visitors: 267  },
-    { id: 16, lat: 52.52,  lng: 13.40,  city: 'Berlin',         visitors: 245  },
-    { id: 17, lat: 40.71,  lng: -74.01, city: 'New York',       visitors: 1523 },
-    { id: 18, lat: 34.05,  lng: -118.24,city: 'Los Angeles',    visitors: 412  },
-    { id: 19, lat: -33.87, lng: 151.21, city: 'Sydney',         visitors: 98   },
-    { id: 20, lat: -23.55, lng: -46.63, city: 'São Paulo',      visitors: 187  },
-    { id: 21, lat: -34.60, lng: -58.38, city: 'Buenos Aires',   visitors: 156  },
-    { id: 22, lat: 30.05,  lng: 31.25,  city: 'Cairo',          visitors: 143  },
-    { id: 23, lat: 6.52,   lng: 3.38,   city: 'Lagos',          visitors: 132  },
-    { id: 24, lat: -26.20, lng: 28.04,  city: 'Johannesburg',   visitors: 121  },
-    { id: 25, lat: 55.75,  lng: 37.62,  city: 'Moscow',         visitors: 118  },
-  ];
 
-  const geoData = monitoringData?.geoData || DEFAULT_GEO_DATA;
+  const geoData = monitoringData?.geoData || [];
 
-  const DEFAULT_TRAFFIC_SOURCES = {
-    sources: [
-      { name: 'Direct', value: 4523, percentage: 35, color: 'bg-indigo-500' },
-      { name: 'Organic Search', value: 3845, percentage: 30, color: 'bg-purple-500' },
-      { name: 'Social Media', value: 2156, percentage: 17, color: 'bg-pink-500' },
-      { name: 'Referral', value: 1234, percentage: 10, color: 'bg-blue-500' },
-      { name: 'Email', value: 987, percentage: 8, color: 'bg-green-500' },
-    ],
-    utm: [
-      { campaign: 'SDG_Campaign_2024', value: 1567, percentage: 45 },
-      { campaign: 'Research_Promo', value: 1023, percentage: 29 },
-      { campaign: 'Webinar_March', value: 678, percentage: 19 },
-      { campaign: 'Newsletter_Q1', value: 245, percentage: 7 },
-    ],
-    referrers: [
-      { domain: 'google.com', value: 2345, percentage: 42 },
-      { domain: 'linkedin.com', value: 1234, percentage: 22 },
-      { domain: 'twitter.com', value: 987, percentage: 18 },
-      { domain: 'facebook.com', value: 567, percentage: 10 },
-      { domain: 'others', value: 456, percentage: 8 },
-    ],
-    keywords: [
-      { keyword: 'SDG analysis', value: 1234, percentage: 28 },
-      { keyword: 'research analytics', value: 987, percentage: 22 },
-      { keyword: 'wizdam platform', value: 756, percentage: 17 },
-      { keyword: 'academic tools', value: 534, percentage: 12 },
-      { keyword: 'others', value: 923, percentage: 21 },
-    ]
-  };
 
-  const trafficSources = monitoringData?.trafficSources || DEFAULT_TRAFFIC_SOURCES;
+  const trafficSources = monitoringData?.trafficSources || { sources: [], utm: [], referrers: [], keywords: [] };
 
-  const DEFAULT_PAGES_DATA = {
-    entryPages: [
-      { path: '/dashboard', views: 3456, percentage: 32, bounceRate: '24%' },
-      { path: '/researchers', views: 2345, percentage: 22, bounceRate: '31%' },
-      { path: '/sdgs', views: 1876, percentage: 17, bounceRate: '28%' },
-      { path: '/journals', views: 1234, percentage: 11, bounceRate: '35%' },
-      { path: '/about', views: 987, percentage: 9, bounceRate: '42%' },
-    ],
-    topPages: [
-      { path: '/dashboard/analytics', views: 5678, avgTime: '4m 32s', exits: 234 },
-      { path: '/researchers/profile', views: 4321, avgTime: '3m 18s', exits: 187 },
-      { path: '/sdgs/explorer', views: 3456, avgTime: '5m 12s', exits: 156 },
-      { path: '/journals/list', views: 2345, avgTime: '2m 45s', exits: 123 },
-      { path: '/api/docs', views: 1876, avgTime: '6m 05s', exits: 89 },
-    ],
-    exitPages: [
-      { path: '/dashboard', views: 1234, percentage: 28 },
-      { path: '/researchers', views: 987, percentage: 22 },
-      { path: '/logout', views: 756, percentage: 17 },
-      { path: '/sdgs', views: 534, percentage: 12 },
-      { path: '/contact', views: 423, percentage: 9 },
-    ]
-  };
 
-  const pagesData = monitoringData?.pagesData || DEFAULT_PAGES_DATA;
+  const pagesData = monitoringData?.pagesData || { entryPages: [], topPages: [], exitPages: [] };
 
-  const DEFAULT_SYSTEM_DATA = {
-    browsers: [
-      { name: 'Chrome',  value: 6789, percentage: 58 },
-      { name: 'Firefox', value: 2345, percentage: 20 },
-      { name: 'Safari',  value: 1567, percentage: 13 },
-      { name: 'Edge',    value: 987,  percentage: 8  },
-      { name: 'Others',  value: 123,  percentage: 1  },
-    ],
-    platforms: [
-      { name: 'Desktop', value: 7654, percentage: 65 },
-      { name: 'Mobile',  value: 3456, percentage: 29 },
-      { name: 'Tablet',  value: 701,  percentage: 6  },
-    ],
-    os: [
-      { name: 'Windows', value: 6789, percentage: 58 },
-      { name: 'macOS', value: 2345, percentage: 20 },
-      { name: 'Android', value: 1567, percentage: 13 },
-      { name: 'iOS', value: 987, percentage: 8 },
-      { name: 'Linux', value: 123, percentage: 1 },
-    ]
-  };
 
-  const systemData = monitoringData?.systemData || DEFAULT_SYSTEM_DATA;
+  const systemData = monitoringData?.systemData || { browsers: [], platforms: [], os: [] };
 
-  const DEFAULT_PAGE_VIEW_ACTIVITY = [
-    { id: 1, timestamp: '2024-05-25 14:32:15', page: '/dashboard/analytics', source: 'google.com', location: 'Jakarta', device: 'Chrome/Windows', duration: '4m 32s' },
-    { id: 2, timestamp: '2024-05-25 14:31:48', page: '/researchers/profile', source: 'Direct', location: 'Surabaya', device: 'Firefox/macOS', duration: '3m 18s' },
-    { id: 3, timestamp: '2024-05-25 14:30:22', page: '/sdgs/explorer', source: 'linkedin.com', location: 'Bandung', device: 'Chrome/Android', duration: '5m 12s' },
-    { id: 4, timestamp: '2024-05-25 14:29:55', page: '/journals/list', source: 'twitter.com', location: 'Denpasar', device: 'Safari/iOS', duration: '2m 45s' },
-    { id: 5, timestamp: '2024-05-25 14:28:33', page: '/api/docs', source: 'google.com', location: 'Jakarta', device: 'Chrome/Windows', duration: '6m 05s' },
-    { id: 6, timestamp: '2024-05-25 14:27:12', page: '/dashboard', source: 'Direct', location: 'Yogyakarta', device: 'Edge/Windows', duration: '1m 23s' },
-    { id: 7, timestamp: '2024-05-25 14:26:45', page: '/about', source: 'facebook.com', location: 'Makassar', device: 'Chrome/Android', duration: '0m 45s' },
-    { id: 8, timestamp: '2024-05-25 14:25:18', page: '/researchers', source: 'google.com', location: 'Jakarta', device: 'Firefox/Linux', duration: '3m 56s' },
-  ];
 
-  const pageViewActivity = monitoringData?.activity || DEFAULT_PAGE_VIEW_ACTIVITY;
+  const pageViewActivity = monitoringData?.activity || [];
 
   const formatSeconds = (seconds) => {
     if (!seconds) return '0s';
@@ -373,28 +263,28 @@ const Monitoring = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             title={t('stats.page_views')}
-            value={monitoringData?.summary?.totalPageViews?.toLocaleString() || '12,847'}
+            value={monitoringData?.summary?.totalPageViews?.toLocaleString() || '—'}
             change={12.5}
             icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>}
             color="bg-indigo-500"
           />
           <StatCard
             title={t('stats.visitors')}
-            value={monitoringData?.summary?.uniqueVisitors?.toLocaleString() || '3,456'}
+            value={monitoringData?.summary?.uniqueVisitors?.toLocaleString() || '—'}
             change={8.3}
             icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>}
             color="bg-purple-500"
           />
           <StatCard
             title={t('stats.session')}
-            value={formatSeconds(monitoringData?.summary?.avgSessionDuration) || '4m 32s'}
+            value={formatSeconds(monitoringData?.summary?.avgSessionDuration) || '—'}
             change={-2.1}
             icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
             color="bg-green-500"
           />
           <StatCard
             title={t('stats.bounce')}
-            value={(monitoringData?.summary?.bounceRate || 32.4).toFixed(1) + '%'}
+            value={(monitoringData?.summary?.bounceRate != null ? monitoringData.summary.bounceRate.toFixed(1) + '%' : '—')}
             change={-5.7}
             icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>}
             color="bg-amber-500"
