@@ -11,6 +11,10 @@
 /logs/*.log
 !/logs/.gitkeep
 
+# Cache artikel (dibuat ulang saat runtime)
+/cache/*.json.gz
+!/cache/.getkeep
+
 # Dependencies
 /vendor/
 /node_modules/
