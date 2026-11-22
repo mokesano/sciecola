@@ -141,6 +141,22 @@ CREATE TABLE IF NOT EXISTS ecosystem_cache (
   INDEX idx_expires (expires_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Jejak migrasi file cache mesin SDG (cache/*.json.gz) ke tabel unified.
+-- Ditulis oleh src/Cache/CacheMigrator.php (Admin → Cache & DB). Dibuat otomatis bila belum ada.
+CREATE TABLE IF NOT EXISTS cache_migration_log (
+  file_name    VARCHAR(255) NOT NULL PRIMARY KEY,
+  file_type    VARCHAR(20)  NOT NULL  COMMENT 'orcid_init | orcid_profile | orcid_batch | article | unknown',
+  status       ENUM('migrated','skipped','failed') NOT NULL,
+  message      VARCHAR(500) NULL,
+  records_json TEXT         NULL  COMMENT 'Ringkasan baris yang ditulis',
+  file_size    INT UNSIGNED NOT NULL DEFAULT 0,
+  file_mtime   INT UNSIGNED NOT NULL DEFAULT 0,
+  processed_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  archived_at  TIMESTAMP    NULL,
+  archive_path VARCHAR(255) NULL,
+  INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS analytics_snapshots (
   id            INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
   snapshot_type VARCHAR(50)     NOT NULL  COMMENT 'institution_impact | researcher_trend | sdg_distribution',

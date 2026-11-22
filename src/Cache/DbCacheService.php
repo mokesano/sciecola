@@ -15,7 +15,7 @@ use Sciecola\Database\Connection;
  * 
  * @ingroup src
  * @brief Implementation for database-backed cache service.
- * Database-backed cache using wizdam_ecosystem unified schema.
+ * Database-backed cache using sangia_ecosystem unified schema.
  *
  * Tables used:
  *   ecosystem_cache  — generic key-value cache (replaces sdg_cache)

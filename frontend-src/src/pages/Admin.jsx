@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
@@ -62,10 +62,79 @@ const Admin = () => {
   const [crawlLog, setCrawlLog] = useState([]);
   const [crawlLoading, setCrawlLoading] = useState(false);
 
-  // State: Cache Migration
+  // State: Cache Migration (backend: /api/cache_migration.php → api/wrapper/cache_migration.php)
   const [cacheStatus, setCacheStatus] = useState(null);
   const [cacheLoading, setCacheLoading] = useState(false);
   const [cacheLog, setCacheLog] = useState([]);
+  const [cacheRunning, setCacheRunning] = useState(false);
+  const [cacheProgress, setCacheProgress] = useState(null); // { done, total }
+  const cacheStopRef = useRef(false);
+  const [adminToken, setAdminToken] = useState(() => {
+    try { return sessionStorage.getItem('sciecola_admin_token') || ''; } catch { return ''; }
+  });
+
+  const pushCacheLog = (msg, type = 'info') =>
+    setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg, type }, ...prev.slice(0, 49)]);
+
+  const saveAdminToken = (value) => {
+    setAdminToken(value);
+    try { sessionStorage.setItem('sciecola_admin_token', value); } catch { /* storage tidak tersedia */ }
+  };
+
+  const cacheApi = async (action, payload = null) => {
+    const isGet = action === 'status';
+    const res = await fetch(`/api/cache_migration.php${isGet ? '?action=status' : ''}`, {
+      method: isGet ? 'GET' : 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+      body: isGet ? undefined : JSON.stringify({ action, ...(payload || {}) }),
+    });
+    let data;
+    try { data = await res.json(); } catch { throw new Error(`Respons server bukan JSON (HTTP ${res.status})`); }
+    if (!res.ok || data.status !== 'success') throw new Error(data.message || `HTTP ${res.status}`);
+    return data;
+  };
+
+  const refreshCacheStatus = async (silent = false) => {
+    try {
+      const d = await cacheApi('status');
+      setCacheStatus(d);
+      if (!silent) pushCacheLog(d.db_available ? 'Status cache diperbarui' : d.message, d.db_available ? 'info' : 'error');
+      return d;
+    } catch (e) {
+      pushCacheLog(`Gagal memuat status: ${e.message}`, 'error');
+      return null;
+    }
+  };
+
+  const runCacheMigration = async (retryFailed = false) => {
+    setCacheRunning(true);
+    cacheStopRef.current = false;
+    const start = await refreshCacheStatus(true);
+    const total = start?.files ? start.files.pending + (retryFailed ? start.files.failed : 0) : 0;
+    let done = 0;
+    let retry = retryFailed;
+    setCacheProgress({ done, total });
+    pushCacheLog(retryFailed ? 'Mengulang file yang gagal…' : `Migrasi dimulai: ${total} file menunggu`, 'info');
+    try {
+      while (!cacheStopRef.current) {
+        const d = await cacheApi('migrate', { limit: 25, retry_failed: retry });
+        retry = false; // file gagal hanya diulang sekali per klik
+        done += d.processed;
+        setCacheProgress({ done, total: Math.max(total, done + d.remaining) });
+        pushCacheLog(d.message, d.totals.failed > 0 ? 'error' : 'success');
+        d.results.filter(r => r.status === 'failed').slice(0, 5)
+          .forEach(r => pushCacheLog(`Gagal: ${r.file} — ${r.message}`, 'error'));
+        if (d.done || d.processed === 0) break;
+      }
+      if (cacheStopRef.current) pushCacheLog('Migrasi dihentikan. Klik Jalankan lagi untuk melanjutkan.', 'info');
+      else showToast('Migrasi selesai');
+    } catch (e) {
+      pushCacheLog(`Migrasi berhenti: ${e.message}`, 'error');
+      showToast(e.message, 'error');
+    }
+    await refreshCacheStatus(true);
+    setCacheRunning(false);
+  };
 
   // Toast Handler
   const showToast = (message, type = 'success') => {
@@ -96,15 +165,17 @@ const Admin = () => {
     } else if (action === 'promoteToCoAdmin') {
       setUsers(prev => prev.map(u => u.id === target ? { ...u, role: 'co-admin' } : u));
       showToast('Pengguna dipromosikan menjadi Co-Admin');
-    } else if (action === 'clearCache') {
+    } else if (action === 'archiveCache') {
       try {
-        const r = await fetch('/api/cache_to_db.php?action=clear_cache', { method: 'POST' });
-        const d = await r.json();
-        setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: d.message || 'Cache file dihapus', type: d.status === 'ok' ? 'success' : 'error' }, ...prev.slice(0, 19)]);
-        showToast(d.message || 'Cache dibersihkan');
-      } catch {
-        setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal membersihkan cache', type: 'error' }, ...prev.slice(0, 19)]);
+        const d = await cacheApi('archive');
+        pushCacheLog(d.message, 'success');
+        if (d.changed > 0) pushCacheLog(`${d.changed} file berubah sejak dimigrasikan dan tidak diarsipkan — jalankan migrasi lagi.`, 'info');
+        showToast(d.message);
+      } catch (e) {
+        pushCacheLog(`Gagal mengarsipkan: ${e.message}`, 'error');
+        showToast(e.message, 'error');
       }
+      await refreshCacheStatus(true);
     }
     
     setConfirmModal({ show: false, action: null, target: null });
@@ -564,86 +635,143 @@ const Admin = () => {
           </div>
         );
 
-      case 'cache-migration':
+      case 'cache-migration': {
+        const f = cacheStatus?.files;
+        const pct = cacheProgress && cacheProgress.total > 0
+          ? Math.min(100, Math.round((cacheProgress.done / cacheProgress.total) * 100))
+          : 0;
+        const busy = cacheLoading || cacheRunning;
+        const typeLabels = { orcid_init: 'ORCID init', orcid_profile: 'Profil ORCID', orcid_batch: 'Batch ORCID', article: 'Artikel', unknown: 'Lainnya' };
         return (
           <div className="space-y-6">
             <SectionHeader
               title={t('cache.section')}
-              description="Migrasikan cache file legacy ke database dan kelola status cache aktif."
+              description={t('cache.description')}
               action={
                 <button
-                  onClick={async () => {
-                    setCacheLoading(true);
-                    try {
-                      const r = await fetch('/api/cache_to_db.php?action=status');
-                      const d = await r.json();
-                      setCacheStatus(d);
-                      setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Status cache diperbarui', type: 'info' }, ...prev.slice(0, 19)]);
-                    } catch {
-                      setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal terhubung ke API cache', type: 'error' }, ...prev.slice(0, 19)]);
-                    }
-                    setCacheLoading(false);
-                  }}
-                  disabled={cacheLoading}
+                  onClick={async () => { setCacheLoading(true); await refreshCacheStatus(); setCacheLoading(false); }}
+                  disabled={busy || !adminToken}
                   className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2"
                 >
                   {cacheLoading ? <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg> : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" /></svg>}
-                  Cek Status Cache
+                  {t('cache.check_status')}
                 </button>
               }
             />
-            {cacheStatus && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {[
-                  { label: t('cache.stat.legacy'), value: cacheStatus.file_cache_count ?? '—', color: 'bg-amber-50 text-amber-700' },
-                  { label: t('cache.stat.migrated'), value: cacheStatus.db_cache_count ?? '—', color: 'bg-green-50 text-green-700' },
-                  { label: t('cache.stat.db_ready'), value: cacheStatus.db_available ? t('cache.stat.yes') : t('cache.stat.no'), color: cacheStatus.db_available ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700' },
-                ].map((s, i) => (
-                  <div key={i} className={`p-4 rounded-xl border ${s.color} border-current/20`}>
-                    <p className="text-2xl font-bold">{s.value}</p>
-                    <p className="text-[15px] mt-1">{s.label}</p>
-                  </div>
-                ))}
-              </div>
+
+            {/* Token admin: diverifikasi di server terhadap ADMIN_TOOL_TOKEN di .env */}
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-2">
+              <label htmlFor="admin-token" className="font-bold text-gray-900 block">{t('cache.token_label')}</label>
+              <p className="text-sm text-gray-500">{t('cache.token_help')}</p>
+              <input
+                id="admin-token"
+                type="password"
+                autoComplete="off"
+                value={adminToken}
+                onChange={(e) => saveAdminToken(e.target.value.trim())}
+                className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="ADMIN_TOOL_TOKEN"
+              />
+            </div>
+
+            {cacheStatus && !cacheStatus.db_available && (
+              <div className="p-4 rounded-xl border border-red-200 bg-red-50 text-red-700 text-[15px]">{cacheStatus.message}</div>
             )}
+
+            {f && (
+              <>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                  {[
+                    { label: t('cache.stat.total'), value: f.total, color: 'bg-gray-50 text-gray-700' },
+                    { label: t('cache.stat.pending'), value: f.pending, color: 'bg-amber-50 text-amber-700' },
+                    { label: t('cache.stat.migrated'), value: f.migrated, color: 'bg-green-50 text-green-700' },
+                    { label: t('cache.stat.skipped'), value: f.skipped, color: 'bg-slate-50 text-slate-700' },
+                    { label: t('cache.stat.failed'), value: f.failed, color: f.failed > 0 ? 'bg-red-50 text-red-700' : 'bg-gray-50 text-gray-500' },
+                    { label: t('cache.stat.archived'), value: f.archived, color: 'bg-indigo-50 text-indigo-700' },
+                  ].map((s, i) => (
+                    <div key={i} className={`p-4 rounded-xl border ${s.color} border-current/20`}>
+                      <p className="text-2xl font-bold">{s.value ?? '—'}</p>
+                      <p className="text-[15px] mt-1">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 grid gap-4 md:grid-cols-2">
+                  <div>
+                    <h3 className="font-bold text-gray-900 mb-2">{t('cache.by_type')}</h3>
+                    <ul className="text-[15px] text-gray-700 space-y-1">
+                      {Object.entries(f.by_type || {}).map(([k, v]) => (
+                        <li key={k} className="flex justify-between"><span>{typeLabels[k] || k}</span><span className="font-mono">{v}</span></li>
+                      ))}
+                      {Object.keys(f.by_type || {}).length === 0 && <li className="text-gray-500">{t('cache.no_files')}</li>}
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 mb-2">{t('cache.db_rows')} <span className="font-mono text-sm text-gray-500">({cacheStatus.database})</span></h3>
+                    <ul className="text-[15px] text-gray-700 space-y-1">
+                      {Object.entries(cacheStatus.db || {}).map(([k, v]) => (
+                        <li key={k} className="flex justify-between"><span className="font-mono text-sm">{k}</span><span className="font-mono">{v ?? t('cache.table_missing')}</span></li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </>
+            )}
+
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
               <h3 className="font-bold text-gray-900">{t('cache.migration_actions')}</h3>
-              <p className="text-[15px] text-gray-600">{t('cache.migrate_desc_full')} <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono">api_cache</code> di database. Proses ini tidak menghapus file asli.</p>
+              <p className="text-[15px] text-gray-600">{t('cache.migrate_desc_full')}</p>
+
+              {cacheProgress && (
+                <div>
+                  <div className="flex justify-between text-sm text-gray-600 mb-1">
+                    <span>{cacheProgress.done} / {cacheProgress.total} file</span><span>{pct}%</span>
+                  </div>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
+                    <div className="h-full bg-indigo-600 transition-all" style={{ width: `${pct}%` }} />
+                  </div>
+                </div>
+              )}
+
               <div className="flex flex-wrap gap-3">
+                {!cacheRunning ? (
+                  <button
+                    onClick={() => runCacheMigration(false)}
+                    disabled={busy || !adminToken || (cacheStatus && !cacheStatus.db_available)}
+                    className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+                    {t('cache.run')}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => { cacheStopRef.current = true; }}
+                    className="px-5 py-2.5 bg-gray-700 text-white rounded-lg text-[15px] font-medium hover:bg-gray-800 transition-colors"
+                  >
+                    {t('cache.stop')}
+                  </button>
+                )}
                 <button
-                  onClick={async () => {
-                    setCacheLoading(true);
-                    try {
-                      const r = await fetch('/api/cache_to_db.php?action=migrate', { method: 'POST' });
-                      const d = await r.json();
-                      setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: d.message || `Migrasi: ${d.migrated ?? 0} item berhasil`, type: d.status === 'ok' ? 'success' : 'error' }, ...prev.slice(0, 19)]);
-                      setCacheStatus(prev => prev ? { ...prev, db_cache_count: (prev.db_cache_count || 0) + (d.migrated || 0) } : prev);
-                      showToast(d.message || 'Migrasi selesai');
-                    } catch {
-                      setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal menjalankan migrasi', type: 'error' }, ...prev.slice(0, 19)]);
-                    }
-                    setCacheLoading(false);
-                  }}
-                  disabled={cacheLoading}
-                  className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2"
+                  onClick={() => runCacheMigration(true)}
+                  disabled={busy || !adminToken || !f || f.failed === 0}
+                  className="px-5 py-2.5 border border-red-300 text-red-700 rounded-lg text-[15px] font-medium hover:bg-red-50 disabled:opacity-50 transition-colors"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
-                  {t('cache.run')}
+                  {t('cache.retry_failed')}
                 </button>
                 <button
-                  onClick={() => confirmAction('clearCache', null)}
-                  disabled={cacheLoading}
-                  className="px-5 py-2.5 bg-red-600 text-white rounded-lg text-[15px] font-medium hover:bg-red-700 disabled:opacity-60 transition-colors flex items-center gap-2"
+                  onClick={() => confirmAction('archiveCache', null)}
+                  disabled={busy || !adminToken || !f || (f.migrated + f.skipped) === 0}
+                  className="px-5 py-2.5 bg-amber-600 text-white rounded-lg text-[15px] font-medium hover:bg-amber-700 disabled:opacity-60 transition-colors flex items-center gap-2"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                  {t('cache.clear')}
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+                  {t('cache.archive')}
                 </button>
               </div>
             </div>
+
             {cacheLog.length > 0 && (
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                 <h3 className="font-bold text-gray-900 mb-3">{t('cache.log')}</h3>
-                <div className="space-y-2 max-h-48 overflow-y-auto font-mono text-sm">
+                <div className="space-y-2 max-h-64 overflow-y-auto font-mono text-sm">
                   {cacheLog.map((entry, idx) => (
                     <div key={idx} className={`flex gap-3 ${entry.type === 'error' ? 'text-red-600' : entry.type === 'success' ? 'text-green-600' : 'text-gray-600'}`}>
                       <span className="text-gray-400 shrink-0">[{entry.time}]</span>
@@ -655,6 +783,7 @@ const Admin = () => {
             )}
           </div>
         );
+      }
 
       default: return null;
     }
@@ -668,7 +797,7 @@ const Admin = () => {
       suspendUser: { title: 'Tangguhkan Akun?', message: 'Pengguna tidak dapat login hingga ditinjau.', confirmText: 'Ya, Tangguhkan', confirmClass: 'bg-amber-600' },
       deleteUser: { title: 'Hapus Akun Permanen?', message: 'SEMUA data akan dihapus permanen. TIDAK DAPAT DIBATALKAN.', confirmText: 'Ya, Hapus', confirmClass: 'bg-red-700' },
       promoteToCoAdmin: { title: 'Promosikan ke Co-Admin?', message: 'Pengguna akan memiliki akses administratif terbatas.', confirmText: 'Ya, Promosikan', confirmClass: 'bg-indigo-600' },
-      clearCache: { title: t('cache.confirm_clear_title'), message: t('cache.confirm_clear_msg'), confirmText: t('cache.confirm_clear_ok'), confirmClass: 'bg-red-600' },
+      archiveCache: { title: t('cache.confirm_archive_title'), message: t('cache.confirm_archive_msg'), confirmText: t('cache.confirm_archive_ok'), confirmClass: 'bg-amber-600' },
     }[confirmModal.action] || { title: 'Konfirmasi', message: 'Lanjutkan?', confirmText: 'Ya', confirmClass: 'bg-indigo-600' };
     return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">

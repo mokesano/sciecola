@@ -27,7 +27,7 @@ class Database {
         $driver  = defined('DB_DRIVER')  ? DB_DRIVER  : 'mysql';
         $host    = defined('DB_HOST')    ? DB_HOST    : 'localhost';
         $port    = defined('DB_PORT')    ? DB_PORT    : '3306';
-        $dbName  = defined('DB_NAME')    ? DB_NAME    : 'sicola_db';
+        $dbName  = defined('DB_NAME')    ? DB_NAME    : (getenv('DB_DATABASE') ?: (getenv('DB_NAME') ?: 'sangia_ecosystem'));
         $charset = defined('DB_CHARSET') ? DB_CHARSET : 'utf8mb4';
         $user    = defined('DB_USER')    ? DB_USER    : '';
         $pass    = defined('DB_PASS')    ? DB_PASS    : '';

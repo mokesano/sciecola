@@ -5,7 +5,7 @@
 -- Creates notification, preference, and statistics tracking tables
 -- ═══════════════════════════════════════════════════════════════
 
-USE wizdam_ecosystem;
+USE sangia_ecosystem;
 
 -- ── EXTEND INSTITUTIONS TABLE ──────────────────────────────────────────────
 

@@ -47,9 +47,12 @@ if (!defined('ROOT_PATH') && !defined('SCIECOLA_API_CONTEXT')) {
 // 1. ENVIRONMENT & URL SETTINGS
 // ================================================================
 
-define('ENVIRONMENT', getenv('APP_ENV')  ?: 'development');
-define('SITE_URL',    getenv('SITE_URL') ?: 'http://localhost/workspace');
-define('SITE_NAME', 'Lumera Sicola');
+// Dijaga dengan defined(): saat diakses lewat front controller, includes/config.php
+// sudah mendefinisikan konstanta ini lebih dulu. Tanpa penjaga, PHP mencetak warning
+// "already defined" yang merusak respons JSON endpoint /api/*.php.
+defined('ENVIRONMENT') || define('ENVIRONMENT', getenv('APP_ENV')  ?: 'development');
+defined('SITE_URL')    || define('SITE_URL',    getenv('SITE_URL') ?: 'http://localhost/workspace');
+defined('SITE_NAME')   || define('SITE_NAME', 'Lumera Sicola');
 
 // ================================================================
 // 2. PATH DEFINITIONS (Direktori)
@@ -104,9 +107,9 @@ define('DB_PORT',     getenv('DB_PORT')     ?: '3306');
 define('DB_CHARSET',  'utf8mb4');
 define('DB_DRIVER',   getenv('DB_DRIVER')   ?: 'mysql');
 
-// Canonical names (wizdam_ecosystem schema). Accept both new and legacy env-var names.
-$_db_name = getenv('DB_DATABASE') ?: (getenv('DB_NAME') ?: 'wizdam_ecosystem');
-$_db_user = getenv('DB_USERNAME') ?: (getenv('DB_USER') ?: 'wizdam_app');
+// Canonical names (sangia_ecosystem unified schema). Accept both new and legacy env-var names.
+$_db_name = getenv('DB_DATABASE') ?: (getenv('DB_NAME') ?: 'sangia_ecosystem');
+$_db_user = getenv('DB_USERNAME') ?: (getenv('DB_USER') ?: 'sangia_app');
 $_db_pass = getenv('DB_PASSWORD') ?: (getenv('DB_PASS') ?: '');
 
 define('DB_DATABASE', $_db_name);  // canonical
@@ -159,9 +162,14 @@ if (ENVIRONMENT === 'development') {
 
 // Fungsi pembantu kecil untuk mengambil nilai konfigurasi jika dibutuhkan di file lain
 // (Mencegah error jika konstanta belum didefinisikan)
-function getConfig($key, $default = null) {
-    if (defined($key)) {
-        return constant($key);
+// Dijaga: includes/config.php juga mendeklarasikan getConfig(). Tanpa penjaga ini,
+// setiap endpoint /api/*.php yang memuat file ini lewat front controller berhenti
+// dengan fatal error "Cannot redeclare getConfig()".
+if (!function_exists('getConfig')) {
+    function getConfig($key, $default = null) {
+        if (defined($key)) {
+            return constant($key);
+        }
+        return $default;
     }
-    return $default;
 }
