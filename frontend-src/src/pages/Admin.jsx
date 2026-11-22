@@ -94,6 +94,62 @@ const Admin = () => {
     return data;
   };
 
+  // ── Crawl queue (backend: /api/crawl_queue.php → api/wrapper/crawl_queue.php) ──
+  const crawlStopRef = useRef(false);
+  const [crawlRunning, setCrawlRunning] = useState(false);
+
+  const pushCrawlLog = (msg, type = 'info') =>
+    setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg, type }, ...prev.slice(0, 49)]);
+
+  const crawlApi = async (action, payload = null) => {
+    const isGet = action === 'status' || action === 'list';
+    const res = await fetch(`/api/crawl_queue.php${isGet ? `?action=${action}` : ''}`, {
+      method: isGet ? 'GET' : 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+      body: isGet ? undefined : JSON.stringify({ action, ...(payload || {}) }),
+    });
+    let data;
+    try { data = await res.json(); } catch { throw new Error(`Respons server bukan JSON (HTTP ${res.status})`); }
+    if (!res.ok || data.status !== 'success') throw new Error(data.message || `HTTP ${res.status}`);
+    return data;
+  };
+
+  const refreshCrawl = async (silent = false) => {
+    try {
+      const [s, l] = await Promise.all([crawlApi('status'), crawlApi('list')]);
+      setCrawlStatus(s);
+      setCrawlQueue(l.jobs || []);
+      if (!silent) pushCrawlLog('Status antrian diperbarui');
+    } catch (e) {
+      pushCrawlLog(`Gagal memuat antrian: ${e.message}`, 'error');
+    }
+  };
+
+  const runCrawl = async () => {
+    setCrawlRunning(true);
+    crawlStopRef.current = false;
+    try {
+      while (!crawlStopRef.current) {
+        const d = await crawlApi('process');
+        pushCrawlLog(d.message, 'success');
+        d.jobs.forEach(j => {
+          if (j.error) pushCrawlLog(`${j.identifier}: ${j.error}`, 'error');
+          else if (j.status === 'completed') pushCrawlLog(`${j.identifier} selesai — ${j.result?.publications ?? 0} karya, ${j.result?.sdg_rows ?? 0} baris SDG`, 'success');
+          else if (j.progress) pushCrawlLog(`${j.identifier}: ${j.progress.offset}/${j.progress.total} karya`, 'info');
+        });
+        await refreshCrawl(true);
+        if (d.done || d.jobs.length === 0) break;
+      }
+      if (crawlStopRef.current) pushCrawlLog('Proses dihentikan. Pekerjaan yang belum selesai akan dilanjutkan saat diproses lagi.');
+      else showToast('Antrian selesai diproses');
+    } catch (e) {
+      pushCrawlLog(`Proses berhenti: ${e.message}`, 'error');
+      showToast(e.message, 'error');
+    }
+    await refreshCrawl(true);
+    setCrawlRunning(false);
+  };
+
   const refreshCacheStatus = async (silent = false) => {
     try {
       const d = await cacheApi('status');
@@ -229,6 +285,24 @@ const Admin = () => {
   };
 
   // Render Section Content
+  // Token admin dipakai bersama oleh tab Crawl Queue dan Cache & DB;
+  // diverifikasi di server terhadap ADMIN_TOOL_TOKEN di .env.
+  const adminTokenField = (
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-2">
+      <label htmlFor="admin-token" className="font-bold text-gray-900 block">{t('cache.token_label')}</label>
+      <p className="text-sm text-gray-500">{t('cache.token_help')}</p>
+      <input
+        id="admin-token"
+        type="password"
+        autoComplete="off"
+        value={adminToken}
+        onChange={(e) => saveAdminToken(e.target.value.trim())}
+        className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        placeholder="ADMIN_TOOL_TOKEN"
+      />
+    </div>
+  );
+
   const renderSection = () => {
     switch (activeSection) {
       case 'dashboard':
@@ -495,7 +569,12 @@ const Admin = () => {
           </div>
         );
 
-      case 'crawl-queue':
+      case 'crawl-queue': {
+        const crawlBusy = crawlLoading || crawlRunning;
+        const statusClass = (s) => s === 'completed' ? 'bg-green-100 text-green-700'
+          : s === 'failed' ? 'bg-red-100 text-red-700'
+          : s === 'running' ? 'bg-indigo-100 text-indigo-700'
+          : 'bg-amber-100 text-amber-700';
         return (
           <div className="space-y-6">
             <SectionHeader
@@ -503,39 +582,27 @@ const Admin = () => {
               description={t('crawl.description')}
               action={
                 <button
-                  onClick={async () => {
-                    setCrawlLoading(true);
-                    try {
-                      const r = await fetch('/api/crawl_queue.php?action=status');
-                      const d = await r.json();
-                      setCrawlStatus(d);
-                      const r2 = await fetch('/api/crawl_queue.php?action=list');
-                      const d2 = await r2.json();
-                      setCrawlQueue(d2.jobs || []);
-                      setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Status antrian diperbarui', type: 'info' }, ...prev.slice(0, 19)]);
-                    } catch {
-                      setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal terhubung ke API crawl', type: 'error' }, ...prev.slice(0, 19)]);
-                    }
-                    setCrawlLoading(false);
-                  }}
-                  disabled={crawlLoading}
+                  onClick={async () => { setCrawlLoading(true); await refreshCrawl(); setCrawlLoading(false); }}
+                  disabled={crawlBusy || !adminToken}
                   className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2"
                 >
                   {crawlLoading ? <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg> : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>}
-                  Refresh Status
+                  {t('crawl.refresh')}
                 </button>
               }
             />
+            {adminTokenField}
             {crawlStatus && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
                 {[
-                  { label: t('crawl.stat.total'), value: crawlStatus.total ?? '—', color: 'bg-gray-50 text-gray-700' },
-                  { label: t('crawl.stat.pending'), value: crawlStatus.pending ?? '—', color: 'bg-amber-50 text-amber-700' },
-                  { label: t('crawl.stat.done'), value: crawlStatus.done ?? '—', color: 'bg-green-50 text-green-700' },
-                  { label: t('crawl.stat.failed'), value: crawlStatus.failed ?? '—', color: 'bg-red-50 text-red-700' },
+                  { label: t('crawl.stat.total'), value: crawlStatus.total, color: 'bg-gray-50 text-gray-700' },
+                  { label: t('crawl.stat.pending'), value: crawlStatus.pending, color: 'bg-amber-50 text-amber-700' },
+                  { label: t('crawl.stat.running'), value: crawlStatus.running, color: 'bg-indigo-50 text-indigo-700' },
+                  { label: t('crawl.stat.done'), value: crawlStatus.completed, color: 'bg-green-50 text-green-700' },
+                  { label: t('crawl.stat.failed'), value: crawlStatus.failed, color: 'bg-red-50 text-red-700' },
                 ].map((s, i) => (
                   <div key={i} className={`p-4 rounded-xl border ${s.color} border-current/20`}>
-                    <p className="text-2xl font-bold">{s.value}</p>
+                    <p className="text-2xl font-bold">{s.value ?? '—'}</p>
                     <p className="text-[15px] mt-1">{s.label}</p>
                   </div>
                 ))}
@@ -543,6 +610,7 @@ const Admin = () => {
             )}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
               <h3 className="font-bold text-gray-900">{t('crawl.add')}</h3>
+              <p className="text-[15px] text-gray-600">{t('crawl.process_desc')}</p>
               <div className="flex gap-3">
                 <input
                   type="text"
@@ -556,46 +624,52 @@ const Admin = () => {
                     if (!crawlInput.trim()) return;
                     setCrawlLoading(true);
                     try {
-                      const id = crawlInput.trim();
-                      const inferredType = /^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/i.test(id) ? 'orcid' : 'doi';
-                      const r = await fetch('/api/crawl_queue.php?action=enqueue', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ type: inferredType, identifier: id }),
-                      });
-                      const d = await r.json();
-                      setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: d.message || `Ditambahkan: ${crawlInput}`, type: d.status === 'ok' ? 'success' : 'error' }, ...prev.slice(0, 19)]);
-                      if (d.status === 'ok') setCrawlInput('');
-                    } catch {
-                      setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal menambahkan ke antrian', type: 'error' }, ...prev.slice(0, 19)]);
+                      const d = await crawlApi('enqueue', { identifier: crawlInput.trim() });
+                      pushCrawlLog(d.message, d.duplicate ? 'info' : 'success');
+                      setCrawlInput('');
+                      await refreshCrawl(true);
+                    } catch (e) {
+                      pushCrawlLog(`Gagal menambahkan: ${e.message}`, 'error');
                     }
                     setCrawlLoading(false);
                   }}
-                  disabled={crawlLoading || !crawlInput.trim()}
+                  disabled={crawlBusy || !adminToken || !crawlInput.trim()}
                   className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors whitespace-nowrap"
                 >
-                  Tambah
+                  {t('crawl.add_short')}
                 </button>
               </div>
-              <button
-                onClick={async () => {
-                  setCrawlLoading(true);
-                  try {
-                    const r = await fetch('/api/crawl_queue.php?action=process', { method: 'POST' });
-                    const d = await r.json();
-                    setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: d.message || 'Proses antrian dijalankan', type: d.status === 'ok' ? 'success' : 'error' }, ...prev.slice(0, 19)]);
-                    showToast(d.message || 'Crawl dijalankan');
-                  } catch {
-                    setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal menjalankan proses crawl', type: 'error' }, ...prev.slice(0, 19)]);
-                  }
-                  setCrawlLoading(false);
-                }}
-                disabled={crawlLoading}
-                className="w-full py-2.5 bg-green-600 text-white rounded-lg text-[15px] font-medium hover:bg-green-700 disabled:opacity-60 transition-colors flex items-center justify-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                {t('crawl.process')}
-              </button>
+              <div className="flex flex-wrap gap-3">
+                {!crawlRunning ? (
+                  <button
+                    onClick={runCrawl}
+                    disabled={crawlBusy || !adminToken}
+                    className="flex-1 py-2.5 bg-green-600 text-white rounded-lg text-[15px] font-medium hover:bg-green-700 disabled:opacity-60 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    {t('crawl.process')}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => { crawlStopRef.current = true; }}
+                    className="flex-1 py-2.5 bg-gray-700 text-white rounded-lg text-[15px] font-medium hover:bg-gray-800 transition-colors"
+                  >
+                    {t('crawl.stop')}
+                  </button>
+                )}
+                <button
+                  onClick={async () => {
+                    setCrawlLoading(true);
+                    try { const d = await crawlApi('clear_finished'); pushCrawlLog(d.message, 'success'); await refreshCrawl(true); }
+                    catch (e) { pushCrawlLog(e.message, 'error'); }
+                    setCrawlLoading(false);
+                  }}
+                  disabled={crawlBusy || !adminToken || !crawlStatus || (crawlStatus.completed + crawlStatus.failed) === 0}
+                  className="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg text-[15px] font-medium hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                >
+                  {t('crawl.clear_finished')}
+                </button>
+              </div>
             </div>
             {crawlQueue.length > 0 && (
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
@@ -603,15 +677,28 @@ const Admin = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full text-[15px]">
                     <thead className="bg-gray-50 text-gray-600">
-                      <tr><th className="px-4 py-3 text-left font-medium">{t('crawl.identifier')}</th><th className="px-4 py-3 text-left font-medium">{t('crawl.type')}</th><th className="px-4 py-3 text-left font-medium">{t('crawl.status')}</th><th className="px-4 py-3 text-left font-medium">{t('crawl.added')}</th></tr>
+                      <tr>
+                        <th className="px-4 py-3 text-left font-medium">{t('crawl.identifier')}</th>
+                        <th className="px-4 py-3 text-left font-medium">{t('crawl.type')}</th>
+                        <th className="px-4 py-3 text-left font-medium">{t('crawl.status')}</th>
+                        <th className="px-4 py-3 text-left font-medium">{t('crawl.progress')}</th>
+                        <th className="px-4 py-3 text-left font-medium">{t('crawl.added')}</th>
+                      </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                      {crawlQueue.map((item, idx) => (
-                        <tr key={idx} className="hover:bg-gray-50">
+                      {crawlQueue.map((item) => (
+                        <tr key={item.id} className="hover:bg-gray-50">
                           <td className="px-4 py-3 font-mono text-sm text-gray-700">{item.identifier}</td>
                           <td className="px-4 py-3"><span className="px-2 py-1 rounded text-sm font-medium bg-indigo-100 text-indigo-700">{item.type || 'unknown'}</span></td>
-                          <td className="px-4 py-3"><span className={`px-2 py-1 rounded-full text-sm font-medium ${item.status === 'done' ? 'bg-green-100 text-green-700' : item.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>{item.status}</span></td>
-                          <td className="px-4 py-3 text-gray-500 text-sm">{item.created_at || '—'}</td>
+                          <td className="px-4 py-3">
+                            <span className={`px-2 py-1 rounded-full text-sm font-medium ${statusClass(item.status)}`}>{item.status}</span>
+                            {item.error && <p className="text-xs text-red-600 mt-1 max-w-xs truncate" title={item.error}>{item.error}</p>}
+                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-600">
+                            {item.progress ? `${item.progress.offset}/${item.progress.total} karya` : '—'}
+                            {item.result && <span className="block text-xs text-gray-500">{item.result.publications} tersimpan · {item.result.sdg_rows} SDG</span>}
+                          </td>
+                          <td className="px-4 py-3 text-gray-500 text-sm">{item.created_at ? new Date(item.created_at).toLocaleString('id-ID') : '—'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -622,7 +709,7 @@ const Admin = () => {
             {crawlLog.length > 0 && (
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                 <h3 className="font-bold text-gray-900 mb-3">{t('crawl.activity_log')}</h3>
-                <div className="space-y-2 max-h-48 overflow-y-auto font-mono text-sm">
+                <div className="space-y-2 max-h-64 overflow-y-auto font-mono text-sm">
                   {crawlLog.map((entry, idx) => (
                     <div key={idx} className={`flex gap-3 ${entry.type === 'error' ? 'text-red-600' : entry.type === 'success' ? 'text-green-600' : 'text-gray-600'}`}>
                       <span className="text-gray-400 shrink-0">[{entry.time}]</span>
@@ -634,6 +721,7 @@ const Admin = () => {
             )}
           </div>
         );
+      }
 
       case 'cache-migration': {
         const f = cacheStatus?.files;
@@ -659,20 +747,7 @@ const Admin = () => {
               }
             />
 
-            {/* Token admin: diverifikasi di server terhadap ADMIN_TOOL_TOKEN di .env */}
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-2">
-              <label htmlFor="admin-token" className="font-bold text-gray-900 block">{t('cache.token_label')}</label>
-              <p className="text-sm text-gray-500">{t('cache.token_help')}</p>
-              <input
-                id="admin-token"
-                type="password"
-                autoComplete="off"
-                value={adminToken}
-                onChange={(e) => saveAdminToken(e.target.value.trim())}
-                className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                placeholder="ADMIN_TOOL_TOKEN"
-              />
-            </div>
+            {adminTokenField}
 
             {cacheStatus && !cacheStatus.db_available && (
               <div className="p-4 rounded-xl border border-red-200 bg-red-50 text-red-700 text-[15px]">{cacheStatus.message}</div>

@@ -147,11 +147,17 @@
       "total": "Total",
       "pending": "Pending",
       "done": "Done",
-      "failed": "Failed"
+      "failed": "Failed",
+      "running": "Running"
     },
     "type": "Type",
     "title": "Crawl Queue",
-    "description": "Manage the queue that fetches ORCID and DOI data from external APIs."
+    "description": "Queue ORCIDs or DOIs to be analysed by the SDG engine and saved to the database.",
+    "refresh": "Refresh Status",
+    "process_desc": "ORCID/DOI jobs run through the local SDG engine and the results are saved straight to the database. ORCIDs with many works are processed in steps and resume automatically.",
+    "stop": "Stop",
+    "clear_finished": "Clear Finished",
+    "progress": "Progress"
   },
   "cache": {
     "section": "Cache & Database Migration",

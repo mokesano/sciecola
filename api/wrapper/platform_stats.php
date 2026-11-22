@@ -56,7 +56,8 @@ function fetchPlatformStats(): array
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
 
-    $articles    = (int) $pdo->query('SELECT COUNT(*) FROM publications')->fetchColumn();
+    // Hanya publikasi yang punya minimal satu SDG (lolos ambang klasifikasi).
+    $articles    = (int) $pdo->query('SELECT COUNT(DISTINCT doi) FROM work_sdgs')->fetchColumn();
     // Semua peneliti yang tercatat. cache_expires_at hanya menandai kesegaran
     // profile_cache_json (kapan profil perlu diambil ulang dari ORCID), bukan
     // keberadaan peneliti, jadi tidak dipakai sebagai filter penghitungan.

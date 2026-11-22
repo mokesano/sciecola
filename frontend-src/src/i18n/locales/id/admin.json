@@ -147,11 +147,17 @@
       "total": "Total",
       "pending": "Menunggu",
       "done": "Selesai",
-      "failed": "Gagal"
+      "failed": "Gagal",
+      "running": "Berjalan"
     },
     "type": "Tipe",
     "title": "Antrian Perayapan",
-    "description": "Kelola antrian pengambilan data ORCID dan DOI dari API eksternal."
+    "description": "Antrekan ORCID atau DOI untuk dianalisis mesin SDG dan disimpan ke database.",
+    "refresh": "Refresh Status",
+    "process_desc": "Pekerjaan ORCID/DOI dijalankan dengan mesin SDG lokal dan hasilnya langsung disimpan ke database. ORCID dengan banyak karya diproses bertahap dan dilanjutkan otomatis.",
+    "stop": "Hentikan",
+    "clear_finished": "Bersihkan yang Selesai",
+    "progress": "Progres"
   },
   "cache": {
     "section": "Cache & Migrasi Basis Data",

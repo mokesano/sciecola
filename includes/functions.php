@@ -214,7 +214,7 @@ function route_api_wrapper(): void {
 
     static $allowed = [
         'analytics.php', 'article_profile.php', 'articles.php', 'auth.php',
-        'cache_handler.php', 'cache_migration.php', 'collaboration.php', 'innovation_marketplace.php',
+        'cache_handler.php', 'cache_migration.php', 'collaboration.php', 'crawl_queue.php', 'innovation_marketplace.php',
         'journal_profile.php', 'journals.php',
         'leaderboard.php', 'log_history.php', 'my_activity.php',
         'my_articles.php', 'my_collections.php', 'my_profile.php',

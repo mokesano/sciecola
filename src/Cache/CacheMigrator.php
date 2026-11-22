@@ -351,15 +351,44 @@ class CacheMigrator
     // Per-file migration
     // =========================================================================
 
+    /**
+     * Menyimpan satu payload hasil mesin SDG langsung ke database, tanpa file cache.
+     * Dipakai oleh antrean crawl (api/wrapper/crawl_queue.php).
+     *
+     * @param array  $data   Respons mesin SDG (init, batch, profil ORCID, atau artikel DOI)
+     * @param string $label  Penanda sumber, mis. "crawl:orcid:0000-0002-…"
+     * @return array{status:string,message:string,records:array<string,int>}
+     */
+    public function migrateData(array $data, string $label): array
+    {
+        $r = $this->runPayload(['name' => $label, 'type' => 'crawl', 'size' => 0, 'mtime' => time()], $data);
+        return ['status' => $r['status'], 'message' => $r['message'], 'records' => $r['records']];
+    }
+
     /** @return array{file:string,type:string,status:string,message:string,records:array<string,int>} */
     private function migrateFile(array $file): array
+    {
+        $r = $this->runPayload($file, null);
+        $this->writeLog($file, $r['status'], $r['message'], $r['records']);
+        return $r;
+    }
+
+    /**
+     * Inti proses satu sumber data dalam satu transaksi.
+     * $data null → dibaca dari $file['path'].
+     *
+     * @return array{file:string,type:string,status:string,message:string,records:array<string,int>}
+     */
+    private function runPayload(array $file, ?array $data): array
     {
         $records = ['researchers' => 0, 'publications' => 0, 'authors' => 0, 'sdg_rows' => 0, 'no_doi' => 0];
         $status  = 'migrated';
         $message = '';
 
         try {
-            $data = self::decodeFile($file['path']);
+            if ($data === null) {
+                $data = self::decodeFile($file['path']);
+            }
             if (!is_array($data)) {
                 throw new MigrationSkip('Isi file tidak bisa dibaca (bukan gzip/zlib/JSON yang valid)');
             }
@@ -384,8 +413,6 @@ class CacheMigrator
             $status  = 'failed';
             $message = mb_substr($e->getMessage(), 0, 480);
         }
-
-        $this->writeLog($file, $status, $message, $records);
 
         return [
             'file'    => $file['name'],
