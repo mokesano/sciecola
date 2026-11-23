@@ -58,6 +58,8 @@ final class SangiaApiClient
             'orcid'           => $orcid,
             'scopus_id'       => $scopusId,
             'batch_size'      => 50,
+            // Bobot Wizdam Impact Score dari Admin → Konfigurasi WIS.
+            'weights'         => \Sciecola\Support\AppSettings::group('impact'),
             'supplied_works'  => $supplied,
             'supplied_person' => [
                 'name'        => $person['name'] ?? null,

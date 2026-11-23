@@ -202,8 +202,19 @@ class CacheMigrator
 
         $remaining = count($queue) - count($results);
 
+        // Sisa waktu dipakai untuk melengkapi negara/institusi data lama.
+        $backfilled = 0;
+        if ((microtime(true) - $started) < $timeBudget) {
+            try {
+                $backfilled = $this->backfillAffiliations();
+            } catch (\Throwable $e) {
+                error_log('[CacheMigrator] backfill afiliasi: ' . $e->getMessage());
+            }
+        }
+
         return [
             'processed' => count($results),
+            'affiliations_backfilled' => $backfilled,
             'totals'    => $totals,
             'remaining' => $remaining,
             'done'      => $remaining === 0,
@@ -508,6 +519,104 @@ class CacheMigrator
         }
         $params[] = $orcid;
         $this->pdo->prepare($sql)->execute($params);
+
+        $this->applyAffiliation($orcid, $person);
+    }
+
+    /**
+     * Mengisi researchers.institution_id dan researchers.country dari afiliasi ORCID
+     * (personal_info.affiliations: employment dengan address.country berupa kode ISO 3166-1
+     * alpha-2, mis. "ID"). Afiliasi yang masih berjalan (tanpa tanggal selesai) diutamakan.
+     * Negara disimpan sebagai kode dua huruf; frontend menerjemahkan ke nama negara.
+     */
+    private function applyAffiliation(string $orcid, array $person): void
+    {
+        $aff = self::currentAffiliation($person['affiliations'] ?? null);
+        if ($aff === null) {
+            return;
+        }
+        $instId = null;
+        if ($aff['name'] !== '') {
+            $instId = $this->fetchValue(
+                'SELECT id FROM institutions WHERE name = ? AND (country = ? OR country IS NULL) ORDER BY id LIMIT 1',
+                [self::cut($aff['name'], 255), $aff['country']]
+            );
+            if (!$instId) {
+                $this->pdo->prepare('INSERT INTO institutions (name, country, city) VALUES (?, ?, ?)')
+                    ->execute([self::cut($aff['name'], 255), $aff['country'], self::cut($aff['city'], 100)]);
+                $instId = $this->pdo->lastInsertId();
+            } elseif ($aff['country'] !== null) {
+                $this->pdo->prepare('UPDATE institutions SET country = ? WHERE id = ? AND country IS NULL')
+                    ->execute([$aff['country'], $instId]);
+            }
+        }
+        $this->pdo->prepare(
+            'UPDATE researchers SET country = COALESCE(?, country), institution_id = COALESCE(?, institution_id) WHERE orcid = ?'
+        )->execute([$aff['country'], $instId !== null ? (int) $instId : null, $orcid]);
+    }
+
+    /**
+     * Memilih afiliasi utama dari daftar afiliasi ORCID.
+     *
+     * @return array{name:string,country:?string,city:?string}|null
+     */
+    public static function currentAffiliation($affiliations): ?array
+    {
+        if (!is_array($affiliations) || $affiliations === []) {
+            return null;
+        }
+        $best = null;
+        foreach ($affiliations as $a) {
+            if (!is_array($a)) {
+                continue;
+            }
+            $name    = trim((string) ($a['organization'] ?? $a['name'] ?? $a['org'] ?? ''));
+            $country = strtoupper(trim((string) ($a['address']['country'] ?? $a['country'] ?? '')));
+            $country = preg_match('/^[A-Z]{2}$/', $country) ? $country : null;
+            if ($name === '' && $country === null) {
+                continue;
+            }
+            $current = !empty($a['is_current']) || (array_key_exists('end_date', $a) && empty($a['end_date']));
+            $cand = [
+                'name'    => $name,
+                'country' => $country,
+                'city'    => isset($a['address']['city']) ? trim((string) $a['address']['city']) : null,
+                'score'   => ($current ? 2 : 0) + ($country !== null ? 1 : 0),
+            ];
+            if ($best === null || $cand['score'] > $best['score']) {
+                $best = $cand;
+            }
+        }
+        if ($best === null) {
+            return null;
+        }
+        unset($best['score']);
+        return $best;
+    }
+
+    /**
+     * Mengisi negara/institusi peneliti yang profilnya sudah tersimpan tetapi negaranya
+     * masih kosong (data lama sebelum ekstraksi afiliasi ditambahkan).
+     *
+     * @return int jumlah peneliti yang diperbarui
+     */
+    public function backfillAffiliations(int $limit = 200): int
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT orcid, profile_cache_json FROM researchers
+              WHERE country IS NULL AND profile_cache_json LIKE ? LIMIT " . max(1, $limit)
+        );
+        $stmt->execute(['%affiliations%']);
+        $n = 0;
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $profile = json_decode((string) $row['profile_cache_json'], true);
+            if (!is_array($profile) || self::currentAffiliation($profile['affiliations'] ?? null) === null) {
+                continue;
+            }
+            $this->applyAffiliation((string) $row['orcid'], $profile);
+            $n++;
+        }
+        return $n;
     }
 
     /** Memastikan baris researchers ada (nama sementara = ORCID bila belum diketahui). */

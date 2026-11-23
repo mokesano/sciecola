@@ -213,7 +213,7 @@ function route_api_wrapper(): void {
     $filename = basename($m[2]);
 
     static $allowed = [
-        'analytics.php', 'article_impact.php', 'article_profile.php', 'articles.php', 'auth.php',
+        'analytics.php', 'app_settings.php', 'article_impact.php', 'article_profile.php', 'articles.php', 'auth.php',
         'admin_teams.php', 'become_sponsor.php',
         'cache_handler.php', 'cache_migration.php', 'collaboration.php', 'crawl_queue.php',
         'feeds.php', 'insights.php', 'innovation_marketplace.php', 'institution_profile.php', 'institutions.php',
@@ -225,11 +225,11 @@ function route_api_wrapper(): void {
         'researcher_distribution.php', 'researcher_profile.php', 'researchers.php',
         'research_matching.php', 'sdg_distribution.php', 'sdgs_cluster.php', 'sitemap.php',
         'sponsors.php', 'team_member_profile.php', 'teams.php', 'top_researchers.php',
-        'trends_analysis.php',
+        'trends_analysis.php', 'user_preferences.php',
     ];
 
     static $admin_allowed = [
-        'researchers.php', 'projects.php', 'opportunities.php', 'expertise.php', 'landing_content.php'
+        'researchers.php', 'projects.php', 'opportunities.php', 'expertise.php', 'landing_content.php', 'users.php', 'settings.php'
     ];
 
     if ($subdir === 'admin/') {

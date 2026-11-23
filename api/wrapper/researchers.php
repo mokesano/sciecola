@@ -24,6 +24,7 @@ try {
     if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
     $configFile = ROOT_PATH . '/config/config.php';
     if (file_exists($configFile)) require_once $configFile;
+    require_once ROOT_PATH . '/includes/autoload.php';
 
     $page      = max(1, (int)($_GET['page'] ?? 1));
     $limit     = min(100, max(1, (int)($_GET['limit'] ?? 20)));
@@ -40,7 +41,8 @@ try {
         'limit'       => $limit,
         'total'       => $result['total'],
         'total_pages' => (int) ceil($result['total'] / $limit),
-        'data'        => $result['items'],
+        // Profil yang dibuat privat oleh pemiliknya tidak ditampilkan di direktori.
+        'data'        => \Sciecola\Auth\ProfilePrivacy::filterList($result['items']),
         'timestamp'   => date('c'),
     ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 

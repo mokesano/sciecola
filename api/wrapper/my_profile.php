@@ -19,14 +19,12 @@ declare(strict_types=1);
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, X-Auth-Token');
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
 if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
 $configFile = ROOT_PATH . '/config/config.php';
 if (file_exists($configFile)) require_once $configFile;
+require_once ROOT_PATH . '/includes/autoload.php';
 
 $body   = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -35,7 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $action = $body['action'] ?? $_GET['action'] ?? 'get';
-$orcid  = trim($body['orcid'] ?? $_GET['orcid'] ?? '');
+// Membaca profil (data publik ORCID) boleh untuk ORCID mana pun; mengubah hanya untuk
+// ORCID milik akun yang login. Nilai orcid dari permintaan tidak dipercaya untuk update.
+$orcid  = $action === 'update'
+    ? \Sciecola\Auth\UserAuth::requireOrcid()
+    : trim($body['orcid'] ?? $_GET['orcid'] ?? '');
 
 if (empty($orcid)) {
     http_response_code(400);
@@ -94,10 +96,11 @@ switch ($action) {
             : [];
 
         $allowed = ['bio', 'avatar', 'socialLinks', 'researchInterests', 'title', 'department'];
-        $fields  = $body['fields'] ?? [];
+        $fields  = is_array($body['fields'] ?? null) ? $body['fields'] : [];
         foreach ($allowed as $key) {
             if (isset($fields[$key])) $existing[$key] = $fields[$key];
         }
+        $fields = array_intersect_key($fields, array_flip($allowed));
         $existing['updated_at'] = date('c');
         file_put_contents($overlayFile, json_encode($existing, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 

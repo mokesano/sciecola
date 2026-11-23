@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
+import { countryName } from '../utils/countryName';
 
 /* ─── constants ─────────────────────────────────────────────────────────── */
 
@@ -83,7 +84,8 @@ const SintaChip = ({ value }) => {
 /* ─── main component ─────────────────────────────────────────────────────── */
 
 const Leaderboard = () => {
-  const { t } = useTranslation('leaderboard');
+  const { t, i18n } = useTranslation('leaderboard');
+  const lang = (i18n.language || 'id').slice(0, 2);
 
   const [category, setCategory]     = useState('researchers');
   const [sdgFilter, setSdgFilter]   = useState(0);
@@ -290,7 +292,7 @@ const Leaderboard = () => {
               <td className="px-6 py-4"><RankBadge rank={inst.rank} /></td>
               <td className="px-6 py-4">
                 <p className="font-semibold text-gray-900">{inst.name}</p>
-                {inst.country && <p className="text-[15px] text-gray-500">{inst.country}</p>}
+                {inst.country && <p className="text-[15px] text-gray-500">{countryName(inst.country, lang)}</p>}
               </td>
               <td className="px-6 py-4 text-right font-medium text-gray-900">{inst.researchers.toLocaleString()}</td>
               <td className="px-6 py-4 text-right font-medium text-gray-900">{inst.publications.toLocaleString()}</td>
@@ -373,7 +375,16 @@ const Leaderboard = () => {
             <select value={country} onChange={e => setCountry(e.target.value)}
               className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-[15px] text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
               <option value="">{t('filter.country_all')}</option>
-              {countries.map(c => <option key={c} value={c}>{c}</option>)}
+              {countries.map(c => {
+                // API mengirim { value, count }; versi lama mengirim string.
+                const value = typeof c === 'string' ? c : c.value;
+                const count = typeof c === 'string' ? null : c.count;
+                return (
+                  <option key={value} value={value}>
+                    {countryName(value, lang)}{count != null ? ` (${count})` : ''}
+                  </option>
+                );
+              })}
             </select>
           )}
 

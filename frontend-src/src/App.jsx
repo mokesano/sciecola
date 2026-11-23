@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { HashRouter as Router, Routes, Route, Outlet } from 'react-router';
+import { HashRouter as Router, Routes, Route, Outlet, Navigate } from 'react-router';
 import { useAuth } from './context/AuthContext';
 import { AuthProvider } from './context/AuthContext';
+import { AppSettingsProvider, useAppSettings } from './context/AppSettingsContext';
 import ScrollToTop from './components/shared/ScrollToTop';
 
 // Komponen Layout Global
@@ -90,6 +91,10 @@ import TutorialExport from './pages/TutorialExport';
 
 // Impor Halaman Register
 import Register from './pages/Register';
+import VerifyEmail from './pages/VerifyEmail';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import { RequireAuth, RequireAdmin } from './components/auth/RequireAuth';
 import Login from './pages/Login';
 
 // Impor Halaman Admin Dashboard Panel
@@ -202,15 +207,37 @@ const HomeRouter = () => {
 // =====================================================================
 // LAYOUT UTAMA (dengan Navbar, Footer, Chatbot)
 // =====================================================================
-const MainLayout = () => (
-  <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
-    <Navbar />
-    <Outlet />
-    <Footer />
-    <Chatbot />
-    <NewsletterModal />
-  </div>
-);
+const MainLayout = () => {
+  const { settings, loaded } = useAppSettings();
+  const { user, loading } = useAuth();
+  // Mode pemeliharaan (Admin → Sistem): pengunjung dan pengguna biasa melihat halaman
+  // pemeliharaan; admin tetap bisa memakai aplikasi. Halaman /login tetap terbuka.
+  if (loaded && !loading && settings.system.maintenanceMode && user?.role !== 'admin') {
+    return <MaintenanceMode message={settings.system.maintenanceMessage} />;
+  }
+  return (
+    <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
+      {settings.system.maintenanceMode && user?.role === 'admin' && (
+        <div className="fixed bottom-4 left-4 z-50 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white shadow-lg">
+          Mode pemeliharaan aktif — hanya admin yang melihat aplikasi
+        </div>
+      )}
+      <Navbar />
+      <Outlet />
+      <Footer />
+      <Chatbot />
+      <NewsletterModal />
+    </div>
+  );
+};
+
+// Halaman yang bisa disembunyikan dari pengunjung lewat Admin → Konten.
+const ContentGate = ({ setting, children }) => {
+  const { settings } = useAppSettings();
+  const { user } = useAuth();
+  if (settings.content[setting] === false && user?.role !== 'admin') return <Navigate to="/" replace />;
+  return children;
+};
 
 // =====================================================================
 // APLIKASI UTAMA (ROUTER)
@@ -218,6 +245,7 @@ const MainLayout = () => (
 function App() {
   return (
     <AuthProvider>
+      <AppSettingsProvider>
       <Router>
         <ErrorBoundary>
           {/* Scroll ke atas setiap perpindahan halaman */}
@@ -233,15 +261,15 @@ function App() {
               <Route path="/" element={<HomeRouter />} />
 
               {/* Rute Jurnal */}
-              <Route path="/journals" element={<JournalList />} />
-              <Route path="/journals/:journalId" element={<JournalProfile />} />
+              <Route path="/journals" element={<ContentGate setting="showJournalsMain"><JournalList /></ContentGate>} />
+              <Route path="/journals/:journalId" element={<ContentGate setting="showJournalsMain"><JournalProfile /></ContentGate>} />
 
               {/* Rute Institusi */}
-              <Route path="/institutions" element={<InstitutionsList />} />
-              <Route path="/institutions/:institutionId" element={<InstitutionProfile />} />
+              <Route path="/institutions" element={<ContentGate setting="showInstitutionsMain"><InstitutionsList /></ContentGate>} />
+              <Route path="/institutions/:institutionId" element={<ContentGate setting="showInstitutionsMain"><InstitutionProfile /></ContentGate>} />
 
               {/* Rute Peneliti */}
-              <Route path="/researchers" element={<ResearchersList />} />
+              <Route path="/researchers" element={<ContentGate setting="showResearchersMain"><ResearchersList /></ContentGate>} />
               <Route path="/orcid/:orcidCode" element={<ResearcherProfile sourceType="orcid" />} />
               <Route path="/scopus/:id"       element={<ResearcherProfile sourceType="scopus" />} />
               <Route path="/sinta/:id"        element={<ResearcherProfile sourceType="sinta" />} />
@@ -302,36 +330,42 @@ function App() {
               {/* Rute Dashboard */}
               <Route path="/feeds" element={<Feeds />} />
               <Route path="/sciecodash" element={<SciecoDashboard />} />
-              <Route path="/my-profile" element={<MyProfile />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/notifications" element={<Notifications />} />
-              <Route path="/my-articles" element={<MyArticles />} />
-              <Route path="/my-collections" element={<MyCollections />} />
-              <Route path="/collections/:id" element={<CollectionDetail />} />
-              <Route path="/my-statistics" element={<MyStatistics />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/settings/change-password" element={<ChangePassword />} />
+              <Route path="/my-profile" element={<RequireAuth><MyProfile /></RequireAuth>} />
+              <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+              <Route path="/messages" element={<RequireAuth><Messages /></RequireAuth>} />
+              <Route path="/notifications" element={<RequireAuth><Notifications /></RequireAuth>} />
+              <Route path="/my-articles" element={<RequireAuth><MyArticles /></RequireAuth>} />
+              <Route path="/my-collections" element={<RequireAuth><MyCollections /></RequireAuth>} />
+              <Route path="/collections/:id" element={<RequireAuth><CollectionDetail /></RequireAuth>} />
+              <Route path="/my-statistics" element={<RequireAuth><MyStatistics /></RequireAuth>} />
+              <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
+              <Route path="/settings/change-password" element={<RequireAuth><ChangePassword /></RequireAuth>} />
 
               {/* Rute Log History/Activity */}
-              <Route path="/my-activity" element={<MyActivity />} />
-              <Route path="/log-history" element={<LogHistory />} />
+              <Route path="/my-activity" element={<RequireAuth><MyActivity /></RequireAuth>} />
+              <Route path="/log-history" element={<RequireAuth><LogHistory /></RequireAuth>} />
 
-              {/* Rute Register */}
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
 
               {/* Rute Admin Panel Dashboard */}
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/admin/monitoring" element={<Monitoring />} />
-              <Route path="/admin/data-management" element={<AdminPanel />} />
-              <Route path="/admin/landing-content" element={<AdminLandingContent />} />
-              <Route path="/admin/teams" element={<AdminTeams />} />
+              <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
+              <Route path="/admin/monitoring" element={<RequireAdmin><Monitoring /></RequireAdmin>} />
+              <Route path="/admin/data-management" element={<RequireAdmin><AdminPanel /></RequireAdmin>} />
+              <Route path="/admin/landing-content" element={<RequireAdmin><AdminLandingContent /></RequireAdmin>} />
+              <Route path="/admin/teams" element={<RequireAdmin><AdminTeams /></RequireAdmin>} />
             </Route>
 
             {/* ============================================== */}
             {/* HALAMAN ERROR (TANPA Navbar/Footer/Chatbot)   */}
             {/* ============================================== */}
+            {/* Halaman akun: punya header sendiri (AuthShell), tanpa Navbar */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/auth/verify-email" element={<Navigate to="/verify-email" replace />} />
+            <Route path="/auth/forgot-password" element={<Navigate to="/forgot-password" replace />} />
+
             <Route path="/404" element={<NotFound404 />} />
             <Route path="/500" element={<ServerError500 />} />
             <Route path="/maintenance" element={<MaintenanceMode />} />
@@ -342,6 +376,7 @@ function App() {
           </Routes>
         </ErrorBoundary>
       </Router>
+      </AppSettingsProvider>
     </AuthProvider>
   );
 }

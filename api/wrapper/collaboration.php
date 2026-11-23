@@ -19,12 +19,12 @@ declare(strict_types=1);
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
 
 try {
     if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
     $configFile = ROOT_PATH . '/config/config.php';
     if (file_exists($configFile)) require_once $configFile;
+    require_once ROOT_PATH . '/includes/autoload.php';
 
     $action = $_GET['action'] ?? 'researchers';
 
@@ -38,6 +38,9 @@ try {
         case 'request':
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo json_encode(sendCollaborationRequest());
+            } else {
+                http_response_code(405);
+                echo json_encode(['status' => 'error', 'message' => 'Method not allowed']);
             }
             break;
         default:
@@ -151,9 +154,13 @@ function sendCollaborationRequest(): array {
         return ['status' => 'error', 'message' => 'Database not configured'];
     }
 
-    $input = json_decode(file_get_contents('php://input'), true);
+    $input = json_decode(file_get_contents('php://input'), true) ?: [];
+    $input['from_orcid'] = \Sciecola\Auth\UserAuth::requireOrcid();
+    if (($input['to_orcid'] ?? '') === $input['from_orcid']) {
+        return ['status' => 'error', 'message' => 'Tidak bisa mengirim permintaan ke diri sendiri'];
+    }
 
-    if (!$input['from_orcid'] || !$input['to_orcid']) {
+    if (empty($input['from_orcid']) || empty($input['to_orcid'])) {
         return ['status' => 'error', 'message' => 'Missing required fields'];
     }
 

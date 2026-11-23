@@ -37,9 +37,11 @@ final class Db
         try {
             $driver = defined('DB_DRIVER') ? DB_DRIVER : 'mysql';
             $port   = defined('DB_PORT') ? DB_PORT : '3306';
-            $dsn = $driver === 'pgsql'
-                ? sprintf('pgsql:host=%s;port=%s;dbname=%s', DB_HOST, $port, DB_DATABASE)
-                : sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', DB_HOST, $port, DB_DATABASE);
+            $dsn = match ($driver) {
+                'pgsql'  => sprintf('pgsql:host=%s;port=%s;dbname=%s', DB_HOST, $port, DB_DATABASE),
+                'sqlite' => 'sqlite:' . DB_DATABASE, // pengujian lokal: DB_DATABASE = path file
+                default  => sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', DB_HOST, $port, DB_DATABASE),
+            };
             self::$pdo = new PDO($dsn, DB_USERNAME, DB_PASSWORD, [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,

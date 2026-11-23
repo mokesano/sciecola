@@ -17,8 +17,8 @@ declare(strict_types=1);
  *   POST /api/cache_migration.php  { "action": "migrate", "limit": 25, "retry_failed": false }
  *   POST /api/cache_migration.php  { "action": "archive" }
  *
- * Wajib header  X-Admin-Token: <ADMIN_TOOL_TOKEN dari .env>
- * Tanpa ADMIN_TOOL_TOKEN di .env, endpoint menolak semua permintaan (fail closed).
+ * Hanya admin: akun login berperan admin, atau header X-Admin-Token (= ADMIN_TOOL_TOKEN di .env).
+ * Selain itu ditolak (fail closed); lihat src/Auth/AdminGuard.php.
  *
  * Format respons selalu:
  *   { "status": "success"|"error", "message": "...", ...data }
@@ -52,18 +52,8 @@ function cm_respond(array $payload, int $code = 200): void
 }
 
 // ── Autentikasi admin (server-side) ──────────────────────────────────────────
-$expected = (string) (getenv('ADMIN_TOOL_TOKEN') ?: ($_ENV['ADMIN_TOOL_TOKEN'] ?? ''));
-if ($expected === '') {
-    cm_respond([
-        'status'  => 'error',
-        'code'    => 'TOKEN_NOT_CONFIGURED',
-        'message' => 'ADMIN_TOOL_TOKEN belum diatur di file .env server. Migrasi dinonaktifkan demi keamanan.',
-    ], 503);
-}
-$given = (string) ($_SERVER['HTTP_X_ADMIN_TOKEN'] ?? '');
-if ($given === '' || !hash_equals($expected, $given)) {
-    cm_respond(['status' => 'error', 'code' => 'UNAUTHORIZED', 'message' => 'Token admin tidak valid.'], 401);
-}
+// Akun admin yang login, atau header X-Admin-Token (= ADMIN_TOOL_TOKEN di .env).
+\Sciecola\Auth\AdminGuard::require();
 
 // ── Input ────────────────────────────────────────────────────────────────────
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';

@@ -20,13 +20,21 @@ declare(strict_types=1);
 require_once __DIR__ . '/../config/config.php';
 
 class MailService {
+
     private static ?MailService $instance = null;
     private string $driver;
 
+    /**
+     * Constructor.
+     */
     private function __construct() {
         $this->driver = defined('MAIL_DRIVER') ? MAIL_DRIVER : 'log';
     }
 
+    /**
+     * Get the singleton instance of MailService.
+     * @return MailService
+     */
     public static function getInstance(): self {
         if (!self::$instance) self::$instance = new self();
         return self::$instance;
@@ -60,6 +68,11 @@ class MailService {
 
     // ─── Convenience wrappers ───────────────────────────────────────────
 
+    /**
+     * Send a welcome email to a new user.
+     * @param string $to    Recipient email address
+     * @param string $name  Recipient name
+     */
     public function sendWelcome(string $to, string $name): bool {
         $appUrl = defined('APP_URL') ? APP_URL : 'http://localhost';
         $body   = $this->renderTemplate('welcome', [
@@ -69,12 +82,22 @@ class MailService {
         return $this->send($to, 'Selamat datang di Sciecola!', $body);
     }
 
+    /**
+     * Send a password reset email with a unique token.
+     * @param string $to     Recipient email address
+     * @param string $token  Unique reset token
+     */
     public function sendPasswordReset(string $to, string $token): bool {
         $link = (defined('APP_URL') ? APP_URL : 'http://localhost') . "/reset-password?token={$token}";
         $body = $this->renderTemplate('reset-password', ['reset_url' => $link]);
         return $this->send($to, 'Reset Kata Sandi', $body);
     }
 
+    /**
+     * Send an email verification message with a unique token.
+     * @param string $to     Recipient email address
+     * @param string $token  Unique verification token
+     */
     public function sendEmailVerification(string $to, string $token): bool {
         $appUrl = defined('APP_URL') ? APP_URL : 'http://localhost';
         $link   = $appUrl . "/verify-email?token={$token}";
@@ -85,11 +108,22 @@ class MailService {
         return $this->send($to, 'Verifikasi Email Anda', $body);
     }
 
+    /**
+     * Send a one-time password (OTP) code to the user.
+     * @param string $to    Recipient email address
+     * @param string $code  OTP code
+     */
     public function sendOtpCode(string $to, string $code): bool {
         $body = $this->template('otp', ['code' => $code]);
         return $this->send($to, "Kode OTP Anda: {$code}", $body);
     }
 
+    /**
+     * Send an analysis complete notification.
+     * @param string $to    Recipient email address
+     * @param string $orcid  Researcher ORCID
+     * @param int $count     Number of SDGs analyzed
+     */
     public function sendAnalysisComplete(string $to, string $orcid, int $count): bool {
         $body = $this->template('analysis_complete', ['orcid' => $orcid, 'count' => $count]);
         return $this->send($to, 'Analisis SDGs Selesai', $body);
@@ -130,15 +164,24 @@ class MailService {
         return $html;
     }
 
+    /**
+     * Send an email using PHPMailer via SMTP.
+     * @param string $to        Recipient email address
+     * @param string $subject   Subject line
+     * @param string $body      HTML body
+     * @param string $from      Sender email address
+     * @param string $fromName  Sender name
+     * @param array  $options   Additional options (reply_to, attachments)
+     */
     private function sendViaSmtp(string $to, string $subject, string $body, string $from, string $fromName, array $options): bool {
         try {
-            $mailer = new \PHPMailer\PHPMailer\PHPMailer(true);
+            $mailer = new \PHPMailer\PHPMailer\PHPMailer(true); // Error: Undefined type 'PHPMailer\PHPMailer\PHPMailer'.
             $mailer->isSMTP();
             $mailer->Host       = defined('SMTP_HOST')   ? SMTP_HOST   : 'localhost';
             $mailer->SMTPAuth   = defined('SMTP_AUTH')   ? SMTP_AUTH   : false;
             $mailer->Username   = defined('SMTP_USER')   ? SMTP_USER   : '';
             $mailer->Password   = defined('SMTP_PASS')   ? SMTP_PASS   : '';
-            $mailer->SMTPSecure = defined('SMTP_SECURE') ? SMTP_SECURE : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $mailer->SMTPSecure = defined('SMTP_SECURE') ? SMTP_SECURE : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS; // Error: Undefined type 'PHPMailer\PHPMailer\PHPMailer'.
             $mailer->Port       = defined('SMTP_PORT')   ? SMTP_PORT   : 587;
             $mailer->CharSet    = 'UTF-8';
 
@@ -163,6 +206,13 @@ class MailService {
         }
     }
 
+    /**
+     * Log email content to a file for local testing.
+     * @param string $to        Recipient email address
+     * @param string $subject   Subject line
+     * @param string $body      HTML body
+     * @param string $from      Sender email address
+     */
     private function logMail(string $to, string $subject, string $body, string $from): bool {
         $logFile = '/tmp/sciecola_mail.log';
         $entry   = sprintf(
@@ -173,6 +223,12 @@ class MailService {
         return true;
     }
 
+    /**
+     * Render an inline email template with placeholders replaced.
+     * @param string $name  Template name (e.g., 'welcome', 'password_reset')
+     * @param array  $vars  Associative array of placeholder => value
+     * @return string       Rendered HTML string
+     */
     private function template(string $name, array $vars): string {
         $templates = [
             'welcome' => <<<HTML

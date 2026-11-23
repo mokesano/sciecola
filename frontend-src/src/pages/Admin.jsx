@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../context/AuthContext';
+import { adminFetch } from '../utils/adminFetch';
+import { useAppSettings, applyUiSettings } from '../context/AppSettingsContext';
 
 const Admin = () => {
   const { t } = useTranslation('admin');
@@ -10,34 +13,50 @@ const Admin = () => {
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [confirmModal, setConfirmModal] = useState({ show: false, action: null, target: null });
 
-  // Mock: Check admin access
-  const isAdmin = true;
+  // Peran admin dari server (user_accounts.role atau ADMIN_EMAILS). Rute /admin juga
+  // dibungkus RequireAdmin, dan setiap endpoint admin memeriksa ulang di server.
+  const { user: authUser } = useAuth();
+  const isAdmin = authUser?.role === 'admin';
   
   // State: Impact Score Weights
   const [wisWeights, setWisWeights] = useState({
     academic: 0.40, social: 0.25, economic: 0.20, sdg: 0.15
   });
 
-  // State: API Keys
-  const [apiKeys, setApiKeys] = useState({
-    cloudflareTurnstile: '', recaptchaV3: '', sangiaApi: '',
-    twilioWhatsapp: '', telegramBot: ''
-  });
+  // Status konfigurasi server (.env) — hanya dibaca, rahasia tidak pernah dikirim ke browser.
+  const [serverConfig, setServerConfig] = useState([]);
+  const [dashStats, setDashStats] = useState(null);
+  const [auditEntries, setAuditEntries] = useState([]);
+  const [settingsError, setSettingsError] = useState('');
+  const { refresh: refreshAppSettings } = useAppSettings();
 
   // State: User Management
-  const [users, setUsers] = useState([
-    { id: 1, name: 'Dr. Andi Rahman', email: 'andi@ui.ac.id', role: 'researcher', status: 'active', joined: '2024-01-15', lastLogin: '2 jam lalu' },
-    { id: 2, name: 'Prof. Siti Nurhaliza', email: 'siti@brin.go.id', role: 'co-admin', status: 'active', joined: '2024-02-20', lastLogin: 'Kemarin' },
-    { id: 3, name: 'Budi Santoso', email: 'budi@ugm.ac.id', role: 'researcher', status: 'suspended', joined: '2024-03-10', lastLogin: '5 hari lalu' },
-    { id: 4, name: 'Dewi Setiawan', email: 'dewi@ipb.ac.id', role: 'researcher', status: 'disabled', joined: '2024-01-28', lastLogin: '2 minggu lalu' },
-    { id: 5, name: 'Rizky Pratama', email: 'rizky@its.ac.id', role: 'researcher', status: 'active', joined: '2024-04-05', lastLogin: '1 jam lalu' }
-  ]);
+  const [users, setUsers] = useState([]);
+  const [usersError, setUsersError] = useState('');
+  const [userSearch, setUserSearch] = useState('');
 
-  const [userApiKeys, setUserApiKeys] = useState([
-    { id: 1, userId: 1, key: 'wz_42_1717200000_a3f8c2e1b4d5f678', created: '2024-01-20', lastUsed: 'Hari ini', status: 'active' },
-    { id: 2, userId: 2, key: 'wz_88_1719800000_b7e9d3f2c5a6g789', created: '2024-02-25', lastUsed: 'Kemarin', status: 'active' },
-    { id: 3, userId: 3, key: 'wz_15_1720400000_c8f0e4g3d6b7h890', created: '2024-03-15', lastUsed: '1 minggu lalu', status: 'revoked' }
-  ]);
+  // Daftar akun dari user_accounts (GET /api/admin/users.php).
+  const loadUsers = async (search = userSearch) => {
+    setUsersError('');
+    try {
+      const res = await adminFetch(`/api/admin/users.php?limit=100&search=${encodeURIComponent(search)}`);
+      const d = await res.json();
+      if (!res.ok || d.status !== 'success') throw new Error(d.message || `HTTP ${res.status}`);
+      setUsers(d.users);
+    } catch (e) {
+      setUsers([]);
+      setUsersError(e.message);
+    }
+  };
+  const userAction = async (body) => {
+    const res = await adminFetch('/api/admin/users.php', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    });
+    const d = await res.json();
+    if (!res.ok || d.status !== 'success') throw new Error(d.message || `HTTP ${res.status}`);
+    await loadUsers();
+  };
+
 
   // State: Content & UI Settings
   const [contentSettings, setContentSettings] = useState({
@@ -46,14 +65,64 @@ const Admin = () => {
   });
 
   const [uiSettings, setUiSettings] = useState({
-    primaryColor: '#6366f1', secondaryColor: '#8b5cf6', fontFamily: 'Inter',
-    chartType: 'area', enableAnimations: true, compactMode: false
+    primaryColor: '#6366f1', secondaryColor: '#8b5cf6', fontFamily: 'Inter'
   });
 
   const [systemSettings, setSystemSettings] = useState({
-    maintenanceMode: false, allowNewRegistrations: true, requireEmailVerification: true,
-    maxApiCallsPerHour: 60, sessionTimeoutMinutes: 120
+    maintenanceMode: false, maintenanceMessage: '', allowNewRegistrations: true,
+    requireEmailVerification: true, sessionTimeoutMinutes: 1440
   });
+
+  // ── Pengaturan dari server (GET/POST /api/admin/settings.php) ──
+  const settingsApi = async (query = '', body = null) => {
+    const res = await adminFetch(`/api/admin/settings.php${query}`, body ? {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    } : {});
+    const d = await res.json();
+    if (!res.ok || d.status !== 'success') throw new Error(d.message || `HTTP ${res.status}`);
+    return d;
+  };
+  const applyServerSettings = (st) => {
+    if (!st) return;
+    setWisWeights(st.impact);
+    setContentSettings(st.content);
+    setUiSettings(st.ui);
+    setSystemSettings(st.system);
+  };
+  const loadSettings = async () => {
+    setSettingsError('');
+    try {
+      const d = await settingsApi();
+      applyServerSettings(d.settings);
+      setServerConfig(d.config || []);
+    } catch (e) { setSettingsError(e.message); }
+  };
+  const loadStats = async () => {
+    try {
+      const d = await settingsApi('?view=stats');
+      setDashStats(d.stats);
+      setAuditEntries(d.recent_audit || []);
+    } catch (e) { setSettingsError(e.message); }
+  };
+  const loadAudit = async () => {
+    try { const d = await settingsApi('?view=audit&limit=200'); setAuditEntries(d.entries || []); }
+    catch (e) { setSettingsError(e.message); }
+  };
+  const saveGroup = async (group, values, okMessage) => {
+    setLoading(true);
+    try {
+      const d = await settingsApi('', { group, values });
+      applyServerSettings(d.settings);
+      await refreshAppSettings();
+      showToast(okMessage);
+      return true;
+    } catch (e) {
+      showToast(e.message, 'error');
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // State: Crawl Queue
   const [crawlStatus, setCrawlStatus] = useState(null);
@@ -204,23 +273,21 @@ const Admin = () => {
   const executeAction = async () => {
     const { action, target } = confirmModal;
     setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    if (action === 'revokeApiKey') {
-      setUserApiKeys(prev => prev.map(k => k.id === target ? { ...k, status: 'revoked' } : k));
-      showToast('API key berhasil dicabut');
-    } else if (action === 'suspendUser') {
-      setUsers(prev => prev.map(u => u.id === target ? { ...u, status: 'suspended' } : u));
-      showToast('Akun peneliti ditangguhkan');
-    } else if (action === 'disableUser') {
-      setUsers(prev => prev.map(u => u.id === target ? { ...u, status: 'disabled' } : u));
-      showToast('Akun peneliti dinonaktifkan');
-    } else if (action === 'deleteUser') {
-      setUsers(prev => prev.filter(u => u.id !== target));
-      showToast('Akun peneliti dihapus permanen');
-    } else if (action === 'promoteToCoAdmin') {
-      setUsers(prev => prev.map(u => u.id === target ? { ...u, role: 'co-admin' } : u));
-      showToast('Pengguna dipromosikan menjadi Co-Admin');
+
+    if (['disableUser', 'deleteUser', 'promoteToAdmin', 'demoteToUser', 'revokeSessions'].includes(action)) {
+      const body = {
+        disableUser:    { action: 'set_active', id: target, active: false },
+        deleteUser:     { action: 'delete', id: target },
+        promoteToAdmin: { action: 'set_role', id: target, role: 'admin' },
+        demoteToUser:   { action: 'set_role', id: target, role: 'user' },
+        revokeSessions: { action: 'revoke_sessions', id: target },
+      }[action];
+      try {
+        await userAction(body);
+        showToast(t(`users.done.${action}`));
+      } catch (e) {
+        showToast(e.message, 'error');
+      }
     } else if (action === 'archiveCache') {
       try {
         const d = await cacheApi('archive');
@@ -241,16 +308,24 @@ const Admin = () => {
   // Save Handlers
   const saveWisWeights = async () => {
     const total = Object.values(wisWeights).reduce((a, b) => a + b, 0);
-    if (Math.abs(total - 1.0) > 0.01) { showToast('Total bobot harus 100%', 'error'); return; }
-    setLoading(true); await new Promise(r => setTimeout(r, 1000)); setLoading(false);
-    showToast('Bobot WIS berhasil diperbarui');
+    if (Math.abs(total - 1.0) > 0.01) { showToast(t('settings_api.weights_total'), 'error'); return; }
+    await saveGroup('impact', wisWeights, t('settings_api.saved_wis'));
   };
-  const saveApiKeys = async () => { setLoading(true); await new Promise(r => setTimeout(r, 1000)); setLoading(false); showToast('Konfigurasi API key disimpan'); };
-  const saveContentSettings = async () => { setLoading(true); await new Promise(r => setTimeout(r, 800)); setLoading(false); showToast('Pengaturan konten diperbarui'); };
-  const saveUiSettings = async () => { setLoading(true); await new Promise(r => setTimeout(r, 800)); document.documentElement.style.setProperty('--primary-color', uiSettings.primaryColor); setLoading(false); showToast('Tampilan aplikasi diperbarui'); };
-  const saveSystemSettings = async () => { setLoading(true); await new Promise(r => setTimeout(r, 800)); setLoading(false); showToast('Pengaturan sistem disimpan'); };
+  const saveContentSettings = () => saveGroup('content', contentSettings, t('settings_api.saved_content'));
+  const saveUiSettings = async () => {
+    if (await saveGroup('ui', uiSettings, t('settings_api.saved_ui'))) applyUiSettings(uiSettings);
+  };
+  const saveSystemSettings = () => saveGroup('system', systemSettings, t('settings_api.saved_system'));
 
   useEffect(() => { if (!isAdmin) navigate('/'); }, [isAdmin, navigate]);
+  useEffect(() => {
+    if (!isAdmin) return;
+    if (activeSection === 'dashboard') loadStats();
+    if (activeSection === 'audit') loadAudit();
+    if (['impact-config', 'api-security', 'content-moderation', 'ui-customization', 'system'].includes(activeSection)) loadSettings();
+    if (activeSection === 'user-management') loadUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSection, isAdmin]);
 
   // Navigation Items
   const navItems = [
@@ -311,10 +386,10 @@ const Admin = () => {
             <SectionHeader title={t('dashboard.title')} description={t('dashboard.description')} />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { label: t('dashboard.stats.users'), value: users.length, icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z', color: 'bg-indigo-50 text-indigo-600' },
-                { label: t('dashboard.stats.api_keys'), value: userApiKeys.filter(k => k.status === 'active').length, icon: 'M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z', color: 'bg-purple-50 text-purple-600' },
-                { label: t('dashboard.stats.requests'), value: '2,847', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6', color: 'bg-green-50 text-green-600' },
-                { label: t('dashboard.stats.uptime'), value: '99.98%', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', color: 'bg-amber-50 text-amber-600' }
+                { label: t('dashboard.stats.users'), value: dashStats?.users_total ?? '—', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z', color: 'bg-indigo-50 text-indigo-600' },
+                { label: t('settings_api.stats.sessions'), value: dashStats?.sessions_active ?? '—', icon: 'M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', color: 'bg-purple-50 text-purple-600' },
+                { label: t('settings_api.stats.failed_logins'), value: dashStats?.logins_failed_24h ?? '—', icon: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z', color: 'bg-red-50 text-red-600' },
+                { label: t('settings_api.stats.publications'), value: dashStats?.publications ?? '—', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', color: 'bg-green-50 text-green-600' },
               ].map((stat, idx) => (
                 <div key={idx} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex items-center gap-4">
                   <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}>
@@ -327,19 +402,18 @@ const Admin = () => {
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
               <h3 className="font-bold text-gray-900 mb-4">{t('dashboard.recent_activity')}</h3>
               <div className="space-y-4">
-                {[
-                  { user: 'Dr. Andi Rahman', action: 'Memperbarui profil riset', time: '5 menit lalu', type: 'update' },
-                  { user: 'Admin', action: 'Mencabut API key pengguna #3', time: '1 jam lalu', type: 'security' },
-                  { user: 'Prof. Siti Nurhaliza', action: 'Menganalisis 12 artikel baru', time: '3 jam lalu', type: 'analysis' },
-                  { user: 'Sistem', action: 'Backup database harian selesai', time: 'Hari ini 02:00', type: 'system' }
-                ].map((activity, idx) => (
-                  <div key={idx} className="flex items-start gap-3 pb-3 border-b border-gray-100 last:border-0 last:pb-0">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${activity.type === 'security' ? 'bg-red-100 text-red-600' : activity.type === 'analysis' ? 'bg-indigo-100 text-indigo-600' : activity.type === 'system' ? 'bg-gray-100 text-gray-600' : 'bg-green-100 text-green-600'}`}>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={activity.type === 'security' ? 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z' : activity.type === 'analysis' ? 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' : activity.type === 'system' ? 'M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4' : 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'} /></svg>
-                    </div>
-                    <div className="flex-grow"><p className="text-[15px] text-gray-900"><span className="font-medium">{activity.user}</span> {activity.action}</p><p className="text-sm text-gray-500 mt-0.5">{activity.time}</p></div>
+                {auditEntries.length === 0 && <p className="text-[15px] text-gray-500">{t('settings_api.no_activity')}</p>}
+                {auditEntries.slice(0, 8).map((a) => (
+                  <div key={a.id} className="flex items-start gap-3 pb-3 border-b border-gray-100 last:border-0 last:pb-0">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-indigo-100 text-indigo-600 text-xs font-bold">{(a.admin_email || '?')[0].toUpperCase()}</div>
+                    <div className="flex-grow"><p className="text-[15px] text-gray-900"><span className="font-medium">{a.admin_email}</span> · {t(`settings_api.actions.${String(a.action).replace(/\./g, '_')}`, { defaultValue: a.action })} <span className="text-gray-500">{a.target}</span></p><p className="text-sm text-gray-500 mt-0.5">{a.created_at} UTC</p></div>
                   </div>
                 ))}
+                {dashStats && (
+                  <p className="text-sm text-gray-500 pt-2">
+                    {t('settings_api.stats.summary', { unverified: dashStats.users_unverified ?? 0, twofa: dashStats.users_2fa ?? 0, researchers: dashStats.researchers ?? 0 })}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -370,44 +444,29 @@ const Admin = () => {
       case 'api-security':
         return (
           <div className="space-y-6">
-            <SectionHeader title={t('api_security.title')} description={t('api_security.description')} />
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <h3 className="font-bold text-gray-900 mb-4">{t('api_security.external_keys')}</h3>
-              <div className="space-y-4">
-                {[
-                  { key: 'cloudflareTurnstile', label: t('api_security.labels.cloudflareTurnstile'), placeholder: '0x4AAAAAA...', helper: t('api_security.helpers.cloudflareTurnstile') },
-                  { key: 'recaptchaV3', label: t('api_security.labels.recaptchaV3'), placeholder: '6Lc...', helper: t('api_security.helpers.recaptchaV3') },
-                  { key: 'sangiaApi', label: t('api_security.labels.sangiaApi'), placeholder: 'sk_live_...', helper: t('api_security.helpers.sangiaApi') },
-                ].map((field) => (
-                  <div key={field.key}>
-                    <label className="block text-[15px] font-medium text-gray-700 mb-1">{field.label}</label>
-                    <input type="password" value={apiKeys[field.key]} onChange={(e) => setApiKeys(prev => ({ ...prev, [field.key]: e.target.value }))} placeholder={field.placeholder} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-[15px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono" />
-                    <p className="text-sm text-gray-500 mt-1">{field.helper}</p>
-                  </div>
-                ))}
-              </div>
-              <button onClick={saveApiKeys} disabled={loading} className="mt-6 px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? 'Menyimpan...' : 'Simpan Kunci API'}</button>
+            <SectionHeader title={t('api_security.title')} description={t('settings_api.config_desc')} />
+            {settingsError && <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-[15px] text-red-700">{settingsError}</div>}
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+              <table className="w-full text-[15px]">
+                <thead className="bg-gray-50 text-gray-600">
+                  <tr><th className="px-4 py-3 text-left font-medium">{t('settings_api.config_item')}</th><th className="px-4 py-3 text-left font-medium">{t('settings_api.config_status')}</th><th className="px-4 py-3 text-left font-medium">{t('settings_api.config_detail')}</th></tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {serverConfig.map((c) => (
+                    <tr key={c.key}>
+                      <td className="px-4 py-3"><p className="font-medium text-gray-900">{t(`settings_api.config.${c.key}.label`)}</p><p className="text-sm text-gray-500">{t(`settings_api.config.${c.key}.env`)}</p></td>
+                      <td className="px-4 py-3">{c.ok
+                        ? <span className="px-2.5 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700">{t('settings_api.ok')}</span>
+                        : <span className="px-2.5 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-700">{t('settings_api.not_set')}</span>}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600 font-mono break-all">{c.detail || '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <h3 className="font-bold text-gray-900 mb-4">{t('api_security.user_keys')}</h3>
-              <div className="overflow-x-auto">
-                <table className="w-full text-[15px]">
-                  <thead className="bg-gray-50 text-gray-600">
-                    <tr><th className="px-4 py-3 text-left font-medium">{t('api_security.table.user')}</th><th className="px-4 py-3 text-left font-medium">{t('api_security.table.api_key')}</th><th className="px-4 py-3 text-left font-medium">{t('api_security.table.created')}</th><th className="px-4 py-3 text-left font-medium">{t('api_security.table.status')}</th><th className="px-4 py-3 text-right font-medium">{t('api_security.table.actions')}</th></tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {userApiKeys.map((key) => { const user = users.find(u => u.id === key.userId); return (
-                      <tr key={key.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3"><p className="font-medium text-gray-900">{user?.name || 'Unknown'}</p><p className="text-sm text-gray-500">{user?.email}</p></td>
-                        <td className="px-4 py-3 font-mono text-sm text-gray-600">{key.key}</td>
-                        <td className="px-4 py-3 text-gray-500">{key.created}</td>
-                        <td className="px-4 py-3"><StatusBadge status={key.status} /></td>
-                        <td className="px-4 py-3 text-right">{key.status === 'active' && <button onClick={() => confirmAction('revokeApiKey', key.id)} className="text-red-600 hover:text-red-800 text-sm font-medium hover:underline">{t('api_security.revoke')}</button>}</td>
-                      </tr>
-                    );})}
-                  </tbody>
-                </table>
-              </div>
+            <div className="p-4 bg-indigo-50 border border-indigo-200 rounded-xl text-[15px] text-indigo-800 space-y-2">
+              <p>{t('settings_api.env_note')}</p>
+              <p>{t('settings_api.user_keys_note')}</p>
             </div>
           </div>
         );
@@ -416,6 +475,12 @@ const Admin = () => {
         return (
           <div className="space-y-6">
             <SectionHeader title={t('users.title')} description={t('users.description')} />
+            <form onSubmit={(e) => { e.preventDefault(); loadUsers(userSearch); }} className="flex gap-2">
+              <input value={userSearch} onChange={e => setUserSearch(e.target.value)} placeholder={t('users.search_ph')}
+                className="flex-1 px-4 py-2 bg-white border border-gray-200 rounded-lg text-[15px]" />
+              <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700">{t('users.search')}</button>
+            </form>
+            {usersError && <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-[15px] text-red-700">{usersError}</div>}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-[15px]">
@@ -423,19 +488,34 @@ const Admin = () => {
                     <tr><th className="px-4 py-3 text-left font-medium">{t('users.table.name_email')}</th><th className="px-4 py-3 text-left font-medium">{t('users.table.role')}</th><th className="px-4 py-3 text-left font-medium">{t('users.table.status')}</th><th className="px-4 py-3 text-left font-medium">{t('users.table.joined')}</th><th className="px-4 py-3 text-right font-medium">{t('users.table.actions')}</th></tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {users.map((user) => (
-                      <tr key={user.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3"><p className="font-medium text-gray-900">{user.name}</p><p className="text-sm text-gray-500">{user.email}</p></td>
-                        <td className="px-4 py-3"><RoleBadge role={user.role} /></td>
-                        <td className="px-4 py-3"><StatusBadge status={user.status} /></td>
-                        <td className="px-4 py-3 text-gray-500">{user.joined}</td>
+                    {users.length === 0 && !usersError && (
+                      <tr><td colSpan={5} className="px-4 py-6 text-center text-gray-500">{t('users.empty')}</td></tr>
+                    )}
+                    {users.map((u) => (
+                      <tr key={u.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3">
+                          <p className="font-medium text-gray-900">{u.name || '—'} {u.is_me && <span className="text-sm text-gray-400">({t('users.you')})</span>}</p>
+                          <p className="text-sm text-gray-500">{u.email}{u.orcid ? ` · ${u.orcid}` : ''}</p>
+                          <p className="text-xs text-gray-400">
+                            {u.email_verified ? t('users.flags.verified') : t('users.flags.unverified')}
+                            {u.two_factor && ` · 2FA`}
+                          </p>
+                        </td>
+                        <td className="px-4 py-3"><RoleBadge role={u.role === 'admin' ? 'admin' : 'researcher'} /></td>
+                        <td className="px-4 py-3"><StatusBadge status={u.active ? 'active' : 'disabled'} /></td>
+                        <td className="px-4 py-3 text-gray-500">{(u.created_at || '').slice(0, 10)}</td>
                         <td className="px-4 py-3 text-right">
-                          <div className="flex justify-end gap-2">
-                            {user.role === 'researcher' && <button onClick={() => confirmAction('promoteToCoAdmin', user.id)} className="text-indigo-600 hover:text-indigo-800 text-sm font-medium hover:underline">{t('users.actions.promote')}</button>}
-                            {user.status === 'active' && <><button onClick={() => confirmAction('suspendUser', user.id)} className="text-amber-600 hover:text-amber-800 text-sm font-medium hover:underline">{t('users.actions.suspend')}</button><button onClick={() => confirmAction('disableUser', user.id)} className="text-red-600 hover:text-red-800 text-sm font-medium hover:underline">{t('users.actions.disable')}</button></>}
-                            {(user.status === 'suspended' || user.status === 'disabled') && <button onClick={() => setUsers(prev => prev.map(u => u.id === user.id ? { ...u, status: 'active' } : u))} className="text-green-600 hover:text-green-800 text-sm font-medium hover:underline">{t('users.actions.activate')}</button>}
-                            <button onClick={() => confirmAction('deleteUser', user.id)} className="text-red-700 hover:text-red-900 text-sm font-medium hover:underline">{t('users.actions.delete')}</button>
-                          </div>
+                          {!u.is_me && (
+                            <div className="flex justify-end gap-2 flex-wrap">
+                              {u.role !== 'admin' && <button onClick={() => confirmAction('promoteToAdmin', u.id)} className="text-indigo-600 hover:text-indigo-800 text-sm font-medium hover:underline">{t('users.actions.promote')}</button>}
+                              {u.role === 'admin' && u.role_source === 'database' && <button onClick={() => confirmAction('demoteToUser', u.id)} className="text-indigo-600 hover:text-indigo-800 text-sm font-medium hover:underline">{t('users.actions.demote')}</button>}
+                              {u.active
+                                ? <button onClick={() => confirmAction('disableUser', u.id)} className="text-red-600 hover:text-red-800 text-sm font-medium hover:underline">{t('users.actions.disable')}</button>
+                                : <button onClick={async () => { try { await userAction({ action: 'set_active', id: u.id, active: true }); showToast(t('users.done.activate')); } catch (e) { showToast(e.message, 'error'); } }} className="text-green-600 hover:text-green-800 text-sm font-medium hover:underline">{t('users.actions.activate')}</button>}
+                              <button onClick={() => confirmAction('revokeSessions', u.id)} className="text-gray-600 hover:text-gray-800 text-sm font-medium hover:underline">{t('users.actions.revoke_sessions')}</button>
+                              <button onClick={() => confirmAction('deleteUser', u.id)} className="text-red-700 hover:text-red-900 text-sm font-medium hover:underline">{t('users.actions.delete')}</button>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -498,12 +578,7 @@ const Admin = () => {
                     <option value="Inter">Inter (Default)</option><option value="Roboto">Roboto</option><option value="Open Sans">Open Sans</option><option value="Nunito">Nunito</option>
                   </select>
                 </div>
-                <div>
-                  <label className="block text-[15px] font-medium text-gray-700 mb-2">{t('ui.chart_type')}</label>
-                  <select value={uiSettings.chartType} onChange={(e) => setUiSettings(prev => ({ ...prev, chartType: e.target.value }))} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-[15px] focus:ring-2 focus:ring-indigo-500">
-                    <option value="area">{t('appearance.chart.area')}</option><option value="line">{t('appearance.chart.line')}</option><option value="bar">{t('appearance.chart.bar')}</option><option value="radar">{t('appearance.chart.radar')}</option>
-                  </select>
-                </div>
+                <p className="text-sm text-gray-500">{t('settings_api.ui_note')}</p>
               </div>
             </div>
           </div>
@@ -534,6 +609,22 @@ const Admin = () => {
                   </button>
                 </div>
               </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[15px] font-medium text-gray-700 mb-1">{t('settings_api.maintenance_message')}</label>
+                  <textarea rows={3} maxLength={500} value={systemSettings.maintenanceMessage || ''}
+                    onChange={(e) => setSystemSettings(prev => ({ ...prev, maintenanceMessage: e.target.value }))}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[15px]" />
+                </div>
+                <div>
+                  <label className="block text-[15px] font-medium text-gray-700 mb-1">{t('settings_api.session_timeout')}</label>
+                  <input type="number" min={15} max={43200} value={systemSettings.sessionTimeoutMinutes}
+                    onChange={(e) => setSystemSettings(prev => ({ ...prev, sessionTimeoutMinutes: Number(e.target.value) }))}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[15px]" />
+                  <p className="text-sm text-gray-500 mt-1">{t('settings_api.session_timeout_help')}</p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-500">{t('settings_api.email_verify_note')}</p>
             </div>
           </div>
         );
@@ -546,20 +637,19 @@ const Admin = () => {
               <div className="overflow-x-auto">
                 <table className="w-full text-[15px]">
                   <thead className="bg-gray-50 text-gray-600">
-                    <tr><th className="px-4 py-3 text-left font-medium">{t('audit.table.time')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.admin')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.action')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.target')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.status')}</th></tr>
+                    <tr><th className="px-4 py-3 text-left font-medium">{t('audit.table.time')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.admin')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.action')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.target')}</th><th className="px-4 py-3 text-left font-medium">{t('settings_api.ip')}</th></tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {[
-                      { time: '2024-05-25 14:32', admin: 'Admin Utama', action: 'Mencabut API Key', target: 'wz_42_...f678', status: 'success' },
-                      { time: '2024-05-25 10:15', admin: 'Admin Utama', action: 'Memperbarui Bobot WIS', target: 'academic: 40% → 45%', status: 'success' },
-                      { time: '2024-05-24 16:48', admin: 'Admin Utama', action: 'Menangguhkan Akun', target: 'budi@ugm.ac.id', status: 'success' },
-                    ].map((log, idx) => (
-                      <tr key={idx} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-gray-900 font-mono text-sm">{log.time}</td>
-                        <td className="px-4 py-3 text-gray-900">{log.admin}</td>
-                        <td className="px-4 py-3"><span className={`px-2 py-1 rounded text-sm font-medium ${log.action.includes('Cabut') || log.action.includes('Hapus') ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>{log.action}</span></td>
-                        <td className="px-4 py-3 text-gray-600 font-mono text-sm truncate max-w-[200px]">{log.target}</td>
-                        <td className="px-4 py-3"><span className={`px-2 py-1 rounded-full text-sm font-medium ${log.status === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{log.status}</span></td>
+                    {auditEntries.length === 0 && (
+                      <tr><td colSpan={5} className="px-4 py-6 text-center text-gray-500">{t('settings_api.no_activity')}</td></tr>
+                    )}
+                    {auditEntries.map((log) => (
+                      <tr key={log.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 text-gray-900 font-mono text-sm">{log.created_at}</td>
+                        <td className="px-4 py-3 text-gray-900">{log.admin_email}</td>
+                        <td className="px-4 py-3"><span className="px-2 py-1 rounded text-sm font-medium bg-indigo-50 text-indigo-700">{t(`settings_api.actions.${String(log.action).replace(/\./g, '_')}`, { defaultValue: log.action })}</span></td>
+                        <td className="px-4 py-3 text-gray-600 font-mono text-sm truncate max-w-[260px]" title={log.after ? JSON.stringify(log.after) : ''}>{log.target}</td>
+                        <td className="px-4 py-3 text-gray-500 text-sm">{log.ip || '—'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -868,10 +958,11 @@ const Admin = () => {
   const ConfirmationModal = () => {
     if (!confirmModal.show) return null;
     const modal = {
-      revokeApiKey: { title: 'Cabut API Key?', message: 'Pengguna tidak akan dapat menggunakan kunci API ini lagi.', confirmText: 'Ya, Cabut', confirmClass: 'bg-red-600' },
-      suspendUser: { title: 'Tangguhkan Akun?', message: 'Pengguna tidak dapat login hingga ditinjau.', confirmText: 'Ya, Tangguhkan', confirmClass: 'bg-amber-600' },
-      deleteUser: { title: 'Hapus Akun Permanen?', message: 'SEMUA data akan dihapus permanen. TIDAK DAPAT DIBATALKAN.', confirmText: 'Ya, Hapus', confirmClass: 'bg-red-700' },
-      promoteToCoAdmin: { title: 'Promosikan ke Co-Admin?', message: 'Pengguna akan memiliki akses administratif terbatas.', confirmText: 'Ya, Promosikan', confirmClass: 'bg-indigo-600' },
+      disableUser: { title: t('users.confirm.disable_title'), message: t('users.confirm.disable_msg'), confirmText: t('users.confirm.disable_ok'), confirmClass: 'bg-red-600' },
+      revokeSessions: { title: t('users.confirm.revoke_title'), message: t('users.confirm.revoke_msg'), confirmText: t('users.confirm.revoke_ok'), confirmClass: 'bg-gray-800' },
+      demoteToUser: { title: t('users.confirm.demote_title'), message: t('users.confirm.demote_msg'), confirmText: t('users.confirm.demote_ok'), confirmClass: 'bg-indigo-600' },
+      deleteUser: { title: t('users.confirm.delete_title'), message: t('users.confirm.delete_msg'), confirmText: t('users.confirm.delete_ok'), confirmClass: 'bg-red-700' },
+      promoteToAdmin: { title: t('users.confirm.promote_title'), message: t('users.confirm.promote_msg'), confirmText: t('users.confirm.promote_ok'), confirmClass: 'bg-indigo-600' },
       archiveCache: { title: t('cache.confirm_archive_title'), message: t('cache.confirm_archive_msg'), confirmText: t('cache.confirm_archive_ok'), confirmClass: 'bg-amber-600' },
     }[confirmModal.action] || { title: 'Konfirmasi', message: 'Lanjutkan?', confirmText: 'Ya', confirmClass: 'bg-indigo-600' };
     return (

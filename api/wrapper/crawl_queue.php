@@ -19,7 +19,7 @@ declare(strict_types=1);
  *   POST /api/crawl_queue.php { "action": "process" }
  *   POST /api/crawl_queue.php { "action": "clear_finished" }
  *
- * Wajib header X-Admin-Token (= ADMIN_TOOL_TOKEN di .env).
+ * Hanya admin (akun admin yang login atau header X-Admin-Token), lihat AdminGuard.
  *
  * Alur "process": mesin SDG lokal (api/sdgs/SDG_Classification_API.php) dijalankan
  * di proses yang sama untuk ORCID (init → batch per 3 karya) atau DOI, lalu setiap
@@ -61,15 +61,8 @@ function cq_respond(array $payload, int $code = 200): void
 }
 
 // ── Autentikasi admin ────────────────────────────────────────────────────────
-$expected = (string) (getenv('ADMIN_TOOL_TOKEN') ?: ($_ENV['ADMIN_TOOL_TOKEN'] ?? ''));
-if ($expected === '') {
-    cq_respond(['status' => 'error', 'code' => 'TOKEN_NOT_CONFIGURED',
-        'message' => 'ADMIN_TOOL_TOKEN belum diatur di file .env server. Antrean crawl dinonaktifkan.'], 503);
-}
-$given = (string) ($_SERVER['HTTP_X_ADMIN_TOKEN'] ?? '');
-if ($given === '' || !hash_equals($expected, $given)) {
-    cq_respond(['status' => 'error', 'code' => 'UNAUTHORIZED', 'message' => 'Token admin tidak valid.'], 401);
-}
+// Akun admin yang login, atau header X-Admin-Token (= ADMIN_TOOL_TOKEN di .env).
+\Sciecola\Auth\AdminGuard::require();
 
 // ── Input ────────────────────────────────────────────────────────────────────
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';

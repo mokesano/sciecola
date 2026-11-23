@@ -24,7 +24,9 @@
   "auth": {
     "login": "Masuk",
     "register": "Daftar",
-    "profile": "Profil Saya"
+    "profile": "Profil Saya",
+    "settings": "Pengaturan",
+    "logout": "Keluar"
   },
   "menu": {
     "home": "Beranda",

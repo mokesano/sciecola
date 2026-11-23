@@ -115,11 +115,17 @@ switch ($type) {
         // Profil ORCID disusun langsung oleh ResearcherProfileService (database dulu,
         // lalu mesin SDG lokal). Dulu file researcher_profile.php di-require di sini,
         // yang memicu fatal error "Cannot redeclare callLocalApi()".
+        if ($denied = \Sciecola\Auth\ProfilePrivacy::denial($id)) {
+            http_response_code($denied[0]);
+            echo json_encode(['status' => 'error', 'code' => $denied[1], 'message' => $denied[2]], JSON_UNESCAPED_UNICODE);
+            break;
+        }
         @set_time_limit(90);
         ob_start();
         try {
             $data = \Sciecola\Sdg\ResearcherProfileService::build($id, ['refresh' => ($_GET['refresh'] ?? '') === 'true']);
             unset($data['works']);
+            $data['profile'] = \Sciecola\Auth\ProfilePrivacy::filterProfile($id, (array) ($data['profile'] ?? []));
             $data['profile']['_source_type'] = 'orcid';
             $data['profile']['_source_id']   = strtoupper($id);
             ob_end_clean();

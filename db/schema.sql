@@ -223,6 +223,145 @@ CREATE TABLE IF NOT EXISTS user_accounts (
   INDEX idx_active (is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Keamanan akun, sesi, dan token sekali pakai (src/Auth/AuthStore.php juga membuat
+-- tabel-tabel ini otomatis bila belum ada). Token hanya disimpan sebagai hash SHA-256.
+CREATE TABLE IF NOT EXISTS user_security (
+  user_id              INT UNSIGNED    NOT NULL PRIMARY KEY,
+  totp_secret          VARCHAR(64)     NULL,
+  totp_pending_secret  VARCHAR(64)     NULL,
+  totp_enabled         TINYINT         NOT NULL DEFAULT 0,
+  totp_last_counter    BIGINT          NULL  COMMENT 'mencegah kode TOTP dipakai ulang',
+  recovery_codes       TEXT            NULL  COMMENT 'JSON array hash SHA-256',
+  orcid_verified       TINYINT         NOT NULL DEFAULT 0  COMMENT '1 = dibuktikan lewat ORCID OAuth',
+  google_sub           VARCHAR(64)     NULL UNIQUE,
+  password_changed_at  TIMESTAMP       NULL,
+  updated_at           TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS auth_sessions (
+  id            CHAR(64)        NOT NULL PRIMARY KEY  COMMENT 'SHA-256 token sesi',
+  user_id       INT UNSIGNED    NOT NULL,
+  remember      TINYINT         NOT NULL DEFAULT 0,
+  ip            VARCHAR(45)     NULL,
+  user_agent    VARCHAR(255)    NULL,
+  created_at    TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  last_seen_at  TIMESTAMP       NULL,
+  expires_at    TIMESTAMP       NOT NULL,
+  INDEX idx_auth_sessions_user (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS auth_tokens (
+  id            BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id       INT UNSIGNED    NULL,
+  purpose       VARCHAR(30)     NOT NULL  COMMENT 'verify_email | reset_password | login_2fa | oauth_state | orcid_claim',
+  token_hash    CHAR(64)        NOT NULL UNIQUE,
+  code_hash     CHAR(64)        NULL,
+  attempts      INT UNSIGNED    NOT NULL DEFAULT 0,
+  data_json     TEXT            NULL,
+  expires_at    TIMESTAMP       NOT NULL,
+  used_at       TIMESTAMP       NULL,
+  created_at    TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_auth_tokens_user_purpose (user_id, purpose)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS auth_attempts (
+  id            BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  scope         VARCHAR(20)     NOT NULL,
+  identifier    VARCHAR(255)    NOT NULL,
+  created_at    TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_auth_attempts_lookup (scope, identifier, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Pengaturan Admin & log audit (src/Support/AppSettings.php membuatnya otomatis).
+CREATE TABLE IF NOT EXISTS app_settings (
+  setting_group  VARCHAR(40)  NOT NULL PRIMARY KEY  COMMENT 'system | content | ui | impact',
+  value_json     TEXT         NOT NULL,
+  updated_by     INT          NULL,
+  updated_at     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS admin_audit_log (
+  id             BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  admin_user_id  INT          NULL,
+  admin_email    VARCHAR(255) NULL,
+  action         VARCHAR(60)  NOT NULL,
+  target         VARCHAR(255) NOT NULL DEFAULT '',
+  before_json    TEXT         NULL,
+  after_json     TEXT         NULL,
+  ip             VARCHAR(45)  NULL,
+  created_at     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Pesan & feed komunitas (src/Community/CommunitySchema.php membuatnya otomatis).
+CREATE TABLE IF NOT EXISTS conversations (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  conversation_type VARCHAR(10) NOT NULL DEFAULT 'direct',
+  name VARCHAR(255) NULL,
+  created_by INT UNSIGNED NOT NULL,
+  is_archived TINYINT NOT NULL DEFAULT 0,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  last_message_at TIMESTAMP NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS conversation_participants (
+  conversation_id BIGINT UNSIGNED NOT NULL,
+  user_id INT UNSIGNED NOT NULL,
+  last_read_at TIMESTAMP NULL,
+  joined_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (conversation_id, user_id),
+  INDEX idx_cp_user (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS messages (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  conversation_id BIGINT UNSIGNED NOT NULL,
+  sender_id INT UNSIGNED NOT NULL,
+  message_text TEXT NOT NULL,
+  message_type VARCHAR(20) NOT NULL DEFAULT 'text',
+  file_url VARCHAR(512) NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'sent',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  edited_at TIMESTAMP NULL,
+  deleted_at TIMESTAMP NULL,
+  INDEX idx_messages_conv (conversation_id, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS feed_posts (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  author_id INT UNSIGNED NOT NULL,
+  post_type VARCHAR(20) NOT NULL DEFAULT 'text',
+  title VARCHAR(255) NULL,
+  content TEXT NOT NULL,
+  image_url VARCHAR(512) NULL,
+  visibility VARCHAR(20) NOT NULL DEFAULT 'public'  COMMENT 'public | internal (hanya pengguna terdaftar)',
+  likes_count INT UNSIGNED NOT NULL DEFAULT 0,
+  comments_count INT UNSIGNED NOT NULL DEFAULT 0,
+  is_pinned TINYINT NOT NULL DEFAULT 0,
+  is_deleted TINYINT NOT NULL DEFAULT 0,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NULL,
+  INDEX idx_feed_created (is_deleted, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS feed_post_likes (
+  post_id BIGINT UNSIGNED NOT NULL,
+  user_id INT UNSIGNED NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (post_id, user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS feed_post_comments (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  post_id BIGINT UNSIGNED NOT NULL,
+  author_id INT UNSIGNED NOT NULL,
+  parent_comment_id BIGINT UNSIGNED NULL,
+  comment_text TEXT NOT NULL,
+  likes_count INT UNSIGNED NOT NULL DEFAULT 0,
+  is_deleted TINYINT NOT NULL DEFAULT 0,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_fpc_post (post_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS user_external_ids (
   id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
   orcid           VARCHAR(20)     NOT NULL,

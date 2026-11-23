@@ -32,6 +32,7 @@ try {
     if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
     $configFile = ROOT_PATH . '/config/config.php';
     if (file_exists($configFile)) require_once $configFile;
+    require_once ROOT_PATH . '/includes/autoload.php';
 
     $page    = max(1, (int)($_GET['page'] ?? 1));
     $limit   = min(50, max(1, (int)($_GET['limit'] ?? 10)));
@@ -43,7 +44,13 @@ try {
 
     echo json_encode([
         'status'    => 'success',
-        'data'      => fetchTopResearchersData($page, $limit, $sort, $sdg, $country, $search),
+        'data'      => (static function (array $d): array {
+            // Profil privat disaring dari peringkat publik.
+            if (isset($d['researchers']) && is_array($d['researchers'])) {
+                $d['researchers'] = \Sciecola\Auth\ProfilePrivacy::filterList($d['researchers']);
+            }
+            return $d;
+        })(fetchTopResearchersData($page, $limit, $sort, $sdg, $country, $search)),
         'timestamp' => date('c'),
     ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 

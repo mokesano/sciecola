@@ -52,6 +52,11 @@ if (!preg_match('/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/i', $orcid)) {
     rp_respond(['status' => 'error', 'message' => 'invalid ORCID format'], 400);
 }
 
+// Pengaturan privasi pemilik profil (Pengaturan → Notifikasi & Privasi).
+if ($denied = \Sciecola\Auth\ProfilePrivacy::denial($orcid)) {
+    rp_respond(['status' => 'error', 'code' => $denied[1], 'message' => $denied[2]], $denied[0]);
+}
+
 @set_time_limit(90);
 
 try {
@@ -59,6 +64,9 @@ try {
         'refresh' => ($_GET['refresh'] ?? '') === 'true',
     ]);
     unset($result['works']); // daftar karya lengkap hanya untuk pemakaian internal
+    if (isset($result['profile']) && is_array($result['profile'])) {
+        $result['profile'] = \Sciecola\Auth\ProfilePrivacy::filterProfile($orcid, $result['profile']);
+    }
     rp_respond($result);
 } catch (Throwable $e) {
     $code = in_array($e->getCode(), [400, 404, 502], true) ? (int) $e->getCode() : 500;

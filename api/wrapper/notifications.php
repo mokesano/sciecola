@@ -18,17 +18,17 @@ declare(strict_types=1);
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
 
 try {
     if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
     $configFile = ROOT_PATH . '/config/config.php';
     if (file_exists($configFile)) require_once $configFile;
+    require_once ROOT_PATH . '/includes/autoload.php';
 
     $method = $_SERVER['REQUEST_METHOD'];
 
     if ($method === 'GET') {
-        $orcid      = trim($_GET['orcid'] ?? '');
+        $orcid      = \Sciecola\Auth\UserAuth::requireOrcid();
         $unreadOnly = $_GET['unread_only'] ?? '0';
         $type       = trim($_GET['type'] ?? '');
         $limit      = (int)($_GET['limit'] ?? 50);
@@ -44,6 +44,7 @@ try {
         echo json_encode(getNotifications($orcid, $unreadOnly, $type, $limit));
 
     } elseif ($method === 'PUT') {
+        $ownerOrcid = \Sciecola\Auth\UserAuth::requireOrcid();
         $input    = json_decode(file_get_contents('php://input'), true);
         $notifId  = (int)($input['id'] ?? 0);
         $action   = $input['action'] ?? '';
@@ -55,9 +56,9 @@ try {
         }
 
         if ($action === 'read') {
-            echo json_encode(markAsRead($notifId));
+            echo json_encode(markAsRead($notifId, $ownerOrcid));
         } elseif ($action === 'delete') {
-            echo json_encode(deleteNotification($notifId));
+            echo json_encode(deleteNotification($notifId, $ownerOrcid));
         } else {
             http_response_code(400);
             echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
@@ -146,7 +147,7 @@ function getNotifications(string $orcid, string $unreadOnly, string $type, int $
     }
 }
 
-function markAsRead(int $notifId): array {
+function markAsRead(int $notifId, string $ownerOrcid): array {
     if (!defined('DB_HOST') || !DB_HOST) {
         return ['status' => 'error', 'message' => 'Database not configured'];
     }
@@ -158,13 +159,13 @@ function markAsRead(int $notifId): array {
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
         );
 
-        $checkStmt = $pdo->prepare("SELECT id FROM notifications WHERE id = ?");
-        $checkStmt->execute([$notifId]);
+        $checkStmt = $pdo->prepare("SELECT id FROM notifications WHERE id = ? AND recipient_orcid = ?");
+        $checkStmt->execute([$notifId, $ownerOrcid]);
         if (!$checkStmt->fetch()) {
             return ['status' => 'error', 'message' => 'Notification not found'];
         }
 
-        $stmt = $pdo->prepare("UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ?");
+        $stmt = $pdo->prepare("UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ? AND recipient_orcid = ?");
         $stmt->execute([$notifId]);
 
         return ['status' => 'success', 'message' => 'Notification marked as read'];
@@ -174,7 +175,7 @@ function markAsRead(int $notifId): array {
     }
 }
 
-function deleteNotification(int $notifId): array {
+function deleteNotification(int $notifId, string $ownerOrcid): array {
     if (!defined('DB_HOST') || !DB_HOST) {
         return ['status' => 'error', 'message' => 'Database not configured'];
     }
@@ -186,13 +187,13 @@ function deleteNotification(int $notifId): array {
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
         );
 
-        $checkStmt = $pdo->prepare("SELECT id FROM notifications WHERE id = ?");
-        $checkStmt->execute([$notifId]);
+        $checkStmt = $pdo->prepare("SELECT id FROM notifications WHERE id = ? AND recipient_orcid = ?");
+        $checkStmt->execute([$notifId, $ownerOrcid]);
         if (!$checkStmt->fetch()) {
             return ['status' => 'error', 'message' => 'Notification not found'];
         }
 
-        $stmt = $pdo->prepare("DELETE FROM notifications WHERE id = ?");
+        $stmt = $pdo->prepare("DELETE FROM notifications WHERE id = ? AND recipient_orcid = ?");
         $stmt->execute([$notifId]);
 
         return ['status' => 'success', 'message' => 'Notification deleted'];

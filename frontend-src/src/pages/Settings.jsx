@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useSearchParams, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
+import { useAuth } from '../context/AuthContext';
+import { authGet, authPost, getAuthConfig, oauthUrl } from '../utils/authApi';
 
-const NOTIFICATION_KEYS = [
-  { state: 'citationAlerts',        i18n: 'citation'  },
-  { state: 'collaborationRequests', i18n: 'collab'    },
-  { state: 'weeklyDigest',          i18n: 'digest'    },
-  { state: 'marketingUpdates',      i18n: 'marketing' },
-  { state: 'securityAlerts',        i18n: 'security'  },
-];
-
+/**
+ * Pengaturan akun — semua nilai berasal dari server dan disimpan ke server.
+ *
+ * Versi lama menampilkan profil contoh ("Dr. Andi Rahman"), kunci API palsu, dan
+ * tombol simpan yang hanya menunggu 0,8 detik; tombol 2FA tidak melakukan apa pun.
+ */
 const TABS = [
-  { id: 'profile',       i18n: 'profile',       icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
-  { id: 'notifications', i18n: 'notifications', icon: 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9' },
-  { id: 'privacy',       i18n: 'privacy',       icon: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z' },
-  { id: 'integrations',  i18n: 'integrations',  icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
-  { id: 'account',       i18n: 'account',       icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z' },
+  { id: 'profile',       icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
+  { id: 'security',      icon: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z' },
+  { id: 'notifications', icon: 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9' },
+  { id: 'account',       icon: 'M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16' },
 ];
 
 const Chevron = () => (
@@ -25,74 +24,55 @@ const Chevron = () => (
   </svg>
 );
 
-const Toggle = ({ on, onClick }) => (
-  <button
-    onClick={onClick}
-    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${on ? 'bg-indigo-600' : 'bg-gray-200'}`}
-  >
+const Toggle = ({ on, onClick, label }) => (
+  <button type="button" onClick={onClick} role="switch" aria-checked={on} aria-label={label}
+    className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${on ? 'bg-indigo-600' : 'bg-gray-200'}`}>
     <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${on ? 'translate-x-6' : 'translate-x-1'}`} />
   </button>
 );
 
+const Card = ({ title, desc, children }) => (
+  <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
+    {title && <h2 className="text-lg font-bold text-gray-900">{title}</h2>}
+    {desc && <p className="text-[15px] text-gray-500 -mt-2">{desc}</p>}
+    {children}
+  </div>
+);
+
+const input = 'w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500';
+const btnPrimary = 'px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60';
+const btnGhost = 'px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-[15px] font-medium hover:bg-gray-50 disabled:opacity-60';
+
 const Settings = () => {
   const { t } = useTranslation('settings');
+  const { t: ta } = useTranslation('account');
+  const { user, login, logout, linkOrcid } = useAuth();
+  const navigate = useNavigate();
+  const [params] = useSearchParams();
 
   const [activeTab, setActiveTab] = useState('profile');
-  const [loading, setLoading] = useState(false);
+  const [config, setConfig] = useState(null);
+  const [busy, setBusy] = useState('');
 
-  const [profile, setProfile] = useState({
-    name: 'Dr. Andi Rahman',
-    email: 'andi.rahman@ui.ac.id',
-    orcid: '0000-0002-1825-0097',
-    affiliation: 'Universitas Indonesia',
-    role: 'Peneliti Utama',
-    bio: 'Fokus pada adaptasi perubahan iklim dan kebijakan lingkungan pesisir.',
-    interests: ['Climate Change', 'Coastal Ecology', 'Environmental Policy']
-  });
+  useEffect(() => { getAuthConfig().then(setConfig); }, []);
+  useEffect(() => {
+    const linked = params.get('linked');
+    const err = params.get('oauth_error');
+    if (linked) toast.success(ta('settings.linked_ok', { provider: linked === 'orcid' ? 'ORCID' : 'Google' }));
+    if (err) toast.error(ta(`oauth_errors.${err}`, { defaultValue: ta('oauth_errors.generic') }));
+  }, [params, ta]);
 
-  const [notifications, setNotifications] = useState({
-    citationAlerts: true,
-    collaborationRequests: true,
-    weeklyDigest: false,
-    marketingUpdates: false,
-    securityAlerts: true
-  });
-
-  const [privacy, setPrivacy] = useState({
-    profileVisibility: 'public',
-    showDownloads: true,
-    allowMessages: true,
-    twoFactor: false
-  });
-
-  const [integrations] = useState({
-    orcidConnected: true,
-    apiKeys: [
-      { id: 1, name: 'Production Key',  key: 'wz_****_8f3a9c', created: '2024-01-15', active: true  },
-      { id: 2, name: 'Development Key', key: 'wz_****_2b7e1d', created: '2024-03-22', active: false }
-    ]
-  });
-
-  const [account, setAccount] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
-  });
-
-  const handleSave = async () => {
-    setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
-    setLoading(false);
-    toast.success(t('toast.saved'));
+  const run = async (key, fn) => {
+    setBusy(key);
+    try { return await fn(); }
+    catch (err) { toast.error(err.message); return null; }
+    finally { setBusy(''); }
   };
 
-  const toggleNotification = (key) => {
-    setNotifications(prev => ({ ...prev, [key]: !prev[key] }));
-  };
+  if (!user) return null; // dilindungi RequireAuth
 
   return (
     <main className="pt-[68px] pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-      {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-[15px] text-gray-600 mb-6">
         <Link to="/" className="hover:text-indigo-600 transition-colors">{t('breadcrumb.home')}</Link>
         <span className="text-gray-400"><Chevron /></span>
@@ -101,306 +81,45 @@ const Settings = () => {
         <span className="text-gray-900 font-medium">{t('breadcrumb.current')}</span>
       </nav>
 
-      {/* Header & Save */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
-          <p className="text-gray-600 mt-1">{t('subtitle')}</p>
-        </div>
-        <button
-          onClick={handleSave}
-          disabled={loading}
-          className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transition-all flex items-center gap-2 shadow-sm"
-        >
-          {loading ? (
-            <>
-              <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-              </svg>
-              {t('actions.saving')}
-            </>
-          ) : (
-            <>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-              </svg>
-              {t('actions.save')}
-            </>
-          )}
-        </button>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">{t('title')}</h1>
+        <p className="text-gray-600 mt-1">{t('subtitle')}</p>
       </div>
 
-      {/* Tabs Navigation */}
       <div className="border-b border-gray-200 mb-8 overflow-x-auto">
         <nav className="flex gap-6 min-w-max">
           {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+            <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 font-medium text-[15px] whitespace-nowrap transition-colors ${
-                activeTab === tab.id
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
+                activeTab === tab.id ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}>
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={tab.icon} />
               </svg>
-              {t(`tabs.${tab.i18n}`)}
+              {ta(`settings.tabs.${tab.id}`)}
             </button>
           ))}
         </nav>
       </div>
 
-      {/* Tab Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Form Content */}
         <div className="lg:col-span-2 space-y-6">
-
-          {/* Profile Tab */}
           {activeTab === 'profile' && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-6">
-              <h2 className="text-lg font-bold text-gray-900">{t('profile.title')}</h2>
-
-              <div className="flex items-center gap-4">
-                <div className="w-20 h-20 rounded-full bg-indigo-100 flex items-center justify-center text-2xl font-bold text-indigo-600 border-4 border-white shadow">
-                  {profile.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                </div>
-                <div>
-                  <button className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-[15px] font-medium hover:bg-gray-200 transition-colors">{t('profile.photo_change')}</button>
-                  <p className="text-sm text-gray-500 mt-1">{t('profile.photo_help')}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[15px] font-medium text-gray-700 mb-1">{t('profile.name')}</label>
-                  <input type="text" value={profile.name} onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
-                </div>
-                <div>
-                  <label className="block text-[15px] font-medium text-gray-700 mb-1">{t('profile.email')}</label>
-                  <input type="email" value={profile.email} readOnly
-                    className="w-full px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-lg text-gray-500 cursor-not-allowed" />
-                </div>
-                <div>
-                  <label className="block text-[15px] font-medium text-gray-700 mb-1">{t('profile.orcid')}</label>
-                  <input type="text" value={profile.orcid} onChange={(e) => setProfile({ ...profile, orcid: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
-                </div>
-                <div>
-                  <label className="block text-[15px] font-medium text-gray-700 mb-1">{t('profile.affiliation')}</label>
-                  <input type="text" value={profile.affiliation} onChange={(e) => setProfile({ ...profile, affiliation: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[15px] font-medium text-gray-700 mb-1">{t('profile.bio')}</label>
-                <textarea rows={3} value={profile.bio} onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all resize-none" />
-              </div>
-
-              <div>
-                <label className="block text-[15px] font-medium text-gray-700 mb-1">{t('profile.interests')}</label>
-                <input type="text" value={profile.interests.join(', ')}
-                  onChange={(e) => setProfile({ ...profile, interests: e.target.value.split(',').map(i => i.trim()) })}
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
-              </div>
-            </div>
+            <ProfileTab user={user} config={config} busy={busy} run={run} login={login} linkOrcid={linkOrcid} t={t} ta={ta} />
           )}
-
-          {/* Notifications Tab */}
-          {activeTab === 'notifications' && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm divide-y divide-gray-100">
-              <div className="p-6">
-                <h2 className="text-lg font-bold text-gray-900">{t('notifications.title')}</h2>
-                <p className="text-[15px] text-gray-600 mt-1">{t('notifications.subtitle')}</p>
-              </div>
-
-              {NOTIFICATION_KEYS.map((n) => (
-                <div key={n.state} className="p-6 flex items-center justify-between gap-4">
-                  <div>
-                    <p className="font-medium text-gray-900">{t(`notifications.items.${n.i18n}.title`)}</p>
-                    <p className="text-[15px] text-gray-500">{t(`notifications.items.${n.i18n}.desc`)}</p>
-                  </div>
-                  <Toggle on={notifications[n.state]} onClick={() => toggleNotification(n.state)} />
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Privacy Tab */}
-          {activeTab === 'privacy' && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-6">
-              <h2 className="text-lg font-bold text-gray-900">{t('privacy.title')}</h2>
-
-              <div>
-                <label className="block text-[15px] font-medium text-gray-700 mb-2">{t('privacy.visibility')}</label>
-                <select value={privacy.profileVisibility}
-                  onChange={(e) => setPrivacy({ ...privacy, profileVisibility: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                  <option value="public">{t('privacy.visibility_public')}</option>
-                  <option value="registered">{t('privacy.visibility_reg')}</option>
-                  <option value="private">{t('privacy.visibility_private')}</option>
-                </select>
-              </div>
-
-              <div className="space-y-4 pt-4 border-t border-gray-100">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-gray-900">{t('privacy.downloads')}</p>
-                    <p className="text-[15px] text-gray-500">{t('privacy.downloads_desc')}</p>
-                  </div>
-                  <Toggle on={privacy.showDownloads} onClick={() => setPrivacy(p => ({ ...p, showDownloads: !p.showDownloads }))} />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-gray-900">{t('privacy.messages')}</p>
-                    <p className="text-[15px] text-gray-500">{t('privacy.messages_desc')}</p>
-                  </div>
-                  <Toggle on={privacy.allowMessages} onClick={() => setPrivacy(p => ({ ...p, allowMessages: !p.allowMessages }))} />
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-gray-100">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-gray-900">{t('privacy.twofa')}</p>
-                    <p className="text-[15px] text-gray-500">{t('privacy.twofa_desc')}</p>
-                  </div>
-                  <Toggle on={privacy.twoFactor} onClick={() => setPrivacy(p => ({ ...p, twoFactor: !p.twoFactor }))} />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Integrations Tab */}
-          {activeTab === 'integrations' && (
-            <div className="space-y-6">
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <h2 className="text-lg font-bold text-gray-900">{t('integrations.linked')}</h2>
-                <div className="mt-4 flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
-                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm0 22c-5.52 0-10-4.48-10-10S6.48 2 12 2s10 4.48 10 10-4.48 10-10 10zm1-15h-2v6l5.25 3.15.75-1.23-4-2.42V7z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900">ORCID</p>
-                      <p className="text-[15px] text-gray-500">{t('integrations.orcid_status')}</p>
-                    </div>
-                  </div>
-                  <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-bold">{t('integrations.connected')}</span>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-lg font-bold text-gray-900">{t('integrations.api_keys')}</h2>
-                  <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 transition-colors">
-                    {t('integrations.api_new')}
-                  </button>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-[15px]">
-                    <thead className="bg-gray-50 text-gray-600">
-                      <tr>
-                        <th className="px-4 py-3 font-medium">{t('integrations.api_name')}</th>
-                        <th className="px-4 py-3 font-medium">{t('integrations.api_key')}</th>
-                        <th className="px-4 py-3 font-medium">{t('integrations.api_created')}</th>
-                        <th className="px-4 py-3 font-medium">{t('integrations.api_status')}</th>
-                        <th className="px-4 py-3 font-medium text-right">{t('integrations.api_actions')}</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {integrations.apiKeys.map(key => (
-                        <tr key={key.id} className="hover:bg-gray-50">
-                          <td className="px-4 py-3 font-medium text-gray-900">{key.name}</td>
-                          <td className="px-4 py-3 text-gray-600 font-mono text-sm">{key.key}</td>
-                          <td className="px-4 py-3 text-gray-500">{key.created}</td>
-                          <td className="px-4 py-3">
-                            <span className={`px-2 py-1 rounded-full text-sm font-bold ${key.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
-                              {key.active ? t('integrations.api_active') : t('integrations.api_inactive')}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-right">
-                            <button className="text-red-600 hover:text-red-800 text-[15px] font-medium">{t('integrations.api_revoke')}</button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Account Tab */}
+          {activeTab === 'security' && <SecurityTab user={user} busy={busy} run={run} login={login} ta={ta} />}
+          {activeTab === 'notifications' && <PreferencesTab user={user} ta={ta} t={t} />}
           {activeTab === 'account' && (
-            <div className="space-y-6">
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
-                <h2 className="text-lg font-bold text-gray-900">{t('account.password_title')}</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[15px] font-medium text-gray-700 mb-1">{t('account.current')}</label>
-                    <input type="password" value={account.currentPassword}
-                      onChange={(e) => setAccount({ ...account, currentPassword: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[15px] font-medium text-gray-700 mb-1">{t('account.new')}</label>
-                    <input type="password" value={account.newPassword}
-                      onChange={(e) => setAccount({ ...account, newPassword: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-                  </div>
-                  <div>
-                    <label className="block text-[15px] font-medium text-gray-700 mb-1">{t('account.confirm')}</label>
-                    <input type="password" value={account.confirmPassword}
-                      onChange={(e) => setAccount({ ...account, confirmPassword: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-                  </div>
-                </div>
-                <Link to="/settings/change-password"
-                  className="inline-block px-5 py-2.5 bg-gray-900 text-white rounded-lg text-[15px] font-medium hover:bg-gray-800 transition-colors">
-                  {t('account.update')}
-                </Link>
-              </div>
-
-              <div className="bg-red-50 rounded-xl border border-red-200 p-6">
-                <h2 className="text-lg font-bold text-red-800">{t('account.danger_title')}</h2>
-                <p className="text-[15px] text-red-600 mt-1 mb-4">{t('account.danger_desc')}</p>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <button className="px-4 py-2 border border-red-300 text-red-700 rounded-lg text-[15px] font-medium hover:bg-red-100 transition-colors">
-                    {t('account.deactivate')}
-                  </button>
-                  <button className="px-4 py-2 bg-red-600 text-white rounded-lg text-[15px] font-medium hover:bg-red-700 transition-colors">
-                    {t('account.delete')}
-                  </button>
-                </div>
-              </div>
-            </div>
+            <AccountTab user={user} busy={busy} run={run} ta={ta} t={t}
+              onClosed={async () => { await logout(); navigate('/', { replace: true }); }} />
           )}
         </div>
 
-        {/* Right Column: Helper Info */}
         <aside className="lg:col-span-1 space-y-6">
-          <div className="bg-indigo-50 rounded-xl border border-indigo-100 p-5">
-            <h3 className="font-bold text-indigo-900 mb-2">{t('help.title')}</h3>
-            <p className="text-[15px] text-indigo-700 mb-4">{t('help.subtitle')}</p>
-            <Link to="/help" className="inline-block px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 transition-colors w-full text-center">
-              {t('help.button')}
-            </Link>
-          </div>
-
           <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
             <h3 className="font-bold text-gray-900 mb-3">{t('tips.title')}</h3>
             <ul className="space-y-3 text-[15px] text-gray-600">
-              {['item1', 'item2', 'item3'].map(k => (
+              {['item1', 'item2'].map(k => (
                 <li key={k} className="flex gap-2">
                   <svg className="w-5 h-5 text-green-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
@@ -410,10 +129,404 @@ const Settings = () => {
               ))}
             </ul>
           </div>
+          <div className="bg-indigo-50 rounded-xl border border-indigo-100 p-5">
+            <h3 className="font-bold text-indigo-900 mb-2">{t('help.title')}</h3>
+            <p className="text-[15px] text-indigo-700 mb-4">{t('help.subtitle')}</p>
+            <Link to="/help" className="inline-block px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 transition-colors w-full text-center">
+              {t('help.button')}
+            </Link>
+          </div>
         </aside>
       </div>
     </main>
   );
 };
+
+// ─── Profil & identitas ───────────────────────────────────────────────────────
+function ProfileTab({ user, config, busy, run, login, linkOrcid, t, ta }) {
+  const [name, setName] = useState(user.name || '');
+  const [orcidInput, setOrcidInput] = useState('');
+  const initials = (user.name || user.email).split(/\s+/).map(n => n[0]).join('').slice(0, 2).toUpperCase();
+
+  const saveName = () => run('name', async () => {
+    const data = await authPost('update_profile', { name: name.trim() });
+    login(data.user);
+    toast.success(t('toast.saved'));
+  });
+
+  const manualLink = () => run('orcid', async () => {
+    await linkOrcid(orcidInput.trim().toUpperCase());
+    setOrcidInput('');
+    toast.success(ta('settings.orcid_linked'));
+  });
+
+  const unlink = () => {
+    if (!window.confirm(ta('settings.orcid_unlink_confirm'))) return;
+    run('orcid', async () => { const d = await authPost('unlink_orcid'); login(d.user); });
+  };
+
+  return (
+    <>
+      <Card title={t('profile.title')}>
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center text-xl font-bold text-indigo-600">{initials}</div>
+          <div className="text-[15px] text-gray-600">
+            <p className="font-semibold text-gray-900">{user.name}</p>
+            <p>{user.email}</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-[15px] font-medium text-gray-700 mb-1" htmlFor="name">{t('profile.name')}</label>
+            <input id="name" value={name} onChange={e => setName(e.target.value)} className={input} maxLength={255} />
+          </div>
+          <div>
+            <label className="block text-[15px] font-medium text-gray-700 mb-1" htmlFor="email">{t('profile.email')}</label>
+            <input id="email" value={user.email} readOnly className={`${input} bg-gray-100 text-gray-500 cursor-not-allowed`} />
+          </div>
+        </div>
+        <div className="flex justify-between items-center">
+          <Link to="/my-profile" className="text-[15px] text-indigo-600 hover:underline">{ta('settings.research_profile_link')}</Link>
+          <button type="button" className={btnPrimary} disabled={busy === 'name' || !name.trim() || name.trim() === user.name} onClick={saveName}>
+            {busy === 'name' ? t('actions.saving') : t('actions.save')}
+          </button>
+        </div>
+      </Card>
+
+      <Card title={ta('settings.linked_accounts')}>
+        {/* ORCID */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div>
+            <p className="font-semibold text-gray-900">ORCID</p>
+            {user.orcid ? (
+              <p className="text-[15px] text-gray-600">
+                <a href={`https://orcid.org/${user.orcid}`} target="_blank" rel="noopener noreferrer" className="font-mono hover:underline">{user.orcid}</a>
+                {' · '}
+                <span className={user.orcid_verified ? 'text-green-700' : 'text-amber-700'}>
+                  {user.orcid_verified ? ta('settings.orcid_verified') : ta('settings.orcid_unverified')}
+                </span>
+              </p>
+            ) : (
+              <p className="text-[15px] text-gray-500">{ta('settings.orcid_none')}</p>
+            )}
+          </div>
+          <div className="flex gap-2">
+            {config?.oauth?.orcid && (!user.orcid || !user.orcid_verified) && (
+              <a href={oauthUrl('orcid', { mode: 'link' })} className={btnPrimary}>{ta('settings.orcid_connect')}</a>
+            )}
+            {user.orcid && (
+              <button type="button" className={btnGhost} disabled={busy === 'orcid'} onClick={unlink}>{ta('settings.unlink')}</button>
+            )}
+          </div>
+        </div>
+        {!user.orcid && config && !config.oauth?.orcid && (
+          <div className="flex gap-2">
+            <input value={orcidInput} onChange={e => setOrcidInput(e.target.value)} placeholder="0000-0000-0000-0000"
+              className={`${input} font-mono`} aria-label="ORCID" />
+            <button type="button" className={btnPrimary} disabled={busy === 'orcid' || !/^\d{4}-\d{4}-\d{4}-\d{3}[\dXx]$/.test(orcidInput.trim())}
+              onClick={manualLink}>{ta('settings.link')}</button>
+          </div>
+        )}
+
+        {/* Google */}
+        {(config?.oauth?.google || user.google_linked) && (
+          <div className="flex items-center justify-between gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <div>
+              <p className="font-semibold text-gray-900">Google</p>
+              <p className="text-[15px] text-gray-500">{user.google_linked ? ta('settings.google_linked') : ta('settings.google_none')}</p>
+            </div>
+            {!user.google_linked && <a href={oauthUrl('google', { mode: 'link' })} className={btnPrimary}>{ta('settings.connect')}</a>}
+          </div>
+        )}
+      </Card>
+    </>
+  );
+}
+
+// ─── Keamanan: sandi, 2FA, sesi ───────────────────────────────────────────────
+function SecurityTab({ user, busy, run, login, ta }) {
+  const [setup, setSetup] = useState(null);     // { secret, otpauth_url }
+  const [code, setCode] = useState('');
+  const [codes, setCodes] = useState(null);     // kode pemulihan yang baru dibuat
+  const [disableForm, setDisableForm] = useState(null); // { password, code }
+  const [sessions, setSessions] = useState([]);
+
+  const loadSessions = useCallback(() => {
+    authGet('sessions').then(d => setSessions(d.sessions || [])).catch(() => setSessions([]));
+  }, []);
+  useEffect(() => { loadSessions(); }, [loadSessions]);
+
+  const startSetup = () => run('2fa', async () => { setSetup(await authPost('twofa_setup')); setCode(''); });
+  const enable = () => run('2fa', async () => {
+    const d = await authPost('twofa_enable', { code: code.trim() });
+    setCodes(d.recovery_codes);
+    setSetup(null);
+    login(d.user);
+    toast.success(ta('twofa.enabled'));
+  });
+  const disable = () => run('2fa', async () => {
+    const d = await authPost('twofa_disable', disableForm);
+    login(d.user);
+    setDisableForm(null);
+    toast.success(ta('twofa.disabled'));
+  });
+  const regenerate = () => {
+    const c = window.prompt(ta('twofa.prompt_code'));
+    if (!c) return;
+    run('2fa', async () => { const d = await authPost('twofa_recovery', { code: c.trim() }); setCodes(d.recovery_codes); });
+  };
+  const revokeOthers = () => run('sessions', async () => {
+    const d = await authPost('revoke_other_sessions');
+    toast.success(ta('settings.sessions_revoked', { count: d.revoked }));
+    loadSessions();
+  });
+
+  return (
+    <>
+      <Card title={ta('settings.password_title')} desc={user.has_password ? ta('settings.password_desc') : ta('settings.password_none')}>
+        <Link to="/settings/change-password" className={`${btnPrimary} inline-block`}>
+          {user.has_password ? ta('settings.password_change') : ta('settings.password_set')}
+        </Link>
+      </Card>
+
+      <Card title={ta('twofa.title')} desc={ta('twofa.desc')}>
+        {codes && (
+          <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+            <p className="font-semibold text-amber-900 mb-2">{ta('twofa.recovery_title')}</p>
+            <p className="text-[15px] text-amber-800 mb-3">{ta('twofa.recovery_desc')}</p>
+            <div className="grid grid-cols-2 gap-2 font-mono text-[15px] bg-white p-3 rounded border border-amber-200">
+              {codes.map(c => <span key={c}>{c}</span>)}
+            </div>
+            <div className="flex gap-2 mt-3">
+              <button type="button" className={btnGhost} onClick={() => { navigator.clipboard?.writeText(codes.join('\n')); toast.success(ta('common.copied')); }}>
+                {ta('common.copy')}
+              </button>
+              <button type="button" className={btnPrimary} onClick={() => setCodes(null)}>{ta('twofa.recovery_saved')}</button>
+            </div>
+          </div>
+        )}
+
+        {user.two_factor_enabled ? (
+          <>
+            <p className="text-[15px] text-green-700 font-medium">{ta('twofa.status_on')}</p>
+            {disableForm ? (
+              <div className="space-y-3">
+                {user.has_password ? (
+                  <input type="password" placeholder={ta('common.current_password')} className={input}
+                    value={disableForm.password || ''} onChange={e => setDisableForm(f => ({ ...f, password: e.target.value }))} />
+                ) : (
+                  <input type="email" placeholder={ta('settings.confirm_email_ph')} className={input}
+                    value={disableForm.confirm || ''} onChange={e => setDisableForm(f => ({ ...f, confirm: e.target.value }))} />
+                )}
+                <input inputMode="numeric" placeholder={ta('twofa.code_or_recovery')} className={input}
+                  value={disableForm.code || ''} onChange={e => setDisableForm(f => ({ ...f, code: e.target.value }))} />
+                <div className="flex gap-2">
+                  <button type="button" className="px-4 py-2 bg-red-600 text-white rounded-lg text-[15px] font-medium hover:bg-red-700 disabled:opacity-60"
+                    disabled={busy === '2fa'} onClick={disable}>{ta('twofa.disable')}</button>
+                  <button type="button" className={btnGhost} onClick={() => setDisableForm(null)}>{ta('common.cancel')}</button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                <button type="button" className={btnGhost} disabled={busy === '2fa'} onClick={regenerate}>{ta('twofa.regenerate')}</button>
+                <button type="button" className="px-4 py-2 border border-red-300 text-red-700 rounded-lg text-[15px] font-medium hover:bg-red-50"
+                  onClick={() => setDisableForm({})}>{ta('twofa.disable')}</button>
+              </div>
+            )}
+          </>
+        ) : setup ? (
+          <div className="space-y-4">
+            <ol className="list-decimal pl-5 space-y-2 text-[15px] text-gray-700">
+              <li>{ta('twofa.step_app')}</li>
+              <li>
+                {ta('twofa.step_key')}
+                <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded font-mono text-[15px] break-all select-all">
+                  {setup.secret.replace(/(.{4})/g, '$1 ').trim()}
+                </div>
+                <a href={setup.otpauth_url} className="inline-block mt-2 text-indigo-600 hover:underline">{ta('twofa.open_app')}</a>
+              </li>
+              <li>{ta('twofa.step_code')}</li>
+            </ol>
+            <div className="flex gap-2">
+              <input value={code} onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))} inputMode="numeric"
+                autoComplete="one-time-code" placeholder="123456" className={`${input} tracking-widest text-center`} aria-label={ta('twofa.code_label')} />
+              <button type="button" className={btnPrimary} disabled={busy === '2fa' || code.length !== 6} onClick={enable}>{ta('twofa.enable')}</button>
+            </div>
+            <button type="button" className="text-[15px] text-gray-500 hover:underline" onClick={() => setSetup(null)}>{ta('common.cancel')}</button>
+          </div>
+        ) : (
+          <>
+            <p className="text-[15px] text-gray-600">{ta('twofa.status_off')}</p>
+            <button type="button" className={btnPrimary} disabled={busy === '2fa'} onClick={startSetup}>{ta('twofa.setup')}</button>
+          </>
+        )}
+      </Card>
+
+      <Card title={ta('settings.sessions_title')} desc={ta('settings.sessions_desc')}>
+        <ul className="divide-y divide-gray-100">
+          {sessions.map(s => (
+            <li key={s.id} className="py-3 text-[15px]">
+              <p className="text-gray-900">
+                {s.user_agent || '—'} {s.current && <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold">{ta('settings.this_device')}</span>}
+              </p>
+              <p className="text-gray-500 text-sm">{s.ip || '—'} · {ta('settings.last_active')}: {s.last_seen_at || s.created_at}</p>
+            </li>
+          ))}
+          {sessions.length === 0 && <li className="py-3 text-[15px] text-gray-500">—</li>}
+        </ul>
+        {sessions.length > 1 && (
+          <button type="button" className={btnGhost} disabled={busy === 'sessions'} onClick={revokeOthers}>{ta('settings.revoke_others')}</button>
+        )}
+      </Card>
+    </>
+  );
+}
+
+// ─── Preferensi notifikasi & privasi (tabel user_preferences) ─────────────────
+function PreferencesTab({ user, ta, t }) {
+  const [prefs, setPrefs] = useState(null);
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!user.orcid) return;
+    fetch('/api/user_preferences.php', { credentials: 'same-origin' })
+      .then(r => r.json())
+      .then(d => {
+        if (d.status === 'success' && d.preferences && d.data_source !== 'unavailable') setPrefs(d.preferences);
+        else setError(d.message || ta('settings.prefs_unavailable'));
+      })
+      .catch(() => setError(ta('settings.prefs_unavailable')));
+  }, [user.orcid, ta]);
+
+  if (!user.orcid) return <Card title={ta('settings.tabs.notifications')}><p className="text-[15px] text-gray-600">{ta('settings.prefs_need_orcid')}</p></Card>;
+  if (error) return <Card title={ta('settings.tabs.notifications')}><p className="text-[15px] text-red-600">{error}</p></Card>;
+  if (!prefs) return <Card><p className="text-[15px] text-gray-500">{ta('common.loading')}</p></Card>;
+
+  const setGroup = (group, key, value) => setPrefs(p => ({ ...p, [group]: { ...p[group], [key]: value } }));
+  const save = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch('/api/user_preferences.php', {
+        method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          notification: { email_enabled: prefs.notification.email_enabled, email_digest: prefs.notification.email_digest },
+          notification_preferences: prefs.notification_preferences,
+          privacy: prefs.privacy,
+          newsletter_subscribed: prefs.newsletter_subscribed,
+        }),
+      });
+      const d = await res.json();
+      if (!res.ok || d.status !== 'success') throw new Error(d.message || ta('settings.prefs_unavailable'));
+      toast.success(t('toast.saved'));
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const row = (label, desc, on, onClick) => (
+    <div className="flex items-center justify-between gap-4 py-3">
+      <div>
+        <p className="font-medium text-gray-900">{label}</p>
+        {desc && <p className="text-[15px] text-gray-500">{desc}</p>}
+      </div>
+      <Toggle on={!!on} onClick={onClick} label={label} />
+    </div>
+  );
+  const np = prefs.notification_preferences;
+
+  return (
+    <>
+      <Card title={ta('settings.notif_title')} desc={ta('settings.notif_desc')}>
+        <div className="divide-y divide-gray-100">
+          {row(ta('settings.pref.email_enabled'), null, prefs.notification.email_enabled, () => setGroup('notification', 'email_enabled', !prefs.notification.email_enabled))}
+          <div className="flex items-center justify-between gap-4 py-3">
+            <p className="font-medium text-gray-900">{ta('settings.pref.digest')}</p>
+            <select value={prefs.notification.email_digest || 'never'} onChange={e => setGroup('notification', 'email_digest', e.target.value)}
+              className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[15px]">
+              {['daily', 'weekly', 'monthly', 'never'].map(v => <option key={v} value={v}>{ta(`settings.pref.digest_${v}`)}</option>)}
+            </select>
+          </div>
+          {row(ta('settings.pref.research_area'), null, np.research_area, () => setGroup('notification_preferences', 'research_area', !np.research_area))}
+          {row(ta('settings.pref.collaboration'), null, np.collaboration, () => setGroup('notification_preferences', 'collaboration', !np.collaboration))}
+          {row(ta('settings.pref.opportunity'), null, np.opportunity, () => setGroup('notification_preferences', 'opportunity', !np.opportunity))}
+          {row(ta('settings.pref.system'), null, np.system, () => setGroup('notification_preferences', 'system', !np.system))}
+          {row(ta('settings.pref.newsletter'), null, prefs.newsletter_subscribed, () => setPrefs(p => ({ ...p, newsletter_subscribed: !p.newsletter_subscribed })))}
+        </div>
+      </Card>
+
+      <Card title={ta('settings.privacy_title')}>
+        <div>
+          <label className="block text-[15px] font-medium text-gray-700 mb-1" htmlFor="vis">{t('privacy.visibility')}</label>
+          <select id="vis" value={prefs.privacy.profile_visibility} onChange={e => setGroup('privacy', 'profile_visibility', e.target.value)} className={input}>
+            <option value="public">{t('privacy.visibility_public')}</option>
+            <option value="registered">{t('privacy.visibility_reg')}</option>
+            <option value="private">{t('privacy.visibility_private')}</option>
+          </select>
+        </div>
+        <div className="divide-y divide-gray-100">
+          {row(ta('settings.pref.show_affiliations'), null, prefs.privacy.show_affiliations, () => setGroup('privacy', 'show_affiliations', !prefs.privacy.show_affiliations))}
+          {row(ta('settings.pref.show_publications'), null, prefs.privacy.show_publications, () => setGroup('privacy', 'show_publications', !prefs.privacy.show_publications))}
+          {row(ta('settings.pref.show_collaborations'), null, prefs.privacy.show_collaborations, () => setGroup('privacy', 'show_collaborations', !prefs.privacy.show_collaborations))}
+        </div>
+      </Card>
+
+      <div className="flex justify-end">
+        <button type="button" className={btnPrimary} disabled={saving} onClick={save}>{saving ? t('actions.saving') : t('actions.save')}</button>
+      </div>
+    </>
+  );
+}
+
+// ─── Nonaktifkan / hapus akun ─────────────────────────────────────────────────
+function AccountTab({ user, busy, run, ta, t, onClosed }) {
+  const [mode, setMode] = useState(null); // 'deactivate' | 'delete'
+  const [form, setForm] = useState({});
+
+  const submit = () => run('close', async () => {
+    await authPost(mode === 'delete' ? 'delete_account' : 'deactivate_account', form);
+    toast.success(ta(mode === 'delete' ? 'settings.deleted' : 'settings.deactivated'));
+    await onClosed();
+  });
+
+  return (
+    <div className="bg-red-50 rounded-xl border border-red-200 p-6 space-y-4">
+      <h2 className="text-lg font-bold text-red-800">{t('account.danger_title')}</h2>
+      <p className="text-[15px] text-red-600">{t('account.danger_desc')}</p>
+      {!mode ? (
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button type="button" onClick={() => { setMode('deactivate'); setForm({}); }}
+            className="px-4 py-2 border border-red-300 text-red-700 rounded-lg text-[15px] font-medium hover:bg-red-100">{t('account.deactivate')}</button>
+          <button type="button" onClick={() => { setMode('delete'); setForm({}); }}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg text-[15px] font-medium hover:bg-red-700">{t('account.delete')}</button>
+        </div>
+      ) : (
+        <div className="space-y-3 bg-white p-4 rounded-lg border border-red-200">
+          <p className="text-[15px] text-gray-700">{ta(mode === 'delete' ? 'settings.delete_explain' : 'settings.deactivate_explain')}</p>
+          {user.has_password ? (
+            <input type="password" placeholder={ta('common.current_password')} className={input}
+              value={form.password || ''} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} />
+          ) : (
+            <input type="email" placeholder={ta('settings.confirm_email_ph')} className={input}
+              value={form.confirm || ''} onChange={e => setForm(f => ({ ...f, confirm: e.target.value }))} />
+          )}
+          {user.two_factor_enabled && (
+            <input inputMode="numeric" placeholder={ta('twofa.code_or_recovery')} className={input}
+              value={form.code || ''} onChange={e => setForm(f => ({ ...f, code: e.target.value }))} />
+          )}
+          <div className="flex gap-2">
+            <button type="button" disabled={busy === 'close'} onClick={submit}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg text-[15px] font-medium hover:bg-red-700 disabled:opacity-60">
+              {mode === 'delete' ? t('account.delete') : t('account.deactivate')}
+            </button>
+            <button type="button" className={btnGhost} onClick={() => setMode(null)}>{ta('common.cancel')}</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default Settings;

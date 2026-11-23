@@ -20,12 +20,12 @@ declare(strict_types=1);
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
 
 try {
     if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
     $configFile = ROOT_PATH . '/config/config.php';
     if (file_exists($configFile)) require_once $configFile;
+    require_once ROOT_PATH . '/includes/autoload.php';
 
     $method = $_SERVER['REQUEST_METHOD'];
     $action = $_GET['action'] ?? 'list';
@@ -196,9 +196,10 @@ function getProjectStats(): array {
 }
 
 function createProject(): array {
-    $input = json_decode(file_get_contents('php://input'), true);
+    $input = json_decode(file_get_contents('php://input'), true) ?: [];
+    $input['lead_orcid'] = \Sciecola\Auth\UserAuth::requireOrcid();
 
-    if (!$input['title'] || !$input['lead_orcid']) {
+    if (empty($input['title']) || empty($input['lead_orcid'])) {
         return ['status' => 'error', 'message' => 'Missing required fields'];
     }
 
@@ -247,9 +248,10 @@ function createProject(): array {
 }
 
 function updateProject(): array {
-    $input = json_decode(file_get_contents('php://input'), true);
+    $ownerOrcid = \Sciecola\Auth\UserAuth::requireOrcid();
+    $input = json_decode(file_get_contents('php://input'), true) ?: [];
 
-    if (!$input['id']) {
+    if (empty($input['id'])) {
         return ['status' => 'error', 'message' => 'Project ID required'];
     }
 
@@ -278,10 +280,15 @@ function updateProject(): array {
         }
 
         $params[] = $input['id'];
-        $sql = "UPDATE research_projects SET " . implode(', ', $updates) . " WHERE id = ?";
+        $params[] = $ownerOrcid;
+        $sql = "UPDATE research_projects SET " . implode(', ', $updates) . " WHERE id = ? AND lead_orcid = ?";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
+        if ($stmt->rowCount() === 0) {
+            http_response_code(403);
+            return ['status' => 'error', 'message' => 'Proyek tidak ditemukan atau bukan milik Anda'];
+        }
 
         return [
             'status' => 'success',

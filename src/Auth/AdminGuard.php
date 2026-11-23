@@ -17,9 +17,10 @@ namespace Sciecola\Auth;
  * Halaman admin di React hanya menyembunyikan menu (const isAdmin = true), dan login
  * aplikasi masih menerima kredensial apa pun, sehingga pemeriksaan di browser tidak
  * bisa diandalkan. Setiap endpoint yang mengubah data admin atau membuka data internal
- * wajib memanggil AdminGuard::require(): permintaan harus membawa header
- * X-Admin-Token yang sama dengan ADMIN_TOOL_TOKEN di .env server.
- * Tanpa ADMIN_TOOL_TOKEN di .env, semua permintaan ditolak (fail closed).
+ * wajib memanggil AdminGuard::require(). Permintaan diterima bila:
+ *   - dikirim oleh akun yang login dengan peran admin (lihat UserAuth::roleOf), atau
+ *   - membawa header X-Admin-Token yang sama dengan ADMIN_TOOL_TOKEN di .env server.
+ * Selain itu ditolak (fail closed).
  */
 final class AdminGuard
 {
@@ -32,7 +33,11 @@ final class AdminGuard
     {
         $expected = self::configuredToken();
         $given    = (string) ($_SERVER['HTTP_X_ADMIN_TOKEN'] ?? '');
-        return $expected !== '' && $given !== '' && hash_equals($expected, $given);
+        if ($expected !== '' && $given !== '' && hash_equals($expected, $given)) {
+            return true;
+        }
+        // Akun yang login dengan peran admin (user_accounts.role = 'admin' atau ADMIN_EMAILS).
+        return UserAuth::isAdmin();
     }
 
     /** Menghentikan permintaan dengan JSON 401/503 bila token admin tidak valid. */
@@ -42,14 +47,16 @@ final class AdminGuard
             http_response_code(204);
             exit;
         }
-        if (self::configuredToken() === '') {
+        if (self::isAuthorized()) {
+            UserAuth::checkSameOrigin();
+            return;
+        }
+        if (self::configuredToken() === '' && UserAuth::current() === null) {
             self::deny(503, 'TOKEN_NOT_CONFIGURED',
-                'ADMIN_TOOL_TOKEN belum diatur di file .env server. Fitur admin dinonaktifkan demi keamanan.');
+                'Masuk dengan akun admin, atau atur ADMIN_TOOL_TOKEN di file .env server.');
         }
-        if (!self::isAuthorized()) {
-            self::deny(401, 'UNAUTHORIZED',
-                'Token admin tidak valid atau belum diisi. Masukkan token di Admin → Cache & DB.');
-        }
+        self::deny(401, 'UNAUTHORIZED',
+            'Hanya admin. Masuk dengan akun admin atau masukkan token admin di Admin → Cache & DB.');
     }
 
     /**

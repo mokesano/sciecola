@@ -24,7 +24,9 @@
   "auth": {
     "login": "Login",
     "register": "Register",
-    "profile": "My Profile"
+    "profile": "My Profile",
+    "settings": "Settings",
+    "logout": "Sign out"
   },
   "menu": {
     "home": "Home",

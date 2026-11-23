@@ -69,11 +69,11 @@ const MyProfile = () => {
   const handleSyncId = async (key) => {
     setIsSyncing(prev => ({ ...prev, [key]: true }));
     try {
-      await fetch('/api/cache_handler.php', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ action: 'sync', type: 'orcid', limit: 1 }),
-      });
+      // Muat ulang profil dari ORCID lewat mesin SDG. Sebelumnya halaman memanggil
+      // cache_handler.php (endpoint admin) dan menandai "tersinkron" apa pun hasilnya.
+      const res  = await fetch(`/api/researcher_profile.php?orcid=${encodeURIComponent(user.orcid)}&refresh=true`);
+      const json = await res.json().catch(() => null);
+      if (!res.ok || !json || json.status === 'error') throw new Error(json?.message || `HTTP ${res.status}`);
       setExternalIds(prev => prev.map(id =>
         id.key === key ? { ...id, status: 'synced', lastSync: t('external_ids.just_now') } : id
       ));

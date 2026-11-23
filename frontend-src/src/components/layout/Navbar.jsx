@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { NavLink, Link, useLocation } from 'react-router';
+import { NavLink, Link, useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Menu, X, Bell } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -51,6 +51,7 @@ const Navbar = () => {
   const location = useLocation();
   const { t, i18n } = useTranslation('navbar');
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const [langOpen, setLangOpen]       = useState(false);
   const [menuOpen, setMenuOpen]       = useState(false);
@@ -225,7 +226,17 @@ const Navbar = () => {
                     {user.name || t('auth.profile')}
                   </span>
                 </Link>
-                <button onClick={logout}
+                {user.role === 'admin' && (
+                  <Link to="/admin"
+                    className="hidden rounded-lg px-3 py-2 text-[15px] font-medium text-slate-500 transition-colors hover:bg-orange-50 hover:text-orange-700 md:block">
+                    Admin
+                  </Link>
+                )}
+                <Link to="/settings"
+                  className="hidden rounded-lg px-3 py-2 text-[15px] font-medium text-slate-500 transition-colors hover:bg-orange-50 hover:text-orange-700 md:block">
+                  {t('auth.settings', 'Pengaturan')}
+                </Link>
+                <button onClick={async () => { await logout(); navigate('/'); }}
                   className="hidden rounded-lg px-3 py-2 text-[15px] font-medium text-slate-500 transition-colors hover:bg-orange-50 hover:text-orange-700 md:block">
                   {t('auth.logout', 'Keluar')}
                 </button>

@@ -17,6 +17,8 @@ header('Cache-Control: private, no-store');
 
 if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
 require_once ROOT_PATH . '/includes/bootstrap.php';
+// Konstanta DB_* (dipakai AdminGuard/UserAuth untuk membaca sesi admin) ada di config/config.php.
+if (file_exists(ROOT_PATH . '/config/config.php')) require_once ROOT_PATH . '/config/config.php';
 
 // Data trafik & sistem hanya untuk admin.
 \Sciecola\Auth\AdminGuard::require();

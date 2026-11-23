@@ -19,14 +19,12 @@ declare(strict_types=1);
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, X-Auth-Token');
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
 if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
 $configFile = ROOT_PATH . '/config/config.php';
 if (file_exists($configFile)) require_once $configFile;
+require_once ROOT_PATH . '/includes/autoload.php';
 
 $body  = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -34,12 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $body = json_decode($raw, true) ?? $_POST;
 }
 
-$orcid = trim($body['orcid'] ?? $_GET['orcid'] ?? '');
-if (empty($orcid)) {
-    http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'Parameter orcid diperlukan']);
-    exit;
-}
+// Data pribadi: selalu milik akun yang login (orcid dari permintaan diabaikan).
+$orcid = \Sciecola\Auth\UserAuth::requireOrcid();
 
 function dbPdo(): ?PDO
 {
