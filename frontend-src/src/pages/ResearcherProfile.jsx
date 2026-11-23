@@ -5,6 +5,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area,
 } from 'recharts';
+import { useTrackView } from '../hooks/useTrackActivity';
 
 // UN official SDG colour palette
 const SDG_COLORS = {
@@ -76,6 +77,7 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
   const { t } = useTranslation('researcher');
   const [activeTab, setActiveTab]   = useState('ringkasan');
   const [researcher, setResearcher] = useState(null);
+  useTrackView('researcher', researcher?.orcid || (researcher ? idValue : ''), researcher?.name);
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState(null);
   const [unsupported, setUnsupported] = useState(null);

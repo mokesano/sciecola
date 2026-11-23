@@ -132,15 +132,38 @@ function getOpportunities(): array {
     }
 }
 
+function marketCount(PDO $pdo, string $sql): ?int {
+    try {
+        $v = $pdo->query($sql)->fetchColumn();
+        return $v === false || $v === null ? null : (int) $v;
+    } catch (Throwable $e) {
+        return null;
+    }
+}
+
+/**
+ * Statistik marketplace dari database (null = belum bisa dihitung -> "—").
+ */
 function getMarketplaceStats(): array {
+    try {
+        $pdo = \Sciecola\Database\Db::pdo();
+    } catch (Throwable $e) {
+        http_response_code(503);
+        return ['status' => 'error', 'message' => 'Database tidak tersedia', 'data_source' => 'unavailable'];
+    }
+    $apps     = marketCount($pdo, "SELECT COUNT(*) FROM opportunity_applications");
+    $accepted = marketCount($pdo, "SELECT COUNT(*) FROM opportunity_applications WHERE status = 'accepted'");
+    $decided  = marketCount($pdo, "SELECT COUNT(*) FROM opportunity_applications WHERE status IN ('accepted','rejected')");
     return [
         'status' => 'success',
         'data' => [
-            'totalOpportunities' => 247,
-            'totalFunding' => '$127M+',
-            'activePartnerships' => 89,
-            'successRate' => '73%'
+            'totalOpportunities' => marketCount($pdo, "SELECT COUNT(*) FROM innovation_opportunities WHERE status = 'open'"),
+            'totalApplications'  => $apps,
+            'activePartnerships' => marketCount($pdo, "SELECT COUNT(DISTINCT organization_id) FROM innovation_opportunities WHERE organization_id IS NOT NULL"),
+            // Persentase lamaran diterima dari lamaran yang sudah diputuskan; null bila belum ada keputusan.
+            'successRate'        => ($decided ?? 0) > 0 ? round(100 * $accepted / $decided) : null,
         ],
+        'data_source' => 'database',
         'timestamp' => date('c')
     ];
 }

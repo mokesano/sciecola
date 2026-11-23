@@ -362,6 +362,23 @@ CREATE TABLE IF NOT EXISTS feed_post_comments (
   INDEX idx_fpc_post (post_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Notifikasi pengguna (src/Community/Notifications.php juga membuat tabel ini otomatis).
+-- Dibuat oleh peristiwa nyata: pesan langsung, komentar/suka feed, permintaan kolaborasi.
+CREATE TABLE IF NOT EXISTS user_notifications (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id INT UNSIGNED NOT NULL  COMMENT 'user_accounts.id penerima',
+  type VARCHAR(30) NOT NULL  COMMENT 'message | comment | like | collaboration | system',
+  title VARCHAR(255) NOT NULL,
+  message TEXT NULL,
+  link VARCHAR(512) NULL,
+  actor_user_id INT UNSIGNED NULL,
+  ref_key VARCHAR(100) NULL  COMMENT 'pengelompokan, mis. conv:12',
+  is_read TINYINT NOT NULL DEFAULT 0,
+  read_at TIMESTAMP NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_un_user (user_id, is_read, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS user_external_ids (
   id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
   orcid           VARCHAR(20)     NOT NULL,

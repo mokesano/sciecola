@@ -117,7 +117,7 @@ function getCollaborationResearchers(): array {
                 'hIndex' => (int)$row['h_index'],
                 'citations' => (int)$row['citation_count'],
                 'status' => $row['collaboration_status'],
-                'avatar' => $row['profile_photo_url'] ?? "https://i.pravatar.cc/150?img=" . crc32($row['orcid']) % 100,
+                'avatar' => $row['profile_photo_url'] ?: null, // tanpa foto -> inisial di frontend
                 'expertise' => array_filter(explode(',', $row['expertise_fields'] ?? ''))
             ];
         }, $rows);
@@ -134,17 +134,39 @@ function getCollaborationResearchers(): array {
     }
 }
 
+function collabCount(PDO $pdo, string $sql): ?float {
+    try {
+        $v = $pdo->query($sql)->fetchColumn();
+        return $v === false || $v === null ? null : (float) $v;
+    } catch (Throwable $e) {
+        return null; // tabel/kolom belum ada -> tampil "—", bukan angka karangan
+    }
+}
+
+/**
+ * Statistik jaringan dari database. Nilai yang tidak bisa dihitung = null
+ * (frontend menampilkan "—"). Tidak ada angka bawaan/karangan.
+ */
 function getNetworkStats(): array {
+    try {
+        $pdo = \Sciecola\Database\Db::pdo();
+    } catch (Throwable $e) {
+        http_response_code(503);
+        return ['status' => 'error', 'message' => 'Database tidak tersedia', 'data_source' => 'unavailable'];
+    }
+    $int = fn($v) => $v === null ? null : (int) $v;
+    $avg = collabCount($pdo, "SELECT AVG(collaboration_count) FROM researchers WHERE collaboration_count > 0");
     return [
         'status' => 'success',
         'data' => [
-            'totalResearchers' => 12847,
-            'activeCollaborations' => 3421,
-            'countries' => 156,
-            'institutions' => 2341,
-            'projectsCompleted' => 8934,
-            'avgCollaborationScore' => 8.7
+            'totalResearchers'      => $int(collabCount($pdo, "SELECT COUNT(*) FROM researchers")),
+            'activeCollaborations'  => $int(collabCount($pdo, "SELECT COUNT(*) FROM collaboration_requests WHERE status = 'accepted'")),
+            'countries'             => $int(collabCount($pdo, "SELECT COUNT(DISTINCT country) FROM researchers WHERE country IS NOT NULL AND country <> ''")),
+            'institutions'          => $int(collabCount($pdo, "SELECT COUNT(*) FROM institutions")),
+            'projectsCompleted'     => $int(collabCount($pdo, "SELECT COUNT(*) FROM research_projects WHERE status = 'completed'")),
+            'avgCollaborations'     => $avg === null ? null : round($avg, 1),
         ],
+        'data_source' => 'database',
         'timestamp' => date('c')
     ];
 }
@@ -181,6 +203,17 @@ function sendCollaborationRequest(): array {
             $input['message'] ?? null
         ]);
 
+        // Beri tahu penerima bila ORCID-nya sudah ditautkan ke akun Sciecola.
+        $toUser = \Sciecola\Community\Notifications::userIdForOrcid($pdo, (string) $input['to_orcid']);
+        if ($toUser !== null) {
+            $me = \Sciecola\Auth\UserAuth::current();
+            $fromName = $me ? \Sciecola\Community\Notifications::displayName($pdo, (int) $me['id']) : $input['from_orcid'];
+            \Sciecola\Community\Notifications::notify($pdo, $toUser, 'collaboration',
+                'Permintaan kolaborasi dari ' . $fromName,
+                isset($input['message']) ? mb_substr((string) $input['message'], 0, 140) : null,
+                '/orcid/' . $input['from_orcid'], $me ? (int) $me['id'] : null);
+        }
+
         return [
             'status' => 'success',
             'message' => 'Collaboration request sent',
@@ -196,8 +229,8 @@ function getSampleCollaborationResearchers(): array {
     return [
         'status' => 'success',
         'data' => [
-            ['orcid' => '0000-0002-5152-9727', 'name' => 'Dr. Sarah Chen', 'institution' => 'MIT', 'location' => 'Cambridge, MA, USA', 'sdgFocus' => [13, 14, 15], 'collaborations' => 47, 'hIndex' => 52, 'citations' => 4321, 'status' => 'open', 'avatar' => 'https://i.pravatar.cc/150?img=1', 'expertise' => ['Climate Science', 'Ocean Systems']],
-            ['orcid' => '0000-0001-6742-5861', 'name' => 'Prof. Ahmed Hassan', 'institution' => 'Cairo University', 'location' => 'Cairo, Egypt', 'sdgFocus' => [7, 9, 11], 'collaborations' => 63, 'hIndex' => 48, 'citations' => 3891, 'status' => 'open', 'avatar' => 'https://i.pravatar.cc/150?img=2', 'expertise' => ['Renewable Energy', 'Smart Grids']]
+            ['orcid' => '0000-0002-5152-9727', 'name' => 'Dr. Sarah Chen', 'institution' => 'MIT', 'location' => 'Cambridge, MA, USA', 'sdgFocus' => [13, 14, 15], 'collaborations' => 47, 'hIndex' => 52, 'citations' => 4321, 'status' => 'open', 'expertise' => ['Climate Science', 'Ocean Systems']],
+            ['orcid' => '0000-0001-6742-5861', 'name' => 'Prof. Ahmed Hassan', 'institution' => 'Cairo University', 'location' => 'Cairo, Egypt', 'sdgFocus' => [7, 9, 11], 'collaborations' => 63, 'hIndex' => 48, 'citations' => 3891, 'status' => 'open', 'expertise' => ['Renewable Energy', 'Smart Grids']]
         ],
         'total' => 2,
         'timestamp' => date('c')

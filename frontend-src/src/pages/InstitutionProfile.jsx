@@ -6,6 +6,7 @@ import {
   PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
 import { LoadingSpinner } from '../components/shared';
+import { useTrackView } from '../hooks/useTrackActivity';
 
 const SDG_COLORS = {
   1:'#E5243B',2:'#DDA63A',3:'#4C9F38',4:'#C5192D',5:'#FF3A21',
@@ -35,12 +36,15 @@ const EmptySection = ({ icon, message }) => (
 );
 
 const InstitutionProfile = () => {
-  const { id } = useParams();
+  // Rute: /institutions/:institutionId (sebelumnya dibaca sebagai `id`, sehingga profil tidak pernah dimuat)
+  const params = useParams();
+  const id = params.institutionId ?? params.id;
   const { t } = useTranslation('institution_profile');
   const [activeTab, setActiveTab] = useState('ringkasan');
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [profileData, setProfileData] = useState(null);
+  useTrackView('institution', profileData?.institution ? String(profileData.institution.id ?? id) : '', profileData?.institution?.name);
 
   const fetchProfile = useCallback(async () => {
     if (!id) { setLoading(false); return; }

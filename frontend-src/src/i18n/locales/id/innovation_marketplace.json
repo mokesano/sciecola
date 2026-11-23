@@ -6,9 +6,9 @@
   },
   "stats": {
     "opportunities": "Peluang",
-    "funding": "Total Pendanaan",
-    "partnerships": "Kemitraan",
-    "success_rate": "Tingkat Keberhasilan"
+    "funding": "Total Lamaran",
+    "partnerships": "Organisasi Mitra",
+    "success_rate": "Lamaran Diterima"
   },
   "filter": {
     "search_placeholder": "Cari peluang berdasarkan kata kunci, organisasi, atau teknologi…",

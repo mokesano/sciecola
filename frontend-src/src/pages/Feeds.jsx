@@ -105,7 +105,11 @@ function PostCard({ post, user, t, onChanged }) {
   );
 }
 
-const Feeds = () => {
+/**
+ * Aliran feed (form kiriman + daftar kiriman). Dipakai di Beranda pengguna (/) dan
+ * di halaman /feeds untuk pengunjung.
+ */
+export function FeedStream() {
   const { t } = useTranslation('account');
   const { user } = useAuth();
   const [posts, setPosts] = useState([]);
@@ -132,9 +136,7 @@ const Feeds = () => {
   };
 
   return (
-    <main className="pt-[68px] pb-12 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto w-full">
-      <h1 className="text-2xl font-bold text-gray-900 mt-6 mb-6">{t('community.feeds.title')}</h1>
-
+    <>
       {user ? (
         <form onSubmit={publish} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 mb-6 space-y-3">
           <textarea value={content} onChange={e => setContent(e.target.value)} rows={3} maxLength={5000}
@@ -159,11 +161,25 @@ const Feeds = () => {
 
       {error && <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-[15px] text-red-700">{error}</div>}
       {loading && <p className="text-gray-500 text-[15px]">{t('common.loading')}</p>}
-      {!loading && !error && posts.length === 0 && <p className="text-gray-500 text-[15px]">{t('community.feeds.empty')}</p>}
+      {!loading && !error && posts.length === 0 && (
+        <div className="bg-white rounded-xl border border-dashed border-gray-300 p-8 text-center text-gray-500 text-[15px]">
+          {t('community.feeds.empty')}
+        </div>
+      )}
 
       <div className="space-y-4">
         {posts.map(p => <PostCard key={p.id} post={p} user={user} t={t} onChanged={load} />)}
       </div>
+    </>
+  );
+}
+
+const Feeds = () => {
+  const { t } = useTranslation('account');
+  return (
+    <main className="pt-[68px] pb-12 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto w-full">
+      <h1 className="text-2xl font-bold text-gray-900 mt-6 mb-6">{t('community.feeds.title')}</h1>
+      <FeedStream />
     </main>
   );
 };

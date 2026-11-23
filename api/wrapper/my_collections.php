@@ -97,6 +97,22 @@ function saveCollections(string $orcid, array $colls): void
     @file_put_contents(collFile($orcid), json_encode(array_values($colls), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 }
 
+function ownsCollection(PDO $pdo, int $collId, string $orcid): bool
+{
+    $st = $pdo->prepare('SELECT COUNT(*) FROM user_collections WHERE id = ? AND orcid = ?');
+    $st->execute([$collId, $orcid]);
+    return (int) $st->fetchColumn() > 0;
+}
+/** Catat ke riwayat aktivitas (Aktivitas Saya / Log History). Gagal = diabaikan. */
+function logSavedActivity(PDO $pdo, string $orcid, string $doi, int $collId): void
+{
+    try {
+        $pdo->prepare(
+            'INSERT INTO user_activity_log (orcid, activity_type, category, target_id, title, metadata_json) VALUES (?, ?, ?, ?, ?, ?)'
+        )->execute([$orcid, 'saved', 'article', $doi, $doi, json_encode(['collection_id' => $collId])]);
+    } catch (Throwable $e) { /* FK/tabel belum ada */ }
+}
+
 // ─── Request routing ─────────────────────────────────────────────────────────
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -143,12 +159,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             if ($pdo) {
                 try {
+                    if (!ownsCollection($pdo, (int) $collId, $orcid)) {
+                        http_response_code(404);
+                        echo json_encode(['status' => 'error', 'message' => 'Koleksi tidak ditemukan']);
+                        exit;
+                    }
                     $pdo->prepare(
                         'INSERT IGNORE INTO collection_items (collection_id, doi, item_type) VALUES (?, ?, ?)'
                     )->execute([(int)$collId, $doi, $body['item_type'] ?? 'article']);
                     $pdo->prepare(
                         'UPDATE user_collections SET item_count = (SELECT COUNT(*) FROM collection_items WHERE collection_id = ?), updated_at = NOW() WHERE id = ?'
                     )->execute([(int)$collId, (int)$collId]);
+                    logSavedActivity($pdo, $orcid, $doi, (int) $collId);
                     echo json_encode(['status' => 'success']);
                     exit;
                 } catch (Exception $e) { /* fall through */ }
@@ -161,6 +183,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $doi    = strtolower(trim($body['doi'] ?? ''));
             if ($pdo) {
                 try {
+                    if (!ownsCollection($pdo, (int) $collId, $orcid)) {
+                        http_response_code(404);
+                        echo json_encode(['status' => 'error', 'message' => 'Koleksi tidak ditemukan']);
+                        exit;
+                    }
                     $pdo->prepare('DELETE FROM collection_items WHERE collection_id = ? AND doi = ?')->execute([(int)$collId, $doi]);
                     $pdo->prepare(
                         'UPDATE user_collections SET item_count = (SELECT COUNT(*) FROM collection_items WHERE collection_id = ?), updated_at = NOW() WHERE id = ?'
@@ -173,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             break;
 
         case 'delete':
-            $id = $body['id'] ?? '';
+            $id = $body['id'] ?? $body['collection_id'] ?? '';
             if ($pdo) {
                 try {
                     $pdo->prepare('DELETE FROM user_collections WHERE id = ? AND orcid = ?')->execute([(int)$id, $orcid]);
@@ -185,7 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             break;
 
         case 'update':
-            $id      = $body['id'] ?? '';
+            $id      = $body['id'] ?? $body['collection_id'] ?? '';
             $updates = [];
             $params  = [];
             if (isset($body['name']))        { $updates[] = 'name = ?';        $params[] = substr(htmlspecialchars($body['name'], ENT_QUOTES), 0, 100); }

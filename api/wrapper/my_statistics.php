@@ -50,6 +50,19 @@ try {
 }
 $profile = $profileData['profile'] ?? [];
 
+// ── Kunjungan profil: dihitung dari riwayat aktivitas pengguna lain yang login
+//    (user_activity_log, kategori researcher). Pengunjung anonim tidak tercatat.
+$profileViews = 0;
+try {
+    $vp = \Sciecola\Database\Db::pdo()->prepare(
+        "SELECT COUNT(*) FROM user_activity_log WHERE activity_type = 'viewed' AND category = 'researcher' AND target_id = ? AND orcid <> ?"
+    );
+    $vp->execute([$orcid, $orcid]);
+    $profileViews = (int) $vp->fetchColumn();
+} catch (Throwable $e) {
+    $profileViews = 0;
+}
+
 // ── Tren dampak ─────────────────────────────────────────────────────────────
 // Belum ada pelacakan kunjungan/unduhan maupun sitasi per bulan. Dulu bagian ini
 // mengarang angka acak (rand/lcg_value) yang berubah setiap kali halaman dibuka;
@@ -90,7 +103,7 @@ echo json_encode([
         'citations'    => $profile['citations'] ?? 0,
         'hIndex'       => $profile['hIndex'] ?? 0,
         'i10Index'     => $profile['i10Index'] ?? 0,
-        'views'        => $profile['views'] ?? 0,
+        'views'        => $profileViews,
         'downloads'    => $profile['downloads'] ?? 0,
         'sdgsInvolved' => $profile['sdgsInvolved'] ?? 0,
     ],

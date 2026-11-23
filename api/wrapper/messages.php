@@ -30,6 +30,7 @@ require_once ROOT_PATH . '/includes/autoload.php';
 
 use Sciecola\Auth\UserAuth;
 use Sciecola\Community\CommunitySchema;
+use Sciecola\Community\Notifications;
 use Sciecola\Database\Db;
 
 const MSG_MAX = 4000;
@@ -57,6 +58,15 @@ function dm_send(PDO $pdo, int $conversationId, int $uid, string $text): int
     $pdo->prepare('UPDATE conversations SET last_message_at = ?, is_archived = 0 WHERE id = ?')->execute([$now, $conversationId]);
     $pdo->prepare('UPDATE conversation_participants SET last_read_at = ? WHERE conversation_id = ? AND user_id = ?')
         ->execute([$now, $conversationId, $uid]);
+
+    // Notifikasi untuk peserta lain (satu notifikasi per percakapan sampai dibaca).
+    $others = $pdo->prepare('SELECT user_id FROM conversation_participants WHERE conversation_id = ? AND user_id <> ?');
+    $others->execute([$conversationId, $uid]);
+    $name = Notifications::displayName($pdo, $uid);
+    foreach ($others->fetchAll(PDO::FETCH_COLUMN) as $other) {
+        Notifications::notify($pdo, (int) $other, 'message', 'Pesan baru dari ' . $name,
+            mb_substr($text, 0, 140), '/messages', $uid, 'conv:' . $conversationId);
+    }
     return $id;
 }
 

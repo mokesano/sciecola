@@ -1,36 +1,49 @@
 {
   "breadcrumb": {
-    "home":      "Home",
+    "home": "Home",
     "dashboard": "Dashboard",
-    "current":   "Notifications"
+    "current": "Notifications"
   },
   "title": "Notifications",
   "subtitle": {
-    "unread":  "You have {{count}} unread notifications",
+    "unread": "You have {{count}} unread notifications",
     "all_read": "All notifications have been read"
   },
   "actions": {
-    "mark_all":  "Mark All As Read",
+    "mark_all": "Mark All As Read",
     "clear_all": "Clear All",
-    "mark":      "Mark As Read",
-    "dismiss":   "Dismiss",
-    "load_more": "Load Older Notifications"
+    "mark": "Mark As Read",
+    "dismiss": "Dismiss"
   },
   "filter": {
-    "all":      "All",
-    "unread":   "Unread",
-    "mentions": "Mentions",
-    "system":   "System"
+    "all": "All",
+    "unread": "Unread",
+    "message": "Messages",
+    "comment": "Comments",
+    "like": "Likes",
+    "collaboration": "Collaboration"
   },
   "empty": {
-    "unread_title":   "No unread notifications",
-    "all_title":      "No notifications yet",
-    "unread_desc":    "You've reviewed everything recent. Stay tuned for updates!",
-    "all_desc":       "We'll let you know about citations, collaborations, and system updates here.",
-    "cta":            "View All Notifications"
+    "unread_title": "No unread notifications",
+    "all_title": "No notifications yet",
+    "unread_desc": "You have read all your notifications.",
+    "all_desc": "Notifications appear here when you receive a new message, a comment or like on your post, or a collaboration request.",
+    "cta": "View All Notifications"
   },
   "toast": {
     "marked_all": "All notifications marked as read",
-    "cleared":    "Notification history cleared"
+    "cleared": "Notification history cleared"
+  },
+  "loading": "Loading notifications…",
+  "load_failed": "Failed to load notifications",
+  "confirm_clear": "Delete all notifications? This cannot be undone.",
+  "time": {
+    "just_now": "just now",
+    "minutes_one": "{{count}} minute ago",
+    "minutes_other": "{{count}} minutes ago",
+    "hours_one": "{{count}} hour ago",
+    "hours_other": "{{count}} hours ago",
+    "days_one": "{{count}} day ago",
+    "days_other": "{{count}} days ago"
   }
 }

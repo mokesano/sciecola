@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { HashRouter as Router, Routes, Route, Outlet, Navigate } from 'react-router';
 import { useAuth } from './context/AuthContext';
 import { AuthProvider } from './context/AuthContext';
@@ -9,23 +9,8 @@ import ScrollToTop from './components/shared/ScrollToTop';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 
-// Impor Halaman Public (landing page untuk user belum login)
-import PublicHomePage from './pages/PublicHomePage';
-
-// Komponen Halaman Beranda (Home)
-import Hero from './components/layout/Hero';
-import StatCards from './components/sdg/StatCards';
-import SdgDistributionChart from './components/sdg/SdgDistributionChart';
-import SdgTrendChart from './components/sdg/SdgTrendChart';
-import TopSdgsCard from './components/sdg/TopSdgsCard';
-import LatestArticles from './components/sdg/LatestArticles';
-import InsightsAI from './components/sdg/InsightsAI';
-import ResearchExplorer from './components/sdg/ResearchExplorer';
-import TrustedSources from './components/layout/TrustedSources';
-import CallToAction from './components/layout/CallToAction';
-
-// Wrapper Adapter
-import { transformToChartData, generateSummaryStats } from './utils/sdgDataAdapter';
+// Beranda tunggal: landing publik untuk pengunjung, feed untuk pengguna yang masuk.
+import HomePage from './pages/HomePage';
 
 // Impor Halaman Profil Dinamis
 import JournalList from './pages/JournalList';
@@ -138,73 +123,6 @@ import Sitemap from './pages/Sitemap';
 import ErrorBoundary from './components/shared/ErrorBoundary';
 
 // =====================================================================
-// KOMPONEN BERANDA (HOME)
-// =====================================================================
-const Home = () => {
-  // === STATE MANAGEMENT ===
-  const [rawApiData, setRawApiData] = useState(null);
-  const [chartData, setChartData] = useState([]);
-  const [summaryStats, setSummaryStats] = useState(null);
-
-  // === FUNGSI PENERIMA DATA ===
-  const handleAnalysisComplete = (dataDariApi) => {
-    setRawApiData(dataDariApi);
-    const formattedChart = transformToChartData(dataDariApi.works);
-    const stats = generateSummaryStats(dataDariApi.works, dataDariApi.total_works);
-    setChartData(formattedChart);
-    setSummaryStats(stats);
-  };
-
-  return (
-    <main className="flex-grow pt-20 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-      <Hero onAnalysisComplete={handleAnalysisComplete} />
-      
-      {summaryStats ? (
-        <StatCards data={summaryStats} />
-      ) : (
-        <StatCards />
-      )}
-
-      <div id="cta-section"><CallToAction /></div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-        <SdgDistributionChart
-            data={chartData.length > 0 ? chartData : null}
-            totalArticles={summaryStats ? summaryStats.totalArticles : null}
-        />
-        <SdgTrendChart rawData={rawApiData} />
-      </div>
-
-      <TopSdgsCard rawData={rawApiData} />
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-        <div className="lg:col-span-2">
-          <LatestArticles works={rawApiData ? rawApiData.works : []} />
-        </div>
-        
-        <div className="lg:col-span-1">
-            <InsightsAI rawData={rawApiData} />
-        </div>
-      </div>
-
-      <ResearchExplorer rawData={rawApiData} />
-      
-      <TrustedSources />
-    </main>
-  );
-};
-
-// =====================================================================
-// HOME ROUTER — Tampilkan landing page publik atau dashboard SDG
-// berdasarkan status login pengguna, tanpa redirect.
-// =====================================================================
-const HomeRouter = () => {
-  const { user, loading } = useAuth();
-  if (loading) return null;
-  return user ? <Home /> : <PublicHomePage />;
-};
-
-// =====================================================================
 // LAYOUT UTAMA (dengan Navbar, Footer, Chatbot)
 // =====================================================================
 const MainLayout = () => {
@@ -229,6 +147,14 @@ const MainLayout = () => {
       <NewsletterModal />
     </div>
   );
+};
+
+// Feed komunitas: pengguna yang masuk melihatnya di Beranda (/), jadi /feeds hanya
+// untuk pengunjung (kiriman publik) agar tidak ada dua halaman feed.
+const FeedsRoute = () => {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  return user ? <Navigate to="/" replace /> : <Feeds />;
 };
 
 // Halaman yang bisa disembunyikan dari pengunjung lewat Admin → Konten.
@@ -258,7 +184,7 @@ function App() {
             {/* ============================================== */}
             <Route element={<MainLayout />}>
               {/* Halaman Utama */}
-              <Route path="/" element={<HomeRouter />} />
+              <Route path="/" element={<HomePage />} />
 
               {/* Rute Jurnal */}
               <Route path="/journals" element={<ContentGate setting="showJournalsMain"><JournalList /></ContentGate>} />
@@ -328,7 +254,7 @@ function App() {
               <Route path="/docs/api-reference" element={<Api />} />
 
               {/* Rute Dashboard */}
-              <Route path="/feeds" element={<Feeds />} />
+              <Route path="/feeds" element={<FeedsRoute />} />
               <Route path="/sciecodash" element={<SciecoDashboard />} />
               <Route path="/my-profile" element={<RequireAuth><MyProfile /></RequireAuth>} />
               <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />

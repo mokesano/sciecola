@@ -1,50 +1,51 @@
 {
   "breadcrumb": {
-    "home":      "Beranda",
+    "home": "Beranda",
     "dashboard": "Dashboard",
-    "current":   "Statistik"
+    "current": "Statistik"
   },
-  "title":    "Statistik Performa",
+  "title": "Statistik Performa",
   "subtitle": "Analisis mendalam mengenai dampak dan jangkauan publikasi Anda.",
   "range": {
-    "12":  "12 Bulan Terakhir",
-    "6":   "6 Bulan Terakhir",
-    "1":   "30 Hari Terakhir",
+    "12": "12 Bulan Terakhir",
+    "6": "6 Bulan Terakhir",
+    "1": "30 Hari Terakhir",
     "all": "Semua Waktu"
   },
-  "download":     "Unduh Laporan",
-  "loading":      "Memuat statistik…",
+  "download": "Unduh Laporan",
+  "loading": "Memuat statistik…",
   "error_prefix": "Gagal memuat:",
-  "load_failed":  "Gagal memuat statistik",
+  "load_failed": "Gagal memuat statistik",
   "no_orcid": {
     "title": "ORCID Belum Terhubung",
-    "cta":   "Hubungkan ORCID"
+    "cta": "Hubungkan ORCID"
   },
   "cards": {
-    "views":     "Total Views",
+    "views": "Kunjungan Profil",
     "citations": "Total Citations",
-    "hindex":    "h-Index",
-    "impact":    "Avg. Impact Score"
+    "hindex": "h-Index",
+    "publications": "Publikasi"
   },
   "sections": {
-    "impact_trend":       "Tren Dampak Riset",
-    "sdg_profile":        "Profil SDG",
-    "sdg_footnote":       "Berdasarkan skor klasifikasi artikel",
-    "top_countries":      "Top 5 Negara Pembaca",
-    "citation_sources":   "Sumber Sitasi",
-    "top_articles":       "Artikel Teratas",
-    "see_all_articles":   "Lihat semua artikel →"
+    "impact_trend": "Tren Dampak Riset",
+    "sdg_profile": "Profil SDG",
+    "sdg_footnote": "Berdasarkan skor klasifikasi artikel",
+    "top_countries": "Top 5 Negara Pembaca",
+    "citation_sources": "Sumber Sitasi",
+    "top_articles": "Artikel Teratas",
+    "see_all_articles": "Lihat semua artikel →"
   },
   "chart": {
-    "views":       "Views",
-    "citations":   "Citations",
-    "contribution":"Kontribusi",
-    "citation":    "Sitasi"
+    "views": "Views",
+    "citations": "Citations",
+    "contribution": "Kontribusi",
+    "citation": "Sitasi"
   },
   "table": {
-    "title":     "Judul",
-    "views":     "Views",
+    "title": "Judul",
+    "views": "Views",
     "citations": "Sitasi",
-    "score":     "Skor"
-  }
+    "score": "Skor"
+  },
+  "views_note": "Kunjungan profil dihitung dari pengguna lain yang masuk (login) dan membuka profil Anda."
 }

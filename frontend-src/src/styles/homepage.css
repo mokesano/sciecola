@@ -638,3 +638,160 @@
   .sc-roam__wave { animation: none; opacity: 0; }
   .sc-spot { display: none; }
 }
+
+/* =====================================================================
+   HERO ANALITIK (components/home/AnalyticsHero.jsx)
+   Bidang gelap navy dengan grid halus dan dua cahaya lembut; teks putih,
+   satu aksen oranye (warna merek). Di kanan, panel kaca berisi angka
+   langsung dari database — pola hero yang lazim di aplikasi analitik.
+   ===================================================================== */
+
+.sc-ah {
+  --ah-bg:     #0B1120;
+  --ah-panel:  rgba(15, 23, 42, .72);
+  --ah-line:   rgba(148, 163, 184, .16);
+  --ah-text:   #E2E8F0;
+  --ah-muted:  #94A3B8;
+  position: relative; overflow: hidden; isolation: isolate;
+  background: var(--ah-bg); color: #fff;
+}
+.sc-ah__grid {
+  position: absolute; inset: 0; z-index: -1;
+  background-image:
+    linear-gradient(to right, rgba(148,163,184,.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148,163,184,.08) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 60% 40%, #000 30%, transparent 75%);
+          mask-image: radial-gradient(ellipse 80% 70% at 60% 40%, #000 30%, transparent 75%);
+}
+.sc-ah__glow { position: absolute; z-index: -1; border-radius: 999px; filter: blur(90px); pointer-events: none; }
+.sc-ah__glow_a { width: 520px; height: 520px; right: -120px; top: -160px; background: rgba(234, 88, 12, .28); }
+.sc-ah__glow_b { width: 460px; height: 460px; left: -160px; bottom: -220px; background: rgba(79, 70, 229, .30); }
+
+.sc-ah__inner {
+  display: grid; gap: 3rem; align-items: center;
+  padding-block: 4.5rem 5rem;
+}
+@media (min-width: 1024px) {
+  .sc-ah__inner { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 4rem; padding-block: 6rem 6.5rem; }
+}
+
+/* ── Teks ── */
+.sc-ah__pill {
+  display: inline-flex; align-items: center; gap: .5rem;
+  border-radius: 999px; padding: .375rem .875rem;
+  background: rgba(255,255,255,.06); color: #FED7AA;
+  font-size: .875rem; font-weight: 600;
+  box-shadow: inset 0 0 0 1px rgba(251,146,60,.35);
+}
+.sc-ah__dot {
+  width: .5rem; height: .5rem; border-radius: 999px; background: #FB923C;
+  box-shadow: 0 0 0 0 rgba(251,146,60,.7); animation: sc-ah-pulse 2s infinite;
+}
+@keyframes sc-ah-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(251,146,60,.6); }
+  70%  { box-shadow: 0 0 0 8px rgba(251,146,60,0); }
+  100% { box-shadow: 0 0 0 0 rgba(251,146,60,0); }
+}
+.sc-page .sc-ah__title {
+  margin-top: 1.5rem; font-size: 2.5rem; font-weight: 800;
+  line-height: 1.08; letter-spacing: -.03em; color: #fff;
+}
+@media (min-width: 640px)  { .sc-page .sc-ah__title { font-size: 3.25rem; } }
+@media (min-width: 1280px) { .sc-page .sc-ah__title { font-size: 3.75rem; } }
+.sc-ah__accent {
+  background: linear-gradient(90deg, #FDBA74 0%, #FB923C 45%, #F97316 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.sc-page .sc-ah__lede { margin-top: 1.25rem; max-width: 38rem; font-size: 1.125rem; line-height: 1.65; color: var(--ah-muted); }
+
+/* Pencarian di atas bidang gelap */
+.sc-ah__search .sc-search { margin-top: 2rem; max-width: 40rem; }
+.sc-ah__search .sc-search__input {
+  background: rgba(255,255,255,.06); border-color: var(--ah-line); color: #fff;
+  box-shadow: none; backdrop-filter: blur(6px);
+}
+.sc-ah__search .sc-search__input::placeholder { color: #64748B; }
+.sc-ah__search .sc-search__input:focus { border-color: #FB923C; box-shadow: 0 0 0 3px rgba(251,146,60,.25); }
+.sc-ah__search .sc-search__icon { color: #64748B; }
+.sc-page .sc-ah__search .sc-btn_dark { background: #fff; color: var(--sc-ink); }
+.sc-page .sc-ah__search .sc-btn_dark:hover { background: #F1F5F9; }
+.sc-page .sc-ah__search .sc-search__note { margin-top: .75rem; color: #64748B; font-size: .875rem; }
+.sc-ah__search .sc-search__error { color: #FCA5A5; }
+.sc-ah__search .sc-choice { background: #111827; border-color: var(--ah-line); }
+.sc-ah__search .sc-choice__q { color: var(--ah-text); }
+.sc-page .sc-ah__search .sc-choice__btn { border-color: var(--ah-line); color: var(--ah-text); }
+
+.sc-ah__actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.75rem; }
+.sc-page .sc-ah__btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  border-radius: .625rem; padding: .8125rem 1.375rem;
+  font-size: .9375rem; font-weight: 600; white-space: nowrap;
+  transition: background-color .2s, border-color .2s, transform .2s, box-shadow .2s;
+}
+.sc-page .sc-ah__btn_primary { background: var(--sc-accent); color: #fff; box-shadow: 0 8px 24px -8px rgba(234,88,12,.6); }
+.sc-page .sc-ah__btn_primary:hover { background: #F97316; transform: translateY(-1px); }
+.sc-page .sc-ah__btn_ghost { background: rgba(255,255,255,.04); color: var(--ah-text); box-shadow: inset 0 0 0 1px var(--ah-line); }
+.sc-page .sc-ah__btn_ghost:hover { background: rgba(255,255,255,.08); color: #fff; }
+
+.sc-page .sc-ah__hint { margin-top: 1.5rem; font-size: .9375rem; color: #64748B; }
+.sc-ah__hint a { color: #FDBA74; font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
+
+/* ── Panel ── */
+.sc-ah__panel {
+  border-radius: 1.25rem; padding: 1.5rem;
+  background: var(--ah-panel); backdrop-filter: blur(14px);
+  box-shadow: inset 0 0 0 1px var(--ah-line), 0 30px 80px -30px rgba(0,0,0,.65);
+}
+@media (min-width: 640px) { .sc-ah__panel { padding: 1.75rem; } }
+.sc-ah__panelHead { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.sc-ah__panelTitle { font-size: 1rem; font-weight: 700; color: #fff; }
+.sc-page .sc-ah__panelSub { margin-top: .25rem; font-size: .8125rem; color: var(--ah-muted); }
+.sc-ah__live {
+  display: inline-flex; align-items: center; gap: .375rem; flex: none;
+  border-radius: 999px; padding: .25rem .625rem;
+  background: rgba(16,185,129,.12); color: #6EE7B7; font-size: .75rem; font-weight: 600;
+}
+.sc-ah__live_off { background: rgba(148,163,184,.12); color: var(--ah-muted); }
+.sc-ah__liveDot { width: .375rem; height: .375rem; border-radius: 999px; background: currentColor; }
+
+.sc-ah__kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; margin-top: 1.25rem; }
+.sc-ah__kpi {
+  display: flex; flex-direction: column; gap: .125rem;
+  border-radius: .875rem; padding: .875rem 1rem;
+  background: rgba(255,255,255,.035); box-shadow: inset 0 0 0 1px var(--ah-line);
+}
+.sc-ah__kpiIcon { display: inline-flex; width: 1.75rem; height: 1.75rem; align-items: center; justify-content: center;
+  border-radius: .5rem; background: rgba(251,146,60,.14); color: #FDBA74; margin-bottom: .375rem; }
+.sc-ah__kpiIcon svg { width: .9375rem; height: .9375rem; }
+.sc-ah__kpiValue { font-size: 1.5rem; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.sc-ah__kpiLabel { font-size: .8125rem; color: var(--ah-muted); }
+.sc-ah__skel { display: inline-block; width: 3.5rem; height: 1.25rem; border-radius: .375rem;
+  background: linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.14), rgba(255,255,255,.06));
+  background-size: 200% 100%; animation: sc-ah-shimmer 1.4s infinite; }
+@keyframes sc-ah-shimmer { to { background-position: -200% 0; } }
+
+.sc-ah__blockTitle { font-size: .75rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ah-muted); }
+.sc-ah__chart { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--ah-line); }
+.sc-ah__chartBox { height: 132px; margin-top: .5rem; }
+.sc-page .sc-ah__empty { margin-top: .5rem; font-size: .875rem; color: #64748B; }
+.sc-ah-tip {
+  display: flex; flex-direction: column; gap: .125rem;
+  border-radius: .5rem; padding: .5rem .625rem; background: #0F172A;
+  box-shadow: inset 0 0 0 1px rgba(148,163,184,.25); font-size: .75rem; color: #CBD5E1;
+}
+.sc-ah-tip strong { color: #fff; }
+
+.sc-ah__sdgs { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--ah-line); }
+.sc-page .sc-ah__sdgs ul { margin-top: .625rem; display: grid; gap: .625rem; }
+.sc-ah__sdg { display: grid; grid-template-columns: auto minmax(0, 1fr) 30% auto; align-items: center; gap: .625rem; font-size: .875rem; }
+.sc-ah__sdgChip { display: inline-flex; width: 1.5rem; height: 1.5rem; align-items: center; justify-content: center;
+  border-radius: .375rem; font-size: .75rem; font-weight: 700; color: #fff; }
+.sc-ah__sdgName { color: var(--ah-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sc-ah__sdgBar { height: .375rem; border-radius: 999px; background: rgba(255,255,255,.08); overflow: hidden; }
+.sc-ah__sdgBar span { display: block; height: 100%; border-radius: 999px; }
+.sc-ah__sdgPct { color: var(--ah-muted); font-variant-numeric: tabular-nums; min-width: 3rem; text-align: right; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-ah__dot, .sc-ah__skel { animation: none; }
+}

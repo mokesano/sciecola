@@ -5,6 +5,7 @@ import { Brain, Users, Target, Zap, Search, Filter, Sparkles, TrendingUp,
   Award, BookOpen, Building2, MapPin, Mail, ExternalLink, CheckCircle,
   Star, Lightbulb, Network, ArrowRight, Heart, MessageSquare, Share2
 } from 'lucide-react';
+import InitialsAvatar from '../components/shared/InitialsAvatar';
 
 const ResearchMatching = () => {
   const navigate = useNavigate();
@@ -280,12 +281,7 @@ const ResearchMatching = () => {
                       </div>
 
                       {/* Avatar */}
-                      <img
-                        src={match.avatar || `https://i.pravatar.cc/150?u=${match.id}`}
-                        alt={match.name}
-                        className="w-20 h-20 rounded-2xl object-cover shadow-lg"
-                        onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
-                      />
+                      <InitialsAvatar src={match.avatar} name={match.name} seed={String(match.orcid || match.id || match.name)} className="w-20 h-20 rounded-2xl shadow-lg shrink-0" textClassName="text-xl" />
 
                       {/* Main Info */}
                       <div className="flex-1">

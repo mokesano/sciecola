@@ -36,6 +36,7 @@ require_once ROOT_PATH . '/includes/autoload.php';
 
 use Sciecola\Auth\UserAuth;
 use Sciecola\Community\CommunitySchema;
+use Sciecola\Community\Notifications;
 use Sciecola\Database\Db;
 
 const FEED_MAX_CONTENT = 5000;
@@ -167,6 +168,10 @@ try {
                 $nowLiked = false;
             } else {
                 $pdo->prepare('INSERT INTO feed_post_likes (post_id, user_id, created_at) VALUES (?, ?, ?)')->execute([$postId, $uid, $now]);
+                $au = $pdo->prepare('SELECT author_id FROM feed_posts WHERE id = ?');
+                $au->execute([$postId]);
+                Notifications::notify($pdo, (int) $au->fetchColumn(), 'like',
+                    Notifications::displayName($pdo, $uid) . ' menyukai kiriman Anda', null, '/feeds', $uid, 'like:' . $postId);
                 $nowLiked = true;
             }
             // Hitungan dihitung ulang dari tabel suka agar selalu konsisten.
@@ -186,6 +191,10 @@ try {
             $pdo->prepare('INSERT INTO feed_post_comments (post_id, author_id, comment_text, created_at) VALUES (?, ?, ?, ?)')
                 ->execute([$postId, $uid, $text, $now]);
             $id = (int) $pdo->lastInsertId();
+            $au = $pdo->prepare('SELECT author_id FROM feed_posts WHERE id = ?');
+            $au->execute([$postId]);
+            Notifications::notify($pdo, (int) $au->fetchColumn(), 'comment',
+                Notifications::displayName($pdo, $uid) . ' mengomentari kiriman Anda', mb_substr($text, 0, 140), '/feeds', $uid);
             $pdo->prepare('UPDATE feed_posts SET comments_count = (SELECT COUNT(*) FROM feed_post_comments WHERE post_id = ? AND is_deleted = 0) WHERE id = ?')
                 ->execute([$postId, $postId]);
             feed_respond(['status' => 'success', 'comment_id' => $id], 201);

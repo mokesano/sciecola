@@ -152,5 +152,69 @@
       "body": "Klasifikasi SDG, profil peneliti, metrik jurnal, dan skor dampak — satu REST API dengan kunci HMAC.",
       "cta": "Baca API Reference"
     }
+  },
+  "hero_panel": {
+    "title": "Ringkasan platform",
+    "live": "Langsung",
+    "loading": "Memuat data…",
+    "updated": "Dari database · diperbarui {{time}}",
+    "unavailable": "Data belum dapat dimuat",
+    "empty": "Belum ada data yang cukup",
+    "cta_dashboard": "Lihat Dasbor Analitik",
+    "kpi": {
+      "articles": "Artikel terklasifikasi",
+      "researchers": "Peneliti",
+      "journals": "Jurnal",
+      "citations": "Total sitasi",
+      "institutions": "Institusi",
+      "sdgs": "SDG terwakili"
+    },
+    "chart_title": "Artikel terklasifikasi per tahun",
+    "chart_tip": "{{count}} artikel",
+    "partial": "tahun berjalan",
+    "top_sdgs": "SDG teratas"
+  },
+  "user_home": {
+    "greeting": {
+      "morning": "Selamat pagi",
+      "afternoon": "Selamat siang",
+      "evening": "Selamat sore",
+      "night": "Selamat malam"
+    },
+    "title": "Halo, {{name}}",
+    "title_plain": "Selamat datang kembali",
+    "subtitle": "Ikuti kabar terbaru dari komunitas peneliti dan pantau ringkasan riset Anda.",
+    "kpi": {
+      "publications": "Publikasi",
+      "citations": "Sitasi",
+      "hindex": "h-index",
+      "notifications": "Notifikasi baru",
+      "messages": "Pesan baru"
+    },
+    "no_orcid": "Angka publikasi, sitasi, dan h-index muncul setelah ORCID ditautkan.",
+    "link_orcid": "Tautkan ORCID",
+    "profile_unavailable": "Data profil riset belum dapat dimuat saat ini.",
+    "feed_title": "Feed komunitas",
+    "nav": {
+      "dashboard": "Dasbor Saya",
+      "profile": "Profil Saya",
+      "articles": "Artikel Saya",
+      "collections": "Koleksi",
+      "statistics": "Statistik",
+      "messages": "Pesan",
+      "notifications": "Notifikasi",
+      "settings": "Pengaturan"
+    },
+    "platform": {
+      "title": "Sciecola hari ini",
+      "cta": "Buka dasbor analitik"
+    },
+    "lookup": {
+      "title": "Analisis cepat",
+      "subtitle": "Buka profil peneliti (ORCID) atau artikel (DOI).",
+      "placeholder": "0000-0002-1825-0097 atau 10.xxxx/…",
+      "submit": "Analisis",
+      "error": "Masukkan ORCID atau DOI yang valid."
+    }
   }
 }

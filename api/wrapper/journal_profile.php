@@ -489,23 +489,6 @@ function generateSampleCitationTrend() {
 }
 
 /**
- * Generate sample access stats
- */
-function generateSampleAccessStats() {
-    $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-    $stats = [];
-
-    foreach ($months as $month) {
-        $stats[] = [
-            'month' => $month,
-            'views' => mt_rand(5000, 15000),
-        ];
-    }
-
-    return $stats;
-}
-
-/**
  * Sanitize ID from journal name
  */
 function sanitizeId($name) {

@@ -6,9 +6,9 @@
   },
   "stats": {
     "opportunities": "Opportunities",
-    "funding": "Total Funding",
-    "partnerships": "Partnerships",
-    "success_rate": "Success Rate"
+    "funding": "Total Applications",
+    "partnerships": "Partner Organisations",
+    "success_rate": "Applications Accepted"
   },
   "filter": {
     "search_placeholder": "Search opportunities by keyword, organisation or technology…",

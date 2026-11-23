@@ -29,9 +29,14 @@ const InnovationMarketplace = () => {
   const [selectedOpportunity, setSelectedOpportunity] = useState(null);
   const [opportunities, setOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [marketStats, setMarketStats] = useState(null);
 
   useEffect(() => {
     fetchOpportunities();
+    fetch('/api/innovation_marketplace.php?action=stats')
+      .then((r) => r.json())
+      .then((j) => { if (j.status === 'success') setMarketStats(j.data); })
+      .catch(() => {});
   }, []);
 
   const fetchOpportunities = async () => {
@@ -120,11 +125,13 @@ const InnovationMarketplace = () => {
     return matchesSearch && matchesCategory;
   });
 
+  // Statistik dari API (/api/innovation_marketplace.php?action=stats); "—" bila belum ada data.
+  const fmt = (v, suffix = '') => (v === null || v === undefined ? '—' : `${Number(v).toLocaleString()}${suffix}`);
   const stats = {
-    totalOpportunities: 247,
-    totalFunding: '$127M+',
-    activePartnerships: 89,
-    successRate: '73%'
+    totalOpportunities: fmt(marketStats?.totalOpportunities),
+    totalFunding: fmt(marketStats?.totalApplications),
+    activePartnerships: fmt(marketStats?.activePartnerships),
+    successRate: fmt(marketStats?.successRate, '%')
   };
 
   return (
@@ -156,7 +163,7 @@ const InnovationMarketplace = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
               {[
                 { label: t('stats.opportunities'), value: stats.totalOpportunities, icon: Lightbulb },
-                { label: t('stats.funding'), value: stats.totalFunding, icon: DollarSign },
+                { label: t('stats.funding'), value: stats.totalFunding, icon: Users },
                 { label: t('stats.partnerships'), value: stats.activePartnerships, icon: Handshake },
                 { label: t('stats.success_rate'), value: stats.successRate, icon: CheckCircle }
               ].map((stat, index) => (

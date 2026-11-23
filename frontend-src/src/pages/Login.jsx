@@ -20,7 +20,7 @@ const Login = () => {
 
   const next = (() => {
     const n = params.get('next') || '';
-    return n.startsWith('/') && !n.startsWith('//') ? n : '/dashboard';
+    return n.startsWith('/') && !n.startsWith('//') ? n : '/'; // Beranda feed
   })();
 
   const [config, setConfig] = useState(null);

@@ -1,27 +1,32 @@
-import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
-// NOTE: notification data below still ships as static Indonesian strings.
-// Once the backend serves real notifications this component should render
-// them verbatim; i18n covers only the shell chrome (labels/actions/empty).
-const INITIAL_NOTIFICATIONS = [
-  { id: 1, type: 'citation',      title: 'Artikel Anda dikutip', message: '"Climate Change Adaptation..." mendapat 5 sitasi baru dari Prof. Budi Santoso (UGM).', time: '2 menit yang lalu', read: false, link: '/articles/1' },
-  { id: 2, type: 'collaboration', title: 'Permintaan Kolaborasi', message: 'Dr. Siti Nurhaliza mengundang Anda untuk berkolaborasi pada proyek "Green Energy Policy 2024".', time: '1 jam yang lalu', read: false, link: '/collaborations/invite/5' },
-  { id: 3, type: 'mention',       title: 'Anda disebut dalam komentar', message: 'Ahmad Fauzi menyebut Anda dalam diskusi artikel "Urban Transport Systems".', time: '3 jam yang lalu', read: true,  link: '/articles/2#comment-45' },
-  { id: 4, type: 'system',        title: 'Update Fitur Platform', message: 'Wizdam v2.5 sekarang mendukung ekspor data ke format CSV dan JSON. Cek fitur baru di pengaturan.', time: 'Kemarin', read: true, link: '/changelog' },
-  { id: 5, type: 'download',      title: 'Laporan Bulanan Siap', message: 'Ringkasan statistik performa riset Anda untuk bulan Oktober 2024 telah tersedia.', time: '2 hari yang lalu', read: true, link: '/reports/oct-2024' },
-  { id: 6, type: 'citation',      title: 'Milestone Sitasi', message: 'Selamat! Total sitasi artikel Anda telah mencapai 1,000+. Terus berkarya!', time: '3 hari yang lalu', read: true, link: '/stats' },
-  { id: 7, type: 'collaboration', title: 'Kolaborasi Disetujui', message: 'Proposal riset "AI for Agriculture" telah disetujui oleh mitra dari IPB University.', time: '4 hari yang lalu', read: true, link: '/projects/ai-agri' },
-  { id: 8, type: 'system',        title: 'Verifikasi ORCID Berhasil', message: 'Akun Anda telah terhubung dengan ORCID. Profil riset Anda sekarang lebih kredibel.', time: '1 minggu yang lalu', read: true, link: '/settings#integrations' },
-];
+/**
+ * Notifikasi akun yang login — data dari /api/notifications.php (tabel user_notifications).
+ * Notifikasi dibuat oleh peristiwa nyata: pesan langsung, komentar/suka pada kiriman feed,
+ * dan permintaan kolaborasi. Tidak ada data contoh.
+ */
+async function notifPost(body) {
+  const res = await fetch('/api/notifications.php', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data.status !== 'success') throw new Error(data.message || `HTTP ${res.status}`);
+  return data;
+}
 
-const FILTERS = ['all', 'unread', 'mentions', 'system'];
+const FILTERS = ['all', 'unread', 'message', 'comment', 'like', 'collaboration'];
 
 const TYPE_CONFIG = {
   citation:      { bg: 'bg-indigo-50', text: 'text-indigo-600', icon: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z' },
   collaboration: { bg: 'bg-purple-50', text: 'text-purple-600', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
-  mention:       { bg: 'bg-amber-50',  text: 'text-amber-600',  icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z' },
+  message:       { bg: 'bg-sky-50',    text: 'text-sky-600',    icon: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
+  like:          { bg: 'bg-rose-50',   text: 'text-rose-600',   icon: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' },
+  comment:       { bg: 'bg-amber-50',  text: 'text-amber-600',  icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z' },
   system:        { bg: 'bg-gray-100',  text: 'text-gray-600',   icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z' },
   download:      { bg: 'bg-green-50',  text: 'text-green-600',  icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4' }
 };
@@ -32,53 +37,103 @@ const Chevron = () => (
   </svg>
 );
 
+function timeAgo(iso, t, locale) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const diff = Math.max(0, (Date.now() - d.getTime()) / 1000);
+  if (diff < 60) return t('time.just_now');
+  if (diff < 3600) return t('time.minutes', { count: Math.floor(diff / 60) });
+  if (diff < 86400) return t('time.hours', { count: Math.floor(diff / 3600) });
+  if (diff < 7 * 86400) return t('time.days', { count: Math.floor(diff / 86400) });
+  return d.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
 const Notification = () => {
-  const { t } = useTranslation('notifications');
+  const { t, i18n } = useTranslation('notifications');
+  const navigate = useNavigate();
+  const locale = i18n.language === 'id' ? 'id-ID' : 'en-US';
   const [activeFilter, setActiveFilter] = useState('all');
-  const [notifications, setNotifications] = useState(INITIAL_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [toast, setToast] = useState({ show: false, message: '' });
   const [loadingAction, setLoadingAction] = useState(null);
 
+  const load = useCallback(() => {
+    setError(null);
+    return fetch('/api/notifications.php?limit=200', { credentials: 'same-origin' })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.status !== 'success') throw new Error(data.message || t('load_failed'));
+        setNotifications((data.notifications || []).map((n) => ({ ...n, read: !!n.is_read })));
+      })
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, [t]);
+
+  useEffect(() => { load(); }, [load]);
+
   const filteredNotifications = useMemo(() => {
-    if (activeFilter === 'unread')   return notifications.filter(n => !n.read);
-    if (activeFilter === 'mentions') return notifications.filter(n => n.type === 'mention');
-    if (activeFilter === 'system')   return notifications.filter(n => n.type === 'system');
-    return notifications;
+    if (activeFilter === 'unread') return notifications.filter((n) => !n.read);
+    if (activeFilter === 'all') return notifications;
+    return notifications.filter((n) => n.type === activeFilter);
   }, [activeFilter, notifications]);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const showToast = (msg) => {
     setToast({ show: true, message: msg });
     setTimeout(() => setToast({ show: false, message: '' }), 3000);
   };
 
-  const markAsRead = (id) => setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+  const markAsRead = async (id) => {
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+    try { await notifPost({ action: 'read', id }); } catch (e) { showToast(e.message); load(); }
+  };
 
   const markAllAsRead = async () => {
     setLoadingAction('markAll');
-    await new Promise(res => setTimeout(res, 600));
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-    setLoadingAction(null);
-    showToast(t('toast.marked_all'));
+    try {
+      await notifPost({ action: 'read_all' });
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      showToast(t('toast.marked_all'));
+    } catch (e) {
+      showToast(e.message);
+    } finally {
+      setLoadingAction(null);
+    }
   };
 
   const clearAll = async () => {
+    if (!window.confirm(t('confirm_clear'))) return;
     setLoadingAction('clear');
-    await new Promise(res => setTimeout(res, 400));
-    setNotifications([]);
-    setLoadingAction(null);
-    showToast(t('toast.cleared'));
+    try {
+      await notifPost({ action: 'clear_all' });
+      setNotifications([]);
+      showToast(t('toast.cleared'));
+    } catch (e) {
+      showToast(e.message);
+    } finally {
+      setLoadingAction(null);
+    }
   };
 
-  const dismiss = (id) => setNotifications(prev => prev.filter(n => n.id !== id));
-
-  const counts = {
-    all:      notifications.length,
-    unread:   unreadCount,
-    mentions: notifications.filter(n => n.type === 'mention').length,
-    system:   notifications.filter(n => n.type === 'system').length,
+  const dismiss = async (id) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+    try { await notifPost({ action: 'delete', id }); } catch (e) { showToast(e.message); load(); }
   };
+
+  const openNotif = (notif) => {
+    if (!notif.read) markAsRead(notif.id);
+    if (notif.link) navigate(notif.link);
+  };
+
+  const counts = FILTERS.reduce((acc, f) => {
+    acc[f] = f === 'all' ? notifications.length
+      : f === 'unread' ? unreadCount
+      : notifications.filter((n) => n.type === f).length;
+    return acc;
+  }, {});
 
   return (
     <main className="pt-[68px] pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
@@ -154,8 +209,17 @@ const Notification = () => {
         ))}
       </div>
 
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-red-700">{error}</div>
+      )}
+
       {/* Notification List */}
-      {filteredNotifications.length > 0 ? (
+      {loading ? (
+        <div className="flex items-center justify-center py-16">
+          <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mr-3" />
+          <span className="text-gray-600">{t('loading')}</span>
+        </div>
+      ) : filteredNotifications.length > 0 ? (
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           <div className="divide-y divide-gray-100">
             {filteredNotifications.map((notif) => {
@@ -177,15 +241,19 @@ const Notification = () => {
                         <div>
                           <div className="flex items-center gap-2 mb-1">
                             <h3 className={`font-semibold text-[15px] ${!notif.read ? 'text-gray-900' : 'text-gray-700'}`}>
-                              {notif.title}
+                              {notif.link ? (
+                                <button type="button" onClick={() => openNotif(notif)} className="text-left hover:text-indigo-600 hover:underline">
+                                  {notif.title}
+                                </button>
+                              ) : notif.title}
                             </h3>
                             {!notif.read && <span className="w-2 h-2 bg-indigo-600 rounded-full animate-pulse"></span>}
                           </div>
-                          <p className="text-[15px] text-gray-600 line-clamp-2 mb-2">{notif.message}</p>
-                          <p className="text-sm text-gray-500">{notif.time}</p>
+                          {notif.message && <p className="text-[15px] text-gray-600 line-clamp-2 mb-2">{notif.message}</p>}
+                          <p className="text-sm text-gray-500">{timeAgo(notif.created_at, t, locale)}</p>
                         </div>
 
-                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                        <div className="flex items-center gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shrink-0">
                           {!notif.read && (
                             <button
                               onClick={() => markAsRead(notif.id)}
@@ -215,11 +283,6 @@ const Notification = () => {
             })}
           </div>
 
-          <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 text-center">
-            <button className="text-[15px] font-medium text-indigo-600 hover:text-indigo-700 transition-colors">
-              {t('actions.load_more')}
-            </button>
-          </div>
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-12 text-center">

@@ -152,5 +152,70 @@
       "body": "SDG classification, researcher profiles, journal metrics and impact scores — one REST API with HMAC keys.",
       "cta": "Read the API Reference"
     }
+  },
+  "hero_panel": {
+    "title": "Platform overview",
+    "live": "Live",
+    "loading": "Loading data…",
+    "updated": "From the database · updated {{time}}",
+    "unavailable": "Data could not be loaded yet",
+    "empty": "Not enough data yet",
+    "cta_dashboard": "View Analytics Dashboard",
+    "kpi": {
+      "articles": "Classified articles",
+      "researchers": "Researchers",
+      "journals": "Journals",
+      "citations": "Total citations",
+      "institutions": "Institutions",
+      "sdgs": "SDGs represented"
+    },
+    "chart_title": "Classified articles per year",
+    "chart_tip_one": "{{count}} article",
+    "chart_tip_other": "{{count}} articles",
+    "partial": "current year",
+    "top_sdgs": "Top SDGs"
+  },
+  "user_home": {
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening",
+      "night": "Good evening"
+    },
+    "title": "Hi, {{name}}",
+    "title_plain": "Welcome back",
+    "subtitle": "Catch up with the research community and keep an eye on your research summary.",
+    "kpi": {
+      "publications": "Publications",
+      "citations": "Citations",
+      "hindex": "h-index",
+      "notifications": "New notifications",
+      "messages": "New messages"
+    },
+    "no_orcid": "Publication, citation and h-index figures appear once your ORCID is linked.",
+    "link_orcid": "Link ORCID",
+    "profile_unavailable": "Your research profile could not be loaded right now.",
+    "feed_title": "Community feed",
+    "nav": {
+      "dashboard": "My Dashboard",
+      "profile": "My Profile",
+      "articles": "My Articles",
+      "collections": "Collections",
+      "statistics": "Statistics",
+      "messages": "Messages",
+      "notifications": "Notifications",
+      "settings": "Settings"
+    },
+    "platform": {
+      "title": "Sciecola today",
+      "cta": "Open analytics dashboard"
+    },
+    "lookup": {
+      "title": "Quick analysis",
+      "subtitle": "Open a researcher profile (ORCID) or an article (DOI).",
+      "placeholder": "0000-0002-1825-0097 or 10.xxxx/…",
+      "submit": "Analyse",
+      "error": "Enter a valid ORCID or DOI."
+    }
   }
 }

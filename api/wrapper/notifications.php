@@ -7,260 +7,148 @@ declare(strict_types=1);
  * Copyright (c) 2017-2026 Sangia Publishing House
  * Copyright (c) 2017-2026 Rochmady
  * Distributed under the MIT License.
- * 
+ *
  * @ingroup api
- * @brief Notifications API.
- * 
- * Endpoints:
- * GET /api/notifications.php?orcid=&unread_only=1&type=&limit=50
- * PUT /api/notifications.php?id=&action=read|delete
+ * @brief Notifikasi milik akun yang login (tabel user_notifications).
+ *
+ * GET  /api/notifications.php?filter=all|unread|message|comment|like|collaboration&limit=50
+ *      -> { status, notifications:[...], unread_count, total }
+ * GET  /api/notifications.php?count=1            -> { status, unread_count }
+ * POST /api/notifications.php { action: read|unread|delete, id }
+ * POST /api/notifications.php { action: read_all | clear_all }
+ * (PUT dengan body yang sama tetap diterima untuk kompatibilitas.)
+ *
+ * Tidak ada data contoh: bila belum ada notifikasi, daftarnya kosong.
  */
+
+use Sciecola\Auth\UserAuth;
+use Sciecola\Community\Notifications;
+use Sciecola\Database\Db;
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: no-store');
+
+if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
+$configFile = ROOT_PATH . '/config/config.php';
+if (file_exists($configFile)) require_once $configFile;
+require_once ROOT_PATH . '/includes/autoload.php';
+
+function nt_respond(array $data, int $code = 200): void
+{
+    http_response_code($code);
+    echo json_encode($data, JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+function nt_iso(?string $utc): ?string
+{
+    return $utc ? str_replace(' ', 'T', substr($utc, 0, 19)) . 'Z' : null;
+}
+
+const NT_FILTER_TYPES = ['message', 'comment', 'like', 'collaboration', 'system'];
 
 try {
-    if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
-    $configFile = ROOT_PATH . '/config/config.php';
-    if (file_exists($configFile)) require_once $configFile;
-    require_once ROOT_PATH . '/includes/autoload.php';
+    $user = UserAuth::requireUser();
+    $uid  = (int) $user['id'];
+    try {
+        $pdo = Db::pdo();
+    } catch (\Throwable $e) {
+        $pdo = null;
+    }
+    if (!$pdo) {
+        nt_respond(['status' => 'error', 'message' => 'Database tidak dapat dihubungi', 'notifications' => [], 'unread_count' => 0], 503);
+    }
+    Notifications::ensure($pdo);
+
+    $unread = function () use ($pdo, $uid): int {
+        $st = $pdo->prepare('SELECT COUNT(*) FROM user_notifications WHERE user_id = ? AND is_read = 0');
+        $st->execute([$uid]);
+        return (int) $st->fetchColumn();
+    };
 
     $method = $_SERVER['REQUEST_METHOD'];
 
     if ($method === 'GET') {
-        $orcid      = \Sciecola\Auth\UserAuth::requireOrcid();
-        $unreadOnly = $_GET['unread_only'] ?? '0';
-        $type       = trim($_GET['type'] ?? '');
-        $limit      = (int)($_GET['limit'] ?? 50);
-
-        if ($limit > 500) $limit = 500;
-        if ($limit < 1)   $limit = 1;
-
-        if (!$orcid) {
-            http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'ORCID required']);
-            exit;
+        if (!empty($_GET['count'])) {
+            nt_respond(['status' => 'success', 'unread_count' => $unread()]);
         }
-        echo json_encode(getNotifications($orcid, $unreadOnly, $type, $limit));
+        $filter = (string) ($_GET['filter'] ?? ((($_GET['unread_only'] ?? '') === '1') ? 'unread' : 'all'));
+        $limit  = max(1, min(200, (int) ($_GET['limit'] ?? 50)));
 
-    } elseif ($method === 'PUT') {
-        $ownerOrcid = \Sciecola\Auth\UserAuth::requireOrcid();
-        $input    = json_decode(file_get_contents('php://input'), true);
-        $notifId  = (int)($input['id'] ?? 0);
-        $action   = $input['action'] ?? '';
-
-        if (!$notifId || !$action) {
-            http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'ID and action required']);
-            exit;
+        $where  = ['n.user_id = ?'];
+        $params = [$uid];
+        if ($filter === 'unread') {
+            $where[] = 'n.is_read = 0';
+        } elseif (in_array($filter, NT_FILTER_TYPES, true)) {
+            $where[] = 'n.type = ?';
+            $params[] = $filter;
         }
-
-        if ($action === 'read') {
-            echo json_encode(markAsRead($notifId, $ownerOrcid));
-        } elseif ($action === 'delete') {
-            echo json_encode(deleteNotification($notifId, $ownerOrcid));
-        } else {
-            http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
-        }
-    } else {
-        http_response_code(405);
-        echo json_encode(['status' => 'error', 'message' => 'Method not allowed']);
-    }
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
-}
-
-function getNotifications(string $orcid, string $unreadOnly, string $type, int $limit): array {
-    if (!defined('DB_HOST') || !DB_HOST) {
-        return \Sciecola\Support\EmptyData::like(getSampleNotifications());
-    }
-
-    try {
-        $pdo = new PDO(
-            'mysql:host=' . DB_HOST . ';dbname=' . DB_DATABASE . ';charset=utf8mb4',
-            DB_USERNAME, DB_PASSWORD,
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+        $st = $pdo->prepare(
+            'SELECT n.id, n.type, n.title, n.message, n.link, n.is_read, n.created_at, u.name AS actor_name
+               FROM user_notifications n
+               LEFT JOIN user_accounts u ON u.id = n.actor_user_id
+              WHERE ' . implode(' AND ', $where) . '
+              ORDER BY n.created_at DESC, n.id DESC
+              LIMIT ' . $limit
         );
+        $st->execute($params);
+        $items = array_map(static fn (array $r) => [
+            'id'         => (int) $r['id'],
+            'type'       => $r['type'],
+            'title'      => $r['title'],
+            'message'    => $r['message'],
+            'link'       => $r['link'],
+            'is_read'    => (bool) $r['is_read'],
+            'actor_name' => $r['actor_name'],
+            'created_at' => nt_iso($r['created_at']),
+        ], $st->fetchAll(PDO::FETCH_ASSOC));
 
-        $where  = ['recipient_orcid = ?'];
-        $params = [$orcid];
-
-        if ($unreadOnly === '1') {
-            $where[] = 'is_read = 0';
-        }
-
-        if ($type !== '') {
-            $where[] = 'type = ?';
-            $params[] = $type;
-        }
-
-        $whereClause = implode(' AND ', $where);
-
-        $sql = "SELECT id, type, category, title, message, link, data, is_read,
-                       action_required, action_deadline, created_at, updated_at
-                FROM notifications
-                WHERE $whereClause
-                ORDER BY created_at DESC
-                LIMIT $limit";
-
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute($params);
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $notifications = array_map(function ($row) {
-            $rowData = json_decode($row['data'] ?? '{}', true);
-            return [
-                'id'               => (int)$row['id'],
-                'type'             => $row['type'],
-                'category'         => $row['category'],
-                'title'            => $row['title'],
-                'message'          => $row['message'],
-                'link'             => $row['link'],
-                'data'             => is_array($rowData) ? $rowData : [],
-                'is_read'          => (bool)$row['is_read'],
-                'action_required'  => (bool)$row['action_required'],
-                'action_deadline'  => $row['action_deadline'],
-                'created_at'       => $row['created_at'],
-                'time_ago'         => getTimeAgo($row['created_at'])
-            ];
-        }, $rows);
-
-        $countStmt = $pdo->prepare("
-            SELECT COUNT(*) as count FROM notifications
-            WHERE recipient_orcid = ? AND is_read = 0
-        ");
-        $countStmt->execute([$orcid]);
-        $unreadCount = (int)$countStmt->fetch(PDO::FETCH_ASSOC)['count'];
-
-        return [
+        nt_respond([
             'status'        => 'success',
-            'notifications' => $notifications,
-            'unread_count'  => $unreadCount,
-            'total'         => count($notifications),
-            'timestamp'     => date('c')
-        ];
-    } catch (Exception $e) {
-        error_log($e->getMessage());
-        return \Sciecola\Support\EmptyData::like(getSampleNotifications());
-    }
-}
-
-function markAsRead(int $notifId, string $ownerOrcid): array {
-    if (!defined('DB_HOST') || !DB_HOST) {
-        return ['status' => 'error', 'message' => 'Database not configured'];
+            'notifications' => $items,
+            'unread_count'  => $unread(),
+            'total'         => count($items),
+        ]);
     }
 
-    try {
-        $pdo = new PDO(
-            'mysql:host=' . DB_HOST . ';dbname=' . DB_DATABASE . ';charset=utf8mb4',
-            DB_USERNAME, DB_PASSWORD,
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-        );
-
-        $checkStmt = $pdo->prepare("SELECT id FROM notifications WHERE id = ? AND recipient_orcid = ?");
-        $checkStmt->execute([$notifId, $ownerOrcid]);
-        if (!$checkStmt->fetch()) {
-            return ['status' => 'error', 'message' => 'Notification not found'];
-        }
-
-        $stmt = $pdo->prepare("UPDATE notifications SET is_read = 1, read_at = NOW() WHERE id = ? AND recipient_orcid = ?");
-        $stmt->execute([$notifId]);
-
-        return ['status' => 'success', 'message' => 'Notification marked as read'];
-    } catch (Exception $e) {
-        error_log($e->getMessage());
-        return ['status' => 'error', 'message' => 'Failed to update notification'];
-    }
-}
-
-function deleteNotification(int $notifId, string $ownerOrcid): array {
-    if (!defined('DB_HOST') || !DB_HOST) {
-        return ['status' => 'error', 'message' => 'Database not configured'];
+    if ($method !== 'POST' && $method !== 'PUT') {
+        nt_respond(['status' => 'error', 'message' => 'Method not allowed'], 405);
     }
 
-    try {
-        $pdo = new PDO(
-            'mysql:host=' . DB_HOST . ';dbname=' . DB_DATABASE . ';charset=utf8mb4',
-            DB_USERNAME, DB_PASSWORD,
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-        );
+    $input  = json_decode((string) file_get_contents('php://input'), true) ?: [];
+    $action = (string) ($input['action'] ?? '');
+    $id     = (int) ($input['id'] ?? 0);
+    $now    = gmdate('Y-m-d H:i:s');
 
-        $checkStmt = $pdo->prepare("SELECT id FROM notifications WHERE id = ? AND recipient_orcid = ?");
-        $checkStmt->execute([$notifId, $ownerOrcid]);
-        if (!$checkStmt->fetch()) {
-            return ['status' => 'error', 'message' => 'Notification not found'];
-        }
+    switch ($action) {
+        case 'clear_all':
+            $pdo->prepare('DELETE FROM user_notifications WHERE user_id = ?')->execute([$uid]);
+            nt_respond(['status' => 'success', 'unread_count' => 0]);
 
-        $stmt = $pdo->prepare("DELETE FROM notifications WHERE id = ? AND recipient_orcid = ?");
-        $stmt->execute([$notifId]);
+        case 'read_all':
+            $pdo->prepare('UPDATE user_notifications SET is_read = 1, read_at = ? WHERE user_id = ? AND is_read = 0')->execute([$now, $uid]);
+            nt_respond(['status' => 'success', 'unread_count' => 0]);
 
-        return ['status' => 'success', 'message' => 'Notification deleted'];
-    } catch (Exception $e) {
-        error_log($e->getMessage());
-        return ['status' => 'error', 'message' => 'Failed to delete notification'];
+        case 'read':
+        case 'unread':
+        case 'delete':
+            if ($id <= 0) nt_respond(['status' => 'error', 'message' => 'ID notifikasi diperlukan'], 400);
+            $own = $pdo->prepare('SELECT 1 FROM user_notifications WHERE id = ? AND user_id = ?');
+            $own->execute([$id, $uid]);
+            if (!$own->fetchColumn()) nt_respond(['status' => 'error', 'message' => 'Notifikasi tidak ditemukan'], 404);
+            if ($action === 'delete') {
+                $pdo->prepare('DELETE FROM user_notifications WHERE id = ? AND user_id = ?')->execute([$id, $uid]);
+            } else {
+                $pdo->prepare('UPDATE user_notifications SET is_read = ?, read_at = ? WHERE id = ? AND user_id = ?')
+                    ->execute([$action === 'read' ? 1 : 0, $action === 'read' ? $now : null, $id, $uid]);
+            }
+            nt_respond(['status' => 'success', 'unread_count' => $unread()]);
+
+        default:
+            nt_respond(['status' => 'error', 'message' => 'Aksi tidak dikenal'], 400);
     }
-}
-
-function getTimeAgo(string $timestamp): string {
-    $time = strtotime($timestamp);
-    $now  = time();
-    $diff = $now - $time;
-
-    if ($diff < 60)     return 'just now';
-    if ($diff < 3600)   return ceil($diff / 60) . 'm ago';
-    if ($diff < 86400)  return ceil($diff / 3600) . 'h ago';
-    if ($diff < 604800) return ceil($diff / 86400) . 'd ago';
-    return ceil($diff / 604800) . 'w ago';
-}
-
-function getSampleNotifications(): array {
-    return [
-        'status' => 'success',
-        'notifications' => [
-            [
-                'id'               => 1,
-                'type'             => 'collaboration_request',
-                'category'         => 'Research',
-                'title'            => 'Collaboration Request from Dr. Sarah Chen',
-                'message'          => 'Dr. Sarah Chen is interested in collaborating on climate research project',
-                'link'             => '/#/collaboration-hub',
-                'is_read'          => false,
-                'action_required'  => true,
-                'action_deadline'  => '2024-06-01',
-                'created_at'       => date('c', time() - 3600),
-                'time_ago'         => '1h ago'
-            ],
-            [
-                'id'               => 2,
-                'type'             => 'opportunity_match',
-                'category'         => 'Opportunity',
-                'title'            => 'New Research Opportunity: Climate Tech Partnership',
-                'message'          => 'You matched with 96% to a carbon capture research opportunity',
-                'link'             => '/#/innovation-marketplace',
-                'is_read'          => false,
-                'action_required'  => true,
-                'action_deadline'  => '2024-05-25',
-                'created_at'       => date('c', time() - 86400),
-                'time_ago'         => '1d ago'
-            ],
-            [
-                'id'               => 3,
-                'type'             => 'message',
-                'category'         => 'Message',
-                'title'            => 'New message from Prof. Ahmed Hassan',
-                'message'          => 'New message received in your collaboration chat',
-                'link'             => '/#/messages',
-                'is_read'          => true,
-                'action_required'  => false,
-                'action_deadline'  => null,
-                'created_at'       => date('c', time() - 172800),
-                'time_ago'         => '2d ago'
-            ]
-        ],
-        'unread_count' => 2,
-        'total'        => 3,
-        'timestamp'    => date('c')
-    ];
+} catch (\Throwable $e) {
+    error_log('[notifications] ' . $e->getMessage());
+    nt_respond(['status' => 'error', 'message' => 'Gagal memproses notifikasi'], 500);
 }
