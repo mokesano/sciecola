@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../context/AuthContext';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area
@@ -31,56 +32,66 @@ const Dashboard = () => {
   const { t } = useTranslation('dashboard_page');
   const [dateRange, setDateRange] = useState('current');
 
-  const stats = { articles: 42, citations: 1248, reads: 3562, downloads: 2109,
-                  articleGrowth: 12, citationGrowth: 18, readGrowth: 24, downloadGrowth: 16 };
+  // Semua angka diambil dari profil peneliti yang sedang masuk (ResearcherProfileService:
+  // database dulu, lalu mesin SDG). Dulu seluruh dasbor berisi angka contoh yang sama
+  // untuk setiap pengguna.
+  const { user } = useAuth();
+  const [profile, setProfile]       = useState(null);
+  const [activities, setActivities] = useState([]);
+  const [loadError, setLoadError]   = useState(null);
 
-  // Chart-facing month labels stay short and neutral.
-  const publicationsPerMonth = [
-    { month: 'Jan', count: 5 }, { month: 'Feb', count: 9 }, { month: 'Mar', count: 12 },
-    { month: 'Apr', count: 4 }, { month: 'May', count: 5 }, { month: 'Jun', count: 10 },
-    { month: 'Jul', count: 5 }, { month: 'Aug', count: 9 }, { month: 'Sep', count: 5 },
-    { month: 'Oct', count: 9 }, { month: 'Nov', count: 15 }, { month: 'Dec', count: 4 }
-  ];
+  useEffect(() => {
+    if (!user?.orcid) {
+      setLoadError('Tautkan ORCID Anda di Profil Saya untuk melihat statistik dasbor.');
+      return;
+    }
+    setLoadError(null);
+    fetch(`/api/researcher_profile.php?orcid=${encodeURIComponent(user.orcid)}`)
+      .then(r => r.json())
+      .then(json => {
+        if (json.status === 'success' && json.profile) setProfile(json.profile);
+        else setLoadError(json.message || 'Profil belum tersedia.');
+      })
+      .catch(() => setLoadError('Gagal memuat data dasbor.'));
+    fetch(`/api/my_activity.php?orcid=${encodeURIComponent(user.orcid)}&page_size=3`)
+      .then(r => r.json())
+      .then(json => { if (json.status === 'success' && Array.isArray(json.data)) setActivities(json.data.slice(0, 3)); })
+      .catch(() => {});
+  }, [user?.orcid]);
 
-  // SDG names left untranslated (proper nouns / global SDG labels).
-  const sdgContribution = [
-    { name: 'Climate Action',      value: 28, color: '#10b981' },
-    { name: 'Sustainable Cities',  value: 22, color: '#f59e0b' },
-    { name: 'Good Health',         value: 16, color: '#14b8a6' },
-    { name: 'Clean Energy',        value: 12, color: '#fbbf24' },
-    { name: 'Life on Land',        value: 10, color: '#ef4444' },
-    { name: 'Others',              value: 12, color: '#8b5cf6' }
-  ];
+  const pubs  = profile?.publications ?? 0;
+  const cites = profile?.citations ?? 0;
+  // reads/downloads belum dilacak → ditampilkan "—"; persentase pertumbuhan tidak tersedia.
+  const stats = { articles: pubs, citations: cites, reads: null, downloads: null,
+                  articleGrowth: null, citationGrowth: null, readGrowth: null, downloadGrowth: null };
 
-  const popularArticles = [
-    { title: 'Climate Change Adaptation in Coastal Communities', journal: 'Journal of Environmental Science, 2024', citations: 24, downloads: 652 },
-    { title: 'Sustainable Urban Transport Systems in Indonesia',  journal: 'Sustainable Cities Review, 2023',        citations: 18, downloads: 210 },
-    { title: 'Renewable Energy Policy and Its Impact',            journal: 'Journal of Urbanism, Econ., 2024',       citations: 32, downloads: 411 }
-  ];
+  // Publikasi per tahun (dari tren publikasi peneliti)
+  const publicationsPerMonth = (profile?.publicationTrend || []).map(p => ({ month: p.year, count: p.count }));
 
-  // Recent-activity text is mock data pending the real feed backend.
-  const recentActivities = [
-    { text: 'Artikel Anda "Climate Change Adaptation..." mendapat 15 sitasi baru', time: '2 jam yang lalu', avatar: 'https://i.pravatar.cc/150?img=1' },
-    { text: 'User Budi Santoso menyimpan artikel Anda',                            time: '5 jam yang lalu', avatar: 'https://i.pravatar.cc/150?img=3' },
-    { text: 'Artikel Anda diunduh 23 kali',                                        time: '1 hari yang lalu',avatar: 'https://i.pravatar.cc/150?img=5' }
-  ];
+  const sdgFocus = profile?.sdgFocus || [];
+  const sdgContribution = sdgFocus.slice(0, 6).map(s => ({ name: s.name, value: s.percentage, color: s.color }));
 
-  const articleDistribution = [
-    { sdg: 'Climate Action',      count: 12, percentage: 28 },
-    { sdg: 'Sustainable Cities',  count: 9,  percentage: 22 },
-    { sdg: 'Good Health',         count: 7,  percentage: 16 },
-    { sdg: 'Clean Energy',        count: 5,  percentage: 12 },
-    { sdg: 'Life on Land',        count: 4,  percentage: 10 },
-    { sdg: 'Others',              count: 5,  percentage: 12 }
-  ];
+  const popularArticles = [...(profile?.recentPublications || [])]
+    .sort((a, b) => (b.citations || 0) - (a.citations || 0))
+    .slice(0, 3)
+    .map(a => ({ title: a.title, journal: [a.journal, a.year || null].filter(Boolean).join(', '), citations: a.citations || 0, downloads: null }));
 
-  const citationTrend = [
-    { year: '2018', count: 580  }, { year: '2019', count: 520  }, { year: '2020', count: 1100 },
-    { year: '2021', count: 1350 }, { year: '2022', count: 1300 }, { year: '2023', count: 1800 },
-    { year: '2024', count: 2000 }
-  ];
+  const recentActivities = activities.map(a => ({
+    text: a.title || a.type || '',
+    time: a.timestamp ? new Date(a.timestamp).toLocaleString('id-ID') : '',
+    avatar: null,
+  }));
 
-  const journalPerformance = { acceptanceRate: 24, avgReviewTime: 28, avgPublishTime: 4, citationsPerArticle: 16.1, hIndex: 17 };
+  const articleDistribution = sdgFocus.slice(0, 6).map(s => ({ sdg: s.name, count: s.count, percentage: s.percentage }));
+
+  const citationTrend = (profile?.citationTrend || []).map(c => ({ year: c.year, count: c.citations }));
+
+  const journalPerformance = {
+    acceptanceRate: null, avgReviewTime: null, avgPublishTime: null,
+    citationsPerArticle: pubs > 0 ? (cites / pubs).toFixed(1) : null,
+    hIndex: profile?.hIndex ?? null,
+  };
+  const dash = (v, suffix = '') => (v === null || v === undefined ? '—' : `${v}${suffix}`);
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -95,14 +106,14 @@ const Dashboard = () => {
   };
 
   const statCards = [
-    { key: 'articles',  value: stats.articles,                     growth: stats.articleGrowth,  bg: 'bg-indigo-50 text-indigo-600', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+    { key: 'articles',  value: stats.articles.toLocaleString(),    growth: stats.articleGrowth,  bg: 'bg-indigo-50 text-indigo-600', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
     { key: 'citations', value: stats.citations.toLocaleString(),   growth: stats.citationGrowth, bg: 'bg-purple-50 text-purple-600', icon: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z' },
-    { key: 'reads',     value: stats.reads.toLocaleString(),       growth: stats.readGrowth,     bg: 'bg-blue-50 text-blue-600',     icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
-    { key: 'downloads', value: stats.downloads.toLocaleString(),   growth: stats.downloadGrowth, bg: 'bg-green-50 text-green-600',   icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4' },
+    { key: 'reads',     value: dash(stats.reads),                  growth: stats.readGrowth,     bg: 'bg-blue-50 text-blue-600',     icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
+    { key: 'downloads', value: dash(stats.downloads),              growth: stats.downloadGrowth, bg: 'bg-green-50 text-green-600',   icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4' },
   ];
 
   const navItems = [
-    { to: '/feeds',          i18n: 'feeds',         icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z' },
+    { to: '/',               i18n: 'feeds',         icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z' },
     { to: '/admin',          i18n: 'admin',         icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', active: 'admin', badge: true },
     { to: '/dashboard',      i18n: 'dashboard',     icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', active: true },
     { to: '/my-profile',     i18n: 'my_profile',    icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
@@ -176,6 +187,9 @@ const Dashboard = () => {
           </div>
 
           {/* Stats Cards */}
+          {loadError && (
+            <div className="p-4 rounded-xl border border-amber-200 bg-amber-50 text-amber-800 text-[15px]">{loadError}</div>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {statCards.map((s) => (
               <div key={s.key} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
@@ -188,7 +202,7 @@ const Dashboard = () => {
                   <span className="text-[15px] text-gray-600">{t(`stats.${s.key}`)}</span>
                 </div>
                 <p className="text-2xl font-bold text-gray-900">{s.value}</p>
-                <p className="text-sm font-medium text-green-600 mt-1">{t('stats.growth', { pct: s.growth })}</p>
+                {s.growth !== null && <p className="text-sm font-medium text-green-600 mt-1">{t('stats.growth', { pct: s.growth })}</p>}
               </div>
             ))}
           </div>
@@ -251,7 +265,7 @@ const Dashboard = () => {
                     <p className="text-sm text-gray-500 mb-2">{article.journal}</p>
                     <div className="flex gap-4 text-[15px]">
                       <span className="text-gray-600">{t('article_meta.citations')}: <span className="font-semibold text-gray-900">{article.citations}</span></span>
-                      <span className="text-gray-600">{t('article_meta.downloads')}: <span className="font-semibold text-gray-900">{article.downloads}</span></span>
+                      <span className="text-gray-600">{t('article_meta.downloads')}: <span className="font-semibold text-gray-900">{dash(article.downloads)}</span></span>
                     </div>
                   </div>
                 ))}
@@ -266,7 +280,7 @@ const Dashboard = () => {
               <div className="space-y-4">
                 {recentActivities.map((activity, idx) => (
                   <div key={idx} className="flex gap-3">
-                    <img src={activity.avatar} alt="" className="w-8 h-8 rounded-full object-cover" />
+                    <div className="w-8 h-8 rounded-full bg-indigo-100 flex-shrink-0" aria-hidden="true" />
                     <div className="flex-grow">
                       <p className="text-[15px] text-gray-900">{activity.text}</p>
                       <p className="text-sm text-gray-500 mt-1">{activity.time}</p>
@@ -350,11 +364,11 @@ const Dashboard = () => {
               <h3 className="text-lg font-bold text-gray-900 mb-4">{t('sections.journal_perf')}</h3>
               <div className="space-y-4">
                 {[
-                  { key: 'acceptance',    value: `${journalPerformance.acceptanceRate}%`, icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
-                  { key: 'review_time',   value: `${journalPerformance.avgReviewTime} ${t('journal.days')}`, icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
-                  { key: 'publish_time',  value: `${journalPerformance.avgPublishTime} ${t('journal.days')}`, icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
-                  { key: 'citations_per', value: journalPerformance.citationsPerArticle, icon: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z' },
-                  { key: 'hindex',        value: journalPerformance.hIndex, icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6', last: true },
+                  { key: 'acceptance',    value: dash(journalPerformance.acceptanceRate, '%'), icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
+                  { key: 'review_time',   value: dash(journalPerformance.avgReviewTime, ` ${t('journal.days')}`), icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
+                  { key: 'publish_time',  value: dash(journalPerformance.avgPublishTime, ` ${t('journal.days')}`), icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
+                  { key: 'citations_per', value: dash(journalPerformance.citationsPerArticle), icon: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z' },
+                  { key: 'hindex',        value: dash(journalPerformance.hIndex), icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6', last: true },
                 ].map(row => (
                   <div key={row.key} className={`flex justify-between items-center py-2 ${row.last ? '' : 'border-b border-gray-100'}`}>
                     <div className="flex items-center gap-2">

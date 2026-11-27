@@ -24,7 +24,9 @@
   "auth": {
     "login": "Masuk",
     "register": "Daftar",
-    "profile": "Profil Saya"
+    "profile": "Profil Saya",
+    "settings": "Pengaturan",
+    "logout": "Keluar"
   },
   "menu": {
     "home": "Beranda",
@@ -61,7 +63,8 @@
           "matching": "Pencocokan Riset",
           "projects": "Proyek Bersama",
           "marketplace": "Peluang Inovasi",
-          "sponsor": "Jadi Sponsor"
+          "sponsor": "Jadi Sponsor",
+          "premium": "Layanan Premium"
         }
       },
       "about": {

@@ -80,7 +80,7 @@ function fetchSdgDistribution(int $limit, string $sort): array
         }
     }
 
-    return getSampleSdgDistribution($limit);
+    return \Sciecola\Support\EmptyData::like(getSampleSdgDistribution($limit));
 }
 
 function getSdgMeta(): array

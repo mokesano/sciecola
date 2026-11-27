@@ -47,7 +47,16 @@ header('Access-Control-Allow-Methods: GET, OPTIONS');
 // -----------------------------------------------------------------
 define('BATCH_SIZE', 5); // Jumlah karya diproses per request batch
 
-$CACHE_DIR = __DIR__ . '/cache';
+// Ikat variabel konfigurasi ke scope global. File ini juga di-require dari DALAM fungsi
+// (handle_api_proxy_request di includes/functions.php, antrean crawl). Tanpa deklarasi ini
+// variabel di bawah menjadi variabel lokal fungsi pemanggil, sehingga fungsi-fungsi mesin
+// (yang memakai `global ...`) menerima null: kamus SDG kosong dan cache tidak tersimpan.
+global $CACHE_DIR, $CONFIG, $SDG_KEYWORDS, $IMPACT_INDICATORS, $TRANSFORMATIVE_VERBS,
+       $CONTRIBUTION_PATHWAYS, $MEMORY_CACHE, $CAUSAL_PATTERNS;
+
+// Cache disimpan di ROOT/cache (di luar public/, diblokir .htaccess) agar bisa dimigrasikan
+// lewat halaman Admin → Cache & DB.
+$CACHE_DIR = dirname(__DIR__, 2) . '/cache';
 if (!is_dir($CACHE_DIR)) {
     mkdir($CACHE_DIR, 0755, true);
 }

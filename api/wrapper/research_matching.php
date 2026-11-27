@@ -44,7 +44,7 @@ function calculateMatches(): array {
     if (!$input || empty($input)) {
         return [
             'status' => 'success',
-            'matches' => getSampleMatches(),
+            'matches' => \Sciecola\Support\EmptyData::like(getSampleMatches()),
             'timestamp' => date('c')
         ];
     }
@@ -52,7 +52,7 @@ function calculateMatches(): array {
     if (!defined('DB_HOST') || !DB_HOST) {
         return [
             'status' => 'success',
-            'matches' => getSampleMatches(),
+            'matches' => \Sciecola\Support\EmptyData::like(getSampleMatches()),
             'timestamp' => date('c')
         ];
     }
@@ -64,52 +64,104 @@ function calculateMatches(): array {
             [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
         );
 
-        // Get all researchers
+        // Kriteria pencarian dari halaman Research Matching
+        $wantSdgs = array_values(array_filter(array_map('intval', (array) ($input['sdgGoals'] ?? $input['sdgs'] ?? [])),
+            fn ($n) => $n >= 1 && $n <= 17));
+        $keywords = array_values(array_filter(preg_split('/[\s,;]+/', mb_strtolower(trim(
+            ($input['keywords'] ?? '') . ' ' . ($input['expertise'] ?? '')))) ?: [], fn ($w) => mb_strlen($w) >= 3));
+        $location    = mb_strtolower(trim((string) ($input['location'] ?? '')));
+        $institution = mb_strtolower(trim((string) ($input['institution'] ?? '')));
+
+        // Kandidat: peneliti + SDG nyata dari karya mereka (work_sdgs) + jumlah publikasi & kolaborator
         $stmt = $pdo->query("
-            SELECT r.orcid, r.name, r.h_index, r.citation_count, r.country,
-                   r.collaboration_status, r.profile_photo_url,
+            SELECT r.orcid, r.name, r.h_index, r.country, r.collaboration_status, r.profile_photo_url,
                    i.name AS institution,
-                   GROUP_CONCAT(DISTINCT rse.sdg_number) as sdgs,
-                   GROUP_CONCAT(DISTINCT re.field_name) as expertise
+                   (SELECT GROUP_CONCAT(DISTINCT ws.sdg_number)
+                      FROM publication_authors pa JOIN work_sdgs ws ON ws.doi = pa.doi
+                     WHERE pa.orcid = r.orcid) AS sdgs,
+                   (SELECT GROUP_CONCAT(DISTINCT re.field_name) FROM researcher_expertise re WHERE re.orcid = r.orcid) AS expertise,
+                   (SELECT COUNT(DISTINCT pa.doi) FROM publication_authors pa WHERE pa.orcid = r.orcid) AS pub_count,
+                   (SELECT COUNT(DISTINCT co.name) FROM publication_authors pa
+                      JOIN publication_authors co ON co.doi = pa.doi AND (co.orcid IS NULL OR co.orcid <> r.orcid)
+                     WHERE pa.orcid = r.orcid) AS collab_count
             FROM researchers r
             LEFT JOIN institutions i ON i.id = r.institution_id
-            LEFT JOIN researcher_sdg_expertise rse ON rse.orcid = r.orcid
-            LEFT JOIN researcher_expertise re ON re.orcid = r.orcid
             WHERE r.collaboration_status IS NULL OR r.collaboration_status != 'busy'
-            GROUP BY r.orcid
-            LIMIT 10
         ");
-
         $researchers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $matches = [];
         foreach ($researchers as $match) {
-            $score = rand(80, 96);
-            $sdgs = array_filter(array_map('intval', explode(',', $match['sdgs'] ?? '')));
-            $expertise = array_filter(explode(',', $match['expertise'] ?? ''));
+            $sdgs      = array_values(array_filter(array_map('intval', explode(',', (string) ($match['sdgs'] ?? '')))));
+            $expertise = array_values(array_filter(explode(',', (string) ($match['expertise'] ?? ''))));
+            $haystack  = mb_strtolower(implode(' ', $expertise) . ' ' . $match['name']);
+
+            if ($location !== '' && !str_contains(mb_strtolower((string) $match['country']), $location)) continue;
+            if ($institution !== '' && !str_contains(mb_strtolower((string) $match['institution']), $institution)) continue;
+
+            // Skor kecocokan yang bisa dijelaskan: irisan SDG (70%) + kata kunci keahlian (30%)
+            $reasons  = [];
+            $sdgShare = 0.0;
+            if ($wantSdgs) {
+                $common   = array_values(array_intersect($wantSdgs, $sdgs));
+                $sdgShare = count($common) / count($wantSdgs);
+                if ($common) $reasons[] = 'Fokus SDG yang sama: ' . implode(', ', array_map(fn ($n) => "SDG $n", $common));
+            }
+            $kwShare = 0.0;
+            if ($keywords) {
+                $hits    = array_values(array_filter($keywords, fn ($k) => str_contains($haystack, $k)));
+                $kwShare = count($hits) / count($keywords);
+                if ($hits) $reasons[] = 'Kata kunci cocok: ' . implode(', ', $hits);
+            }
+            if (!$wantSdgs && !$keywords) {
+                $score = null; // tanpa kriteria tidak ada dasar untuk memberi skor
+            } else {
+                $weightSdg = $wantSdgs ? ($keywords ? 0.7 : 1.0) : 0.0;
+                $weightKw  = $keywords ? ($wantSdgs ? 0.3 : 1.0) : 0.0;
+                $score = (int) round(100 * ($sdgShare * $weightSdg + $kwShare * $weightKw));
+                if ($score === 0) continue;
+            }
+
             $matches[] = [
-                'id' => $match['orcid'],
-                'orcid' => $match['orcid'],
-                'name' => $match['name'],
-                'title' => implode(', ', $expertise) ?: 'Researcher',
-                'institution' => $match['institution'] ?? 'Unknown Institution',
-                'location' => $match['country'] ?? 'Unknown',
-                'avatar' => $match['profile_photo_url'] ?? ('https://i.pravatar.cc/150?u=' . $match['orcid']),
-                'match_score' => $score,
-                'match_reasons' => [
-                    'Similar research focus',
-                    'Complementary expertise',
-                    'Active collaboration network',
-                    'High citation impact'
-                ],
-                'sdg_focus' => array_values($sdgs),
-                'h_index' => (int)$match['h_index'],
-                'publications' => rand(100, 300),
-                'collaborations' => rand(30, 70),
-                'availability' => $match['collaboration_status'] === 'open' ? 'Available for new projects' : 'Limited availability',
-                'response_time' => ['< 24 hours', '< 48 hours', '< 72 hours'][rand(0, 2)]
+                'id'             => $match['orcid'],
+                'orcid'          => $match['orcid'],
+                'name'           => $match['name'],
+                'title'          => implode(', ', $expertise) ?: 'Researcher',
+                'institution'    => $match['institution'] ?? '',
+                'location'       => $match['country'] ?? '',
+                'avatar'         => $match['profile_photo_url'] ?: null,
+                'match_score'    => $score,
+                'match_reasons'  => $reasons,
+                'sdg_focus'      => $sdgs,
+                'h_index'        => (int) $match['h_index'],
+                'publications'   => (int) $match['pub_count'],
+                'collaborations' => (int) $match['collab_count'],
+                'availability'   => $match['collaboration_status'] === 'open' ? 'Available for new projects' : 'Limited availability',
+                'response_time'  => null,
             ];
         }
+        // Layanan premium: anggota mendapat lencana; bila fitur prioritas pencocokan berlaku,
+        // anggota yang cocok ditampilkan lebih dulu (tetap hanya yang memenuhi kriteria).
+        $tiers = [];
+        $priority = false;
+        try {
+            $ppdo = \Sciecola\Database\Db::pdo();
+            if ($ppdo) {
+                $tiers = \Sciecola\Premium\Premium::tiersForOrcids($ppdo, array_column($matches, 'orcid'));
+                $priority = \Sciecola\Premium\Premium::active('priority_matching');
+            }
+        } catch (\Throwable $e) {
+            error_log('[research_matching] premium: ' . $e->getMessage());
+        }
+        foreach ($matches as &$mm) {
+            $mm['premium_tier'] = $tiers[strtoupper((string) $mm['orcid'])] ?? null;
+            $mm['priority'] = $priority && $mm['premium_tier'] !== null;
+        }
+        unset($mm);
+        usort($matches, fn ($x, $y) => ($y['priority'] <=> $x['priority'])
+            ?: (($y['match_score'] ?? 0) <=> ($x['match_score'] ?? 0))
+            ?: $y['publications'] <=> $x['publications']);
+        $matches = array_slice($matches, 0, 20);
 
         return [
             'status' => 'success',
@@ -121,7 +173,7 @@ function calculateMatches(): array {
         error_log($e->getMessage());
         return [
             'status' => 'success',
-            'matches' => getSampleMatches(),
+            'matches' => \Sciecola\Support\EmptyData::like(getSampleMatches()),
             'timestamp' => date('c')
         ];
     }

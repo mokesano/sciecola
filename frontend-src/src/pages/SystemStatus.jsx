@@ -1,49 +1,75 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
-// Mock incidents / services stay in source pending a real status API.
-// Only chrome is translated; service status labels (Operational, Degraded
-// Performance) are used verbatim in the badgeStyle map so we keep them as
-// English literals.
-const incidents = [
-  {
-    id: 1,
-    title: 'Peningkatan latensi API pada region Asia Tenggara',
-    status: 'Monitoring',
-    time: '19 Mei 2026, 09:45 UTC',
-    detail: 'Tim infrastruktur telah menerapkan mitigasi autoscaling dan sedang memonitor stabilitas respon API.',
-    color: 'amber',
-  },
-  {
-    id: 2,
-    title: 'Pemeliharaan terjadwal cache index',
-    status: 'Selesai',
-    time: '18 Mei 2026, 22:00 UTC',
-    detail: 'Pemeliharaan selesai tanpa downtime. Performa query meningkat rata-rata 12%.',
-    color: 'emerald',
-  },
+// Status diperiksa langsung dari browser terhadap endpoint aplikasi yang nyata.
+// Dulu halaman ini menampilkan uptime, latensi, dan insiden karangan.
+// Belum ada pencatat uptime historis, jadi kolom uptime menampilkan "—".
+const CHECKS = [
+  { name: 'Web Application', url: '/',                                        expect: 'html' },
+  { name: 'Public API',      url: '/api/platform_stats.php',                  expect: 'json' },
+  { name: 'Database',        url: '/api/platform_stats.php',                  expect: 'db'   },
+  { name: 'Auth Service',    url: '/api/auth.php?action=me',                  expect: 'auth' },
 ];
 
-const services = [
-  { name: 'Web Application',    uptime: '99.98%', latency: '182 ms', status: 'Operational' },
-  { name: 'Public API',         uptime: '99.95%', latency: '236 ms', status: 'Operational' },
-  { name: 'Auth Service',       uptime: '99.99%', latency: '121 ms', status: 'Operational' },
-  { name: 'Background Queue',   uptime: '99.90%', latency: '1.2 s',  status: 'Degraded Performance' },
-];
+async function runCheck(check) {
+  const started = performance.now();
+  try {
+    const res = await fetch(check.url, { cache: 'no-store', headers: { Accept: check.expect === 'html' ? 'text/html' : 'application/json' } });
+    const latency = Math.round(performance.now() - started);
+    let status = 'Operational';
+    if (check.expect === 'html') {
+      if (!res.ok) status = 'Outage';
+    } else if (check.expect === 'auth') {
+      // 401 (belum masuk) berarti layanan menjawab dengan benar
+      if (res.status !== 401 && !res.ok) status = 'Outage';
+    } else {
+      const json = await res.json().catch(() => null);
+      if (!json) status = 'Outage';
+      else if (check.expect === 'db' && json.status !== 'success') status = 'Outage';
+      else if (check.expect === 'json' && !res.ok && res.status !== 503) status = 'Outage';
+      else if (check.expect === 'json' && res.status === 503) status = 'Degraded Performance';
+    }
+    if (status === 'Operational' && latency > 1500) status = 'Degraded Performance';
+    return { name: check.name, uptime: '—', latency: `${latency} ms`, status };
+  } catch {
+    return { name: check.name, uptime: '—', latency: '—', status: 'Outage' };
+  }
+}
 
 const badgeStyle = {
   'Operational':         'bg-emerald-100 text-emerald-700 border-emerald-200',
   'Degraded Performance':'bg-amber-100 text-amber-700 border-amber-200',
+  'Outage':              'bg-red-100 text-red-700 border-red-200',
+  'Checking':            'bg-gray-100 text-gray-600 border-gray-200',
 };
 
 const incidentStyle = {
   amber:   'bg-amber-50 border-amber-200',
   emerald: 'bg-emerald-50 border-emerald-200',
+  red:     'bg-red-50 border-red-200',
 };
 
 const SystemStatus = () => {
   const { t } = useTranslation('system_status');
+  const [services, setServices] = useState(CHECKS.map(c => ({ name: c.name, uptime: '—', latency: '—', status: 'Checking' })));
+  const [checkedAt, setCheckedAt] = useState(null);
+
+  useEffect(() => {
+    let alive = true;
+    Promise.all(CHECKS.map(runCheck)).then(results => {
+      if (!alive) return;
+      setServices(results);
+      setCheckedAt(new Date());
+    });
+    return () => { alive = false; };
+  }, []);
+
+  const down      = services.filter(s => s.status === 'Outage').length;
+  const degraded  = services.filter(s => s.status === 'Degraded Performance').length;
+  const checking  = services.some(s => s.status === 'Checking');
+  const overallOk = !checking && down === 0;
+
   return (
     <main className="flex-grow pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full">
       <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 mb-6">
@@ -52,18 +78,18 @@ const SystemStatus = () => {
             <h1 className="text-3xl font-extrabold text-gray-900">{t('title')}</h1>
             <p className="text-gray-600 mt-2">{t('subtitle')}</p>
           </div>
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 text-[15px] font-semibold w-fit">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            {t('core_up')}
+          <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-[15px] font-semibold w-fit ${overallOk ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : checking ? 'border-gray-200 bg-gray-50 text-gray-600' : 'border-red-200 bg-red-50 text-red-700'}`}>
+            <span className={`w-2.5 h-2.5 rounded-full ${overallOk ? 'bg-emerald-500 animate-pulse' : checking ? 'bg-gray-400' : 'bg-red-500'}`}></span>
+            {checking ? '…' : overallOk ? t('core_up') : `${down} / ${services.length}`}
           </span>
         </div>
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         {[
-          { key: 'uptime30',    value: '99.96%' },
-          { key: 'active',      value: '1' },
-          { key: 'maintenance', value: '0' },
+          { key: 'uptime30',    value: '—' },
+          { key: 'active',      value: checking ? '…' : String(down + degraded) },
+          { key: 'maintenance', value: '—' },
         ].map(s => (
           <div key={s.key} className="bg-white rounded-xl border border-gray-100 p-5">
             <p className="text-[15px] text-gray-500">{t(`stats.${s.key}`)}</p>
@@ -104,8 +130,18 @@ const SystemStatus = () => {
 
       <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
         <h2 className="text-xl font-bold text-gray-900 mb-4">{t('incidents_title')}</h2>
+        {checkedAt && (
+          <p className="text-sm text-gray-500 mb-3">Pemeriksaan langsung: {checkedAt.toLocaleString('id-ID')}</p>
+        )}
         <div className="space-y-3">
-          {incidents.map((incident) => (
+          {services.filter(s => s.status === 'Outage' || s.status === 'Degraded Performance').map((s) => ({
+            id: s.name,
+            title: s.name,
+            status: s.status,
+            time: checkedAt ? checkedAt.toLocaleString('id-ID') : '',
+            detail: s.status === 'Outage' ? 'Layanan tidak menjawab dengan benar saat diperiksa.' : `Respons lambat (${s.latency}).`,
+            color: s.status === 'Outage' ? 'red' : 'amber',
+          })).map((incident) => (
             <article key={incident.id} className={`rounded-xl border p-4 ${incidentStyle[incident.color]}`}>
               <div className="flex flex-wrap items-center gap-2 mb-1">
                 <h3 className="font-semibold text-gray-900">{incident.title}</h3>

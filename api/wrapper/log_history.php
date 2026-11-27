@@ -20,14 +20,12 @@ declare(strict_types=1);
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, X-Auth-Token');
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
 if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
 $configFile = ROOT_PATH . '/config/config.php';
 if (file_exists($configFile)) require_once $configFile;
+require_once ROOT_PATH . '/includes/autoload.php';
 
 $body   = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -37,9 +35,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $appLogFile = ROOT_PATH . '/cache/app_events.json';
 
+// Wajib login. Event sistem (app_events, antrean, file cache) hanya untuk admin;
+// pengguna biasa hanya melihat aktivitas ORCID miliknya sendiri.
+$authUser = \Sciecola\Auth\UserAuth::requireUser();
+$isAdmin  = \Sciecola\Auth\UserAuth::isAdmin($authUser);
+
 // ── POST: append a manual event ──────────────────────────────────────────────
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($body['action'] ?? '') === 'append') {
+    if (!$isAdmin) {
+        http_response_code(403);
+        echo json_encode(['status' => 'error', 'message' => 'Hanya admin yang dapat menambah event sistem.']);
+        exit;
+    }
     $allowedLevels = ['info', 'success', 'warning', 'error', 'debug'];
     $allowedTypes  = ['api_fetch', 'cache_hit', 'cache_miss', 'cache_save', 'db_write', 'queue_enqueue', 'queue_process', 'auth', 'system'];
 
@@ -67,7 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($body['action'] ?? '') === 'append
 
 // ── GET: aggregate events from all sources ───────────────────────────────────
 
-$orcid   = trim($_GET['orcid'] ?? '');
+$orcid   = $isAdmin ? trim($_GET['orcid'] ?? '') : (string) ($authUser['orcid'] ?? '');
+if (!$isAdmin && $orcid === '') {
+    echo json_encode(['status' => 'success', 'events' => [], 'total' => 0, 'message' => 'Tautkan ORCID untuk melihat riwayat aktivitas.']);
+    exit;
+}
 $type    = $_GET['type'] ?? 'all';
 $range   = $_GET['range'] ?? '7days';
 $page    = max(1, (int)($_GET['page'] ?? 1));
@@ -78,7 +90,7 @@ $events = [];
 
 // ── Source 1: app_events.json (manual + system events) ──────────────────────
 
-if (file_exists($appLogFile)) {
+if ($isAdmin && file_exists($appLogFile)) {
     $appEvents = json_decode(file_get_contents($appLogFile), true) ?? [];
     $events = array_merge($events, $appEvents);
 }

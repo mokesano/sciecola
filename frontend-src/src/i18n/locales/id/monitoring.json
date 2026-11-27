@@ -1,5 +1,5 @@
 {
-  "title": "Activity Monitoring",
+  "title": "Monitoring Aktivitas",
   "range": {
     "1h": "1 Jam Terakhir",
     "24h": "24 Jam Terakhir",
@@ -8,48 +8,118 @@
   },
   "loading": "Memuat data monitoring…",
   "error_prefix": "Gagal memuat data:",
-  "error_suffix": "Menampilkan data cache.",
+  "error_suffix": "Coba muat ulang.",
+  "empty": "Belum ada kunjungan pada rentang ini.",
+  "empty_utm": "Belum ada kunjungan dengan parameter UTM.",
+  "source_note": "Angka di halaman ini dihitung dari kunjungan halaman yang benar-benar dibuka di browser (bot tidak dihitung; halaman admin tidak dihitung).",
+  "tracking_since": "Pencatatan aktif sejak {{date}}.",
+  "tracking_none": "Belum ada kunjungan yang tercatat — pencatatan dimulai setelah versi frontend terbaru dipasang.",
+  "updated": "diperbarui {{time}}",
+  "header": {
+    "subtitle": "Kunjungan nyata ke aplikasi: halaman, sumber trafik, lokasi, dan perangkat"
+  },
   "geo": {
-    "title": "Geographic Distribution",
-    "subtitle": "Distribusi pengunjung berdasarkan lokasi geografis"
+    "title": "Sebaran Geografis",
+    "subtitle": "Lokasi pengunjung berdasarkan alamat IP (GeoLite2)",
+    "empty": "Belum ada kunjungan dengan lokasi yang dapat dikenali.",
+    "visitors": "{{count}} pengunjung",
+    "views": "{{count}} tampilan halaman"
   },
   "stats": {
-    "page_views": "Total Page Views",
-    "visitors": "Unique Visitors",
-    "session": "Avg. Session",
-    "bounce": "Bounce Rate"
+    "page_views": "Tampilan Halaman",
+    "visitors": "Pengunjung Unik",
+    "session": "Rata-rata Durasi Sesi",
+    "bounce": "Bounce Rate",
+    "vs_prev": "dari periode sebelumnya",
+    "no_prev": "Belum ada pembanding",
+    "points": " poin",
+    "sessions_line": "{{sessions}} sesi · {{pps}} halaman per sesi. Bounce rate = persentase sesi yang hanya membuka satu halaman."
+  },
+  "timeline": {
+    "title": "Tren Kunjungan",
+    "views": "Tampilan halaman",
+    "visitors": "Pengunjung"
   },
   "sections": {
-    "sources": "Sources",
-    "top_pages": "Top Pages",
-    "entry_pages": "Entry Pages",
-    "browsers": "Browsers",
-    "platforms": "Platforms",
-    "os": "Operating Systems"
+    "sources": "Sumber",
+    "top_pages": "Halaman Teratas",
+    "entry_pages": "Halaman Masuk",
+    "exit_pages": "Halaman Keluar",
+    "browsers": "Browser",
+    "platforms": "Perangkat",
+    "os": "Sistem Operasi"
+  },
+  "pages": {
+    "views": "tampilan",
+    "avg_time": "rata-rata lama tampil",
+    "bounce": "Bounce {{value}}%"
+  },
+  "source": {
+    "direct": "Langsung",
+    "organic": "Mesin Pencari",
+    "social": "Media Sosial",
+    "referral": "Situs Lain",
+    "email": "Email",
+    "paid": "Iklan Berbayar"
+  },
+  "device": {
+    "desktop": "Desktop",
+    "mobile": "Ponsel",
+    "tablet": "Tablet"
   },
   "activity": {
-    "title": "Page View Activity",
-    "subtitle": "Detail aktivitas pengunjung secara real-time"
+    "title": "Kunjungan Terbaru",
+    "subtitle": "15 tampilan halaman terakhir pada rentang yang dipilih"
   },
   "table": {
-    "timestamp": "Timestamp",
-    "page": "Page",
-    "source": "Source",
-    "location": "Location",
-    "device": "Device",
-    "duration": "Duration"
-  },
-  "header": {
-    "subtitle": "Pemantauan aktivitas dan trafik aplikasi secara langsung"
+    "timestamp": "Waktu",
+    "page": "Halaman",
+    "source": "Sumber",
+    "location": "Lokasi",
+    "device": "Perangkat",
+    "duration": "Lama Tampil",
+    "ongoing": "masih dibuka / belum terukur"
   },
   "action": {
     "refresh": "Muat Ulang",
-    "export": "Ekspor CSV",
-    "view_all": "Lihat Semua"
+    "export": "Ekspor CSV"
   },
   "panel": {
     "by_source": "Menurut Sumber Trafik",
+    "referrers": "Situs Perujuk",
     "campaigns": "Kampanye UTM",
     "by_pages": "Menurut Halaman"
+  },
+  "legend": {
+    "visits": "Kunjungan",
+    "danger": "Bahaya",
+    "warning": "Peringatan",
+    "normal_visit": "Kunjungan normal"
+  },
+  "security": {
+    "title": "Peristiwa Keamanan",
+    "subtitle": "Dicatat server: login gagal & brute force, pemindaian celah, akses yang diblokir, akses tanpa melalui halaman utama, endpoint API yang tidak ada, token admin salah, dan kunjungan bot. Merah = bahaya, kuning = peringatan.",
+    "empty": "Tidak ada peristiwa keamanan pada rentang ini.",
+    "unknown_city": "Lokasi tidak dikenal",
+    "ips": "{{count}} alamat IP",
+    "top_ips": "IP Teraktif",
+    "types": {
+      "brute_force": "Brute Force",
+      "scanner_probe": "Pemindaian Celah",
+      "blocked_request": "Akses Diblokir",
+      "admin_token_invalid": "Token Admin Salah",
+      "login_failed": "Login Gagal",
+      "direct_access": "Akses Langsung",
+      "api_probe": "Probe API",
+      "bot_visit": "Bot Visit"
+    },
+    "table": {
+      "time": "Terakhir",
+      "event": "Peristiwa",
+      "ip": "IP",
+      "target": "Alamat / Akun",
+      "location": "Lokasi",
+      "hits": "Jumlah"
+    }
   }
 }

@@ -26,6 +26,7 @@ try {
     if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
     $configFile = ROOT_PATH . '/config/config.php';
     if (file_exists($configFile)) require_once $configFile;
+    require_once ROOT_PATH . '/includes/autoload.php';
 
     $type    = in_array($_GET['type'] ?? 'researchers', ['researchers', 'journals', 'institutions'])
                ? $_GET['type'] : 'researchers';
@@ -38,7 +39,7 @@ try {
     echo json_encode([
         'status'               => 'success',
         'type'                 => $type,
-        'data'                 => $data,
+        'data'                 => $type === 'researchers' ? \Sciecola\Auth\ProfilePrivacy::filterList($data) : $data,
         'summary'              => $summary,
         'sdg_distribution'     => $sdgDist,
         'available_countries'  => $countries,
@@ -56,10 +57,10 @@ function fetchAll(string $type, int $limit, int $sdg, string $country): array
 {
     if (!defined('DB_HOST') || !DB_HOST) {
         return [
-            getSampleLeaderboard($type, $limit),
-            getSampleSummary(),
-            getSampleSdgDist(),
-            ['Indonesia', 'Malaysia', 'Singapore', 'Thailand', 'Philippines'],
+            \Sciecola\Support\EmptyData::like(getSampleLeaderboard($type, $limit)),
+            \Sciecola\Support\EmptyData::like(getSampleSummary()),
+            \Sciecola\Support\EmptyData::like(getSampleSdgDist()),
+            [],
         ];
     }
 
@@ -73,16 +74,16 @@ function fetchAll(string $type, int $limit, int $sdg, string $country): array
         $data     = fetchLeaderboard($pdo, $type, $limit, $sdg, $country);
         $summary  = fetchSummary($pdo);
         $sdgDist  = fetchSdgDistribution($pdo);
-        $countries = fetchCountries($pdo);
+        $countries = fetchCountries($pdo, $type);
 
         return [$data, $summary, $sdgDist, $countries];
 
     } catch (Exception $e) {
         return [
-            getSampleLeaderboard($type, $limit),
-            getSampleSummary(),
-            getSampleSdgDist(),
-            ['Indonesia', 'Malaysia', 'Singapore', 'Thailand', 'Philippines'],
+            \Sciecola\Support\EmptyData::like(getSampleLeaderboard($type, $limit)),
+            \Sciecola\Support\EmptyData::like(getSampleSummary()),
+            \Sciecola\Support\EmptyData::like(getSampleSdgDist()),
+            [],
         ];
     }
 }
@@ -104,12 +105,14 @@ function fetchLeaderboard(PDO $pdo, string $type, int $limit, int $sdg, string $
             $params[] = $sdg;
         }
         if ($country !== '') {
-            $where[] = 'r.country = ?';
+            // Negara peneliti; bila kosong, pakai negara institusinya.
+            $where[] = "COALESCE(NULLIF(r.country, ''), i.country) = ?";
             $params[] = $country;
         }
         $whereClause = implode(' AND ', $where);
 
-        $sql = "SELECT r.orcid, r.name, r.h_index, r.citation_count, r.country,
+        $sql = "SELECT r.orcid, r.name, r.h_index, r.citation_count,
+                       COALESCE(NULLIF(r.country, ''), i.country) AS country,
                        r.profile_cache_json,
                        i.name AS institution_name,
                        COUNT(DISTINCT pa.doi) AS pub_count
@@ -118,7 +121,7 @@ function fetchLeaderboard(PDO $pdo, string $type, int $limit, int $sdg, string $
                 LEFT JOIN publication_authors pa ON pa.orcid = r.orcid
                 WHERE $whereClause
                 GROUP BY r.orcid, r.name, r.h_index, r.citation_count,
-                         r.country, r.profile_cache_json, i.name
+                         r.country, i.country, r.profile_cache_json, i.name
                 ORDER BY r.citation_count DESC
                 LIMIT ?";
         $params[] = $limit;
@@ -243,7 +246,7 @@ function fetchLeaderboard(PDO $pdo, string $type, int $limit, int $sdg, string $
         }
     }
 
-    return getSampleLeaderboard($type, $limit);
+    return \Sciecola\Support\EmptyData::like(getSampleLeaderboard($type, $limit));
 }
 
 /* ─── summary stats ──────────────────────────────────────────────────────── */
@@ -264,7 +267,7 @@ function fetchSummary(PDO $pdo): array
             'institutions' => (int)$i,
         ];
     } catch (Exception $e) {
-        return getSampleSummary();
+        return \Sciecola\Support\EmptyData::like(getSampleSummary());
     }
 }
 
@@ -305,22 +308,40 @@ function fetchSdgDistribution(PDO $pdo): array
             ], $rows);
         }
     } catch (Exception $e) { /* fall through */ }
-    return getSampleSdgDist();
+    return \Sciecola\Support\EmptyData::like(getSampleSdgDist());
 }
 
 /* ─── available countries ────────────────────────────────────────────────── */
 
-function fetchCountries(PDO $pdo): array
+/**
+ * Daftar negara yang benar-benar ada di data, beserta jumlahnya.
+ * Nilai berupa kode ISO 3166-1 alpha-2 (dari afiliasi ORCID) atau nama negara bila
+ * data lama menyimpannya sebagai teks; frontend menerjemahkan kode ke nama negara.
+ *
+ * @return array<int,array{value:string,count:int}>
+ */
+function fetchCountries(PDO $pdo, string $type): array
 {
     try {
-        $stmt = $pdo->query(
-            'SELECT DISTINCT country FROM researchers
-             WHERE country IS NOT NULL AND country <> ""
-             ORDER BY country LIMIT 100'
-        );
-        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+        if ($type === 'institutions') {
+            $sql = "SELECT i.country AS value, COUNT(*) AS n
+                      FROM institutions i
+                     WHERE i.country IS NOT NULL AND i.country <> ''
+                     GROUP BY i.country";
+        } else {
+            $sql = "SELECT COALESCE(NULLIF(r.country, ''), i.country) AS value, COUNT(*) AS n
+                      FROM researchers r
+                      LEFT JOIN institutions i ON i.id = r.institution_id
+                     WHERE COALESCE(NULLIF(r.country, ''), i.country) IS NOT NULL
+                     GROUP BY COALESCE(NULLIF(r.country, ''), i.country)";
+        }
+        $out = [];
+        foreach ($pdo->query($sql . ' ORDER BY n DESC LIMIT 250') as $row) {
+            $out[] = ['value' => (string) $row['value'], 'count' => (int) $row['n']];
+        }
+        return $out;
     } catch (Exception $e) {
-        return ['Indonesia', 'Malaysia', 'Singapore', 'Thailand', 'Philippines'];
+        return [];
     }
 }
 

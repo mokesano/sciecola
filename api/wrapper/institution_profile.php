@@ -45,7 +45,7 @@ try {
 
 function getInstitutionProfile(int $institutionId): array {
     if (!defined('DB_HOST') || !DB_HOST) {
-        return getSampleInstitutionProfile();
+        return \Sciecola\Support\EmptyData::like(getSampleInstitutionProfile());
     }
 
     try {
@@ -76,7 +76,7 @@ function getInstitutionProfile(int $institutionId): array {
         return buildProfileResponse($inst, $news, $trends, $topResearchers, $topPublications);
     } catch (Exception $e) {
         error_log($e->getMessage());
-        return getSampleInstitutionProfile();
+        return \Sciecola\Support\EmptyData::like(getSampleInstitutionProfile());
     }
 }
 

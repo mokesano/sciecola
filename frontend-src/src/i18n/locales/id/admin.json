@@ -5,6 +5,8 @@
     "api-security": "API & Keamanan",
     "user-management": "Pengguna",
     "content-moderation": "Konten",
+    "premium": "Premium",
+    "opportunity-curation": "Kurasi Peluang",
     "ui-customization": "Tampilan",
     "system": "Sistem",
     "crawl-queue": "Crawl Queue",
@@ -64,11 +66,46 @@
       "actions": "Aksi"
     },
     "actions": {
-      "promote": "Jadikan Co-Admin",
+      "promote": "Jadikan admin",
       "suspend": "Tangguhkan",
       "disable": "Nonaktifkan",
       "activate": "Aktifkan",
-      "delete": "Hapus"
+      "delete": "Hapus",
+      "demote": "Jadikan pengguna",
+      "revoke_sessions": "Keluarkan sesi"
+    },
+    "search_ph": "Cari nama, email, atau ORCID",
+    "search": "Cari",
+    "empty": "Belum ada akun terdaftar.",
+    "you": "Anda",
+    "flags": {
+      "verified": "Email terverifikasi",
+      "unverified": "Email belum diverifikasi"
+    },
+    "done": {
+      "disableUser": "Akun dinonaktifkan",
+      "deleteUser": "Akun dihapus",
+      "promoteToAdmin": "Pengguna dijadikan admin",
+      "demoteToUser": "Admin dijadikan pengguna biasa",
+      "revokeSessions": "Semua sesi pengguna dikeluarkan",
+      "activate": "Akun diaktifkan kembali"
+    },
+    "confirm": {
+      "disable_title": "Nonaktifkan akun?",
+      "disable_msg": "Pengguna tidak dapat masuk dan semua sesinya dikeluarkan.",
+      "disable_ok": "Ya, nonaktifkan",
+      "revoke_title": "Keluarkan semua sesi?",
+      "revoke_msg": "Pengguna harus masuk lagi di semua perangkat.",
+      "revoke_ok": "Ya, keluarkan",
+      "promote_title": "Jadikan admin?",
+      "promote_msg": "Pengguna akan mendapat akses penuh ke halaman Admin.",
+      "promote_ok": "Ya, jadikan admin",
+      "demote_title": "Cabut peran admin?",
+      "demote_msg": "Pengguna kembali menjadi pengguna biasa.",
+      "demote_ok": "Ya, cabut",
+      "delete_title": "Hapus akun permanen?",
+      "delete_msg": "Akun, sesi, dan pengaturan keamanannya dihapus. Tidak dapat dibatalkan.",
+      "delete_ok": "Ya, hapus"
     }
   },
   "content": {
@@ -147,30 +184,47 @@
       "total": "Total",
       "pending": "Menunggu",
       "done": "Selesai",
-      "failed": "Gagal"
+      "failed": "Gagal",
+      "running": "Berjalan"
     },
     "type": "Tipe",
     "title": "Antrian Perayapan",
-    "description": "Kelola antrian pengambilan data ORCID dan DOI dari API eksternal."
+    "description": "Antrekan ORCID atau DOI untuk dianalisis mesin SDG dan disimpan ke database.",
+    "refresh": "Refresh Status",
+    "process_desc": "Pekerjaan ORCID/DOI dijalankan dengan mesin SDG lokal dan hasilnya langsung disimpan ke database. ORCID dengan banyak karya diproses bertahap dan dilanjutkan otomatis.",
+    "stop": "Hentikan",
+    "clear_finished": "Bersihkan yang Selesai",
+    "progress": "Progres"
   },
   "cache": {
     "section": "Cache & Migrasi Basis Data",
+    "description": "Pindahkan file cache mesin SDG (folder cache/) ke database sangia_ecosystem secara bertahap, lalu arsipkan file yang sudah termigrasi.",
+    "check_status": "Cek Status Cache",
+    "token_label": "Token Admin",
+    "token_help": "Isi dengan nilai ADMIN_TOOL_TOKEN dari file .env server. Token hanya disimpan di tab browser ini.",
     "migration_actions": "Aksi Migrasi",
-    "migrate_desc": "Migrasikan semua cache file legacy ke tabel",
+    "migrate_desc": "Migrasikan cache file ke tabel database",
+    "migrate_desc_full": "File diproses 25 per permintaan sampai habis, sehingga aman dari batas waktu hosting. Data masuk ke tabel researchers, publications, publication_authors, journals, dan work_sdgs. Karya tanpa DOI dilewati. File asli tidak dihapus.",
     "run": "Jalankan Migrasi",
-    "clear": "Bersihkan Cache File",
+    "stop": "Hentikan",
+    "retry_failed": "Ulangi yang Gagal",
+    "archive": "Arsipkan File Termigrasi",
     "log": "Log Migrasi",
+    "by_type": "File per Jenis",
+    "db_rows": "Isi Database",
+    "no_files": "Tidak ada file cache",
+    "table_missing": "tabel belum ada",
     "stat": {
-      "legacy": "Cache File Legacy",
-      "migrated": "Sudah Migrasi (DB)",
-      "db_ready": "DB Tersedia",
-      "yes": "Ya",
-      "no": "Tidak"
+      "total": "Total File",
+      "pending": "Menunggu",
+      "migrated": "Termigrasi",
+      "skipped": "Dilewati",
+      "failed": "Gagal",
+      "archived": "Diarsipkan"
     },
-    "confirm_clear_title": "Bersihkan Cache File?",
-    "confirm_clear_msg": "Semua file cache legacy akan dihapus. Pastikan migrasi ke DB sudah selesai.",
-    "confirm_clear_ok": "Ya, Bersihkan",
-    "migrate_desc_full": "Migrasikan semua cache file legacy ke tabel"
+    "confirm_archive_title": "Arsipkan file yang sudah termigrasi?",
+    "confirm_archive_msg": "File berstatus termigrasi/dilewati dipindahkan ke cache/archive/. File yang menunggu atau gagal tidak disentuh. Tidak ada file yang dihapus.",
+    "confirm_archive_ok": "Ya, Arsipkan"
   },
   "nav": {
     "home": "Beranda",
@@ -183,5 +237,160 @@
   "action": {
     "cancel": "Batal",
     "save": "Simpan Perubahan"
+  },
+  "settings_api": {
+    "weights_total": "Total bobot harus 100%",
+    "saved_wis": "Bobot WIS disimpan. Berlaku untuk perhitungan dampak berikutnya.",
+    "saved_content": "Pengaturan halaman disimpan",
+    "saved_ui": "Tampilan diperbarui untuk semua pengunjung",
+    "saved_system": "Pengaturan sistem disimpan",
+    "no_activity": "Belum ada aktivitas admin tercatat.",
+    "ip": "Alamat IP",
+    "stats": {
+      "sessions": "Sesi Login Aktif",
+      "failed_logins": "Login Gagal (24 jam)",
+      "publications": "Publikasi ber-SDG",
+      "summary": "{{unverified}} akun belum verifikasi email · {{twofa}} akun memakai 2FA · {{researchers}} peneliti di database"
+    },
+    "actions": {
+      "settings_system": "mengubah pengaturan sistem",
+      "settings_content": "mengubah halaman yang ditampilkan",
+      "settings_ui": "mengubah tampilan",
+      "settings_impact": "mengubah bobot WIS",
+      "user_set_role": "mengubah peran",
+      "user_activate": "mengaktifkan akun",
+      "user_deactivate": "menonaktifkan akun",
+      "user_revoke_sessions": "mengeluarkan sesi",
+      "user_delete": "menghapus akun"
+    },
+    "config_desc": "Status konfigurasi server. Nilai rahasia diatur di file .env dan tidak pernah dikirim ke browser.",
+    "config_item": "Konfigurasi",
+    "config_status": "Status",
+    "config_detail": "Keterangan",
+    "ok": "Aktif",
+    "not_set": "Belum diatur",
+    "env_note": "Untuk mengubah kunci API, SMTP, atau OAuth, edit file .env di server (cPanel → File Manager). Ini disengaja: akun admin yang dibobol tidak bisa membaca atau mengganti kredensial server.",
+    "user_keys_note": "Kunci API untuk pengembang (wz_…) diterbitkan dan dicabut oleh wizdam-apis, bukan oleh aplikasi ini.",
+    "config": {
+      "database": {
+        "label": "Database",
+        "env": "DB_HOST, DB_DATABASE, DB_USERNAME, DB_PASSWORD"
+      },
+      "app_url": {
+        "label": "Alamat situs",
+        "env": "APP_URL — dipakai di tautan email"
+      },
+      "mail": {
+        "label": "Pengiriman email",
+        "env": "MAIL_DRIVER, SMTP_*"
+      },
+      "admin_emails": {
+        "label": "Email admin otomatis",
+        "env": "ADMIN_EMAILS"
+      },
+      "admin_token": {
+        "label": "Token admin cadangan",
+        "env": "ADMIN_TOOL_TOKEN"
+      },
+      "turnstile": {
+        "label": "Captcha Cloudflare Turnstile",
+        "env": "TURNSTILE_SITE_KEY, TURNSTILE_SECRET_KEY"
+      },
+      "orcid_oauth": {
+        "label": "Login ORCID",
+        "env": "ORCID_CLIENT_ID, ORCID_CLIENT_SECRET, ORCID_SANDBOX"
+      },
+      "google_oauth": {
+        "label": "Login Google",
+        "env": "GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET"
+      },
+      "sangia_api": {
+        "label": "wizdam-apis (analisis dampak)",
+        "env": "SANGIA_API_BASE, SANGIA_API_KEY"
+      },
+      "scopus_api": {
+        "label": "Scopus API",
+        "env": "SCOPUS_API_KEY"
+      }
+    },
+    "ui_note": "Warna utama mengganti warna indigo di tombol, tautan, dan aksen; warna sekunder mengganti aksen ungu. Jenis huruf dipakai bila tersedia di perangkat pengunjung.",
+    "maintenance_message": "Pesan untuk pengunjung saat pemeliharaan",
+    "session_timeout": "Lama sesi login (menit)",
+    "session_timeout_help": "Berlaku untuk login tanpa \"Ingat saya\". Login dengan \"Ingat saya\" tetap 30 hari.",
+    "email_verify_note": "Saat mode pemeliharaan aktif, hanya admin yang bisa memakai aplikasi; halaman masuk tetap terbuka. Verifikasi email bisa dipaksa mati dengan REQUIRE_EMAIL_VERIFICATION=false di .env."
+  },
+  "curation": {
+    "title": "Kurasi Peluang",
+    "description": "Tinjau peluang Pasar Inovasi yang dipasang pengguna, konfirmasi biaya penayangan, dan beri lencana Terverifikasi.",
+    "kpi": {
+      "review": "Dalam kurasi",
+      "auto_hidden": "Disembunyikan otomatis",
+      "fee_pending": "Bukti bayar menunggu",
+      "approved": "Terverifikasi"
+    },
+    "status": {
+      "review": "Dalam kurasi",
+      "auto_hidden": "Disembunyikan",
+      "on_hold": "Ditunda",
+      "approved": "Terverifikasi",
+      "all": "Semua"
+    },
+    "fee": {
+      "unpaid": "Belum bayar",
+      "pending": "Menunggu konfirmasi",
+      "paid": "Lunas",
+      "waived": "Dibebaskan"
+    },
+    "fee_any": "Semua status biaya",
+    "search": "Cari judul atau ORCID…",
+    "refresh": "Muat ulang",
+    "loading": "Memuat…",
+    "empty": "Tidak ada peluang pada filter ini.",
+    "reasons": {
+      "spam": "Spam",
+      "misleading": "Menyesatkan",
+      "not_research": "Bukan riset",
+      "duplicate": "Duplikat",
+      "other": "Lainnya"
+    },
+    "fee_label": "Biaya",
+    "fee_ref": "Bukti",
+    "note": "Catatan",
+    "approve": "Setujui",
+    "approve_needs_fee": "Biaya belum lunas",
+    "mark_paid": "Konfirmasi bayar",
+    "reject_payment": "Tolak bukti",
+    "waive_fee": "Bebaskan biaya",
+    "hold": "Tunda",
+    "restore": "Tampilkan lagi",
+    "delete": "Hapus",
+    "prompt_hold": "Catatan untuk pemasang (alasan ditunda / yang perlu diperbaiki):",
+    "prompt_reject_payment": "Alasan bukti pembayaran ditolak:",
+    "confirm_delete": "Hapus peluang \"{{title}}\"? Tindakan ini tidak dapat dibatalkan.",
+    "confirm_force_waive": "Biaya penayangan belum lunas. Setujui sekaligus bebaskan biayanya?",
+    "done": {
+      "approve": "Peluang terverifikasi",
+      "hold": "Peluang ditunda",
+      "restore": "Peluang ditampilkan kembali",
+      "delete": "Peluang dihapus",
+      "mark_paid": "Pembayaran dikonfirmasi",
+      "waive_fee": "Biaya dibebaskan",
+      "reject_payment": "Bukti pembayaran ditolak"
+    },
+    "settings_title": "Pengaturan biaya penayangan & kurasi",
+    "settings_saved": "Pengaturan disimpan",
+    "save": "Simpan pengaturan",
+    "saving": "Menyimpan…",
+    "cfg": {
+      "feeEnabled": "Wajibkan biaya penayangan untuk verifikasi",
+      "feeAmount": "Jumlah biaya",
+      "feeCurrency": "Mata uang",
+      "autoHideReports": "Laporan untuk sembunyi otomatis",
+      "feeInstructions": "Petunjuk pembayaran (tampil ke pemasang)",
+      "feeInstructions_ph": "Contoh: Transfer ke Bank … No. Rek … a.n. …, lalu isi konfirmasi di halaman peluang.",
+      "curatorsRequireOrcid": "Penilai wajib ber-ORCID",
+      "allowApplyInReview": "Boleh melamar peluang yang masih dalam kurasi",
+      "note": "Biaya berlaku untuk peluang baru. Peluang yang dipasang admin otomatis terverifikasi tanpa biaya. Jumlah 0 berarti gratis."
+    }
   }
 }

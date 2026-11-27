@@ -1,67 +1,62 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { authGet, authPost } from '../utils/authApi';
 
+/**
+ * AuthContext — status login berasal dari server (GET /api/auth.php?action=me).
+ *
+ * Versi lama menyimpan objek pengguna di localStorage dan menganggap siapa pun yang
+ * punya objek itu sudah login; server tidak pernah memeriksanya. Sekarang sesi ada di
+ * cookie HttpOnly dan halaman hanya menampilkan apa yang dikonfirmasi server.
+ */
 const AuthContext = createContext(null);
-
-const STORAGE_KEY = 'sciecola_user';
+const LEGACY_KEY = 'sciecola_user';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const refresh = useCallback(async () => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        // Rehydrate setiap pengguna yang sebelumnya berhasil login —
-        // ORCID opsional (login email/password dapat menghasilkan orcid: null).
-        if (parsed && (parsed.token || parsed.orcid || parsed.email)) {
-          setUser(parsed);
-        }
-      }
+      const data = await authGet('me');
+      setUser(data.authenticated ? data.user : null);
+      return data.authenticated ? data.user : null;
     } catch {
-      localStorage.removeItem(STORAGE_KEY);
+      setUser(null);
+      return null;
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
-  const login = useCallback((userData, token) => {
-    // Backend returns { token, user } separately; callers may pass token as
-    // a second arg or fold it into userData. Prefer the explicit second arg.
-    const normalized = {
-      orcid: userData.orcid ?? null,
-      name: userData.name ?? '',
-      email: userData.email ?? '',
-      avatar: userData.avatar ?? null,
-      title: userData.title ?? '',
-      affiliation: userData.affiliation ?? '',
-      token: token ?? userData.token ?? null,
-      loggedInAt: new Date().toISOString(),
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
-    setUser(normalized);
+  useEffect(() => {
+    // Bersihkan sisa sesi palsu versi lama.
+    try { localStorage.removeItem(LEGACY_KEY); } catch { /* storage tidak tersedia */ }
+    refresh();
+  }, [refresh]);
+
+  /** Dipanggil setelah server mengonfirmasi login (respons berisi `user`). */
+  const login = useCallback((userData) => {
+    setUser(userData || null);
   }, []);
 
-  const logout = useCallback(() => {
-    localStorage.removeItem(STORAGE_KEY);
+  const logout = useCallback(async () => {
+    try { await authPost('logout'); } catch { /* tetap keluarkan di sisi klien */ }
     setUser(null);
   }, []);
 
+  /** Perbarui tampilan lokal setelah aksi yang sukses di server. */
   const updateUser = useCallback((patch) => {
-    setUser(prev => {
-      if (!prev) return prev;
-      const updated = { ...prev, ...patch };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      return updated;
-    });
+    setUser(prev => (prev ? { ...prev, ...patch } : prev));
   }, []);
 
-  const linkOrcid = useCallback((orcid) => {
-    updateUser({ orcid });
-  }, [updateUser]);
+  const linkOrcid = useCallback(async (orcid) => {
+    const data = await authPost('link_orcid', { orcid });
+    setUser(data.user);
+    return data.user;
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, updateUser, linkOrcid }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, refresh, updateUser, linkOrcid }}>
       {children}
     </AuthContext.Provider>
   );

@@ -7,7 +7,7 @@
   "sidebar": {
     "profile":       "Profile",
     "profile_role":  "Researcher",
-    "feeds":         "Feeds",
+    "feeds":         "Home (Feed)",
     "admin":         "Admin Dashboard",
     "admin_badge":   "ADMIN",
     "dashboard":     "Dashboard",
@@ -33,7 +33,7 @@
     "growth":    "↑ {{pct}}% vs last year"
   },
   "sections": {
-    "pub_per_month": "Publications per Month",
+    "pub_per_month": "Publications per Year",
     "sdg_contrib":   "SDG Contribution",
     "articles":      "Articles",
     "top_articles":  "Top Articles",

@@ -1,121 +1,101 @@
 {
   "breadcrumb": {
-    "home":      "Home",
+    "home": "Home",
     "analytics": "Analytics",
-    "current":   "Trends Analysis"
+    "current": "Trends Analysis"
   },
   "header": {
-    "title":    "Research Trends Analysis",
-    "subtitle": "In-depth analysis of research impact, collaboration, and trending topics based on publication data."
+    "title": "Research Trends Analysis",
+    "subtitle": "Publication, citation, SDG, and collaboration trends calculated from the publication data in the database."
   },
   "filter": {
-    "sdg_all":    "All SDGs",
-    "sdg_label":  "SDG {{number}}",
+    "sdg_all": "All SDGs",
+    "sdg_label": "SDG {{number}}",
     "period": {
-      "all":      "All Time",
-      "years_3":  "Last 3 Years",
-      "years_5":  "Last 5 Years",
-      "years_7":  "Last 7 Years",
+      "all": "All Time",
+      "years_3": "Last 3 Years",
+      "years_5": "Last 5 Years",
+      "years_7": "Last 7 Years",
       "years_10": "Last 10 Years"
     },
     "show_insights": "Show Insights",
     "hide_insights": "Hide Insights"
   },
+  "loading": "Loading trends data...",
+  "retry": "Try again",
+  "error": "Failed to load data. Please try again.",
   "insights": {
-    "title":            "Trends Analysis Overview",
-    "main_trends":      "Main Trends",
-    "policy_recs":      "Policy Recommendations",
-    "summary_template": "Research impact trends show progress with total growth of {{total}}% over the last {{years}} years. Forecast for the next {{nextYears}} years: score {{nextScore}}.",
-    "trend_1":  "Academic impact growth of {{academic}}% reflects consistent improvement in publication quality",
-    "trend_2":  "International collaboration shows positive trends with cross-country researcher participation",
-    "trend_3":  "Focus on strategic SDGs (Climate, Industry, Energy) with the highest growth and impact",
-    "rec_1":    "Increase funding support for high-growth topics",
-    "rec_2":    "Strengthen international collaboration programs with key regional partners",
-    "rec_3":    "Develop dissemination mechanisms to expand social impact",
-    "rec_4":    "Maintain SDG research momentum with sustainable policies"
+    "title": "Findings from the Data",
+    "not_enough": "Not enough data yet. Findings appear once there are publications in at least two complete years.",
+    "f_publications": "The number of publications changed {{delta}} from {{from}} to {{to}}.",
+    "f_citations": "Average citations per publication changed {{delta}} from {{from}} to {{to}}.",
+    "f_top_sdgs": "SDGs with the most publications: {{list}}.",
+    "f_fastest": "Fastest growth: SDG {{sdg}} ({{name}}), {{delta}}.",
+    "f_collab": "In {{year}}, {{pct}}% of publications with known countries ({{known}} of {{total}}) involved authors from more than one country.",
+    "f_projection": "If the linear trend continues, publications in {{year}} are estimated at about {{value}}.",
+    "source_note": "Calculated from {{total}} publications in the database.",
+    "partial_note": "{{year}} is incomplete (marked *) and is not used for growth or projections."
   },
-  "topic_cards": {
-    "title":          "Promising Research Topics",
-    "subtitle":       "Topics with the highest growth based on publication data",
-    "growth_label":   "Growth",
-    "impact_label":   "Impact potential:",
-    "impact_high":    "Very High",
-    "impact_medium":  "High",
-    "impact_low":     "Medium",
-    "publications":   "publications",
+  "yearly": {
+    "title": "Publications & Citations per Year",
+    "publications": "Publications",
+    "avg_citations": "Average citations per publication",
+    "delta_pubs": "Change in publications {{from}}–{{to}}",
+    "delta_cites": "Change in average citations {{from}}–{{to}}",
     "no_data": {
-      "title":    "No topics identified yet",
-      "subtitle": "Topics will appear once publication data is sufficient for growth calculation."
+      "title": "No publication data yet",
+      "subtitle": "Data appears once the cache is migrated to the database."
     }
   },
-  "prediction": {
-    "title":     "Research Impact Forecast",
-    "actual":    "Actual Impact",
-    "predicted": "Predicted Impact",
-    "insight":   "Linear projection shows a {{direction}} trend with a score approaching {{score}} by {{year}}.",
-    "direction_up":   "upward",
-    "direction_down": "downward",
+  "projection": {
+    "title": "Publication Projection",
+    "actual": "Actual",
+    "projected": "Projected",
+    "method": "Linear regression over complete years. A rough indication of direction, not a precise forecast.",
     "no_data": {
-      "title":    "No forecast data yet",
-      "subtitle": "At least 2 years of data are required to generate a forecast."
+      "title": "Projection not available",
+      "subtitle": "Needs at least three complete years of data."
     }
   },
   "topics_growth": {
-    "title":      "Topics with Highest Growth",
+    "title": "Publication Growth per SDG",
     "growth_pct": "Growth (%)",
-    "insight":    "Top 3 growing topics: {{top3}}. These topics show strong momentum in the research ecosystem.",
+    "method": "Compares publications in {{from}} and {{to}}; only SDGs with at least 3 publications in the first year.",
     "no_data": {
-      "title":    "No growth data yet",
-      "subtitle": "Data will appear once publications have been classified for at least 2 years."
+      "title": "No growth data yet",
+      "subtitle": "Needs SDG-classified publications in at least two complete years."
     }
   },
-  "impact_trends": {
-    "title":             "Research Impact Trends",
-    "academic":          "Academic Impact",
-    "social":            "Social Media Impact",
-    "practical":         "Practical Impact",
-    "total":             "Total Impact Score",
-    "delta_label":       "Change from {{year}}",
-    "social_unavailable": "Social media impact data not available",
-    "practical_unavailable": "Practical impact data not available",
-    "no_data": {
-      "title":    "No impact trend data yet",
-      "subtitle": "Data will appear once publications are indexed with sufficient citation data."
-    }
+  "topic_cards": {
+    "title": "Top SDGs",
+    "subtitle": "By growth and number of publications in the selected period",
+    "growth_label": "Growth",
+    "publications": "Publications"
   },
   "field_trends": {
-    "title":   "Trends per SDG (Top 5)",
-    "insight": "Highest-impact SDGs: {{top}}. These trends indicate dominant research focus areas.",
+    "title": "Publication Trend per SDG (Top 5)",
     "no_data": {
-      "title":    "No per-SDG trend data yet",
-      "subtitle": "Data will appear once publications are classified by SDG over multiple years."
+      "title": "No per-SDG trend data yet",
+      "subtitle": "Appears once publications are classified by SDG."
     }
   },
   "collab_trend": {
-    "title":          "Collaboration Trends",
-    "national":       "National Collaboration",
-    "international":  "International Collaboration",
-    "insight":        "International collaboration trends reflect successful internationalization programs.",
+    "title": "Collaboration Trend",
+    "national": "Single country",
+    "international": "Multi-country",
+    "method": "Author countries come from researchers' ORCID affiliations. Publications without country data are not counted.",
     "no_data": {
-      "title":    "No collaboration data yet",
-      "subtitle": "Data will appear once researchers are linked to institutions with country information."
+      "title": "Collaboration data not available",
+      "subtitle": "Appears once researcher profiles have affiliations with country information."
     }
   },
   "top_countries": {
-    "title":          "Top Collaborator Countries",
-    "collaborations": "Collaborations",
+    "title": "Partner Countries",
+    "home": "Most common country: {{country}} (not shown)",
+    "collaborations": "Publications",
     "no_data": {
-      "title":    "No collaborator country data yet",
-      "subtitle": "Data will appear once there are publications with foreign collaborators."
+      "title": "No partner countries yet",
+      "subtitle": "Appears once there are authors from other countries."
     }
-  },
-  "regional": {
-    "title":           "Regional Impact Comparison",
-    "impact_label":    "Average Impact Score",
-    "growth_label":    "Impact Growth (%)",
-    "insight":         "Indonesia shows high impact growth in the ASEAN region. With this trend, Indonesia has the potential to surpass higher-ranked countries in the coming years."
-  },
-  "loading": "Loading trends data...",
-  "retry":   "Try again",
-  "error":   "Failed to load data. Please try again."
+  }
 }

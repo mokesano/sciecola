@@ -1,24 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, Line, AreaChart, Area, ComposedChart, Bar,
 } from 'recharts';
 
-import {
-  TOP_ARTICLES_DATA, TOP_RESEARCHERS_DATA, RESEARCH_IMPACT_BY_FIELD,
-  DASHBOARD_IMPACT_TRENDS, PROVINCE_RESEARCHER_DATA, DASHBOARD_COLORS,
-} from '../data/mock/dashboardMock';
+// Hanya palet warna yang dipakai dari modul ini; seluruh data diambil dari API.
+import { DASHBOARD_COLORS } from '../data/mock/dashboardMock';
 
 const TABS = ['dashboard', 'articleImpact', 'researcherImpact', 'researcherMap', 'trends'];
 
-// Summary tiles: values are mock until a real stats endpoint lands.
-const SUMMARY_TILES = [
-  { key: 'researchers',   value: '24,580',  yoy: '+5.2%',  bg: 'bg-blue-50',   text: 'text-blue-700'   },
-  { key: 'publications',  value: '156,842', yoy: '+8.7%',  bg: 'bg-green-50',  text: 'text-green-700'  },
-  { key: 'citations',     value: '2.4M+',   yoy: '+12.3%', bg: 'bg-yellow-50', text: 'text-yellow-700' },
-  { key: 'avg_impact',    value: '74.6',    yoy: '+3.8%',  bg: 'bg-indigo-50', text: 'text-indigo-700' },
-  { key: 'global_collab', value: '43.5%',   yoy: '+7.2%',  bg: 'bg-purple-50', text: 'text-purple-700' },
+// Ringkasan diisi dari /api/platform_stats.php. Dulu berisi angka karangan.
+const TILE_STYLE = [
+  { key: 'researchers',   label: 'Peneliti',               bg: 'bg-blue-50',   text: 'text-blue-700'   },
+  { key: 'publications',  label: 'Artikel Terklasifikasi', bg: 'bg-green-50',  text: 'text-green-700'  },
+  { key: 'citations',     label: 'Total Sitasi',           bg: 'bg-yellow-50', text: 'text-yellow-700' },
+  { key: 'avg_impact',    label: null,                     bg: 'bg-indigo-50', text: 'text-indigo-700' },
+  { key: 'global_collab', label: null,                     bg: 'bg-purple-50', text: 'text-purple-700' },
 ];
 
 const SciecoDashboard = () => {
@@ -26,12 +24,41 @@ const SciecoDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [timeRange, setTimeRange] = useState('all');
 
-  const topArticlesData       = TOP_ARTICLES_DATA;
-  const topResearchersData    = TOP_RESEARCHERS_DATA;
-  const researchImpactByField = RESEARCH_IMPACT_BY_FIELD;
-  const impactTrends          = DASHBOARD_IMPACT_TRENDS;
-  const provinceResearcherData = PROVINCE_RESEARCHER_DATA;
+  const [platformStats, setPlatformStats]       = useState([]);
+  const [topArticlesData, setTopArticles]       = useState([]);
+  const [topResearchersData, setTopResearchers] = useState([]);
+  const [impactTrends, setImpactTrends]         = useState([]);
+  // Belum ada endpoint untuk dampak per bidang dan sebaran per provinsi → dibiarkan kosong.
+  const researchImpactByField  = [];
+  const provinceResearcherData = [];
   const COLORS = DASHBOARD_COLORS;
+
+  useEffect(() => {
+    const get = (url) => fetch(url).then(r => r.json()).catch(() => null);
+    get('/api/platform_stats.php').then(j => { if (j?.status === 'success' && Array.isArray(j.data)) setPlatformStats(j.data); });
+    get('/api/top_researchers.php?limit=5&sort=impact').then(j => {
+      const rows = j?.status === 'success' ? (j.data?.researchers || []) : [];
+      setTopResearchers(rows.map((r, i) => ({
+        id: r.orcid || i, name: r.name, field: (r.sdgs || []).map(n => `SDG ${n}`).join(', '),
+        affiliation: r.affiliation || '', location: r.country || '', hIndex: r.h_index ?? 0,
+        citations: r.citations ?? 0, impactScore: r.impact_score ?? 0,
+      })));
+    });
+    get('/api/article_impact.php?limit=5&sort=impact').then(j => {
+      const rows = j?.status === 'success' ? (j.data?.articles || []) : [];
+      setTopArticles(rows.map((a, i) => ({
+        id: a.doi || i, title: a.title, authors: (a.authors || []).join(', '), journal: a.journal,
+        year: a.year, impactScore: a.total_impact ?? 0,
+      })));
+    });
+    get('/api/trends_analysis.php').then(j => {
+      const rows = j?.status === 'success' ? (j.data?.impact_trends || []) : [];
+      setImpactTrends(rows.map(r => ({ year: r.year, akademik: r.academic, sosial: r.social, praktis: r.practical, total: r.total })));
+    });
+  }, []);
+
+  const statValue = (label) => platformStats.find(s => s.label === label)?.value ?? '—';
+  const SUMMARY_TILES = TILE_STYLE.map(tile => ({ ...tile, value: tile.label ? statValue(tile.label) : '—', yoy: null }));
 
   return (
     <main className="pt-[68px] pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
@@ -65,7 +92,7 @@ const SciecoDashboard = () => {
                 <div key={tile.key} className={`${tile.bg} p-4 rounded-lg text-center`}>
                   <p className="text-[15px] text-gray-500">{t(`summary.${tile.key}`)}</p>
                   <p className={`text-2xl font-bold ${tile.text}`}>{tile.value}</p>
-                  <p className="text-sm text-green-600">{t('summary_yoy', { pct: tile.yoy })}</p>
+                  {tile.yoy !== null && <p className="text-sm text-green-600">{t('summary_yoy', { pct: tile.yoy })}</p>}
                 </div>
               ))}
             </div>

@@ -68,6 +68,10 @@ class TwoFactorAuth
         return "otpauth://totp/{$label}?{$params}";
     }
 
+    /**
+     * @deprecated Mengirim rahasia 2FA ke layanan pihak ketiga (api.qrserver.com).
+     *             Jangan dipakai; frontend menampilkan kunci dan tautan otpauth:// langsung.
+     */
     public function getQrImageUrl(string $secret, string $accountName): string
     {
         $otpauth = $this->getQrCodeUrl($secret, $accountName);
@@ -82,6 +86,30 @@ class TwoFactorAuth
     public function getCurrentCode(string $secret): string
     {
         return $this->generateCode($secret, (int) floor(time() / self::PERIOD));
+    }
+
+    /**
+     * Seperti verifyCode(), tetapi mengembalikan nomor langkah waktu (counter) kode yang
+     * cocok, atau null. Pemanggil menyimpan counter terakhir dan menolak counter yang
+     * sama atau lebih lama, sehingga satu kode tidak bisa dipakai dua kali (replay).
+     */
+    public function verifyCodeCounter(string $secret, string $code, ?int $lastCounter = null, int $window = self::WINDOW): ?int
+    {
+        $code = preg_replace('/\s+/', '', $code);
+        if (!preg_match('/^\d{' . self::DIGITS . '}$/', (string) $code)) {
+            return null;
+        }
+        $counter = (int) floor(time() / self::PERIOD);
+        for ($i = -$window; $i <= $window; $i++) {
+            $c = $counter + $i;
+            if ($lastCounter !== null && $c <= $lastCounter) {
+                continue;
+            }
+            if (hash_equals($this->generateCode($secret, $c), (string) $code)) {
+                return $c;
+            }
+        }
+        return null;
     }
 
     public function verifyCode(string $secret, string $code, int $window = self::WINDOW): bool

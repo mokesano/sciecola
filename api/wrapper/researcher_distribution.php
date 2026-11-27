@@ -74,7 +74,7 @@ function fetchResearcherDistribution(string $groupBy, int $sdgFilter): array
         }
     }
 
-    return getSampleDistribution($groupBy);
+    return \Sciecola\Support\EmptyData::like(getSampleDistribution($groupBy));
 }
 
 // ─── By country ───────────────────────────────────────────────────────────────

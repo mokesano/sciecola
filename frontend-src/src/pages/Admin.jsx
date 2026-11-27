@@ -1,6 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../context/AuthContext';
+import { adminFetch } from '../utils/adminFetch';
+import OpportunityCuration from '../components/admin/OpportunityCuration';
+import PremiumAdmin from '../components/admin/PremiumAdmin';
+import { useAppSettings, applyUiSettings } from '../context/AppSettingsContext';
 
 const Admin = () => {
   const { t } = useTranslation('admin');
@@ -10,34 +15,50 @@ const Admin = () => {
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [confirmModal, setConfirmModal] = useState({ show: false, action: null, target: null });
 
-  // Mock: Check admin access
-  const isAdmin = true;
+  // Peran admin dari server (user_accounts.role atau ADMIN_EMAILS). Rute /admin juga
+  // dibungkus RequireAdmin, dan setiap endpoint admin memeriksa ulang di server.
+  const { user: authUser } = useAuth();
+  const isAdmin = authUser?.role === 'admin';
   
   // State: Impact Score Weights
   const [wisWeights, setWisWeights] = useState({
     academic: 0.40, social: 0.25, economic: 0.20, sdg: 0.15
   });
 
-  // State: API Keys
-  const [apiKeys, setApiKeys] = useState({
-    cloudflareTurnstile: '', recaptchaV3: '', sangiaApi: '',
-    twilioWhatsapp: '', telegramBot: ''
-  });
+  // Status konfigurasi server (.env) — hanya dibaca, rahasia tidak pernah dikirim ke browser.
+  const [serverConfig, setServerConfig] = useState([]);
+  const [dashStats, setDashStats] = useState(null);
+  const [auditEntries, setAuditEntries] = useState([]);
+  const [settingsError, setSettingsError] = useState('');
+  const { refresh: refreshAppSettings } = useAppSettings();
 
   // State: User Management
-  const [users, setUsers] = useState([
-    { id: 1, name: 'Dr. Andi Rahman', email: 'andi@ui.ac.id', role: 'researcher', status: 'active', joined: '2024-01-15', lastLogin: '2 jam lalu' },
-    { id: 2, name: 'Prof. Siti Nurhaliza', email: 'siti@brin.go.id', role: 'co-admin', status: 'active', joined: '2024-02-20', lastLogin: 'Kemarin' },
-    { id: 3, name: 'Budi Santoso', email: 'budi@ugm.ac.id', role: 'researcher', status: 'suspended', joined: '2024-03-10', lastLogin: '5 hari lalu' },
-    { id: 4, name: 'Dewi Setiawan', email: 'dewi@ipb.ac.id', role: 'researcher', status: 'disabled', joined: '2024-01-28', lastLogin: '2 minggu lalu' },
-    { id: 5, name: 'Rizky Pratama', email: 'rizky@its.ac.id', role: 'researcher', status: 'active', joined: '2024-04-05', lastLogin: '1 jam lalu' }
-  ]);
+  const [users, setUsers] = useState([]);
+  const [usersError, setUsersError] = useState('');
+  const [userSearch, setUserSearch] = useState('');
 
-  const [userApiKeys, setUserApiKeys] = useState([
-    { id: 1, userId: 1, key: 'wz_42_1717200000_a3f8c2e1b4d5f678', created: '2024-01-20', lastUsed: 'Hari ini', status: 'active' },
-    { id: 2, userId: 2, key: 'wz_88_1719800000_b7e9d3f2c5a6g789', created: '2024-02-25', lastUsed: 'Kemarin', status: 'active' },
-    { id: 3, userId: 3, key: 'wz_15_1720400000_c8f0e4g3d6b7h890', created: '2024-03-15', lastUsed: '1 minggu lalu', status: 'revoked' }
-  ]);
+  // Daftar akun dari user_accounts (GET /api/admin/users.php).
+  const loadUsers = async (search = userSearch) => {
+    setUsersError('');
+    try {
+      const res = await adminFetch(`/api/admin/users.php?limit=100&search=${encodeURIComponent(search)}`);
+      const d = await res.json();
+      if (!res.ok || d.status !== 'success') throw new Error(d.message || `HTTP ${res.status}`);
+      setUsers(d.users);
+    } catch (e) {
+      setUsers([]);
+      setUsersError(e.message);
+    }
+  };
+  const userAction = async (body) => {
+    const res = await adminFetch('/api/admin/users.php', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    });
+    const d = await res.json();
+    if (!res.ok || d.status !== 'success') throw new Error(d.message || `HTTP ${res.status}`);
+    await loadUsers();
+  };
+
 
   // State: Content & UI Settings
   const [contentSettings, setContentSettings] = useState({
@@ -46,14 +67,64 @@ const Admin = () => {
   });
 
   const [uiSettings, setUiSettings] = useState({
-    primaryColor: '#6366f1', secondaryColor: '#8b5cf6', fontFamily: 'Inter',
-    chartType: 'area', enableAnimations: true, compactMode: false
+    primaryColor: '#6366f1', secondaryColor: '#8b5cf6', fontFamily: 'Inter'
   });
 
   const [systemSettings, setSystemSettings] = useState({
-    maintenanceMode: false, allowNewRegistrations: true, requireEmailVerification: true,
-    maxApiCallsPerHour: 60, sessionTimeoutMinutes: 120
+    maintenanceMode: false, maintenanceMessage: '', allowNewRegistrations: true,
+    requireEmailVerification: true, sessionTimeoutMinutes: 1440
   });
+
+  // ── Pengaturan dari server (GET/POST /api/admin/settings.php) ──
+  const settingsApi = async (query = '', body = null) => {
+    const res = await adminFetch(`/api/admin/settings.php${query}`, body ? {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    } : {});
+    const d = await res.json();
+    if (!res.ok || d.status !== 'success') throw new Error(d.message || `HTTP ${res.status}`);
+    return d;
+  };
+  const applyServerSettings = (st) => {
+    if (!st) return;
+    setWisWeights(st.impact);
+    setContentSettings(st.content);
+    setUiSettings(st.ui);
+    setSystemSettings(st.system);
+  };
+  const loadSettings = async () => {
+    setSettingsError('');
+    try {
+      const d = await settingsApi();
+      applyServerSettings(d.settings);
+      setServerConfig(d.config || []);
+    } catch (e) { setSettingsError(e.message); }
+  };
+  const loadStats = async () => {
+    try {
+      const d = await settingsApi('?view=stats');
+      setDashStats(d.stats);
+      setAuditEntries(d.recent_audit || []);
+    } catch (e) { setSettingsError(e.message); }
+  };
+  const loadAudit = async () => {
+    try { const d = await settingsApi('?view=audit&limit=200'); setAuditEntries(d.entries || []); }
+    catch (e) { setSettingsError(e.message); }
+  };
+  const saveGroup = async (group, values, okMessage) => {
+    setLoading(true);
+    try {
+      const d = await settingsApi('', { group, values });
+      applyServerSettings(d.settings);
+      await refreshAppSettings();
+      showToast(okMessage);
+      return true;
+    } catch (e) {
+      showToast(e.message, 'error');
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // State: Crawl Queue
   const [crawlStatus, setCrawlStatus] = useState(null);
@@ -62,10 +133,135 @@ const Admin = () => {
   const [crawlLog, setCrawlLog] = useState([]);
   const [crawlLoading, setCrawlLoading] = useState(false);
 
-  // State: Cache Migration
+  // State: Cache Migration (backend: /api/cache_migration.php → api/wrapper/cache_migration.php)
   const [cacheStatus, setCacheStatus] = useState(null);
   const [cacheLoading, setCacheLoading] = useState(false);
   const [cacheLog, setCacheLog] = useState([]);
+  const [cacheRunning, setCacheRunning] = useState(false);
+  const [cacheProgress, setCacheProgress] = useState(null); // { done, total }
+  const cacheStopRef = useRef(false);
+  const [adminToken, setAdminToken] = useState(() => {
+    try { return sessionStorage.getItem('sciecola_admin_token') || ''; } catch { return ''; }
+  });
+
+  const pushCacheLog = (msg, type = 'info') =>
+    setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg, type }, ...prev.slice(0, 49)]);
+
+  const saveAdminToken = (value) => {
+    setAdminToken(value);
+    try { sessionStorage.setItem('sciecola_admin_token', value); } catch { /* storage tidak tersedia */ }
+  };
+
+  const cacheApi = async (action, payload = null) => {
+    const isGet = action === 'status';
+    const res = await fetch(`/api/cache_migration.php${isGet ? '?action=status' : ''}`, {
+      method: isGet ? 'GET' : 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+      body: isGet ? undefined : JSON.stringify({ action, ...(payload || {}) }),
+    });
+    let data;
+    try { data = await res.json(); } catch { throw new Error(`Respons server bukan JSON (HTTP ${res.status})`); }
+    if (!res.ok || data.status !== 'success') throw new Error(data.message || `HTTP ${res.status}`);
+    return data;
+  };
+
+  // ── Crawl queue (backend: /api/crawl_queue.php → api/wrapper/crawl_queue.php) ──
+  const crawlStopRef = useRef(false);
+  const [crawlRunning, setCrawlRunning] = useState(false);
+
+  const pushCrawlLog = (msg, type = 'info') =>
+    setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg, type }, ...prev.slice(0, 49)]);
+
+  const crawlApi = async (action, payload = null) => {
+    const isGet = action === 'status' || action === 'list';
+    const res = await fetch(`/api/crawl_queue.php${isGet ? `?action=${action}` : ''}`, {
+      method: isGet ? 'GET' : 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+      body: isGet ? undefined : JSON.stringify({ action, ...(payload || {}) }),
+    });
+    let data;
+    try { data = await res.json(); } catch { throw new Error(`Respons server bukan JSON (HTTP ${res.status})`); }
+    if (!res.ok || data.status !== 'success') throw new Error(data.message || `HTTP ${res.status}`);
+    return data;
+  };
+
+  const refreshCrawl = async (silent = false) => {
+    try {
+      const [s, l] = await Promise.all([crawlApi('status'), crawlApi('list')]);
+      setCrawlStatus(s);
+      setCrawlQueue(l.jobs || []);
+      if (!silent) pushCrawlLog('Status antrian diperbarui');
+    } catch (e) {
+      pushCrawlLog(`Gagal memuat antrian: ${e.message}`, 'error');
+    }
+  };
+
+  const runCrawl = async () => {
+    setCrawlRunning(true);
+    crawlStopRef.current = false;
+    try {
+      while (!crawlStopRef.current) {
+        const d = await crawlApi('process');
+        pushCrawlLog(d.message, 'success');
+        d.jobs.forEach(j => {
+          if (j.error) pushCrawlLog(`${j.identifier}: ${j.error}`, 'error');
+          else if (j.status === 'completed') pushCrawlLog(`${j.identifier} selesai — ${j.result?.publications ?? 0} karya, ${j.result?.sdg_rows ?? 0} baris SDG`, 'success');
+          else if (j.progress) pushCrawlLog(`${j.identifier}: ${j.progress.offset}/${j.progress.total} karya`, 'info');
+        });
+        await refreshCrawl(true);
+        if (d.done || d.jobs.length === 0) break;
+      }
+      if (crawlStopRef.current) pushCrawlLog('Proses dihentikan. Pekerjaan yang belum selesai akan dilanjutkan saat diproses lagi.');
+      else showToast('Antrian selesai diproses');
+    } catch (e) {
+      pushCrawlLog(`Proses berhenti: ${e.message}`, 'error');
+      showToast(e.message, 'error');
+    }
+    await refreshCrawl(true);
+    setCrawlRunning(false);
+  };
+
+  const refreshCacheStatus = async (silent = false) => {
+    try {
+      const d = await cacheApi('status');
+      setCacheStatus(d);
+      if (!silent) pushCacheLog(d.db_available ? 'Status cache diperbarui' : d.message, d.db_available ? 'info' : 'error');
+      return d;
+    } catch (e) {
+      pushCacheLog(`Gagal memuat status: ${e.message}`, 'error');
+      return null;
+    }
+  };
+
+  const runCacheMigration = async (retryFailed = false) => {
+    setCacheRunning(true);
+    cacheStopRef.current = false;
+    const start = await refreshCacheStatus(true);
+    const total = start?.files ? start.files.pending + (retryFailed ? start.files.failed : 0) : 0;
+    let done = 0;
+    let retry = retryFailed;
+    setCacheProgress({ done, total });
+    pushCacheLog(retryFailed ? 'Mengulang file yang gagal…' : `Migrasi dimulai: ${total} file menunggu`, 'info');
+    try {
+      while (!cacheStopRef.current) {
+        const d = await cacheApi('migrate', { limit: 25, retry_failed: retry });
+        retry = false; // file gagal hanya diulang sekali per klik
+        done += d.processed;
+        setCacheProgress({ done, total: Math.max(total, done + d.remaining) });
+        pushCacheLog(d.message, d.totals.failed > 0 ? 'error' : 'success');
+        d.results.filter(r => r.status === 'failed').slice(0, 5)
+          .forEach(r => pushCacheLog(`Gagal: ${r.file} — ${r.message}`, 'error'));
+        if (d.done || d.processed === 0) break;
+      }
+      if (cacheStopRef.current) pushCacheLog('Migrasi dihentikan. Klik Jalankan lagi untuk melanjutkan.', 'info');
+      else showToast('Migrasi selesai');
+    } catch (e) {
+      pushCacheLog(`Migrasi berhenti: ${e.message}`, 'error');
+      showToast(e.message, 'error');
+    }
+    await refreshCacheStatus(true);
+    setCacheRunning(false);
+  };
 
   // Toast Handler
   const showToast = (message, type = 'success') => {
@@ -79,32 +275,32 @@ const Admin = () => {
   const executeAction = async () => {
     const { action, target } = confirmModal;
     setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    if (action === 'revokeApiKey') {
-      setUserApiKeys(prev => prev.map(k => k.id === target ? { ...k, status: 'revoked' } : k));
-      showToast('API key berhasil dicabut');
-    } else if (action === 'suspendUser') {
-      setUsers(prev => prev.map(u => u.id === target ? { ...u, status: 'suspended' } : u));
-      showToast('Akun peneliti ditangguhkan');
-    } else if (action === 'disableUser') {
-      setUsers(prev => prev.map(u => u.id === target ? { ...u, status: 'disabled' } : u));
-      showToast('Akun peneliti dinonaktifkan');
-    } else if (action === 'deleteUser') {
-      setUsers(prev => prev.filter(u => u.id !== target));
-      showToast('Akun peneliti dihapus permanen');
-    } else if (action === 'promoteToCoAdmin') {
-      setUsers(prev => prev.map(u => u.id === target ? { ...u, role: 'co-admin' } : u));
-      showToast('Pengguna dipromosikan menjadi Co-Admin');
-    } else if (action === 'clearCache') {
+
+    if (['disableUser', 'deleteUser', 'promoteToAdmin', 'demoteToUser', 'revokeSessions'].includes(action)) {
+      const body = {
+        disableUser:    { action: 'set_active', id: target, active: false },
+        deleteUser:     { action: 'delete', id: target },
+        promoteToAdmin: { action: 'set_role', id: target, role: 'admin' },
+        demoteToUser:   { action: 'set_role', id: target, role: 'user' },
+        revokeSessions: { action: 'revoke_sessions', id: target },
+      }[action];
       try {
-        const r = await fetch('/api/cache_to_db.php?action=clear_cache', { method: 'POST' });
-        const d = await r.json();
-        setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: d.message || 'Cache file dihapus', type: d.status === 'ok' ? 'success' : 'error' }, ...prev.slice(0, 19)]);
-        showToast(d.message || 'Cache dibersihkan');
-      } catch {
-        setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal membersihkan cache', type: 'error' }, ...prev.slice(0, 19)]);
+        await userAction(body);
+        showToast(t(`users.done.${action}`));
+      } catch (e) {
+        showToast(e.message, 'error');
       }
+    } else if (action === 'archiveCache') {
+      try {
+        const d = await cacheApi('archive');
+        pushCacheLog(d.message, 'success');
+        if (d.changed > 0) pushCacheLog(`${d.changed} file berubah sejak dimigrasikan dan tidak diarsipkan — jalankan migrasi lagi.`, 'info');
+        showToast(d.message);
+      } catch (e) {
+        pushCacheLog(`Gagal mengarsipkan: ${e.message}`, 'error');
+        showToast(e.message, 'error');
+      }
+      await refreshCacheStatus(true);
     }
     
     setConfirmModal({ show: false, action: null, target: null });
@@ -114,16 +310,24 @@ const Admin = () => {
   // Save Handlers
   const saveWisWeights = async () => {
     const total = Object.values(wisWeights).reduce((a, b) => a + b, 0);
-    if (Math.abs(total - 1.0) > 0.01) { showToast('Total bobot harus 100%', 'error'); return; }
-    setLoading(true); await new Promise(r => setTimeout(r, 1000)); setLoading(false);
-    showToast('Bobot WIS berhasil diperbarui');
+    if (Math.abs(total - 1.0) > 0.01) { showToast(t('settings_api.weights_total'), 'error'); return; }
+    await saveGroup('impact', wisWeights, t('settings_api.saved_wis'));
   };
-  const saveApiKeys = async () => { setLoading(true); await new Promise(r => setTimeout(r, 1000)); setLoading(false); showToast('Konfigurasi API key disimpan'); };
-  const saveContentSettings = async () => { setLoading(true); await new Promise(r => setTimeout(r, 800)); setLoading(false); showToast('Pengaturan konten diperbarui'); };
-  const saveUiSettings = async () => { setLoading(true); await new Promise(r => setTimeout(r, 800)); document.documentElement.style.setProperty('--primary-color', uiSettings.primaryColor); setLoading(false); showToast('Tampilan aplikasi diperbarui'); };
-  const saveSystemSettings = async () => { setLoading(true); await new Promise(r => setTimeout(r, 800)); setLoading(false); showToast('Pengaturan sistem disimpan'); };
+  const saveContentSettings = () => saveGroup('content', contentSettings, t('settings_api.saved_content'));
+  const saveUiSettings = async () => {
+    if (await saveGroup('ui', uiSettings, t('settings_api.saved_ui'))) applyUiSettings(uiSettings);
+  };
+  const saveSystemSettings = () => saveGroup('system', systemSettings, t('settings_api.saved_system'));
 
   useEffect(() => { if (!isAdmin) navigate('/'); }, [isAdmin, navigate]);
+  useEffect(() => {
+    if (!isAdmin) return;
+    if (activeSection === 'dashboard') loadStats();
+    if (activeSection === 'audit') loadAudit();
+    if (['impact-config', 'api-security', 'content-moderation', 'ui-customization', 'system'].includes(activeSection)) loadSettings();
+    if (activeSection === 'user-management') loadUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSection, isAdmin]);
 
   // Navigation Items
   const navItems = [
@@ -132,6 +336,8 @@ const Admin = () => {
     { id: 'api-security', label: t('tabs.api-security'), icon: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z' },
     { id: 'user-management', label: t('tabs.user-management'), icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' },
     { id: 'content-moderation', label: t('tabs.content-moderation'), icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
+    { id: 'premium', label: t('tabs.premium'), icon: 'M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z' },
+    { id: 'opportunity-curation', label: t('tabs.opportunity-curation'), icon: 'M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z' },
     { id: 'ui-customization', label: t('tabs.ui-customization'), icon: 'M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7.343 11L5.686 9.343a2 2 0 010-2.828l2.829-2.829a2 2 0 012.828 0l8.486 8.485' },
     { id: 'system', label: t('tabs.system'), icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z' },
     { id: 'crawl-queue', label: t('tabs.crawl-queue'), icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15' },
@@ -158,6 +364,24 @@ const Admin = () => {
   };
 
   // Render Section Content
+  // Token admin dipakai bersama oleh tab Crawl Queue dan Cache & DB;
+  // diverifikasi di server terhadap ADMIN_TOOL_TOKEN di .env.
+  const adminTokenField = (
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-2">
+      <label htmlFor="admin-token" className="font-bold text-gray-900 block">{t('cache.token_label')}</label>
+      <p className="text-sm text-gray-500">{t('cache.token_help')}</p>
+      <input
+        id="admin-token"
+        type="password"
+        autoComplete="off"
+        value={adminToken}
+        onChange={(e) => saveAdminToken(e.target.value.trim())}
+        className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        placeholder="ADMIN_TOOL_TOKEN"
+      />
+    </div>
+  );
+
   const renderSection = () => {
     switch (activeSection) {
       case 'dashboard':
@@ -166,10 +390,10 @@ const Admin = () => {
             <SectionHeader title={t('dashboard.title')} description={t('dashboard.description')} />
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { label: t('dashboard.stats.users'), value: users.length, icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z', color: 'bg-indigo-50 text-indigo-600' },
-                { label: t('dashboard.stats.api_keys'), value: userApiKeys.filter(k => k.status === 'active').length, icon: 'M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z', color: 'bg-purple-50 text-purple-600' },
-                { label: t('dashboard.stats.requests'), value: '2,847', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6', color: 'bg-green-50 text-green-600' },
-                { label: t('dashboard.stats.uptime'), value: '99.98%', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', color: 'bg-amber-50 text-amber-600' }
+                { label: t('dashboard.stats.users'), value: dashStats?.users_total ?? '—', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z', color: 'bg-indigo-50 text-indigo-600' },
+                { label: t('settings_api.stats.sessions'), value: dashStats?.sessions_active ?? '—', icon: 'M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z', color: 'bg-purple-50 text-purple-600' },
+                { label: t('settings_api.stats.failed_logins'), value: dashStats?.logins_failed_24h ?? '—', icon: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z', color: 'bg-red-50 text-red-600' },
+                { label: t('settings_api.stats.publications'), value: dashStats?.publications ?? '—', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', color: 'bg-green-50 text-green-600' },
               ].map((stat, idx) => (
                 <div key={idx} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex items-center gap-4">
                   <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}>
@@ -182,19 +406,18 @@ const Admin = () => {
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
               <h3 className="font-bold text-gray-900 mb-4">{t('dashboard.recent_activity')}</h3>
               <div className="space-y-4">
-                {[
-                  { user: 'Dr. Andi Rahman', action: 'Memperbarui profil riset', time: '5 menit lalu', type: 'update' },
-                  { user: 'Admin', action: 'Mencabut API key pengguna #3', time: '1 jam lalu', type: 'security' },
-                  { user: 'Prof. Siti Nurhaliza', action: 'Menganalisis 12 artikel baru', time: '3 jam lalu', type: 'analysis' },
-                  { user: 'Sistem', action: 'Backup database harian selesai', time: 'Hari ini 02:00', type: 'system' }
-                ].map((activity, idx) => (
-                  <div key={idx} className="flex items-start gap-3 pb-3 border-b border-gray-100 last:border-0 last:pb-0">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${activity.type === 'security' ? 'bg-red-100 text-red-600' : activity.type === 'analysis' ? 'bg-indigo-100 text-indigo-600' : activity.type === 'system' ? 'bg-gray-100 text-gray-600' : 'bg-green-100 text-green-600'}`}>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={activity.type === 'security' ? 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z' : activity.type === 'analysis' ? 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' : activity.type === 'system' ? 'M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4' : 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'} /></svg>
-                    </div>
-                    <div className="flex-grow"><p className="text-[15px] text-gray-900"><span className="font-medium">{activity.user}</span> {activity.action}</p><p className="text-sm text-gray-500 mt-0.5">{activity.time}</p></div>
+                {auditEntries.length === 0 && <p className="text-[15px] text-gray-500">{t('settings_api.no_activity')}</p>}
+                {auditEntries.slice(0, 8).map((a) => (
+                  <div key={a.id} className="flex items-start gap-3 pb-3 border-b border-gray-100 last:border-0 last:pb-0">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-indigo-100 text-indigo-600 text-xs font-bold">{(a.admin_email || '?')[0].toUpperCase()}</div>
+                    <div className="flex-grow"><p className="text-[15px] text-gray-900"><span className="font-medium">{a.admin_email}</span> · {t(`settings_api.actions.${String(a.action).replace(/\./g, '_')}`, { defaultValue: a.action })} <span className="text-gray-500">{a.target}</span></p><p className="text-sm text-gray-500 mt-0.5">{a.created_at} UTC</p></div>
                   </div>
                 ))}
+                {dashStats && (
+                  <p className="text-sm text-gray-500 pt-2">
+                    {t('settings_api.stats.summary', { unverified: dashStats.users_unverified ?? 0, twofa: dashStats.users_2fa ?? 0, researchers: dashStats.researchers ?? 0 })}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -225,44 +448,29 @@ const Admin = () => {
       case 'api-security':
         return (
           <div className="space-y-6">
-            <SectionHeader title={t('api_security.title')} description={t('api_security.description')} />
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <h3 className="font-bold text-gray-900 mb-4">{t('api_security.external_keys')}</h3>
-              <div className="space-y-4">
-                {[
-                  { key: 'cloudflareTurnstile', label: t('api_security.labels.cloudflareTurnstile'), placeholder: '0x4AAAAAA...', helper: t('api_security.helpers.cloudflareTurnstile') },
-                  { key: 'recaptchaV3', label: t('api_security.labels.recaptchaV3'), placeholder: '6Lc...', helper: t('api_security.helpers.recaptchaV3') },
-                  { key: 'sangiaApi', label: t('api_security.labels.sangiaApi'), placeholder: 'sk_live_...', helper: t('api_security.helpers.sangiaApi') },
-                ].map((field) => (
-                  <div key={field.key}>
-                    <label className="block text-[15px] font-medium text-gray-700 mb-1">{field.label}</label>
-                    <input type="password" value={apiKeys[field.key]} onChange={(e) => setApiKeys(prev => ({ ...prev, [field.key]: e.target.value }))} placeholder={field.placeholder} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-[15px] focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono" />
-                    <p className="text-sm text-gray-500 mt-1">{field.helper}</p>
-                  </div>
-                ))}
-              </div>
-              <button onClick={saveApiKeys} disabled={loading} className="mt-6 px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2">{loading ? 'Menyimpan...' : 'Simpan Kunci API'}</button>
+            <SectionHeader title={t('api_security.title')} description={t('settings_api.config_desc')} />
+            {settingsError && <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-[15px] text-red-700">{settingsError}</div>}
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+              <table className="w-full text-[15px]">
+                <thead className="bg-gray-50 text-gray-600">
+                  <tr><th className="px-4 py-3 text-left font-medium">{t('settings_api.config_item')}</th><th className="px-4 py-3 text-left font-medium">{t('settings_api.config_status')}</th><th className="px-4 py-3 text-left font-medium">{t('settings_api.config_detail')}</th></tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {serverConfig.map((c) => (
+                    <tr key={c.key}>
+                      <td className="px-4 py-3"><p className="font-medium text-gray-900">{t(`settings_api.config.${c.key}.label`)}</p><p className="text-sm text-gray-500">{t(`settings_api.config.${c.key}.env`)}</p></td>
+                      <td className="px-4 py-3">{c.ok
+                        ? <span className="px-2.5 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700">{t('settings_api.ok')}</span>
+                        : <span className="px-2.5 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-700">{t('settings_api.not_set')}</span>}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600 font-mono break-all">{c.detail || '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <h3 className="font-bold text-gray-900 mb-4">{t('api_security.user_keys')}</h3>
-              <div className="overflow-x-auto">
-                <table className="w-full text-[15px]">
-                  <thead className="bg-gray-50 text-gray-600">
-                    <tr><th className="px-4 py-3 text-left font-medium">{t('api_security.table.user')}</th><th className="px-4 py-3 text-left font-medium">{t('api_security.table.api_key')}</th><th className="px-4 py-3 text-left font-medium">{t('api_security.table.created')}</th><th className="px-4 py-3 text-left font-medium">{t('api_security.table.status')}</th><th className="px-4 py-3 text-right font-medium">{t('api_security.table.actions')}</th></tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {userApiKeys.map((key) => { const user = users.find(u => u.id === key.userId); return (
-                      <tr key={key.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3"><p className="font-medium text-gray-900">{user?.name || 'Unknown'}</p><p className="text-sm text-gray-500">{user?.email}</p></td>
-                        <td className="px-4 py-3 font-mono text-sm text-gray-600">{key.key}</td>
-                        <td className="px-4 py-3 text-gray-500">{key.created}</td>
-                        <td className="px-4 py-3"><StatusBadge status={key.status} /></td>
-                        <td className="px-4 py-3 text-right">{key.status === 'active' && <button onClick={() => confirmAction('revokeApiKey', key.id)} className="text-red-600 hover:text-red-800 text-sm font-medium hover:underline">{t('api_security.revoke')}</button>}</td>
-                      </tr>
-                    );})}
-                  </tbody>
-                </table>
-              </div>
+            <div className="p-4 bg-indigo-50 border border-indigo-200 rounded-xl text-[15px] text-indigo-800 space-y-2">
+              <p>{t('settings_api.env_note')}</p>
+              <p>{t('settings_api.user_keys_note')}</p>
             </div>
           </div>
         );
@@ -271,6 +479,12 @@ const Admin = () => {
         return (
           <div className="space-y-6">
             <SectionHeader title={t('users.title')} description={t('users.description')} />
+            <form onSubmit={(e) => { e.preventDefault(); loadUsers(userSearch); }} className="flex gap-2">
+              <input value={userSearch} onChange={e => setUserSearch(e.target.value)} placeholder={t('users.search_ph')}
+                className="flex-1 px-4 py-2 bg-white border border-gray-200 rounded-lg text-[15px]" />
+              <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700">{t('users.search')}</button>
+            </form>
+            {usersError && <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-[15px] text-red-700">{usersError}</div>}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-[15px]">
@@ -278,19 +492,34 @@ const Admin = () => {
                     <tr><th className="px-4 py-3 text-left font-medium">{t('users.table.name_email')}</th><th className="px-4 py-3 text-left font-medium">{t('users.table.role')}</th><th className="px-4 py-3 text-left font-medium">{t('users.table.status')}</th><th className="px-4 py-3 text-left font-medium">{t('users.table.joined')}</th><th className="px-4 py-3 text-right font-medium">{t('users.table.actions')}</th></tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {users.map((user) => (
-                      <tr key={user.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3"><p className="font-medium text-gray-900">{user.name}</p><p className="text-sm text-gray-500">{user.email}</p></td>
-                        <td className="px-4 py-3"><RoleBadge role={user.role} /></td>
-                        <td className="px-4 py-3"><StatusBadge status={user.status} /></td>
-                        <td className="px-4 py-3 text-gray-500">{user.joined}</td>
+                    {users.length === 0 && !usersError && (
+                      <tr><td colSpan={5} className="px-4 py-6 text-center text-gray-500">{t('users.empty')}</td></tr>
+                    )}
+                    {users.map((u) => (
+                      <tr key={u.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3">
+                          <p className="font-medium text-gray-900">{u.name || '—'} {u.is_me && <span className="text-sm text-gray-400">({t('users.you')})</span>}</p>
+                          <p className="text-sm text-gray-500">{u.email}{u.orcid ? ` · ${u.orcid}` : ''}</p>
+                          <p className="text-xs text-gray-400">
+                            {u.email_verified ? t('users.flags.verified') : t('users.flags.unverified')}
+                            {u.two_factor && ` · 2FA`}
+                          </p>
+                        </td>
+                        <td className="px-4 py-3"><RoleBadge role={u.role === 'admin' ? 'admin' : 'researcher'} /></td>
+                        <td className="px-4 py-3"><StatusBadge status={u.active ? 'active' : 'disabled'} /></td>
+                        <td className="px-4 py-3 text-gray-500">{(u.created_at || '').slice(0, 10)}</td>
                         <td className="px-4 py-3 text-right">
-                          <div className="flex justify-end gap-2">
-                            {user.role === 'researcher' && <button onClick={() => confirmAction('promoteToCoAdmin', user.id)} className="text-indigo-600 hover:text-indigo-800 text-sm font-medium hover:underline">{t('users.actions.promote')}</button>}
-                            {user.status === 'active' && <><button onClick={() => confirmAction('suspendUser', user.id)} className="text-amber-600 hover:text-amber-800 text-sm font-medium hover:underline">{t('users.actions.suspend')}</button><button onClick={() => confirmAction('disableUser', user.id)} className="text-red-600 hover:text-red-800 text-sm font-medium hover:underline">{t('users.actions.disable')}</button></>}
-                            {(user.status === 'suspended' || user.status === 'disabled') && <button onClick={() => setUsers(prev => prev.map(u => u.id === user.id ? { ...u, status: 'active' } : u))} className="text-green-600 hover:text-green-800 text-sm font-medium hover:underline">{t('users.actions.activate')}</button>}
-                            <button onClick={() => confirmAction('deleteUser', user.id)} className="text-red-700 hover:text-red-900 text-sm font-medium hover:underline">{t('users.actions.delete')}</button>
-                          </div>
+                          {!u.is_me && (
+                            <div className="flex justify-end gap-2 flex-wrap">
+                              {u.role !== 'admin' && <button onClick={() => confirmAction('promoteToAdmin', u.id)} className="text-indigo-600 hover:text-indigo-800 text-sm font-medium hover:underline">{t('users.actions.promote')}</button>}
+                              {u.role === 'admin' && u.role_source === 'database' && <button onClick={() => confirmAction('demoteToUser', u.id)} className="text-indigo-600 hover:text-indigo-800 text-sm font-medium hover:underline">{t('users.actions.demote')}</button>}
+                              {u.active
+                                ? <button onClick={() => confirmAction('disableUser', u.id)} className="text-red-600 hover:text-red-800 text-sm font-medium hover:underline">{t('users.actions.disable')}</button>
+                                : <button onClick={async () => { try { await userAction({ action: 'set_active', id: u.id, active: true }); showToast(t('users.done.activate')); } catch (e) { showToast(e.message, 'error'); } }} className="text-green-600 hover:text-green-800 text-sm font-medium hover:underline">{t('users.actions.activate')}</button>}
+                              <button onClick={() => confirmAction('revokeSessions', u.id)} className="text-gray-600 hover:text-gray-800 text-sm font-medium hover:underline">{t('users.actions.revoke_sessions')}</button>
+                              <button onClick={() => confirmAction('deleteUser', u.id)} className="text-red-700 hover:text-red-900 text-sm font-medium hover:underline">{t('users.actions.delete')}</button>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -353,12 +582,7 @@ const Admin = () => {
                     <option value="Inter">Inter (Default)</option><option value="Roboto">Roboto</option><option value="Open Sans">Open Sans</option><option value="Nunito">Nunito</option>
                   </select>
                 </div>
-                <div>
-                  <label className="block text-[15px] font-medium text-gray-700 mb-2">{t('ui.chart_type')}</label>
-                  <select value={uiSettings.chartType} onChange={(e) => setUiSettings(prev => ({ ...prev, chartType: e.target.value }))} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-[15px] focus:ring-2 focus:ring-indigo-500">
-                    <option value="area">{t('appearance.chart.area')}</option><option value="line">{t('appearance.chart.line')}</option><option value="bar">{t('appearance.chart.bar')}</option><option value="radar">{t('appearance.chart.radar')}</option>
-                  </select>
-                </div>
+                <p className="text-sm text-gray-500">{t('settings_api.ui_note')}</p>
               </div>
             </div>
           </div>
@@ -389,9 +613,31 @@ const Admin = () => {
                   </button>
                 </div>
               </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[15px] font-medium text-gray-700 mb-1">{t('settings_api.maintenance_message')}</label>
+                  <textarea rows={3} maxLength={500} value={systemSettings.maintenanceMessage || ''}
+                    onChange={(e) => setSystemSettings(prev => ({ ...prev, maintenanceMessage: e.target.value }))}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[15px]" />
+                </div>
+                <div>
+                  <label className="block text-[15px] font-medium text-gray-700 mb-1">{t('settings_api.session_timeout')}</label>
+                  <input type="number" min={15} max={43200} value={systemSettings.sessionTimeoutMinutes}
+                    onChange={(e) => setSystemSettings(prev => ({ ...prev, sessionTimeoutMinutes: Number(e.target.value) }))}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[15px]" />
+                  <p className="text-sm text-gray-500 mt-1">{t('settings_api.session_timeout_help')}</p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-500">{t('settings_api.email_verify_note')}</p>
             </div>
           </div>
         );
+
+      case 'premium':
+        return <PremiumAdmin />;
+
+      case 'opportunity-curation':
+        return <OpportunityCuration />;
 
       case 'audit':
         return (
@@ -401,20 +647,19 @@ const Admin = () => {
               <div className="overflow-x-auto">
                 <table className="w-full text-[15px]">
                   <thead className="bg-gray-50 text-gray-600">
-                    <tr><th className="px-4 py-3 text-left font-medium">{t('audit.table.time')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.admin')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.action')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.target')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.status')}</th></tr>
+                    <tr><th className="px-4 py-3 text-left font-medium">{t('audit.table.time')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.admin')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.action')}</th><th className="px-4 py-3 text-left font-medium">{t('audit.table.target')}</th><th className="px-4 py-3 text-left font-medium">{t('settings_api.ip')}</th></tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {[
-                      { time: '2024-05-25 14:32', admin: 'Admin Utama', action: 'Mencabut API Key', target: 'wz_42_...f678', status: 'success' },
-                      { time: '2024-05-25 10:15', admin: 'Admin Utama', action: 'Memperbarui Bobot WIS', target: 'academic: 40% → 45%', status: 'success' },
-                      { time: '2024-05-24 16:48', admin: 'Admin Utama', action: 'Menangguhkan Akun', target: 'budi@ugm.ac.id', status: 'success' },
-                    ].map((log, idx) => (
-                      <tr key={idx} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-gray-900 font-mono text-sm">{log.time}</td>
-                        <td className="px-4 py-3 text-gray-900">{log.admin}</td>
-                        <td className="px-4 py-3"><span className={`px-2 py-1 rounded text-sm font-medium ${log.action.includes('Cabut') || log.action.includes('Hapus') ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>{log.action}</span></td>
-                        <td className="px-4 py-3 text-gray-600 font-mono text-sm truncate max-w-[200px]">{log.target}</td>
-                        <td className="px-4 py-3"><span className={`px-2 py-1 rounded-full text-sm font-medium ${log.status === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{log.status}</span></td>
+                    {auditEntries.length === 0 && (
+                      <tr><td colSpan={5} className="px-4 py-6 text-center text-gray-500">{t('settings_api.no_activity')}</td></tr>
+                    )}
+                    {auditEntries.map((log) => (
+                      <tr key={log.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 text-gray-900 font-mono text-sm">{log.created_at}</td>
+                        <td className="px-4 py-3 text-gray-900">{log.admin_email}</td>
+                        <td className="px-4 py-3"><span className="px-2 py-1 rounded text-sm font-medium bg-indigo-50 text-indigo-700">{t(`settings_api.actions.${String(log.action).replace(/\./g, '_')}`, { defaultValue: log.action })}</span></td>
+                        <td className="px-4 py-3 text-gray-600 font-mono text-sm truncate max-w-[260px]" title={log.after ? JSON.stringify(log.after) : ''}>{log.target}</td>
+                        <td className="px-4 py-3 text-gray-500 text-sm">{log.ip || '—'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -424,7 +669,12 @@ const Admin = () => {
           </div>
         );
 
-      case 'crawl-queue':
+      case 'crawl-queue': {
+        const crawlBusy = crawlLoading || crawlRunning;
+        const statusClass = (s) => s === 'completed' ? 'bg-green-100 text-green-700'
+          : s === 'failed' ? 'bg-red-100 text-red-700'
+          : s === 'running' ? 'bg-indigo-100 text-indigo-700'
+          : 'bg-amber-100 text-amber-700';
         return (
           <div className="space-y-6">
             <SectionHeader
@@ -432,39 +682,27 @@ const Admin = () => {
               description={t('crawl.description')}
               action={
                 <button
-                  onClick={async () => {
-                    setCrawlLoading(true);
-                    try {
-                      const r = await fetch('/api/crawl_queue.php?action=status');
-                      const d = await r.json();
-                      setCrawlStatus(d);
-                      const r2 = await fetch('/api/crawl_queue.php?action=list');
-                      const d2 = await r2.json();
-                      setCrawlQueue(d2.jobs || []);
-                      setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Status antrian diperbarui', type: 'info' }, ...prev.slice(0, 19)]);
-                    } catch {
-                      setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal terhubung ke API crawl', type: 'error' }, ...prev.slice(0, 19)]);
-                    }
-                    setCrawlLoading(false);
-                  }}
-                  disabled={crawlLoading}
+                  onClick={async () => { setCrawlLoading(true); await refreshCrawl(); setCrawlLoading(false); }}
+                  disabled={crawlBusy || !adminToken}
                   className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2"
                 >
                   {crawlLoading ? <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg> : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>}
-                  Refresh Status
+                  {t('crawl.refresh')}
                 </button>
               }
             />
+            {adminTokenField}
             {crawlStatus && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
                 {[
-                  { label: t('crawl.stat.total'), value: crawlStatus.total ?? '—', color: 'bg-gray-50 text-gray-700' },
-                  { label: t('crawl.stat.pending'), value: crawlStatus.pending ?? '—', color: 'bg-amber-50 text-amber-700' },
-                  { label: t('crawl.stat.done'), value: crawlStatus.done ?? '—', color: 'bg-green-50 text-green-700' },
-                  { label: t('crawl.stat.failed'), value: crawlStatus.failed ?? '—', color: 'bg-red-50 text-red-700' },
+                  { label: t('crawl.stat.total'), value: crawlStatus.total, color: 'bg-gray-50 text-gray-700' },
+                  { label: t('crawl.stat.pending'), value: crawlStatus.pending, color: 'bg-amber-50 text-amber-700' },
+                  { label: t('crawl.stat.running'), value: crawlStatus.running, color: 'bg-indigo-50 text-indigo-700' },
+                  { label: t('crawl.stat.done'), value: crawlStatus.completed, color: 'bg-green-50 text-green-700' },
+                  { label: t('crawl.stat.failed'), value: crawlStatus.failed, color: 'bg-red-50 text-red-700' },
                 ].map((s, i) => (
                   <div key={i} className={`p-4 rounded-xl border ${s.color} border-current/20`}>
-                    <p className="text-2xl font-bold">{s.value}</p>
+                    <p className="text-2xl font-bold">{s.value ?? '—'}</p>
                     <p className="text-[15px] mt-1">{s.label}</p>
                   </div>
                 ))}
@@ -472,6 +710,7 @@ const Admin = () => {
             )}
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
               <h3 className="font-bold text-gray-900">{t('crawl.add')}</h3>
+              <p className="text-[15px] text-gray-600">{t('crawl.process_desc')}</p>
               <div className="flex gap-3">
                 <input
                   type="text"
@@ -485,46 +724,52 @@ const Admin = () => {
                     if (!crawlInput.trim()) return;
                     setCrawlLoading(true);
                     try {
-                      const id = crawlInput.trim();
-                      const inferredType = /^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/i.test(id) ? 'orcid' : 'doi';
-                      const r = await fetch('/api/crawl_queue.php?action=enqueue', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ type: inferredType, identifier: id }),
-                      });
-                      const d = await r.json();
-                      setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: d.message || `Ditambahkan: ${crawlInput}`, type: d.status === 'ok' ? 'success' : 'error' }, ...prev.slice(0, 19)]);
-                      if (d.status === 'ok') setCrawlInput('');
-                    } catch {
-                      setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal menambahkan ke antrian', type: 'error' }, ...prev.slice(0, 19)]);
+                      const d = await crawlApi('enqueue', { identifier: crawlInput.trim() });
+                      pushCrawlLog(d.message, d.duplicate ? 'info' : 'success');
+                      setCrawlInput('');
+                      await refreshCrawl(true);
+                    } catch (e) {
+                      pushCrawlLog(`Gagal menambahkan: ${e.message}`, 'error');
                     }
                     setCrawlLoading(false);
                   }}
-                  disabled={crawlLoading || !crawlInput.trim()}
+                  disabled={crawlBusy || !adminToken || !crawlInput.trim()}
                   className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors whitespace-nowrap"
                 >
-                  Tambah
+                  {t('crawl.add_short')}
                 </button>
               </div>
-              <button
-                onClick={async () => {
-                  setCrawlLoading(true);
-                  try {
-                    const r = await fetch('/api/crawl_queue.php?action=process', { method: 'POST' });
-                    const d = await r.json();
-                    setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: d.message || 'Proses antrian dijalankan', type: d.status === 'ok' ? 'success' : 'error' }, ...prev.slice(0, 19)]);
-                    showToast(d.message || 'Crawl dijalankan');
-                  } catch {
-                    setCrawlLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal menjalankan proses crawl', type: 'error' }, ...prev.slice(0, 19)]);
-                  }
-                  setCrawlLoading(false);
-                }}
-                disabled={crawlLoading}
-                className="w-full py-2.5 bg-green-600 text-white rounded-lg text-[15px] font-medium hover:bg-green-700 disabled:opacity-60 transition-colors flex items-center justify-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                {t('crawl.process')}
-              </button>
+              <div className="flex flex-wrap gap-3">
+                {!crawlRunning ? (
+                  <button
+                    onClick={runCrawl}
+                    disabled={crawlBusy || !adminToken}
+                    className="flex-1 py-2.5 bg-green-600 text-white rounded-lg text-[15px] font-medium hover:bg-green-700 disabled:opacity-60 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    {t('crawl.process')}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => { crawlStopRef.current = true; }}
+                    className="flex-1 py-2.5 bg-gray-700 text-white rounded-lg text-[15px] font-medium hover:bg-gray-800 transition-colors"
+                  >
+                    {t('crawl.stop')}
+                  </button>
+                )}
+                <button
+                  onClick={async () => {
+                    setCrawlLoading(true);
+                    try { const d = await crawlApi('clear_finished'); pushCrawlLog(d.message, 'success'); await refreshCrawl(true); }
+                    catch (e) { pushCrawlLog(e.message, 'error'); }
+                    setCrawlLoading(false);
+                  }}
+                  disabled={crawlBusy || !adminToken || !crawlStatus || (crawlStatus.completed + crawlStatus.failed) === 0}
+                  className="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg text-[15px] font-medium hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                >
+                  {t('crawl.clear_finished')}
+                </button>
+              </div>
             </div>
             {crawlQueue.length > 0 && (
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
@@ -532,15 +777,28 @@ const Admin = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full text-[15px]">
                     <thead className="bg-gray-50 text-gray-600">
-                      <tr><th className="px-4 py-3 text-left font-medium">{t('crawl.identifier')}</th><th className="px-4 py-3 text-left font-medium">{t('crawl.type')}</th><th className="px-4 py-3 text-left font-medium">{t('crawl.status')}</th><th className="px-4 py-3 text-left font-medium">{t('crawl.added')}</th></tr>
+                      <tr>
+                        <th className="px-4 py-3 text-left font-medium">{t('crawl.identifier')}</th>
+                        <th className="px-4 py-3 text-left font-medium">{t('crawl.type')}</th>
+                        <th className="px-4 py-3 text-left font-medium">{t('crawl.status')}</th>
+                        <th className="px-4 py-3 text-left font-medium">{t('crawl.progress')}</th>
+                        <th className="px-4 py-3 text-left font-medium">{t('crawl.added')}</th>
+                      </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                      {crawlQueue.map((item, idx) => (
-                        <tr key={idx} className="hover:bg-gray-50">
+                      {crawlQueue.map((item) => (
+                        <tr key={item.id} className="hover:bg-gray-50">
                           <td className="px-4 py-3 font-mono text-sm text-gray-700">{item.identifier}</td>
                           <td className="px-4 py-3"><span className="px-2 py-1 rounded text-sm font-medium bg-indigo-100 text-indigo-700">{item.type || 'unknown'}</span></td>
-                          <td className="px-4 py-3"><span className={`px-2 py-1 rounded-full text-sm font-medium ${item.status === 'done' ? 'bg-green-100 text-green-700' : item.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>{item.status}</span></td>
-                          <td className="px-4 py-3 text-gray-500 text-sm">{item.created_at || '—'}</td>
+                          <td className="px-4 py-3">
+                            <span className={`px-2 py-1 rounded-full text-sm font-medium ${statusClass(item.status)}`}>{item.status}</span>
+                            {item.error && <p className="text-xs text-red-600 mt-1 max-w-xs truncate" title={item.error}>{item.error}</p>}
+                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-600">
+                            {item.progress ? `${item.progress.offset}/${item.progress.total} karya` : '—'}
+                            {item.result && <span className="block text-xs text-gray-500">{item.result.publications} tersimpan · {item.result.sdg_rows} SDG</span>}
+                          </td>
+                          <td className="px-4 py-3 text-gray-500 text-sm">{item.created_at ? new Date(item.created_at).toLocaleString('id-ID') : '—'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -551,7 +809,7 @@ const Admin = () => {
             {crawlLog.length > 0 && (
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                 <h3 className="font-bold text-gray-900 mb-3">{t('crawl.activity_log')}</h3>
-                <div className="space-y-2 max-h-48 overflow-y-auto font-mono text-sm">
+                <div className="space-y-2 max-h-64 overflow-y-auto font-mono text-sm">
                   {crawlLog.map((entry, idx) => (
                     <div key={idx} className={`flex gap-3 ${entry.type === 'error' ? 'text-red-600' : entry.type === 'success' ? 'text-green-600' : 'text-gray-600'}`}>
                       <span className="text-gray-400 shrink-0">[{entry.time}]</span>
@@ -563,87 +821,132 @@ const Admin = () => {
             )}
           </div>
         );
+      }
 
-      case 'cache-migration':
+      case 'cache-migration': {
+        const f = cacheStatus?.files;
+        const pct = cacheProgress && cacheProgress.total > 0
+          ? Math.min(100, Math.round((cacheProgress.done / cacheProgress.total) * 100))
+          : 0;
+        const busy = cacheLoading || cacheRunning;
+        const typeLabels = { orcid_init: 'ORCID init', orcid_profile: 'Profil ORCID', orcid_batch: 'Batch ORCID', article: 'Artikel', unknown: 'Lainnya' };
         return (
           <div className="space-y-6">
             <SectionHeader
               title={t('cache.section')}
-              description="Migrasikan cache file legacy ke database dan kelola status cache aktif."
+              description={t('cache.description')}
               action={
                 <button
-                  onClick={async () => {
-                    setCacheLoading(true);
-                    try {
-                      const r = await fetch('/api/cache_to_db.php?action=status');
-                      const d = await r.json();
-                      setCacheStatus(d);
-                      setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Status cache diperbarui', type: 'info' }, ...prev.slice(0, 19)]);
-                    } catch {
-                      setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal terhubung ke API cache', type: 'error' }, ...prev.slice(0, 19)]);
-                    }
-                    setCacheLoading(false);
-                  }}
-                  disabled={cacheLoading}
+                  onClick={async () => { setCacheLoading(true); await refreshCacheStatus(); setCacheLoading(false); }}
+                  disabled={busy || !adminToken}
                   className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2"
                 >
                   {cacheLoading ? <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg> : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" /></svg>}
-                  Cek Status Cache
+                  {t('cache.check_status')}
                 </button>
               }
             />
-            {cacheStatus && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {[
-                  { label: t('cache.stat.legacy'), value: cacheStatus.file_cache_count ?? '—', color: 'bg-amber-50 text-amber-700' },
-                  { label: t('cache.stat.migrated'), value: cacheStatus.db_cache_count ?? '—', color: 'bg-green-50 text-green-700' },
-                  { label: t('cache.stat.db_ready'), value: cacheStatus.db_available ? t('cache.stat.yes') : t('cache.stat.no'), color: cacheStatus.db_available ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700' },
-                ].map((s, i) => (
-                  <div key={i} className={`p-4 rounded-xl border ${s.color} border-current/20`}>
-                    <p className="text-2xl font-bold">{s.value}</p>
-                    <p className="text-[15px] mt-1">{s.label}</p>
-                  </div>
-                ))}
-              </div>
+
+            {adminTokenField}
+
+            {cacheStatus && !cacheStatus.db_available && (
+              <div className="p-4 rounded-xl border border-red-200 bg-red-50 text-red-700 text-[15px]">{cacheStatus.message}</div>
             )}
+
+            {f && (
+              <>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                  {[
+                    { label: t('cache.stat.total'), value: f.total, color: 'bg-gray-50 text-gray-700' },
+                    { label: t('cache.stat.pending'), value: f.pending, color: 'bg-amber-50 text-amber-700' },
+                    { label: t('cache.stat.migrated'), value: f.migrated, color: 'bg-green-50 text-green-700' },
+                    { label: t('cache.stat.skipped'), value: f.skipped, color: 'bg-slate-50 text-slate-700' },
+                    { label: t('cache.stat.failed'), value: f.failed, color: f.failed > 0 ? 'bg-red-50 text-red-700' : 'bg-gray-50 text-gray-500' },
+                    { label: t('cache.stat.archived'), value: f.archived, color: 'bg-indigo-50 text-indigo-700' },
+                  ].map((s, i) => (
+                    <div key={i} className={`p-4 rounded-xl border ${s.color} border-current/20`}>
+                      <p className="text-2xl font-bold">{s.value ?? '—'}</p>
+                      <p className="text-[15px] mt-1">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 grid gap-4 md:grid-cols-2">
+                  <div>
+                    <h3 className="font-bold text-gray-900 mb-2">{t('cache.by_type')}</h3>
+                    <ul className="text-[15px] text-gray-700 space-y-1">
+                      {Object.entries(f.by_type || {}).map(([k, v]) => (
+                        <li key={k} className="flex justify-between"><span>{typeLabels[k] || k}</span><span className="font-mono">{v}</span></li>
+                      ))}
+                      {Object.keys(f.by_type || {}).length === 0 && <li className="text-gray-500">{t('cache.no_files')}</li>}
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 mb-2">{t('cache.db_rows')} <span className="font-mono text-sm text-gray-500">({cacheStatus.database})</span></h3>
+                    <ul className="text-[15px] text-gray-700 space-y-1">
+                      {Object.entries(cacheStatus.db || {}).map(([k, v]) => (
+                        <li key={k} className="flex justify-between"><span className="font-mono text-sm">{k}</span><span className="font-mono">{v ?? t('cache.table_missing')}</span></li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </>
+            )}
+
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4">
               <h3 className="font-bold text-gray-900">{t('cache.migration_actions')}</h3>
-              <p className="text-[15px] text-gray-600">{t('cache.migrate_desc_full')} <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono">api_cache</code> di database. Proses ini tidak menghapus file asli.</p>
+              <p className="text-[15px] text-gray-600">{t('cache.migrate_desc_full')}</p>
+
+              {cacheProgress && (
+                <div>
+                  <div className="flex justify-between text-sm text-gray-600 mb-1">
+                    <span>{cacheProgress.done} / {cacheProgress.total} file</span><span>{pct}%</span>
+                  </div>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
+                    <div className="h-full bg-indigo-600 transition-all" style={{ width: `${pct}%` }} />
+                  </div>
+                </div>
+              )}
+
               <div className="flex flex-wrap gap-3">
+                {!cacheRunning ? (
+                  <button
+                    onClick={() => runCacheMigration(false)}
+                    disabled={busy || !adminToken || (cacheStatus && !cacheStatus.db_available)}
+                    className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+                    {t('cache.run')}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => { cacheStopRef.current = true; }}
+                    className="px-5 py-2.5 bg-gray-700 text-white rounded-lg text-[15px] font-medium hover:bg-gray-800 transition-colors"
+                  >
+                    {t('cache.stop')}
+                  </button>
+                )}
                 <button
-                  onClick={async () => {
-                    setCacheLoading(true);
-                    try {
-                      const r = await fetch('/api/cache_to_db.php?action=migrate', { method: 'POST' });
-                      const d = await r.json();
-                      setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: d.message || `Migrasi: ${d.migrated ?? 0} item berhasil`, type: d.status === 'ok' ? 'success' : 'error' }, ...prev.slice(0, 19)]);
-                      setCacheStatus(prev => prev ? { ...prev, db_cache_count: (prev.db_cache_count || 0) + (d.migrated || 0) } : prev);
-                      showToast(d.message || 'Migrasi selesai');
-                    } catch {
-                      setCacheLog(prev => [{ time: new Date().toLocaleTimeString('id-ID'), msg: 'Gagal menjalankan migrasi', type: 'error' }, ...prev.slice(0, 19)]);
-                    }
-                    setCacheLoading(false);
-                  }}
-                  disabled={cacheLoading}
-                  className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-[15px] font-medium hover:bg-indigo-700 disabled:opacity-60 transition-colors flex items-center gap-2"
+                  onClick={() => runCacheMigration(true)}
+                  disabled={busy || !adminToken || !f || f.failed === 0}
+                  className="px-5 py-2.5 border border-red-300 text-red-700 rounded-lg text-[15px] font-medium hover:bg-red-50 disabled:opacity-50 transition-colors"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
-                  {t('cache.run')}
+                  {t('cache.retry_failed')}
                 </button>
                 <button
-                  onClick={() => confirmAction('clearCache', null)}
-                  disabled={cacheLoading}
-                  className="px-5 py-2.5 bg-red-600 text-white rounded-lg text-[15px] font-medium hover:bg-red-700 disabled:opacity-60 transition-colors flex items-center gap-2"
+                  onClick={() => confirmAction('archiveCache', null)}
+                  disabled={busy || !adminToken || !f || (f.migrated + f.skipped) === 0}
+                  className="px-5 py-2.5 bg-amber-600 text-white rounded-lg text-[15px] font-medium hover:bg-amber-700 disabled:opacity-60 transition-colors flex items-center gap-2"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                  {t('cache.clear')}
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+                  {t('cache.archive')}
                 </button>
               </div>
             </div>
+
             {cacheLog.length > 0 && (
               <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
                 <h3 className="font-bold text-gray-900 mb-3">{t('cache.log')}</h3>
-                <div className="space-y-2 max-h-48 overflow-y-auto font-mono text-sm">
+                <div className="space-y-2 max-h-64 overflow-y-auto font-mono text-sm">
                   {cacheLog.map((entry, idx) => (
                     <div key={idx} className={`flex gap-3 ${entry.type === 'error' ? 'text-red-600' : entry.type === 'success' ? 'text-green-600' : 'text-gray-600'}`}>
                       <span className="text-gray-400 shrink-0">[{entry.time}]</span>
@@ -655,6 +958,7 @@ const Admin = () => {
             )}
           </div>
         );
+      }
 
       default: return null;
     }
@@ -664,11 +968,12 @@ const Admin = () => {
   const ConfirmationModal = () => {
     if (!confirmModal.show) return null;
     const modal = {
-      revokeApiKey: { title: 'Cabut API Key?', message: 'Pengguna tidak akan dapat menggunakan kunci API ini lagi.', confirmText: 'Ya, Cabut', confirmClass: 'bg-red-600' },
-      suspendUser: { title: 'Tangguhkan Akun?', message: 'Pengguna tidak dapat login hingga ditinjau.', confirmText: 'Ya, Tangguhkan', confirmClass: 'bg-amber-600' },
-      deleteUser: { title: 'Hapus Akun Permanen?', message: 'SEMUA data akan dihapus permanen. TIDAK DAPAT DIBATALKAN.', confirmText: 'Ya, Hapus', confirmClass: 'bg-red-700' },
-      promoteToCoAdmin: { title: 'Promosikan ke Co-Admin?', message: 'Pengguna akan memiliki akses administratif terbatas.', confirmText: 'Ya, Promosikan', confirmClass: 'bg-indigo-600' },
-      clearCache: { title: t('cache.confirm_clear_title'), message: t('cache.confirm_clear_msg'), confirmText: t('cache.confirm_clear_ok'), confirmClass: 'bg-red-600' },
+      disableUser: { title: t('users.confirm.disable_title'), message: t('users.confirm.disable_msg'), confirmText: t('users.confirm.disable_ok'), confirmClass: 'bg-red-600' },
+      revokeSessions: { title: t('users.confirm.revoke_title'), message: t('users.confirm.revoke_msg'), confirmText: t('users.confirm.revoke_ok'), confirmClass: 'bg-gray-800' },
+      demoteToUser: { title: t('users.confirm.demote_title'), message: t('users.confirm.demote_msg'), confirmText: t('users.confirm.demote_ok'), confirmClass: 'bg-indigo-600' },
+      deleteUser: { title: t('users.confirm.delete_title'), message: t('users.confirm.delete_msg'), confirmText: t('users.confirm.delete_ok'), confirmClass: 'bg-red-700' },
+      promoteToAdmin: { title: t('users.confirm.promote_title'), message: t('users.confirm.promote_msg'), confirmText: t('users.confirm.promote_ok'), confirmClass: 'bg-indigo-600' },
+      archiveCache: { title: t('cache.confirm_archive_title'), message: t('cache.confirm_archive_msg'), confirmText: t('cache.confirm_archive_ok'), confirmClass: 'bg-amber-600' },
     }[confirmModal.action] || { title: 'Konfirmasi', message: 'Lanjutkan?', confirmText: 'Ya', confirmClass: 'bg-indigo-600' };
     return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">

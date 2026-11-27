@@ -22,15 +22,31 @@
   "filter": {
     "search_placeholder": "Search projects…",
     "filters": "Filters",
-    "export": "Export"
+    "export": "Export",
+    "mine": "My projects only",
+    "all_sdgs": "All SDGs",
+    "sort": {
+      "updated": "Recently updated",
+      "progress": "Highest progress",
+      "end": "Nearest deadline",
+      "title": "Title (A–Z)"
+    }
   },
   "card": {
     "progress": "Progress",
-    "team_member": "Team member",
     "budget_used": "Budget Used",
     "institution": "Institution",
     "updated": "Updated {{when}}",
-    "recently": "recently"
+    "recently": "recently",
+    "yours": "Yours",
+    "collaborators_one": "{{count}} member",
+    "collaborators_other": "{{count}} members",
+    "milestones": "{{done}}/{{total}} milestones",
+    "publications_one": "{{count}} publication",
+    "publications_other": "{{count}} publications",
+    "share": "Share / copy link",
+    "view": "View details",
+    "edit": "Edit project"
   },
   "quick": {
     "title": "Quick Actions",
@@ -54,6 +70,106 @@
     ]
   },
   "list": {
-    "empty": "No matching projects"
+    "empty": "No matching projects",
+    "none": "No projects yet. Be the first to start a collaborative project.",
+    "load_error_title": "Projects could not be loaded",
+    "load_error_gateway": "The API server did not respond (HTTP {{status}}). This usually means the PHP server is not running or timed out. Please try again shortly.",
+    "load_error_generic": "Something went wrong while loading data (HTTP {{status}}).",
+    "retry": "Try again"
+  },
+  "status": {
+    "planning": "Planning",
+    "active": "Active",
+    "paused": "Paused",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+  "visibility": {
+    "public": "Public",
+    "private": "Private",
+    "restricted": "Restricted"
+  },
+  "milestone": {
+    "planned": "Planned",
+    "in-progress": "In progress",
+    "completed": "Completed",
+    "overdue": "Overdue"
+  },
+  "common": {
+    "save": "Save",
+    "saving": "Saving…"
+  },
+  "form": {
+    "new_title": "New Project",
+    "title": "Project title",
+    "description": "Description",
+    "status": "Status",
+    "visibility": "Visibility",
+    "visibility_hint": {
+      "public": "Visible to all visitors.",
+      "private": "Only visible to you and project members.",
+      "restricted": "Only visible to you and project members."
+    },
+    "start_date": "Start date",
+    "end_date": "End date",
+    "budget": "Budget",
+    "spent": "Budget spent",
+    "progress": "Progress",
+    "sdg": "SDG focus",
+    "create": "Create Project"
+  },
+  "detail": {
+    "loading": "Loading project…",
+    "tabs": {
+      "overview": "Overview",
+      "members": "Members",
+      "milestones": "Milestones",
+      "settings": "Settings"
+    },
+    "no_description": "No description yet.",
+    "fields": {
+      "status": "Status",
+      "visibility": "Visibility",
+      "period": "Period",
+      "lead": "Lead",
+      "budget": "Spent / Budget",
+      "progress": "Progress"
+    },
+    "publications": "Related publications",
+    "contact_lead": "Contact project lead",
+    "lead_profile": "Lead's profile",
+    "lead_role": "Project lead",
+    "no_members": "No other members yet.",
+    "role_ph": "Role (e.g. Researcher, Data Analyst)",
+    "add_member": "Add member",
+    "member_hint": "Enter the ORCID of a researcher already registered on Sciecola. If they have an account, they will be notified.",
+    "remove": "Remove",
+    "confirm_remove_member": "Remove this member from the project?",
+    "leave": "Leave project",
+    "confirm_leave": "Leave this project?",
+    "no_milestones": "No milestones yet.",
+    "target": "Target",
+    "milestone_ph": "Milestone title (e.g. Data collection done)",
+    "add_milestone": "Add milestone",
+    "confirm_delete_milestone": "Delete this milestone?",
+    "delete_warning": "Deleting the project also removes its members, milestones and publication links. This cannot be undone.",
+    "delete": "Delete project",
+    "confirm_delete": "Permanently delete this project?"
+  },
+  "picker": {
+    "title": "Choose one of your projects",
+    "empty": "You don't lead any project yet."
+  },
+  "toast": {
+    "need_orcid": "Link your ORCID in Settings to manage projects.",
+    "created": "Project created",
+    "saved": "Changes saved",
+    "deleted": "Project deleted",
+    "member_added": "Member added",
+    "member_removed": "Member removed",
+    "left": "You left the project",
+    "milestone_added": "Milestone added",
+    "link_copied": "Project link copied",
+    "nothing_to_export": "No projects to export"
   }
 }

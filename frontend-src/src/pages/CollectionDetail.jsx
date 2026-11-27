@@ -28,165 +28,15 @@ const CollectionDetail = () => {
     tags: ''
   });
 
-  // Mock Data for Collection Detail
-  const mockCollection = {
-    id: parseInt(id),
-    name: 'Climate Change Adaptation',
-    description: 'Kumpulan riset tentang adaptasi perubahan iklim di wilayah pesisir Asia Tenggara. Koleksi ini mencakup penelitian terbaru tentang strategi adaptasi, mitigasi dampak, dan kebijakan berkelanjutan untuk wilayah pesisir yang rentan terhadap perubahan iklim.',
-    itemCount: 24,
-    lastUpdated: '2024-11-15',
-    privacy: 'public',
-    tags: ['Climate', 'Adaptation', 'SDG 13'],
-    owner: {
-      name: 'Dr. Sarah Wijaya',
-      orcid: '0000-0000-0000-0000',
-      avatar: null
-    },
-    createdAt: '2024-06-10'
-  };
 
-  // Mock Data for Items in Collection
-  const mockItems = [
-    {
-      id: 1,
-      title: 'Climate Change Adaptation Strategies for Coastal Communities in Southeast Asia',
-      authors: ['Sarah Wijaya', 'Ahmad Rahman', 'Li Wei'],
-      type: 'article',
-      publishedDate: '2024-10-15',
-      journal: 'Journal of Climate Studies',
-      doi: '10.1234/jcs.2024.001',
-      citations: 45,
-      sdgs: [13, 14]
-    },
-    {
-      id: 2,
-      title: 'Sustainable Urban Transport Systems and Their Impact on Carbon Emissions',
-      authors: ['Michael Chen', 'Fatima Hassan'],
-      type: 'article',
-      publishedDate: '2024-09-22',
-      journal: 'Urban Sustainability Review',
-      doi: '10.1234/usr.2024.045',
-      citations: 32,
-      sdgs: [11, 13]
-    },
-    {
-      id: 3,
-      title: 'Renewable Energy Policy Frameworks in ASEAN Countries',
-      authors: ['Budi Santoso', 'Emma Thompson'],
-      type: 'article',
-      publishedDate: '2024-08-30',
-      journal: 'Energy Policy Journal',
-      doi: '10.1234/epj.2024.078',
-      citations: 28,
-      sdgs: [7, 13]
-    },
-    {
-      id: 4,
-      title: 'Community-Based Waste Management in Coastal Cities',
-      authors: ['Rina Kusuma', 'John Doe'],
-      type: 'article',
-      publishedDate: '2024-11-01',
-      journal: 'Environmental Management',
-      doi: '10.1234/em.2024.112',
-      citations: 15,
-      sdgs: [11, 12, 13]
-    },
-    {
-      id: 5,
-      title: 'Mangrove Ecosystem Restoration as Climate Adaptation Strategy',
-      authors: ['Agus Pratama', 'Maria Garcia'],
-      type: 'article',
-      publishedDate: '2024-07-18',
-      journal: 'Ecological Engineering',
-      doi: '10.1234/ee.2024.056',
-      citations: 52,
-      sdgs: [13, 14, 15]
-    },
-    {
-      id: 6,
-      title: 'Green Infrastructure Planning for Flood Resilience',
-      authors: ['David Lee', 'Siti Nurhaliza'],
-      type: 'article',
-      publishedDate: '2024-06-25',
-      journal: 'Landscape and Urban Planning',
-      doi: '10.1234/lup.2024.034',
-      citations: 38,
-      sdgs: [11, 13]
-    },
-    {
-      id: 7,
-      title: 'Solar Panel Adoption Patterns in Tropical Regions',
-      authors: ['Hendra Gunawan', 'Lisa Anderson'],
-      type: 'article',
-      publishedDate: '2024-10-05',
-      journal: 'Renewable Energy',
-      doi: '10.1234/re.2024.089',
-      citations: 21,
-      sdgs: [7, 13]
-    },
-    {
-      id: 8,
-      title: 'Water Security and Climate Change in Island Nations',
-      authors: ['Putri Wulandari', 'Robert Smith'],
-      type: 'article',
-      publishedDate: '2024-09-10',
-      journal: 'Water Resources Research',
-      doi: '10.1234/wrr.2024.067',
-      citations: 44,
-      sdgs: [6, 13]
-    },
-    {
-      id: 9,
-      title: 'Agricultural Adaptation to Changing Rainfall Patterns',
-      authors: ['Yanto Susilo', 'Anna Martinez'],
-      type: 'article',
-      publishedDate: '2024-08-15',
-      journal: 'Agricultural Systems',
-      doi: '10.1234/as.2024.045',
-      citations: 36,
-      sdgs: [2, 13]
-    },
-    {
-      id: 10,
-      title: 'Climate Education Programs in Southeast Asian Universities',
-      authors: ['Dewi Lestari', 'James Wilson'],
-      type: 'article',
-      publishedDate: '2024-11-08',
-      journal: 'Environmental Education Research',
-      doi: '10.1234/eer.2024.123',
-      citations: 12,
-      sdgs: [4, 13]
-    },
-    {
-      id: 11,
-      title: 'Blue Carbon Ecosystems: Measurement and Valuation',
-      authors: ['Eko Prasetyo', 'Catherine Brown'],
-      type: 'article',
-      publishedDate: '2024-07-22',
-      journal: 'Marine Policy',
-      doi: '10.1234/mp.2024.078',
-      citations: 48,
-      sdgs: [13, 14]
-    },
-    {
-      id: 12,
-      title: 'Disaster Risk Reduction in Coastal Megacities',
-      authors: ['Fitri Handayani', 'Thomas Miller'],
-      type: 'article',
-      publishedDate: '2024-10-28',
-      journal: 'International Journal of Disaster Risk Reduction',
-      doi: '10.1234/ijdrr.2024.091',
-      citations: 27,
-      sdgs: [11, 13]
-    }
-  ];
 
   // Fetch collection data from API
   useEffect(() => {
     if (!user?.orcid) { 
-      // Use mock data if not authenticated
-      setCollection(mockCollection);
-      setItems(mockItems);
+      // Belum masuk: tidak menampilkan koleksi contoh
+      setCollection(null);
+      setItems([]);
+      setError('Silakan masuk untuk melihat koleksi ini.');
       setLoading(false);
       return; 
     }
@@ -199,18 +49,18 @@ const CollectionDetail = () => {
       .then(r => r.json())
       .then(data => {
         if (data.status === 'success') {
-          setCollection(data.collection ?? mockCollection);
-          setItems(data.items ?? mockItems);
+          setCollection(data.collection ?? null);
+          setItems(data.items ?? []);
         } else {
-          // Fallback to mock data
-          setCollection(mockCollection);
-          setItems(mockItems);
+          // Data tidak tersedia: tampilkan kosong (tanpa data contoh)
+          setCollection(null);
+          setItems([]);
         }
       })
       .catch(err => {
-        // Fallback to mock data on error
-        setCollection(mockCollection);
-        setItems(mockItems);
+        // Gagal memuat: tampilkan kosong (tanpa data contoh)
+        setCollection(null);
+        setItems([]);
       })
       .finally(() => setLoading(false));
   }, [id, user?.orcid]);

@@ -36,8 +36,8 @@ header('Access-Control-Allow-Headers: Content-Type');
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
 if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
-$configFile = ROOT_PATH . '/config/config.php';
-if (file_exists($configFile)) require_once $configFile;
+if (!defined('DB_DATABASE')) require_once ROOT_PATH . '/config/config.php';
+require_once ROOT_PATH . '/includes/autoload.php';
 
 $type = strtolower(trim($_GET['type'] ?? 'orcid'));
 $id   = trim($_GET['id']   ?? '');
@@ -71,33 +71,6 @@ if (!preg_match($validators[$type], $id)) {
         'message' => "Format $type tidak valid: $id",
     ]);
     exit;
-}
-
-// ── Helper: capture in-process PHP output as JSON ────────────────────────────
-function callLocalApi(string $apiFile, array $params): array
-{
-    $origGet    = $_GET;
-    $origMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-    $_GET = $params;
-    $_SERVER['REQUEST_METHOD'] = 'GET';
-    ob_start();
-    try { require $apiFile; } catch (Throwable $t) {
-        ob_end_clean();
-        $_GET = $origGet;
-        $_SERVER['REQUEST_METHOD'] = $origMethod;
-        return ['status' => 'error', 'message' => $t->getMessage()];
-    }
-    $raw = ob_get_clean();
-    $_GET = $origGet;
-    $_SERVER['REQUEST_METHOD'] = $origMethod;
-
-    for ($i = 0, $l = strlen($raw); $i < $l; $i++) {
-        if ($raw[$i] === '{' || $raw[$i] === '[') {
-            $data = json_decode(substr($raw, $i), true);
-            return is_array($data) ? $data : ['status' => 'error', 'message' => 'invalid json'];
-        }
-    }
-    return ['status' => 'error', 'message' => 'empty api output'];
 }
 
 // ── Helper: call sangia-apis for cross-database lookup ───────────────────────
@@ -139,30 +112,30 @@ function callSangiaLookup(string $type, string $id): ?array
 switch ($type) {
 
     case 'orcid':
-        // Delegate to the mature ORCID aggregator that already exists.
-        // Try wrapper path first (in-process); fall back to public endpoint file.
-        $candidates = [
-            __DIR__ . '/researcher_profile.php',
-            ROOT_PATH . '/api/researcher_profile.php',
-        ];
-        $data = null;
-        foreach ($candidates as $file) {
-            if (is_file($file)) {
-                $data = callLocalApi($file, ['orcid' => $id]);
-                if (($data['status'] ?? '') === 'success') break;
-            }
+        // Profil ORCID disusun langsung oleh ResearcherProfileService (database dulu,
+        // lalu mesin SDG lokal). Dulu file researcher_profile.php di-require di sini,
+        // yang memicu fatal error "Cannot redeclare callLocalApi()".
+        if ($denied = \Sciecola\Auth\ProfilePrivacy::denial($id)) {
+            http_response_code($denied[0]);
+            echo json_encode(['status' => 'error', 'code' => $denied[1], 'message' => $denied[2]], JSON_UNESCAPED_UNICODE);
+            break;
         }
-        if (!$data) {
-            http_response_code(503);
-            echo json_encode(['status' => 'error', 'message' => 'ORCID aggregator tidak tersedia']);
-            exit;
-        }
-        // Ensure source metadata is present on the response profile.
-        if (($data['status'] ?? '') === 'success' && isset($data['profile']) && is_array($data['profile'])) {
+        @set_time_limit(90);
+        ob_start();
+        try {
+            $data = \Sciecola\Sdg\ResearcherProfileService::build($id, ['refresh' => ($_GET['refresh'] ?? '') === 'true']);
+            unset($data['works']);
+            $data['profile'] = \Sciecola\Auth\ProfilePrivacy::filterProfile($id, (array) ($data['profile'] ?? []));
             $data['profile']['_source_type'] = 'orcid';
-            $data['profile']['_source_id']   = $id;
+            $data['profile']['_source_id']   = strtoupper($id);
+            ob_end_clean();
+            echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
+        } catch (Throwable $e) {
+            ob_end_clean();
+            $code = in_array($e->getCode(), [400, 404, 502], true) ? (int) $e->getCode() : 500;
+            http_response_code($code);
+            echo json_encode(['status' => 'error', 'message' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
         }
-        echo json_encode($data, JSON_UNESCAPED_UNICODE);
         break;
 
     case 'scopus':

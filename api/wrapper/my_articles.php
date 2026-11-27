@@ -24,8 +24,8 @@ header('Access-Control-Allow-Headers: Content-Type, X-Auth-Token');
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(204); exit; }
 
 if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
-$configFile = ROOT_PATH . '/config/config.php';
-if (file_exists($configFile)) require_once $configFile;
+if (!defined('DB_DATABASE')) require_once ROOT_PATH . '/config/config.php';
+require_once ROOT_PATH . '/includes/autoload.php';
 
 $orcid  = trim($_GET['orcid'] ?? '');
 $page   = max(1, (int)($_GET['page'] ?? 1));
@@ -42,70 +42,46 @@ if (empty($orcid) || !preg_match('/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/i', $orcid)) {
     exit;
 }
 
-// ── Fetch profile from cache or API ─────────────────────────────────────────
-
-function fetchProfile(string $orcid): ?array {
-    // 1. Check cache folder first
-    $cacheFile = ROOT_PATH . '/cache/orcid_' . preg_replace('/[^a-z0-9_-]/i', '_', $orcid) . '.json';
-    if (file_exists($cacheFile)) {
-        $cached = json_decode(file_get_contents($cacheFile), true);
-        if ($cached && isset($cached['cached_at'])) {
-            if (time() - strtotime($cached['cached_at']) < 604800) return $cached;
-        }
-    }
-
-    // 2. Delegate to researcher_profile.php
-    $apiFile = __DIR__ . '/researcher_profile.php';
-    if (!file_exists($apiFile)) return null;
-
-    $origGet = $_GET; $origMethod = $_SERVER['REQUEST_METHOD'];
-    $_GET = ['orcid' => $orcid];
-    $_SERVER['REQUEST_METHOD'] = 'GET';
-    ob_start();
-    try { require $apiFile; } catch (Throwable $t) { ob_end_clean(); }
-    $raw = ob_get_clean();
-    $_GET = $origGet; $_SERVER['REQUEST_METHOD'] = $origMethod;
-
-    for ($i = 0, $l = strlen($raw ?? ''); $i < $l; $i++) {
-        if ($raw[$i] === '{' || $raw[$i] === '[') {
-            $data = json_decode(substr($raw, $i), true);
-            if (is_array($data)) return $data;
-        }
-    }
-    return null;
-}
-
-$profileData = fetchProfile($orcid);
-
-if (!$profileData || ($profileData['status'] ?? '') !== 'success') {
+// ── Ambil daftar karya lewat ResearcherProfileService ───────────────────────
+// (database dulu, lalu mesin SDG lokal). Dulu file ini membaca cache/orcid_<orcid>.json
+// yang tidak pernah ada, lalu me-require researcher_profile.php di dalam fungsi.
+@set_time_limit(90);
+ob_start();
+try {
+    $result = \Sciecola\Sdg\ResearcherProfileService::build($orcid, ['with_impact' => false]);
+    ob_end_clean();
+} catch (Throwable $e) {
+    ob_end_clean();
     http_response_code(502);
-    echo json_encode(['status' => 'error', 'message' => 'Gagal mengambil data artikel dari ORCID']);
+    echo json_encode(['status' => 'error', 'message' => 'Gagal mengambil data artikel: ' . $e->getMessage()]);
     exit;
 }
-
-$profile = $profileData['profile'] ?? [];
-$works   = $profile['recentPublications'] ?? [];
+$works = $result['works'] ?? [];
 
 // ── Build article objects ────────────────────────────────────────────────────
-
 $articles = [];
 foreach ($works as $i => $work) {
-    $year = (int)($work['year'] ?? 0);
+    $year  = (int)($work['year'] ?? 0);
+    $cites = (int)($work['cited_by_count'] ?? $work['citations'] ?? 0);
+    $sdgs  = array_values(array_filter(
+        array_map(fn($s) => (int)preg_replace('/[^0-9]/', '', (string)$s), $work['sdgs'] ?? []),
+        fn($n) => $n >= 1 && $n <= 17
+    ));
     $articles[] = [
-        'id'          => $work['id'] ?? ($i + 1),
+        'id'          => $i + 1,
         'title'       => $work['title'] ?? '',
         'journal'     => $work['journal'] ?? '',
         'date'        => $year > 0 ? "$year-01-01" : '',
         'year'        => $year,
         'doi'         => $work['doi'] ?? null,
-        'sdgs'        => $work['sdgs'] ?? [],
-        'citations'   => (int)($work['citations'] ?? 0),
-        'views'       => (int)($work['views'] ?? 0),
+        'sdgs'        => $sdgs,
+        'citations'   => $cites,
+        'views'       => 0,
         'downloads'   => 0,
-        'impactScore' => round(min(100, 50 + ($work['citations'] ?? 0) * 1.5), 1),
+        'impactScore' => round(min(100, 50 + $cites * 1.5), 1),
         'status'      => 'Published',
         'abstract'    => $work['abstract'] ?? '',
-        'authors'     => $work['authors'] ?? [],
+        'authors'     => array_map(fn($c) => is_array($c) ? ($c['name'] ?? '') : (string)$c, $work['contributors'] ?? $work['authors'] ?? []),
     ];
 }
 

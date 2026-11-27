@@ -28,7 +28,7 @@ try {
     $page      = max(1, (int)($_GET['page'] ?? 1));
     $limit     = min(100, max(1, (int)($_GET['limit'] ?? 20)));
     $offset    = ($page - 1) * $limit;
-    $sort      = in_array($_GET['sort'] ?? 'recent', ['recent', 'citations', 'title']) ? $_GET['sort'] : 'recent';
+    $sort      = in_array($_GET['sort'] ?? 'recent', ['recent', 'citations', 'title']) ? ($_GET['sort'] ?? 'recent') : 'recent';
     $search    = trim($_GET['search'] ?? '');
     $sdgFilter = (int)($_GET['sdg'] ?? 0);
 
@@ -132,7 +132,7 @@ function fetchArticlesList(int $offset, int $limit, string $sort, string $search
         }
     }
 
-    $sample = generateSampleArticles();
+    $sample = \Sciecola\Support\EmptyData::like(generateSampleArticles());
     if ($search) {
         $sample = array_values(array_filter($sample, fn ($a) =>
             stripos($a['title'], $search) !== false

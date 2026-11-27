@@ -50,7 +50,7 @@ try {
 function fetchTeam(string $departmentFilter, int $limit): array
 {
     if (!defined('DB_HOST') || !DB_HOST) {
-        return [sampleMembers(), sampleDeptCounts(), sampleDepartments()];
+        return [\Sciecola\Support\EmptyData::like(sampleMembers()), \Sciecola\Support\EmptyData::like(sampleDeptCounts()), \Sciecola\Support\EmptyData::like(sampleDepartments())];
     }
 
     try {
@@ -124,7 +124,7 @@ function fetchTeam(string $departmentFilter, int $limit): array
         }
     } catch (Exception $e) { /* fall through */ }
 
-    return [sampleMembers(), sampleDeptCounts(), sampleDepartments()];
+    return [\Sciecola\Support\EmptyData::like(sampleMembers()), \Sciecola\Support\EmptyData::like(sampleDeptCounts()), \Sciecola\Support\EmptyData::like(sampleDepartments())];
 }
 
 function sampleDepartments(): array

@@ -1,40 +1,66 @@
 {
   "breadcrumb": {
-    "home":      "Home",
+    "home": "Home",
     "dashboard": "Dashboard",
-    "current":   "My Activity"
+    "current": "My Activity"
   },
-  "title":    "My Activity",
+  "title": "My Activity",
   "subtitle": "History of interactions with articles, collections, and research analyses.",
   "summary": {
-    "viewed":     "Viewed",
-    "saved":      "Saved",
-    "analyzed":   "Analyzed",
-    "shared":     "Shared",
-    "downloaded": "Downloaded"
+    "viewed": "Viewed",
+    "saved": "Saved",
+    "analyzed": "Analyzed",
+    "shared": "Shared",
+    "downloaded": "Downloaded",
+    "searched": "Searches"
   },
   "filter": {
     "date": {
-      "today":  "Today",
-      "7days":  "7 Days",
+      "today": "Today",
+      "7days": "7 Days",
       "30days": "30 Days",
-      "all":    "All"
+      "all": "All",
+      "90days": "90 Days"
     },
     "type": {
-      "all":      "All Types",
-      "viewed":   "Viewed",
-      "saved":    "Saved",
-      "shared":   "Shared",
-      "analysis": "Analysis"
+      "all": "All Types",
+      "viewed": "Viewed",
+      "saved": "Saved",
+      "shared": "Shared",
+      "searched": "Search",
+      "downloaded": "Downloaded"
     }
   },
-  "loading":         "Loading activity…",
-  "error_prefix":    "Failed to load:",
-  "load_failed":     "Failed to load activity",
-  "empty":           "No activity for this period.",
+  "loading": "Loading activity…",
+  "error_prefix": "Failed to load:",
+  "load_failed": "Failed to load activity",
+  "empty": "No activity for this period.",
   "no_orcid": {
-    "title":    "ORCID Not Linked",
+    "title": "ORCID Not Linked",
     "subtitle": "Link your ORCID to see your activity history.",
-    "cta":      "Link ORCID"
+    "cta": "Link ORCID"
+  },
+  "kind": {
+    "viewed": "Viewed",
+    "searched": "Search",
+    "saved": "Saved",
+    "downloaded": "Downloaded",
+    "shared": "Shared",
+    "analyzed": "Analysed",
+    "commented": "Comment",
+    "exported": "Exported",
+    "updated": "Updated",
+    "collaborated": "Collaboration"
+  },
+  "category": {
+    "article": "Article",
+    "journal": "Journal",
+    "researcher": "Researcher",
+    "institution": "Institution",
+    "sdg": "SDGs",
+    "search": "Search",
+    "collection": "Collection",
+    "system": "System",
+    "other": "Other"
   }
 }

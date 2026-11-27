@@ -3,12 +3,13 @@ import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 
+// Kelas Tailwind ditulis lengkap (bukan dirangkai) agar ikut ter-build.
 const SUMMARY_KEYS = [
-  { key: 'viewed',     color: 'indigo' },
-  { key: 'saved',      color: 'amber'  },
-  { key: 'analyzed',   color: 'blue'   },
-  { key: 'shared',     color: 'pink'   },
-  { key: 'downloaded', color: 'green'  },
+  { key: 'viewed',     box: 'bg-indigo-50 border-indigo-200', num: 'text-indigo-700', label: 'text-indigo-600' },
+  { key: 'searched',   box: 'bg-purple-50 border-purple-200', num: 'text-purple-700', label: 'text-purple-600' },
+  { key: 'saved',      box: 'bg-amber-50 border-amber-200',   num: 'text-amber-700',  label: 'text-amber-600'  },
+  { key: 'downloaded', box: 'bg-green-50 border-green-200',   num: 'text-green-700',  label: 'text-green-600'  },
+  { key: 'shared',     box: 'bg-pink-50 border-pink-200',     num: 'text-pink-700',   label: 'text-pink-600'   },
 ];
 
 const MyActivity = () => {
@@ -18,6 +19,7 @@ const MyActivity = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [summary, setSummary] = useState({});
+  const [totalPages, setTotalPages] = useState(1);
 
   const [activeFilter, setActiveFilter] = useState('all');
   const [dateRange, setDateRange] = useState('30days');
@@ -30,12 +32,13 @@ const MyActivity = () => {
     setLoading(true);
     setError(null);
 
-    fetch(`/api/my_activity.php?orcid=${encodeURIComponent(user.orcid)}&range=${dateRange}&type=${activeFilter}&page=${page}&limit=${limit}`)
+    fetch(`/api/my_activity.php?range=${dateRange}&type=${activeFilter}&page=${page}&limit=${limit}`, { credentials: 'same-origin' })
       .then(r => r.json())
       .then(data => {
         if (data.status === 'success') {
           setActivities(data.activities ?? []);
           setSummary(data.summary ?? {});
+          setTotalPages(Math.max(1, data.total_pages ?? 1));
         } else {
           setError(data.message || t('load_failed'));
         }
@@ -97,10 +100,10 @@ const MyActivity = () => {
       {/* Summary Stats */}
       {Object.keys(summary).length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
-          {SUMMARY_KEYS.map(({ key, color }) => (
-            <div key={key} className={`bg-${color}-50 border border-${color}-200 rounded-lg p-3 text-center`}>
-              <p className={`text-2xl font-bold text-${color}-700`}>{summary[key] ?? 0}</p>
-              <p className={`text-sm text-${color}-600`}>{t(`summary.${key}`)}</p>
+          {SUMMARY_KEYS.map(({ key, box, num, label }) => (
+            <div key={key} className={`${box} border rounded-lg p-3 text-center`}>
+              <p className={`text-2xl font-bold ${num}`}>{summary[key] ?? 0}</p>
+              <p className={`text-sm ${label}`}>{t(`summary.${key}`)}</p>
             </div>
           ))}
         </div>
@@ -113,15 +116,17 @@ const MyActivity = () => {
           <option value="today">{t('filter.date.today')}</option>
           <option value="7days">{t('filter.date.7days')}</option>
           <option value="30days">{t('filter.date.30days')}</option>
+          <option value="90days">{t('filter.date.90days')}</option>
           <option value="all">{t('filter.date.all')}</option>
         </select>
         <select value={activeFilter} onChange={e => { setActiveFilter(e.target.value); setPage(1); }}
           className="px-3 py-2 border border-gray-200 rounded-lg text-[15px]">
           <option value="all">{t('filter.type.all')}</option>
           <option value="viewed">{t('filter.type.viewed')}</option>
+          <option value="searched">{t('filter.type.searched')}</option>
           <option value="saved">{t('filter.type.saved')}</option>
+          <option value="downloaded">{t('filter.type.downloaded')}</option>
           <option value="shared">{t('filter.type.shared')}</option>
-          <option value="analysis">{t('filter.type.analysis')}</option>
         </select>
       </div>
 
@@ -146,8 +151,11 @@ const MyActivity = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={getIcon(act.type)} />
                 </svg>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-gray-900 text-[15px]">{act.title}</p>
-                  <p className="text-[15px] text-gray-700 mt-0.5 truncate">{act.target}</p>
+                  <p className="text-sm text-gray-500">{t(`kind.${act.type}`, { defaultValue: act.type })} · {t(`category.${act.category}`, { defaultValue: act.category })}</p>
+                  <p className="font-medium text-gray-900 text-[15px]">{act.title || act.target}</p>
+                  {act.target && act.target !== act.title && (
+                    <p className="text-[15px] text-gray-700 mt-0.5 truncate">{act.target}</p>
+                  )}
                   {act.detail && <p className="text-sm text-gray-600 mt-1">{act.detail}</p>}
                   <p className="text-sm text-gray-500 mt-2">
                     {new Date(act.timestamp).toLocaleString(locale)}
@@ -165,7 +173,7 @@ const MyActivity = () => {
           <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
             className="px-3 py-1.5 text-[15px] border rounded-lg disabled:opacity-40 hover:bg-gray-50">‹</button>
           <span className="px-3 py-1.5 text-[15px] text-gray-700">{page}</span>
-          <button onClick={() => setPage(p => p + 1)} disabled={activities.length < limit}
+          <button onClick={() => setPage(p => p + 1)} disabled={page >= totalPages}
             className="px-3 py-1.5 text-[15px] border rounded-lg disabled:opacity-40 hover:bg-gray-50">›</button>
         </div>
       )}

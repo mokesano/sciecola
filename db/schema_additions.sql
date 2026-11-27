@@ -1,10 +1,10 @@
 -- ═══════════════════════════════════════════════════════════════
 -- Additional Schema Tables for Collaboration, Projects, Matching & Innovation
 -- File: db/schema_additions.sql
--- Add these tables to wizdam_ecosystem database
+-- Add these tables to sangia_ecosystem database
 -- ═══════════════════════════════════════════════════════════════
 
-USE wizdam_ecosystem;
+USE sangia_ecosystem;
 
 -- ── EXTEND RESEARCHERS TABLE WITH COLLABORATION FIELDS ──────────────────────
 

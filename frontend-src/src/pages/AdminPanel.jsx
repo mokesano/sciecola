@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
+import { adminFetch } from '../utils/adminFetch';
 
 const AdminPanel = () => {
   const { t } = useTranslation('admin_panel');
@@ -36,7 +37,7 @@ const AdminPanel = () => {
         { name: 'research_keywords', label: t('field.research_keywords'), type: 'textarea' },
         { name: 'profile_photo_url', label: t('field.profile_photo_url'), type: 'url' }
       ],
-      endpoint: '/api/admin/researchers'
+      endpoint: '/api/admin/researchers.php'
     },
     projects: {
       title: t('section.projects'),
@@ -53,7 +54,7 @@ const AdminPanel = () => {
         { name: 'progress', label: t('field.progress'), type: 'number', min: 0, max: 100 },
         { name: 'sdg_focus', label: t('field.sdg_focus_list'), type: 'text' }
       ],
-      endpoint: '/api/admin/projects'
+      endpoint: '/api/admin/projects.php'
     },
     opportunities: {
       title: t('section.opportunities'),
@@ -69,7 +70,7 @@ const AdminPanel = () => {
         { name: 'sdg_alignment', label: t('field.sdg_alignment'), type: 'textarea' },
         { name: 'required_skills', label: t('field.required_skills'), type: 'textarea' }
       ],
-      endpoint: '/api/admin/opportunities'
+      endpoint: '/api/admin/opportunities.php'
     },
     expertise: {
       title: t('section.expertise'),
@@ -81,7 +82,7 @@ const AdminPanel = () => {
         { name: 'sdg_number', label: t('field.sdg_number'), type: 'number', min: 1, max: 17 },
         { name: 'expertise_level', label: t('field.expertise_level'), type: 'select', options: ['beginner', 'intermediate', 'expert'] }
       ],
-      endpoint: '/api/admin/expertise'
+      endpoint: '/api/admin/expertise.php'
     }
   };
 
@@ -102,7 +103,7 @@ const AdminPanel = () => {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch(currentForm.endpoint, {
+      const response = await adminFetch(currentForm.endpoint, {
         method: formMode === 'create' ? 'POST' : 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

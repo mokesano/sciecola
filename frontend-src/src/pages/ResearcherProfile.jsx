@@ -5,6 +5,9 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area,
 } from 'recharts';
+import { useTrackView } from '../hooks/useTrackActivity';
+import { usePremiumTier } from '../hooks/usePremium';
+import PremiumBadge from '../components/premium/PremiumBadge';
 
 // UN official SDG colour palette
 const SDG_COLORS = {
@@ -76,6 +79,8 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
   const { t } = useTranslation('researcher');
   const [activeTab, setActiveTab]   = useState('ringkasan');
   const [researcher, setResearcher] = useState(null);
+  useTrackView('researcher', researcher?.orcid || (researcher ? idValue : ''), researcher?.name);
+  const premiumTier = usePremiumTier(researcher?.orcid || (sourceType === 'orcid' ? idValue : ''));
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState(null);
   const [unsupported, setUnsupported] = useState(null);
@@ -207,6 +212,7 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
               </div>
 
               <h1 className="text-2xl font-bold text-gray-900 mb-1">{r.name}</h1>
+              {premiumTier && <PremiumBadge tier={premiumTier} size="md" className="mb-2" />}
               {r.title && <p className="text-indigo-600 font-medium mb-4">{r.title}</p>}
 
               <div className="w-full space-y-2 text-[15px]">

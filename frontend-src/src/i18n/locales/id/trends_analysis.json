@@ -1,121 +1,101 @@
 {
   "breadcrumb": {
-    "home":      "Beranda",
+    "home": "Beranda",
     "analytics": "Analytics",
-    "current":   "Analisis Tren"
+    "current": "Analisis Tren"
   },
   "header": {
-    "title":    "Analisis Tren Penelitian",
-    "subtitle": "Analisis mendalam tentang tren dampak penelitian, kolaborasi, dan topik terpanas berdasarkan data publikasi."
+    "title": "Analisis Tren Penelitian",
+    "subtitle": "Tren publikasi, sitasi, SDG, dan kolaborasi yang dihitung dari data publikasi di database."
   },
   "filter": {
-    "sdg_all":    "Semua SDGs",
-    "sdg_label":  "SDG {{number}}",
+    "sdg_all": "Semua SDGs",
+    "sdg_label": "SDG {{number}}",
     "period": {
-      "all":      "Semua Waktu",
-      "years_3":  "3 Tahun Terakhir",
-      "years_5":  "5 Tahun Terakhir",
-      "years_7":  "7 Tahun Terakhir",
+      "all": "Semua Waktu",
+      "years_3": "3 Tahun Terakhir",
+      "years_5": "5 Tahun Terakhir",
+      "years_7": "7 Tahun Terakhir",
       "years_10": "10 Tahun Terakhir"
     },
     "show_insights": "Tampilkan Insights",
     "hide_insights": "Sembunyikan Insights"
   },
+  "loading": "Memuat data tren...",
+  "retry": "Coba lagi",
+  "error": "Gagal memuat data. Silakan coba lagi.",
   "insights": {
-    "title":            "Ikhtisar Analisis Tren",
-    "main_trends":      "Tren Utama",
-    "policy_recs":      "Rekomendasi Kebijakan",
-    "summary_template": "Tren dampak penelitian menunjukkan progres dengan peningkatan total {{total}}% dalam {{years}} tahun terakhir. Prediksi {{nextYears}} tahun ke depan: skor {{nextScore}}.",
-    "trend_1":  "Pertumbuhan dampak akademik sebesar {{academic}}% mencerminkan peningkatan kualitas publikasi yang konsisten",
-    "trend_2":  "Kolaborasi internasional menunjukkan tren positif dengan partisipasi peneliti lintas-negara",
-    "trend_3":  "Fokus pada SDG strategis (Iklim, Industri, Energi) dengan pertumbuhan dan dampak tertinggi",
-    "rec_1":    "Tingkatkan dukungan pendanaan untuk topik dengan pertumbuhan tinggi",
-    "rec_2":    "Perkuat program kolaborasi internasional dengan mitra utama di kawasan",
-    "rec_3":    "Kembangkan mekanisme diseminasi untuk memperluas dampak sosial",
-    "rec_4":    "Pertahankan momentum riset SDG dengan kebijakan berkelanjutan"
+    "title": "Temuan dari Data",
+    "not_enough": "Data belum cukup untuk menarik temuan. Temuan muncul setelah ada publikasi dalam minimal dua tahun lengkap.",
+    "f_publications": "Jumlah publikasi berubah {{delta}} dari {{from}} ke {{to}}.",
+    "f_citations": "Rata-rata sitasi per publikasi berubah {{delta}} dari {{from}} ke {{to}}.",
+    "f_top_sdgs": "SDG dengan publikasi terbanyak: {{list}}.",
+    "f_fastest": "Pertumbuhan tercepat: SDG {{sdg}} ({{name}}), {{delta}}.",
+    "f_collab": "Pada {{year}}, {{pct}}% publikasi yang negaranya diketahui ({{known}} dari {{total}}) melibatkan penulis dari lebih dari satu negara.",
+    "f_projection": "Bila tren linear berlanjut, jumlah publikasi pada {{year}} diperkirakan sekitar {{value}}.",
+    "source_note": "Dihitung dari {{total}} publikasi di database.",
+    "partial_note": "Tahun {{year}} belum lengkap (ditandai *) dan tidak dipakai untuk menghitung pertumbuhan maupun proyeksi."
   },
-  "topic_cards": {
-    "title":          "Topik Penelitian Potensial",
-    "subtitle":       "Topik dengan pertumbuhan tertinggi berdasarkan data publikasi",
-    "growth_label":   "Pertumbuhan",
-    "impact_label":   "Potensi dampak:",
-    "impact_high":    "Sangat tinggi",
-    "impact_medium":  "Tinggi",
-    "impact_low":     "Sedang",
-    "publications":   "publikasi",
+  "yearly": {
+    "title": "Publikasi & Sitasi per Tahun",
+    "publications": "Jumlah publikasi",
+    "avg_citations": "Rata-rata sitasi per publikasi",
+    "delta_pubs": "Perubahan jumlah publikasi {{from}}–{{to}}",
+    "delta_cites": "Perubahan rata-rata sitasi {{from}}–{{to}}",
     "no_data": {
-      "title":    "Belum ada topik teridentifikasi",
-      "subtitle": "Topik akan muncul setelah data publikasi cukup untuk perhitungan pertumbuhan."
+      "title": "Belum ada data publikasi",
+      "subtitle": "Data muncul setelah cache dimigrasikan ke database."
     }
   },
-  "prediction": {
-    "title":    "Prediksi Dampak Penelitian",
-    "actual":   "Dampak Aktual",
-    "predicted": "Dampak Prediksi",
-    "insight":   "Prediksi linear menunjukkan tren {{direction}} dengan skor mendekati {{score}} pada tahun {{year}}.",
-    "direction_up":   "naik",
-    "direction_down": "turun",
+  "projection": {
+    "title": "Proyeksi Jumlah Publikasi",
+    "actual": "Aktual",
+    "projected": "Proyeksi",
+    "method": "Regresi linear dari tahun-tahun lengkap. Hanya gambaran arah tren, bukan prediksi yang pasti.",
     "no_data": {
-      "title":    "Data prediksi belum tersedia",
-      "subtitle": "Perlu data minimal 2 tahun untuk menghasilkan prediksi."
+      "title": "Proyeksi belum tersedia",
+      "subtitle": "Perlu data minimal tiga tahun lengkap."
     }
   },
   "topics_growth": {
-    "title":      "Topik dengan Pertumbuhan Tertinggi",
+    "title": "Pertumbuhan Publikasi per SDG",
     "growth_pct": "Pertumbuhan (%)",
-    "insight":    "Tiga topik dengan pertumbuhan tertinggi: {{top3}}. Topik-topik ini menunjukkan momentum yang kuat dalam ekosistem riset.",
+    "method": "Perbandingan jumlah publikasi {{from}} dan {{to}}; hanya SDG dengan minimal 3 publikasi di tahun awal.",
     "no_data": {
-      "title":    "Belum ada data pertumbuhan",
-      "subtitle": "Data akan muncul setelah publikasi terklasifikasi dalam minimal 2 tahun."
+      "title": "Belum ada data pertumbuhan",
+      "subtitle": "Perlu publikasi terklasifikasi SDG dalam minimal dua tahun lengkap."
     }
   },
-  "impact_trends": {
-    "title":             "Tren Dampak Penelitian",
-    "academic":          "Dampak Akademik",
-    "social":            "Dampak Media Sosial",
-    "practical":         "Dampak Penggunaan Praktis",
-    "total":             "Skor Dampak Total",
-    "delta_label":       "Peningkatan dari {{year}}",
-    "social_unavailable": "Data dampak media sosial belum tersedia",
-    "practical_unavailable": "Data dampak praktis belum tersedia",
-    "no_data": {
-      "title":    "Data tren dampak belum tersedia",
-      "subtitle": "Data akan muncul setelah publikasi diindeks dengan data sitasi yang cukup."
-    }
+  "topic_cards": {
+    "title": "SDG Teratas",
+    "subtitle": "Berdasarkan pertumbuhan dan jumlah publikasi pada periode terpilih",
+    "growth_label": "Pertumbuhan",
+    "publications": "Publikasi"
   },
   "field_trends": {
-    "title":   "Tren per SDG (Top 5)",
-    "insight": "SDG dengan dampak tertinggi: {{top}}. Tren ini menunjukkan area fokus riset yang dominan.",
+    "title": "Tren Publikasi per SDG (5 Teratas)",
     "no_data": {
-      "title":    "Belum ada data tren per SDG",
-      "subtitle": "Data akan muncul setelah publikasi terklasifikasi per SDG dalam beberapa tahun."
+      "title": "Belum ada data tren per SDG",
+      "subtitle": "Data muncul setelah publikasi terklasifikasi per SDG."
     }
   },
   "collab_trend": {
-    "title":          "Tren Kolaborasi",
-    "national":       "Kolaborasi Nasional",
-    "international":  "Kolaborasi Internasional",
-    "insight":        "Tren kolaborasi internasional mencerminkan keberhasilan program internasionalisasi.",
+    "title": "Tren Kolaborasi",
+    "national": "Satu negara",
+    "international": "Lintas negara",
+    "method": "Negara penulis diambil dari afiliasi ORCID peneliti. Publikasi tanpa data negara tidak dihitung.",
     "no_data": {
-      "title":    "Data kolaborasi belum tersedia",
-      "subtitle": "Data akan muncul setelah peneliti dikaitkan dengan institusi yang memiliki informasi negara."
+      "title": "Data kolaborasi belum tersedia",
+      "subtitle": "Muncul setelah profil peneliti memiliki afiliasi dengan informasi negara."
     }
   },
   "top_countries": {
-    "title":          "Negara Kolaborator Utama",
-    "collaborations": "Kolaborasi",
+    "title": "Negara Mitra",
+    "home": "Negara terbanyak: {{country}} (tidak ditampilkan)",
+    "collaborations": "Publikasi",
     "no_data": {
-      "title":    "Belum ada data negara kolaborator",
-      "subtitle": "Data akan muncul setelah ada publikasi dengan kolaborator dari luar negeri."
+      "title": "Belum ada negara mitra",
+      "subtitle": "Muncul setelah ada penulis dari negara lain."
     }
-  },
-  "regional": {
-    "title":           "Perbandingan Dampak Regional",
-    "impact_label":    "Skor Dampak Rata-rata",
-    "growth_label":    "Pertumbuhan Dampak (%)",
-    "insight":         "Indonesia memiliki pertumbuhan dampak tinggi di kawasan ASEAN. Dengan tren ini, Indonesia berpotensi melampaui negara peringkat di atasnya dalam beberapa tahun ke depan."
-  },
-  "loading": "Memuat data tren...",
-  "retry":   "Coba lagi",
-  "error":   "Gagal memuat data. Silakan coba lagi."
+  }
 }

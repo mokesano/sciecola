@@ -1,0 +1,163 @@
+{
+  "tier": {
+    "sponsor": "Sponsor",
+    "partner": "Partner",
+    "collaborator": "Collaborator"
+  },
+  "tier_hint": {
+    "sponsor": "Sponsor resmi Sciecola",
+    "partner": "Partner resmi Sciecola",
+    "collaborator": "Collaborator resmi Sciecola"
+  },
+  "badge_premium": "Premium",
+  "featured": "Unggulan",
+  "priority": "Prioritas",
+  "showcase": {
+    "title": "Didukung oleh",
+    "subtitle": "Sponsor, partner, dan collaborator yang mendukung riset berkelanjutan",
+    "cta": "Jadi bagian dari mereka"
+  },
+  "lock": {
+    "title": "Layanan premium",
+    "hint": "Fitur ini tersedia untuk anggota Sponsor, Partner, dan Collaborator.",
+    "cta": "Lihat paket premium",
+    "login": "Masuk untuk melanjutkan"
+  },
+  "features": {
+    "verified_listing": {
+      "title": "Verifikasi peluang",
+      "desc": "Lencana Terverifikasi pada peluang di Pasar Inovasi. Anggota mendapat kuota verifikasi gratis per tahun; selain itu dikenakan biaya penayangan."
+    },
+    "featured_listing": {
+      "title": "Peluang unggulan",
+      "desc": "Peluang yang dipasang anggota disematkan di bagian atas Pasar Inovasi dengan pita Unggulan."
+    },
+    "partner_showcase": {
+      "title": "Etalase mitra",
+      "desc": "Logo dan tautan anggota tampil di beranda dan Pasar Inovasi."
+    },
+    "institution_report": {
+      "title": "Laporan institusi",
+      "desc": "Unduh laporan SDG institusi (peneliti, publikasi, sebaran SDG) dalam format CSV."
+    },
+    "data_export": {
+      "title": "Ekspor data",
+      "desc": "Unduh statistik pribadi (kunjungan, sitasi, aktivitas) dalam format CSV."
+    },
+    "priority_matching": {
+      "title": "Prioritas pencocokan",
+      "desc": "Profil anggota ditampilkan lebih dulu di Pencocokan Riset bagi lembaga yang mencari mitra."
+    },
+    "analysis_quota": {
+      "title": "Analisis ulang tanpa batas",
+      "desc": "Non-anggota dapat menganalisis ulang SDG {{count}} kali per hari; anggota tanpa batas. Data tersimpan tetap terbuka untuk semua."
+    }
+  },
+  "page": {
+    "title": "Layanan Premium Sciecola",
+    "subtitle": "Dukung riset berkelanjutan dan dapatkan layanan tambahan untuk lembaga Anda.",
+    "free_title": "Semua layanan saat ini gratis",
+    "free_desc": "Sciecola belum memberlakukan layanan premium. Semua fitur dapat digunakan siapa pun tanpa biaya.",
+    "always_free_title": "Selalu gratis untuk publik",
+    "always_free": [
+      "Pencarian dan klasifikasi SDG",
+      "Profil peneliti dan ORCID",
+      "Feed, pesan, dan proyek bersama",
+      "Melamar peluang dan memasang peluang (dalam kurasi)",
+      "Analitik dasar"
+    ],
+    "tiers_title": "Paket keanggotaan",
+    "tier_desc": {
+      "sponsor": "Untuk lembaga yang ingin tampil paling menonjol dan mendukung pengembangan platform.",
+      "partner": "Untuk lembaga riset dan industri yang aktif membuka kolaborasi.",
+      "collaborator": "Untuk kelompok riset, lab, dan organisasi yang baru memulai."
+    },
+    "quota": "{{count}} verifikasi peluang gratis per tahun",
+    "all_features": "Semua fitur premium yang berlaku",
+    "features_title": "Fitur premium",
+    "active": "Berlaku",
+    "inactive": "Gratis",
+    "pricing_title": "Harga & paket",
+    "contact_title": "Tertarik menjadi anggota?",
+    "contact_desc": "Hubungi pengelola Sciecola untuk memilih paket dan mengaktifkan keanggotaan.",
+    "contact_cta": "Hubungi kami",
+    "contact_fallback": "Kirim pesan melalui halaman Kontak.",
+    "my_title": "Keanggotaan Anda",
+    "my_until": "Berlaku hingga {{date}}",
+    "my_open": "Tanpa batas waktu",
+    "my_quota": "Kuota verifikasi tahun ini: {{used}} dari {{quota}} terpakai"
+  },
+  "export": {
+    "institution": "Unduh laporan",
+    "stats": "Unduh",
+    "done": "File CSV diunduh"
+  },
+  "admin": {
+    "title": "Layanan Premium",
+    "description": "Saklar utama layanan premium, fitur yang menjadi premium, dan keanggotaan Sponsor/Partner/Collaborator.",
+    "state_on": "Layanan premium AKTIF",
+    "state_off": "Semua layanan GRATIS",
+    "state_on_desc": "Fitur yang dicentang di bawah hanya untuk anggota (atau berbayar). Lencana dan etalase mitra ditampilkan.",
+    "state_off_desc": "Premium belum diberlakukan: semua fitur gratis untuk semua orang, lencana dan etalase mitra disembunyikan.",
+    "make_premium": "Make Premium",
+    "make_free": "Kembalikan ke Gratis",
+    "confirm_on": "Aktifkan layanan premium? Fitur yang dicentang akan dibatasi untuk anggota, dan verifikasi peluang mulai dikenakan biaya.",
+    "confirm_off": "Matikan layanan premium? Semua fitur kembali gratis untuk semua orang.",
+    "toggled_on": "Layanan premium diaktifkan",
+    "toggled_off": "Semua layanan kembali gratis",
+    "features_title": "Fitur yang menjadi premium saat aktif",
+    "quotas_title": "Kuota",
+    "quota_verified": "Verifikasi gratis/tahun — {{tier}}",
+    "quota_refresh": "Analisis ulang gratis per hari (non-anggota)",
+    "contact_email": "Email kontak premium",
+    "pricing_note": "Keterangan harga/paket (tampil di halaman Premium)",
+    "pricing_ph": "Contoh: Sponsor Rp… /tahun, Partner Rp… /tahun, Collaborator Rp… /tahun",
+    "fee_hint": "Besar biaya verifikasi peluang dan petunjuk pembayaran diatur di tab Kurasi Peluang.",
+    "save": "Simpan pengaturan",
+    "saving": "Menyimpan…",
+    "saved": "Pengaturan premium disimpan",
+    "members_title": "Anggota premium",
+    "add_member": "Tambah anggota",
+    "edit_member": "Ubah anggota",
+    "f": {
+      "tier": "Tingkat",
+      "display_name": "Nama yang ditampilkan",
+      "email": "Email akun (opsional)",
+      "orcid": "ORCID (opsional)",
+      "institution_id": "ID institusi (opsional)",
+      "institution_hint": "Sama dengan ID di alamat halaman institusi, mis. /institutions/<ID>. Kosongkan bila tidak terkait institusi.",
+      "logo_url": "URL logo",
+      "website": "Situs web",
+      "starts_on": "Mulai",
+      "ends_on": "Berakhir (opsional)",
+      "note": "Catatan internal"
+    },
+    "link_hint": "Tautkan ke akun (email) atau ORCID agar lencana muncul dan pengguna mendapat fiturnya.",
+    "state": {
+      "active": "Aktif",
+      "scheduled": "Terjadwal",
+      "expired": "Kedaluwarsa",
+      "cancelled": "Dibatalkan"
+    },
+    "col": {
+      "member": "Anggota",
+      "tier": "Tingkat",
+      "link": "Tautan",
+      "period": "Periode",
+      "quota": "Kuota",
+      "state": "Status"
+    },
+    "cancel": "Batalkan",
+    "delete": "Hapus",
+    "edit": "Ubah",
+    "close": "Tutup",
+    "save_member": "Simpan anggota",
+    "confirm_cancel": "Batalkan keanggotaan {{name}}?",
+    "confirm_delete": "Hapus keanggotaan {{name}} secara permanen?",
+    "member_saved": "Anggota disimpan",
+    "member_cancelled": "Keanggotaan dibatalkan",
+    "member_deleted": "Keanggotaan dihapus",
+    "empty": "Belum ada anggota premium.",
+    "active_count": "{{count}} aktif"
+  }
+}

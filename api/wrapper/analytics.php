@@ -156,7 +156,7 @@ function fetchAnalyticsData(int $years): array
         }
     }
 
-    return getSampleAnalyticsData($years);
+    return \Sciecola\Support\EmptyData::like(getSampleAnalyticsData($years));
 }
 
 // ─── Build response from DB rows ─────────────────────────────────────────────

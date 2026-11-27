@@ -1,30 +1,17 @@
-import React, { useState } from 'react';
-import { HashRouter as Router, Routes, Route, Outlet } from 'react-router';
+import React from 'react';
+import { HashRouter as Router, Routes, Route, Outlet, Navigate } from 'react-router';
 import { useAuth } from './context/AuthContext';
 import { AuthProvider } from './context/AuthContext';
+import { AppSettingsProvider, useAppSettings } from './context/AppSettingsContext';
 import ScrollToTop from './components/shared/ScrollToTop';
+import { PageTracker } from './hooks/usePageTracking';
 
 // Komponen Layout Global
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 
-// Impor Halaman Public (landing page untuk user belum login)
-import PublicHomePage from './pages/PublicHomePage';
-
-// Komponen Halaman Beranda (Home)
-import Hero from './components/layout/Hero';
-import StatCards from './components/sdg/StatCards';
-import SdgDistributionChart from './components/sdg/SdgDistributionChart';
-import SdgTrendChart from './components/sdg/SdgTrendChart';
-import TopSdgsCard from './components/sdg/TopSdgsCard';
-import LatestArticles from './components/sdg/LatestArticles';
-import InsightsAI from './components/sdg/InsightsAI';
-import ResearchExplorer from './components/sdg/ResearchExplorer';
-import TrustedSources from './components/layout/TrustedSources';
-import CallToAction from './components/layout/CallToAction';
-
-// Wrapper Adapter
-import { transformToChartData, generateSummaryStats } from './utils/sdgDataAdapter';
+// Beranda tunggal: landing publik untuk pengunjung, feed untuk pengguna yang masuk.
+import HomePage from './pages/HomePage';
 
 // Impor Halaman Profil Dinamis
 import JournalList from './pages/JournalList';
@@ -68,6 +55,7 @@ import History from './pages/History';
 import Teams from './pages/Teams';
 import TeamMemberProfile from './pages/TeamMemberProfile';
 import Sponsors from './pages/Sponsors';
+import Premium from './pages/Premium';
 import BecomeSponsor from './pages/BecomeSponsor';
 import Partners from './pages/Partners';
 
@@ -90,6 +78,10 @@ import TutorialExport from './pages/TutorialExport';
 
 // Impor Halaman Register
 import Register from './pages/Register';
+import VerifyEmail from './pages/VerifyEmail';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import { RequireAuth, RequireAdmin } from './components/auth/RequireAuth';
 import Login from './pages/Login';
 
 // Impor Halaman Admin Dashboard Panel
@@ -133,84 +125,47 @@ import Sitemap from './pages/Sitemap';
 import ErrorBoundary from './components/shared/ErrorBoundary';
 
 // =====================================================================
-// KOMPONEN BERANDA (HOME)
+// LAYOUT UTAMA (dengan Navbar, Footer, Chatbot)
 // =====================================================================
-const Home = () => {
-  // === STATE MANAGEMENT ===
-  const [rawApiData, setRawApiData] = useState(null);
-  const [chartData, setChartData] = useState([]);
-  const [summaryStats, setSummaryStats] = useState(null);
-
-  // === FUNGSI PENERIMA DATA ===
-  const handleAnalysisComplete = (dataDariApi) => {
-    setRawApiData(dataDariApi);
-    const formattedChart = transformToChartData(dataDariApi.works);
-    const stats = generateSummaryStats(dataDariApi.works, dataDariApi.total_works);
-    setChartData(formattedChart);
-    setSummaryStats(stats);
-  };
-
+const MainLayout = () => {
+  const { settings, loaded } = useAppSettings();
+  const { user, loading } = useAuth();
+  // Mode pemeliharaan (Admin → Sistem): pengunjung dan pengguna biasa melihat halaman
+  // pemeliharaan; admin tetap bisa memakai aplikasi. Halaman /login tetap terbuka.
+  if (loaded && !loading && settings.system.maintenanceMode && user?.role !== 'admin') {
+    return <MaintenanceMode message={settings.system.maintenanceMessage} />;
+  }
   return (
-    <main className="flex-grow pt-20 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-      <Hero onAnalysisComplete={handleAnalysisComplete} />
-      
-      {summaryStats ? (
-        <StatCards data={summaryStats} />
-      ) : (
-        <StatCards />
+    <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
+      {settings.system.maintenanceMode && user?.role === 'admin' && (
+        <div className="fixed bottom-4 left-4 z-50 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white shadow-lg">
+          Mode pemeliharaan aktif — hanya admin yang melihat aplikasi
+        </div>
       )}
-
-      <div id="cta-section"><CallToAction /></div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-        <SdgDistributionChart
-            data={chartData.length > 0 ? chartData : null}
-            totalArticles={summaryStats ? summaryStats.totalArticles : null}
-        />
-        <SdgTrendChart rawData={rawApiData} />
-      </div>
-
-      <TopSdgsCard rawData={rawApiData} />
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-        <div className="lg:col-span-2">
-          <LatestArticles works={rawApiData ? rawApiData.works : []} />
-        </div>
-        
-        <div className="lg:col-span-1">
-            <InsightsAI rawData={rawApiData} />
-        </div>
-      </div>
-
-      <ResearchExplorer rawData={rawApiData} />
-      
-      <TrustedSources />
-    </main>
+      <Navbar />
+      <Outlet />
+      <Footer />
+      <Chatbot />
+      <NewsletterModal />
+    </div>
   );
 };
 
-// =====================================================================
-// HOME ROUTER — Tampilkan landing page publik atau dashboard SDG
-// berdasarkan status login pengguna, tanpa redirect.
-// =====================================================================
-const HomeRouter = () => {
+// Feed komunitas: pengguna yang masuk melihatnya di Beranda (/), jadi /feeds hanya
+// untuk pengunjung (kiriman publik) agar tidak ada dua halaman feed.
+const FeedsRoute = () => {
   const { user, loading } = useAuth();
   if (loading) return null;
-  return user ? <Home /> : <PublicHomePage />;
+  return user ? <Navigate to="/" replace /> : <Feeds />;
 };
 
-// =====================================================================
-// LAYOUT UTAMA (dengan Navbar, Footer, Chatbot)
-// =====================================================================
-const MainLayout = () => (
-  <div className="min-h-screen bg-gray-50 font-sans flex flex-col">
-    <Navbar />
-    <Outlet />
-    <Footer />
-    <Chatbot />
-    <NewsletterModal />
-  </div>
-);
+// Halaman yang bisa disembunyikan dari pengunjung lewat Admin → Konten.
+const ContentGate = ({ setting, children }) => {
+  const { settings } = useAppSettings();
+  const { user } = useAuth();
+  if (settings.content[setting] === false && user?.role !== 'admin') return <Navigate to="/" replace />;
+  return children;
+};
 
 // =====================================================================
 // APLIKASI UTAMA (ROUTER)
@@ -218,10 +173,14 @@ const MainLayout = () => (
 function App() {
   return (
     <AuthProvider>
+      <AppSettingsProvider>
       <Router>
         <ErrorBoundary>
           {/* Scroll ke atas setiap perpindahan halaman */}
           <ScrollToTop />
+
+          {/* Catat kunjungan halaman nyata untuk Admin → Monitoring */}
+          <PageTracker />
 
           {/* Pengatur Lalu Lintas Halaman */}
           <Routes>
@@ -230,18 +189,18 @@ function App() {
             {/* ============================================== */}
             <Route element={<MainLayout />}>
               {/* Halaman Utama */}
-              <Route path="/" element={<HomeRouter />} />
+              <Route path="/" element={<HomePage />} />
 
               {/* Rute Jurnal */}
-              <Route path="/journals" element={<JournalList />} />
-              <Route path="/journals/:journalId" element={<JournalProfile />} />
+              <Route path="/journals" element={<ContentGate setting="showJournalsMain"><JournalList /></ContentGate>} />
+              <Route path="/journals/:journalId" element={<ContentGate setting="showJournalsMain"><JournalProfile /></ContentGate>} />
 
               {/* Rute Institusi */}
-              <Route path="/institutions" element={<InstitutionsList />} />
-              <Route path="/institutions/:institutionId" element={<InstitutionProfile />} />
+              <Route path="/institutions" element={<ContentGate setting="showInstitutionsMain"><InstitutionsList /></ContentGate>} />
+              <Route path="/institutions/:institutionId" element={<ContentGate setting="showInstitutionsMain"><InstitutionProfile /></ContentGate>} />
 
               {/* Rute Peneliti */}
-              <Route path="/researchers" element={<ResearchersList />} />
+              <Route path="/researchers" element={<ContentGate setting="showResearchersMain"><ResearchersList /></ContentGate>} />
               <Route path="/orcid/:orcidCode" element={<ResearcherProfile sourceType="orcid" />} />
               <Route path="/scopus/:id"       element={<ResearcherProfile sourceType="scopus" />} />
               <Route path="/sinta/:id"        element={<ResearcherProfile sourceType="sinta" />} />
@@ -277,6 +236,7 @@ function App() {
               <Route path="/teams" element={<Teams />} />
               <Route path="/teams/:memberSlug" element={<TeamMemberProfile />} />
               <Route path="/sponsors" element={<Sponsors />} />
+              <Route path="/premium" element={<Premium />} />
               <Route path="/become-sponsor" element={<BecomeSponsor />} />
               <Route path="/partners" element={<Partners />} />
 
@@ -300,38 +260,44 @@ function App() {
               <Route path="/docs/api-reference" element={<Api />} />
 
               {/* Rute Dashboard */}
-              <Route path="/feeds" element={<Feeds />} />
+              <Route path="/feeds" element={<FeedsRoute />} />
               <Route path="/sciecodash" element={<SciecoDashboard />} />
-              <Route path="/my-profile" element={<MyProfile />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/notifications" element={<Notifications />} />
-              <Route path="/my-articles" element={<MyArticles />} />
-              <Route path="/my-collections" element={<MyCollections />} />
-              <Route path="/collections/:id" element={<CollectionDetail />} />
-              <Route path="/my-statistics" element={<MyStatistics />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/settings/change-password" element={<ChangePassword />} />
+              <Route path="/my-profile" element={<RequireAuth><MyProfile /></RequireAuth>} />
+              <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
+              <Route path="/messages" element={<RequireAuth><Messages /></RequireAuth>} />
+              <Route path="/notifications" element={<RequireAuth><Notifications /></RequireAuth>} />
+              <Route path="/my-articles" element={<RequireAuth><MyArticles /></RequireAuth>} />
+              <Route path="/my-collections" element={<RequireAuth><MyCollections /></RequireAuth>} />
+              <Route path="/collections/:id" element={<RequireAuth><CollectionDetail /></RequireAuth>} />
+              <Route path="/my-statistics" element={<RequireAuth><MyStatistics /></RequireAuth>} />
+              <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
+              <Route path="/settings/change-password" element={<RequireAuth><ChangePassword /></RequireAuth>} />
 
               {/* Rute Log History/Activity */}
-              <Route path="/my-activity" element={<MyActivity />} />
-              <Route path="/log-history" element={<LogHistory />} />
+              <Route path="/my-activity" element={<RequireAuth><MyActivity /></RequireAuth>} />
+              <Route path="/log-history" element={<RequireAuth><LogHistory /></RequireAuth>} />
 
-              {/* Rute Register */}
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
 
               {/* Rute Admin Panel Dashboard */}
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/admin/monitoring" element={<Monitoring />} />
-              <Route path="/admin/data-management" element={<AdminPanel />} />
-              <Route path="/admin/landing-content" element={<AdminLandingContent />} />
-              <Route path="/admin/teams" element={<AdminTeams />} />
+              <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
+              <Route path="/admin/monitoring" element={<RequireAdmin><Monitoring /></RequireAdmin>} />
+              <Route path="/admin/data-management" element={<RequireAdmin><AdminPanel /></RequireAdmin>} />
+              <Route path="/admin/landing-content" element={<RequireAdmin><AdminLandingContent /></RequireAdmin>} />
+              <Route path="/admin/teams" element={<RequireAdmin><AdminTeams /></RequireAdmin>} />
             </Route>
 
             {/* ============================================== */}
             {/* HALAMAN ERROR (TANPA Navbar/Footer/Chatbot)   */}
             {/* ============================================== */}
+            {/* Halaman akun: punya header sendiri (AuthShell), tanpa Navbar */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/auth/verify-email" element={<Navigate to="/verify-email" replace />} />
+            <Route path="/auth/forgot-password" element={<Navigate to="/forgot-password" replace />} />
+
             <Route path="/404" element={<NotFound404 />} />
             <Route path="/500" element={<ServerError500 />} />
             <Route path="/maintenance" element={<MaintenanceMode />} />
@@ -342,6 +308,7 @@ function App() {
           </Routes>
         </ErrorBoundary>
       </Router>
+      </AppSettingsProvider>
     </AuthProvider>
   );
 }

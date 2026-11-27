@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
-const MaintenanceMode = () => {
+const MaintenanceMode = ({ message = '' }) => {
   const { t } = useTranslation();
 
   return (
@@ -42,6 +42,10 @@ const MaintenanceMode = () => {
             'Kami sedang melakukan peningkatan sistem untuk memberikan pengalaman yang lebih baik.'
           )}
         </p>
+        {/* Pesan dari Admin → Sistem → Mode pemeliharaan */}
+        {message && (
+          <p className="mb-8 rounded-xl border border-amber-200 bg-amber-50 p-4 text-lg text-amber-900">{message}</p>
+        )}
 
         {/* Progress/Status Box */}
         <div className="bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-100">

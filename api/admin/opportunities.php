@@ -19,12 +19,14 @@ declare(strict_types=1);
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
 
 try {
     if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
     $configFile = ROOT_PATH . '/config/config.php';
     if (file_exists($configFile)) require_once $configFile;
+    // Endpoint admin: wajib token admin (X-Admin-Token = ADMIN_TOOL_TOKEN di .env)
+    require_once ROOT_PATH . '/includes/autoload.php';
+    \Sciecola\Auth\AdminGuard::require();
 
     if (!defined('DB_HOST') || !DB_HOST) {
         http_response_code(503);
@@ -38,7 +40,7 @@ try {
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
 
-    $method = $_SERVER['REQUEST_METHOD'];
+    $method = \Sciecola\Auth\AdminGuard::method();
 
     switch ($method) {
         case 'POST':
@@ -140,6 +142,15 @@ function createOpportunity(PDO $pdo): array {
         ]);
 
         $opportunityId = intval($pdo->lastInsertId());
+
+        // Peluang yang dipasang admin langsung terverifikasi tanpa biaya penayangan.
+        try {
+            \Sciecola\Marketplace\OpportunityCuration::ensure($pdo);
+            $pdo->prepare("UPDATE innovation_opportunities SET curation_status = 'approved', fee_status = 'waived', curated_at = NOW() WHERE id = ?")
+                ->execute([$opportunityId]);
+        } catch (\Throwable $e) {
+            error_log('[admin/opportunities] curation: ' . $e->getMessage());
+        }
 
         // Log action
         logAdminAction($pdo, 'CREATE', 'innovation_opportunities', (string)$opportunityId, null, $input);

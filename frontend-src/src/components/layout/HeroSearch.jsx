@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import { useAuth } from '../../context/AuthContext';
+import { trackActivity } from '../../hooks/useTrackActivity';
 
 /* ─── Detectors ─────────────────────────────────────────────────────────────
  * Order matters: check the most specific patterns first (ORCID's dash layout,
@@ -32,12 +34,16 @@ const HeroSearch = () => {
   const [statusMsg, setStatusMsg] = useState('');
   const [ambiguousId, setAmbiguousId] = useState(null); // set when numeric ID needs picker
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     const query = inputValue.trim();
     if (query === '') return;
 
+    if (user?.orcid) {
+      trackActivity({ type: 'searched', category: 'search', targetId: query, title: query });
+    }
     setIsLoading(true);
     setAmbiguousId(null);
     setStatusMsg(t('hero_search.detecting'));

@@ -71,6 +71,33 @@ function handle_api_proxy_request($api_file_path) {
         $pxa    = $_sdg_post['_sdg'];
         $params = [];
 
+        // Layanan premium: analisis ulang (refresh) dibatasi per hari untuk non-anggota.
+        // Data yang sudah tersimpan di cache tetap bebas diakses siapa pun. Dihitung sekali per
+        // analisis (langkah init untuk ORCID, atau satu artikel DOI), bukan per batch.
+        if (!empty($_sdg_post['refresh']) && in_array($_sdg_post['_sdg'], ['init', 'doi'], true)) {
+            try {
+                $qpdo = \Sciecola\Database\Db::pdo();
+                if ($qpdo) {
+                    $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+                    $q  = \Sciecola\Premium\Premium::checkAnalysisRefresh($qpdo, \Sciecola\Auth\UserAuth::current(), $ip);
+                    if (!$q['allowed']) {
+                        http_response_code(429);
+                        echo json_encode([
+                            'status'  => 'error',
+                            'code'    => 'premium_quota',
+                            'message' => 'Kuota analisis ulang hari ini sudah habis (' . $q['limit'] . ' kali). '
+                                       . 'Data tersimpan tetap dapat dilihat; analisis ulang tanpa batas tersedia untuk anggota premium.',
+                            'used'    => $q['used'],
+                            'limit'   => $q['limit'],
+                        ], JSON_UNESCAPED_UNICODE);
+                        exit;
+                    }
+                }
+            } catch (\Throwable $e) {
+                error_log('[premium quota] ' . $e->getMessage());
+            }
+        }
+
         // Validasi dan set up parameter berdasarkan aksi
         switch ($pxa) {
             case 'init':
@@ -213,27 +240,35 @@ function route_api_wrapper(): void {
     $filename = basename($m[2]);
 
     static $allowed = [
-        'analytics.php', 'article_profile.php', 'articles.php', 'auth.php',
-        'cache_handler.php', 'collaboration.php', 'innovation_marketplace.php',
-        'journal_profile.php', 'journals.php',
-        'leaderboard.php', 'log_history.php', 'my_activity.php',
+        'analytics.php', 'app_settings.php', 'article_impact.php', 'article_profile.php', 'articles.php', 'auth.php',
+        'admin_teams.php', 'become_sponsor.php',
+        'cache_handler.php', 'cache_migration.php', 'collaboration.php', 'crawl_queue.php',
+        'feeds.php', 'insights.php', 'innovation_marketplace.php', 'institution_profile.php', 'institutions.php',
+        'journal_profile.php', 'journals.php', 'landing_content.php',
+        'leaderboard.php', 'log_history.php', 'messages.php', 'my_activity.php',
         'my_articles.php', 'my_collections.php', 'my_profile.php',
-        'my_statistics.php', 'platform_stats.php', 'projects.php',
+        'monitoring.php', 'my_statistics.php', 'notifications.php', 'partners.php', 'platform_stats.php', 'platform_timeline.php', 'premium.php',
+        'profile_lookup.php', 'projects.php', 'proxy.php',
         'researcher_distribution.php', 'researcher_profile.php', 'researchers.php',
-        'research_matching.php', 'sdg_distribution.php', 'sitemap.php', 'trends.php',
+        'research_matching.php', 'sdg_distribution.php', 'sdgs_cluster.php', 'sitemap.php',
+        'sponsors.php', 'team_member_profile.php', 'teams.php', 'top_researchers.php', 'track.php',
+        'trends_analysis.php', 'user_preferences.php',
     ];
 
     static $admin_allowed = [
-        'researchers.php', 'projects.php', 'opportunities.php', 'expertise.php'
+        'researchers.php', 'projects.php', 'opportunities.php', 'expertise.php', 'landing_content.php', 'users.php', 'settings.php',
+        'opportunity_curation.php', 'premium.php'
     ];
 
     if ($subdir === 'admin/') {
         if (!in_array($filename, $admin_allowed, true)) {
+            \Sciecola\Middleware\AccessLogger::record('api_probe');
             send_json_response(['status' => 'error', 'message' => 'Admin endpoint tidak ditemukan'], 404);
         }
         $apiFile = ROOT_PATH . '/api/admin/' . $filename;
     } else {
         if (!in_array($filename, $allowed, true)) {
+            \Sciecola\Middleware\AccessLogger::record('api_probe');
             send_json_response(['status' => 'error', 'message' => 'Endpoint tidak ditemukan'], 404);
         }
         $apiFile = ROOT_PATH . '/api/wrapper/' . $filename;

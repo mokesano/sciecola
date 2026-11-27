@@ -110,10 +110,11 @@ const ChangePassword = () => {
 
   const validate = () => {
     const next = {};
-    if (!form.current)                          next.current = t('errors.current_required');
+    // Akun yang dibuat lewat Google/ORCID belum punya sandi: cukup isi sandi baru.
+    if (user?.has_password && !form.current)    next.current = t('errors.current_required');
     if (!form.next)                             next.next    = t('errors.new_required');
     else if (form.next.length < 8)              next.next    = t('errors.new_too_short');
-    else if (form.next === form.current)        next.next    = t('errors.new_same');
+    else if (form.current && form.next === form.current) next.next = t('errors.new_same');
     if (form.confirm !== form.next)             next.confirm = t('errors.confirm_mismatch');
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -121,7 +122,7 @@ const ChangePassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!user?.token) {
+    if (!user) {
       toast.error(t('errors.not_authenticated'));
       navigate('/login');
       return;
@@ -130,12 +131,11 @@ const ChangePassword = () => {
 
     setSaving(true);
     try {
+      // Sesi dibawa cookie HttpOnly; tidak ada token di JavaScript.
       const res = await fetch('/api/auth.php', {
         method:  'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Auth-Token': user.token,
-        },
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action:           'change_password',
           current_password: form.current,
@@ -152,13 +152,6 @@ const ChangePassword = () => {
       toast.success(t('success'));
       setForm({ current: '', next: '', confirm: '' });
       setErrors({});
-      // If the backend returned a fresh token (session rotated), stash it.
-      if (json.token) {
-        try {
-          const stored = JSON.parse(localStorage.getItem('sciecola_user') || '{}');
-          localStorage.setItem('sciecola_user', JSON.stringify({ ...stored, token: json.token }));
-        } catch { /* ignore */ }
-      }
     } catch {
       toast.error(t('errors.server'));
     } finally {
@@ -202,9 +195,11 @@ const ChangePassword = () => {
           className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-6"
           noValidate>
 
-          <PasswordField
-            id="current" name="current" label={t('form.current')} placeholder={t('form.current_ph')}
-            value={form.current} onChange={handleChange} error={errors.current} t={t} />
+          {user.has_password !== false && (
+            <PasswordField
+              id="current" name="current" label={t('form.current')} placeholder={t('form.current_ph')}
+              value={form.current} onChange={handleChange} error={errors.current} t={t} />
+          )}
 
           <div>
             <PasswordField

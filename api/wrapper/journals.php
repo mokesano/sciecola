@@ -29,16 +29,17 @@ try {
         define('ROOT_PATH', dirname(__DIR__) . '/..');
     }
 
-    // Load config and functions
-    if (file_exists(ROOT_PATH . '/includes/config.php')) {
-        require_once ROOT_PATH . '/includes/config.php';
+    // Konfigurasi database (konstanta DB_*) ada di config/config.php
+    if (!defined('DB_DATABASE') && file_exists(ROOT_PATH . '/config/config.php')) {
+        require_once ROOT_PATH . '/config/config.php';
     }
+    require_once ROOT_PATH . '/includes/autoload.php';
 
     // Validate and sanitize parameters
     $page = max(1, (int)($_GET['page'] ?? 1));
     $limit = min(100, max(1, (int)($_GET['limit'] ?? 20)));
     $offset = ($page - 1) * $limit;
-    $sort = in_array($_GET['sort'] ?? 'citescore', ['citescore', 'quartile', 'name', 'articles']) ? $_GET['sort'] : 'citescore';
+    $sort = in_array($_GET['sort'] ?? 'citescore', ['citescore', 'quartile', 'name', 'articles']) ? ($_GET['sort'] ?? 'citescore') : 'citescore';
     $search = trim($_GET['search'] ?? '');
     $sdg_filter = (int)($_GET['sdg'] ?? 0);
 
@@ -71,20 +72,18 @@ try {
 // =====================================================================
 
 /**
- * Fetch journals list from database or generate mock data
+ * Daftar jurnal dari database (journals + publications + work_sdgs).
+ * Dulu selalu mengembalikan daftar jurnal karangan; kini kosong bila database kosong.
  */
 function fetchJournalsList($offset, $limit, $sort, $search, $sdg_filter) {
-    // Try to fetch from database first
-    // For now, generate sample data - in production would query journals + work_sdgs tables
-
-    $sampleJournals = generateSampleJournals();
+    $sampleJournals = loadJournalsFromDb();
 
     // Apply search filter
     if ($search) {
         $sampleJournals = array_filter($sampleJournals, function($journal) use ($search) {
             $searchLower = strtolower($search);
             return stripos($journal['name'], $searchLower) !== false ||
-                   stripos($journal['subject'], $searchLower) !== false;
+                   stripos((string) $journal['subject'], $searchLower) !== false;
         });
     }
 
@@ -109,7 +108,7 @@ function fetchJournalsList($offset, $limit, $sort, $search, $sdg_filter) {
                 return $b['total_articles'] - $a['total_articles'];
             case 'name':
             default:
-                return strcmp($a['name'], $b['name']);
+                return strcmp((string) $a['name'], (string) $b['name']);
         }
     });
 
@@ -123,177 +122,69 @@ function fetchJournalsList($offset, $limit, $sort, $search, $sdg_filter) {
 }
 
 /**
- * Generate sample journals (TODO: replace with database query)
+ * Memuat jurnal beserta jumlah artikel dan distribusi SDG dari database.
+ * Bentuk tiap item sama dengan yang dipakai JournalList.jsx.
  */
-function generateSampleJournals() {
-    return [
-        [
-            'id' => 'jess-2024',
-            'name' => 'Journal of Environmental Science and Sustainability',
-            'issn' => '1234-5678',
-            'publisher' => 'Sangia Research Media and Publishing',
-            'subject' => 'Environmental Science',
-            'country' => 'Indonesia',
-            'citescore' => 2.48,
-            'quartile' => 'Q2',
-            'sjr' => 0.85,
-            'snip' => 1.12,
-            'total_articles' => 356,
-            'articles_this_year' => 68,
-            'focus_sdgs' => [13, 11, 15, 14],
-            'sdg_distribution' => [
-                ['sdg' => 13, 'name' => 'Climate Action', 'value' => 28],
-                ['sdg' => 11, 'name' => 'Sustainable Cities', 'value' => 20],
-                ['sdg' => 15, 'name' => 'Life on Land', 'value' => 16],
-                ['sdg' => 14, 'name' => 'Life Below Water', 'value' => 12],
-            ],
-        ],
-        [
-            'id' => 'jcp-2024',
-            'name' => 'Journal of Cleaner Production',
-            'issn' => '0959-6526',
-            'publisher' => 'Elsevier',
-            'subject' => 'Environmental Science & Technology',
-            'country' => 'United Kingdom',
-            'citescore' => 3.21,
-            'quartile' => 'Q1',
-            'sjr' => 1.45,
-            'snip' => 1.89,
-            'total_articles' => 892,
-            'articles_this_year' => 124,
-            'focus_sdgs' => [12, 13, 11, 7],
-            'sdg_distribution' => [
-                ['sdg' => 12, 'name' => 'Responsible Consumption', 'value' => 35],
-                ['sdg' => 13, 'name' => 'Climate Action', 'value' => 28],
-                ['sdg' => 11, 'name' => 'Sustainable Cities', 'value' => 22],
-                ['sdg' => 7, 'name' => 'Clean Energy', 'value' => 15],
-            ],
-        ],
-        [
-            'id' => 'ncc-2024',
-            'name' => 'Nature Climate Change',
-            'issn' => '1758-678X',
-            'publisher' => 'Springer Nature',
-            'subject' => 'Climate Science',
-            'country' => 'United Kingdom',
-            'citescore' => 4.56,
-            'quartile' => 'Q1',
-            'sjr' => 2.34,
-            'snip' => 2.45,
-            'total_articles' => 456,
-            'articles_this_year' => 87,
-            'focus_sdgs' => [13, 14, 15, 6],
-            'sdg_distribution' => [
-                ['sdg' => 13, 'name' => 'Climate Action', 'value' => 45],
-                ['sdg' => 14, 'name' => 'Life Below Water', 'value' => 22],
-                ['sdg' => 15, 'name' => 'Life on Land', 'value' => 18],
-                ['sdg' => 6, 'name' => 'Clean Water', 'value' => 15],
-            ],
-        ],
-        [
-            'id' => 'mpb-2024',
-            'name' => 'Marine Pollution Bulletin',
-            'issn' => '0025-326X',
-            'publisher' => 'Elsevier',
-            'subject' => 'Marine Science',
-            'country' => 'United Kingdom',
-            'citescore' => 2.89,
-            'quartile' => 'Q2',
-            'sjr' => 0.92,
-            'snip' => 1.34,
-            'total_articles' => 234,
-            'articles_this_year' => 45,
-            'focus_sdgs' => [14, 13, 6, 15],
-            'sdg_distribution' => [
-                ['sdg' => 14, 'name' => 'Life Below Water', 'value' => 50],
-                ['sdg' => 13, 'name' => 'Climate Action', 'value' => 25],
-                ['sdg' => 6, 'name' => 'Clean Water', 'value' => 15],
-                ['sdg' => 15, 'name' => 'Life on Land', 'value' => 10],
-            ],
-        ],
-        [
-            'id' => 'wm-2024',
-            'name' => 'Waste Management',
-            'issn' => '0956-053X',
-            'publisher' => 'Elsevier',
-            'subject' => 'Waste Management & Environmental',
-            'country' => 'United Kingdom',
-            'citescore' => 2.34,
-            'quartile' => 'Q2',
-            'sjr' => 0.78,
-            'snip' => 1.05,
-            'total_articles' => 445,
-            'articles_this_year' => 78,
-            'focus_sdgs' => [12, 11, 13, 6],
-            'sdg_distribution' => [
-                ['sdg' => 12, 'name' => 'Responsible Consumption', 'value' => 45],
-                ['sdg' => 11, 'name' => 'Sustainable Cities', 'value' => 28],
-                ['sdg' => 13, 'name' => 'Climate Action', 'value' => 18],
-                ['sdg' => 6, 'name' => 'Clean Water', 'value' => 9],
-            ],
-        ],
-        [
-            'id' => 'gec-2024',
-            'name' => 'Global Environmental Change',
-            'issn' => '0959-3780',
-            'publisher' => 'Elsevier',
-            'subject' => 'Environmental Studies',
-            'country' => 'United Kingdom',
-            'citescore' => 3.12,
-            'quartile' => 'Q1',
-            'sjr' => 1.32,
-            'snip' => 1.78,
-            'total_articles' => 378,
-            'articles_this_year' => 62,
-            'focus_sdgs' => [13, 15, 14, 12],
-            'sdg_distribution' => [
-                ['sdg' => 13, 'name' => 'Climate Action', 'value' => 35],
-                ['sdg' => 15, 'name' => 'Life on Land', 'value' => 28],
-                ['sdg' => 14, 'name' => 'Life Below Water', 'value' => 22],
-                ['sdg' => 12, 'name' => 'Responsible Consumption', 'value' => 15],
-            ],
-        ],
-        [
-            'id' => 'sustainability-2024',
-            'name' => 'Sustainability',
-            'issn' => '2071-1050',
-            'publisher' => 'MDPI',
-            'subject' => 'Sustainability & Environmental',
-            'country' => 'Switzerland',
-            'citescore' => 1.87,
-            'quartile' => 'Q3',
-            'sjr' => 0.45,
-            'snip' => 0.78,
-            'total_articles' => 1234,
-            'articles_this_year' => 289,
-            'focus_sdgs' => [12, 13, 11, 7],
-            'sdg_distribution' => [
-                ['sdg' => 12, 'name' => 'Responsible Consumption', 'value' => 32],
-                ['sdg' => 13, 'name' => 'Climate Action', 'value' => 28],
-                ['sdg' => 11, 'name' => 'Sustainable Cities', 'value' => 24],
-                ['sdg' => 7, 'name' => 'Clean Energy', 'value' => 16],
-            ],
-        ],
-        [
-            'id' => 'cities-2024',
-            'name' => 'Cities',
-            'issn' => '2118-1620',
-            'publisher' => 'Elsevier',
-            'subject' => 'Urban Planning & Development',
-            'country' => 'United Kingdom',
-            'citescore' => 1.56,
-            'quartile' => 'Q3',
-            'sjr' => 0.38,
-            'snip' => 0.65,
-            'total_articles' => 267,
-            'articles_this_year' => 48,
-            'focus_sdgs' => [11, 13, 3, 8],
-            'sdg_distribution' => [
-                ['sdg' => 11, 'name' => 'Sustainable Cities', 'value' => 55],
-                ['sdg' => 13, 'name' => 'Climate Action', 'value' => 22],
-                ['sdg' => 3, 'name' => 'Good Health', 'value' => 15],
-                ['sdg' => 8, 'name' => 'Decent Work', 'value' => 8],
-            ],
-        ],
-    ];
+function loadJournalsFromDb(): array {
+    $pdo = \Sciecola\Database\Db::pdo();
+    if ($pdo === null) {
+        return [];
+    }
+    $sdgNames = [1 => 'No Poverty', 2 => 'Zero Hunger', 3 => 'Good Health', 4 => 'Quality Education',
+        5 => 'Gender Equality', 6 => 'Clean Water', 7 => 'Clean Energy', 8 => 'Decent Work',
+        9 => 'Industry & Innovation', 10 => 'Reduced Inequalities', 11 => 'Sustainable Cities',
+        12 => 'Responsible Consumption', 13 => 'Climate Action', 14 => 'Life Below Water',
+        15 => 'Life on Land', 16 => 'Peace & Justice', 17 => 'Partnerships'];
+    try {
+        $year = (int) date('Y');
+        $rows = $pdo->query(
+            "SELECT j.id, j.title, j.issn, j.e_issn, j.publisher, j.country, j.cite_score, j.quartile, j.sjr_score, j.snip_score,
+                    COUNT(p.doi) AS total_articles,
+                    SUM(CASE WHEN p.publication_year = {$year} THEN 1 ELSE 0 END) AS articles_this_year
+             FROM journals j
+             LEFT JOIN publications p ON p.journal_id = j.id
+             GROUP BY j.id, j.title, j.issn, j.e_issn, j.publisher, j.country, j.cite_score, j.quartile, j.sjr_score, j.snip_score
+             HAVING COUNT(p.doi) > 0"
+        )->fetchAll(PDO::FETCH_ASSOC);
+
+        $dist = [];
+        foreach ($pdo->query(
+            'SELECT p.journal_id, ws.sdg_number, COUNT(DISTINCT ws.doi) AS n
+             FROM work_sdgs ws JOIN publications p ON p.doi = ws.doi
+             WHERE p.journal_id IS NOT NULL
+             GROUP BY p.journal_id, ws.sdg_number'
+        )->fetchAll(PDO::FETCH_ASSOC) as $d) {
+            $dist[(int) $d['journal_id']][(int) $d['sdg_number']] = (int) $d['n'];
+        }
+
+        $items = [];
+        foreach ($rows as $r) {
+            $jd = $dist[(int) $r['id']] ?? [];
+            arsort($jd);
+            $sum = max(1, array_sum($jd));
+            $sdgDist = [];
+            foreach (array_slice($jd, 0, 6, true) as $n => $cnt) {
+                $sdgDist[] = ['sdg' => $n, 'name' => $sdgNames[$n] ?? "SDG $n", 'value' => (int) round($cnt / $sum * 100)];
+            }
+            $items[] = [
+                'id'                 => $r['issn'] ?: ($r['e_issn'] ?: 'j' . $r['id']),
+                'name'               => $r['title'],
+                'issn'               => $r['issn'] ?: $r['e_issn'],
+                'publisher'          => $r['publisher'],
+                'subject'            => '',
+                'country'            => $r['country'],
+                'citescore'          => $r['cite_score'] !== null ? (float) $r['cite_score'] : null,
+                'quartile'           => $r['quartile'] !== null ? 'Q' . (int) $r['quartile'] : null,
+                'sjr'                => $r['sjr_score'] !== null ? (float) $r['sjr_score'] : null,
+                'snip'               => $r['snip_score'] !== null ? (float) $r['snip_score'] : null,
+                'total_articles'     => (int) $r['total_articles'],
+                'articles_this_year' => (int) $r['articles_this_year'],
+                'focus_sdgs'         => array_slice(array_keys($jd), 0, 4),
+                'sdg_distribution'   => $sdgDist,
+            ];
+        }
+        return $items;
+    } catch (Throwable $e) {
+        return [];
+    }
 }

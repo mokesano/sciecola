@@ -12,7 +12,7 @@
     "countries": "Countries",
     "institutions": "Institutions",
     "projects": "Projects",
-    "avg_score": "Average Score"
+    "avg_score": "Avg. Collaborations per Researcher"
   },
   "filter": {
     "search_placeholder": "Search researchers by name, institution or expertise…",

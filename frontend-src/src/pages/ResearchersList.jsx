@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
+import InitialsAvatar from '../components/shared/InitialsAvatar';
 
 // UN official SDG colour palette (1..17)
 const SDG_COLORS = {
@@ -93,10 +94,7 @@ const ResearchersList = () => {
     return num.toString();
   };
 
-  const avatarFallback = (name) =>
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'R')}&background=random&size=128`;
-
-  const resetAll = () => {
+const resetAll = () => {
     setSelectedCountry('all');
     setSelectedSdg('all');
     setSearchQuery('');
@@ -247,12 +245,7 @@ const ResearchersList = () => {
                   className="group bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-indigo-300 transition-all flex flex-col"
                 >
                   <div className="flex items-start gap-4 mb-4">
-                    <img
-                      src={pro.avatar ?? avatarFallback(pro.name)}
-                      alt={pro.name}
-                      className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md group-hover:scale-105 transition-transform"
-                      onError={(e) => { e.target.src = avatarFallback(pro.name); }}
-                    />
+                    <InitialsAvatar src={pro.avatar} name={pro.name} seed={pro.orcid || pro.name} className="w-16 h-16 rounded-full border-2 border-white shadow-md group-hover:scale-105 transition-transform shrink-0" textClassName="text-lg" />
                     <div className="flex-grow min-w-0">
                       <h3 className="font-bold text-gray-900 group-hover:text-indigo-600 text-lg leading-tight mb-0.5 truncate">
                         {pro.name}

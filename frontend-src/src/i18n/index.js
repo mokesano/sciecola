@@ -65,6 +65,8 @@ import idCollaborationHub   from './locales/id/collaboration_hub.json';
 import enCollaborationHub   from './locales/en/collaboration_hub.json';
 import idInnovationMarket   from './locales/id/innovation_marketplace.json';
 import enInnovationMarket   from './locales/en/innovation_marketplace.json';
+import idPremium            from './locales/id/premium.json';
+import enPremium            from './locales/en/premium.json';
 import idProjectManagement  from './locales/id/project_management.json';
 import enProjectManagement  from './locales/en/project_management.json';
 import idResearchMatching   from './locales/id/research_matching.json';
@@ -85,6 +87,8 @@ import idChangePassword     from './locales/id/change_password.json';
 import enChangePassword     from './locales/en/change_password.json';
 import idSettings           from './locales/id/settings.json';
 import enSettings           from './locales/en/settings.json';
+import idAccount            from './locales/id/account.json';
+import enAccount            from './locales/en/account.json';
 import idAuth               from './locales/id/auth.json';
 import enAuth               from './locales/en/auth.json';
 import idMyActivity         from './locales/id/my_activity.json';
@@ -179,6 +183,7 @@ i18n
         research_matching:   idResearchMatching,
         collaboration_hub:      idCollaborationHub,
         innovation_marketplace: idInnovationMarket,
+        premium: idPremium,
         project_management:     idProjectManagement,
         institutions: idInstitutions,
         article_profile:     idArticleProfile,
@@ -203,6 +208,7 @@ i18n
         insights_page:           idInsightsPage,
         change_password:         idChangePassword,
         settings:                idSettings,
+        account:                 idAccount,
         auth:                    idAuth,
         my_activity:             idMyActivity,
         notifications:           idNotifications,
@@ -249,6 +255,7 @@ i18n
         research_matching:   enResearchMatching,
         collaboration_hub:      enCollaborationHub,
         innovation_marketplace: enInnovationMarket,
+        premium: enPremium,
         project_management:     enProjectManagement,
         institutions: enInstitutions,
         article_profile:     enArticleProfile,
@@ -273,6 +280,7 @@ i18n
         insights_page:           enInsightsPage,
         change_password:         enChangePassword,
         settings:                enSettings,
+        account:                 enAccount,
         auth:                    enAuth,
         my_activity:             enMyActivity,
         notifications:           enNotifications,
@@ -306,7 +314,7 @@ i18n
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams', 'insights_page', 'change_password', 'settings', 'auth', 'my_activity', 'notifications', 'my_statistics', 'messages', 'my_articles', 'dashboard_page', 'my_profile', 'feeds', 'terms', 'privacy', 'faq', 'help', 'sitemap', 'system_status', 'tutorial_orcid', 'docs_page', 'log_history', 'tutorial_doi', 'tutorial_results', 'tutorial_export', 'scieco_dashboard', 'collection_detail', 'contact', 'admin', 'monitoring', 'doc', 'api', 'research_matching', 'collaboration_hub', 'innovation_marketplace', 'project_management', 'common_ui', 'chatbot', 'admin_panel', 'admin_landing'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams', 'insights_page', 'change_password', 'settings', 'account', 'auth', 'my_activity', 'notifications', 'my_statistics', 'messages', 'my_articles', 'dashboard_page', 'my_profile', 'feeds', 'terms', 'privacy', 'faq', 'help', 'sitemap', 'system_status', 'tutorial_orcid', 'docs_page', 'log_history', 'tutorial_doi', 'tutorial_results', 'tutorial_export', 'scieco_dashboard', 'collection_detail', 'contact', 'admin', 'monitoring', 'doc', 'api', 'research_matching', 'collaboration_hub', 'innovation_marketplace', 'premium', 'project_management', 'common_ui', 'chatbot', 'admin_panel', 'admin_landing'],
     interpolation: { escapeValue: false },
   });
 

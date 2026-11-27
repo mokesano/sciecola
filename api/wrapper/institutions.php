@@ -49,7 +49,7 @@ function getInstitutions(): array {
     if ($limit < 1) $limit = 1;
 
     if (!defined('DB_HOST') || !DB_HOST) {
-        return getSampleInstitutions();
+        return \Sciecola\Support\EmptyData::like(getSampleInstitutions());
     }
 
     try {
@@ -139,7 +139,7 @@ function getInstitutions(): array {
         ];
     } catch (Exception $e) {
         error_log($e->getMessage());
-        return getSampleInstitutions();
+        return \Sciecola\Support\EmptyData::like(getSampleInstitutions());
     }
 }
 

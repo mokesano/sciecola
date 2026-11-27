@@ -5,6 +5,8 @@
     "api-security": "API & Security",
     "user-management": "Users",
     "content-moderation": "Content",
+    "premium": "Premium",
+    "opportunity-curation": "Opportunity Curation",
     "ui-customization": "Appearance",
     "system": "System",
     "crawl-queue": "Crawl Queue",
@@ -64,11 +66,46 @@
       "actions": "Actions"
     },
     "actions": {
-      "promote": "Make Co-Admin",
+      "promote": "Make admin",
       "suspend": "Suspend",
       "disable": "Disable",
       "activate": "Activate",
-      "delete": "Delete"
+      "delete": "Delete",
+      "demote": "Make regular user",
+      "revoke_sessions": "Sign out sessions"
+    },
+    "search_ph": "Search name, email, or ORCID",
+    "search": "Search",
+    "empty": "No registered accounts yet.",
+    "you": "you",
+    "flags": {
+      "verified": "Email verified",
+      "unverified": "Email not verified"
+    },
+    "done": {
+      "disableUser": "Account deactivated",
+      "deleteUser": "Account deleted",
+      "promoteToAdmin": "User made admin",
+      "demoteToUser": "Admin made regular user",
+      "revokeSessions": "All of the user's sessions signed out",
+      "activate": "Account reactivated"
+    },
+    "confirm": {
+      "disable_title": "Deactivate account?",
+      "disable_msg": "The user can't sign in and all their sessions are signed out.",
+      "disable_ok": "Yes, deactivate",
+      "revoke_title": "Sign out all sessions?",
+      "revoke_msg": "The user must sign in again on every device.",
+      "revoke_ok": "Yes, sign out",
+      "promote_title": "Make admin?",
+      "promote_msg": "The user gets full access to the Admin pages.",
+      "promote_ok": "Yes, make admin",
+      "demote_title": "Remove admin role?",
+      "demote_msg": "The user becomes a regular user again.",
+      "demote_ok": "Yes, remove",
+      "delete_title": "Delete account permanently?",
+      "delete_msg": "The account, its sessions, and security settings are deleted. This cannot be undone.",
+      "delete_ok": "Yes, delete"
     }
   },
   "content": {
@@ -147,30 +184,47 @@
       "total": "Total",
       "pending": "Pending",
       "done": "Done",
-      "failed": "Failed"
+      "failed": "Failed",
+      "running": "Running"
     },
     "type": "Type",
     "title": "Crawl Queue",
-    "description": "Manage the queue that fetches ORCID and DOI data from external APIs."
+    "description": "Queue ORCIDs or DOIs to be analysed by the SDG engine and saved to the database.",
+    "refresh": "Refresh Status",
+    "process_desc": "ORCID/DOI jobs run through the local SDG engine and the results are saved straight to the database. ORCIDs with many works are processed in steps and resume automatically.",
+    "stop": "Stop",
+    "clear_finished": "Clear Finished",
+    "progress": "Progress"
   },
   "cache": {
     "section": "Cache & Database Migration",
+    "description": "Move the SDG engine's cache files (cache/ folder) into the sangia_ecosystem database step by step, then archive the files that have been migrated.",
+    "check_status": "Check Cache Status",
+    "token_label": "Admin Token",
+    "token_help": "Enter the ADMIN_TOOL_TOKEN value from the server's .env file. The token is only kept in this browser tab.",
     "migration_actions": "Migration Actions",
-    "migrate_desc": "Migrate every legacy file cache into the table",
+    "migrate_desc": "Migrate cache files into database tables",
+    "migrate_desc_full": "Files are processed 25 per request until none remain, so hosting time limits are not hit. Data goes into the researchers, publications, publication_authors, journals and work_sdgs tables. Works without a DOI are skipped. Original files are not deleted.",
     "run": "Run Migration",
-    "clear": "Clear File Cache",
+    "stop": "Stop",
+    "retry_failed": "Retry Failed",
+    "archive": "Archive Migrated Files",
     "log": "Migration Log",
+    "by_type": "Files by Type",
+    "db_rows": "Database Contents",
+    "no_files": "No cache files",
+    "table_missing": "table missing",
     "stat": {
-      "legacy": "Legacy File Cache",
-      "migrated": "Migrated (DB)",
-      "db_ready": "DB Available",
-      "yes": "Yes",
-      "no": "No"
+      "total": "Total Files",
+      "pending": "Pending",
+      "migrated": "Migrated",
+      "skipped": "Skipped",
+      "failed": "Failed",
+      "archived": "Archived"
     },
-    "confirm_clear_title": "Clear the file cache?",
-    "confirm_clear_msg": "Every legacy cache file will be deleted. Make sure the migration to the database has finished.",
-    "confirm_clear_ok": "Yes, clear it",
-    "migrate_desc_full": "Migrate every legacy cache file into the table"
+    "confirm_archive_title": "Archive migrated files?",
+    "confirm_archive_msg": "Files marked migrated/skipped are moved to cache/archive/. Pending or failed files are left alone. No files are deleted.",
+    "confirm_archive_ok": "Yes, archive"
   },
   "nav": {
     "home": "Home",
@@ -183,5 +237,160 @@
   "action": {
     "cancel": "Cancel",
     "save": "Save Changes"
+  },
+  "settings_api": {
+    "weights_total": "Weights must total 100%",
+    "saved_wis": "WIS weights saved. They apply to the next impact calculation.",
+    "saved_content": "Page settings saved",
+    "saved_ui": "Appearance updated for all visitors",
+    "saved_system": "System settings saved",
+    "no_activity": "No admin activity recorded yet.",
+    "ip": "IP address",
+    "stats": {
+      "sessions": "Active Sessions",
+      "failed_logins": "Failed Logins (24h)",
+      "publications": "Publications with SDGs",
+      "summary": "{{unverified}} accounts with unverified email · {{twofa}} accounts using 2FA · {{researchers}} researchers in the database"
+    },
+    "actions": {
+      "settings_system": "changed system settings",
+      "settings_content": "changed visible pages",
+      "settings_ui": "changed appearance",
+      "settings_impact": "changed WIS weights",
+      "user_set_role": "changed role",
+      "user_activate": "activated account",
+      "user_deactivate": "deactivated account",
+      "user_revoke_sessions": "signed out sessions",
+      "user_delete": "deleted account"
+    },
+    "config_desc": "Server configuration status. Secret values are set in the .env file and never sent to the browser.",
+    "config_item": "Configuration",
+    "config_status": "Status",
+    "config_detail": "Details",
+    "ok": "Active",
+    "not_set": "Not set",
+    "env_note": "To change API keys, SMTP, or OAuth, edit the .env file on the server (cPanel → File Manager). This is deliberate: a compromised admin account cannot read or replace server credentials.",
+    "user_keys_note": "Developer API keys (wz_…) are issued and revoked by wizdam-apis, not by this application.",
+    "config": {
+      "database": {
+        "label": "Database",
+        "env": "DB_HOST, DB_DATABASE, DB_USERNAME, DB_PASSWORD"
+      },
+      "app_url": {
+        "label": "Site address",
+        "env": "APP_URL — used in email links"
+      },
+      "mail": {
+        "label": "Email delivery",
+        "env": "MAIL_DRIVER, SMTP_*"
+      },
+      "admin_emails": {
+        "label": "Automatic admin emails",
+        "env": "ADMIN_EMAILS"
+      },
+      "admin_token": {
+        "label": "Fallback admin token",
+        "env": "ADMIN_TOOL_TOKEN"
+      },
+      "turnstile": {
+        "label": "Cloudflare Turnstile captcha",
+        "env": "TURNSTILE_SITE_KEY, TURNSTILE_SECRET_KEY"
+      },
+      "orcid_oauth": {
+        "label": "ORCID sign-in",
+        "env": "ORCID_CLIENT_ID, ORCID_CLIENT_SECRET, ORCID_SANDBOX"
+      },
+      "google_oauth": {
+        "label": "Google sign-in",
+        "env": "GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET"
+      },
+      "sangia_api": {
+        "label": "wizdam-apis (impact analysis)",
+        "env": "SANGIA_API_BASE, SANGIA_API_KEY"
+      },
+      "scopus_api": {
+        "label": "Scopus API",
+        "env": "SCOPUS_API_KEY"
+      }
+    },
+    "ui_note": "The primary colour replaces indigo on buttons, links, and accents; the secondary colour replaces purple accents. The font is used when available on the visitor's device.",
+    "maintenance_message": "Message shown to visitors during maintenance",
+    "session_timeout": "Sign-in session length (minutes)",
+    "session_timeout_help": "Applies to sign-ins without \"Remember me\". \"Remember me\" sign-ins last 30 days.",
+    "email_verify_note": "While maintenance mode is on, only admins can use the application; the sign-in page stays open. Email verification can be forced off with REQUIRE_EMAIL_VERIFICATION=false in .env."
+  },
+  "curation": {
+    "title": "Opportunity Curation",
+    "description": "Review user-posted Innovation Marketplace listings, confirm listing fees, and grant the Verified badge.",
+    "kpi": {
+      "review": "Under review",
+      "auto_hidden": "Auto-hidden",
+      "fee_pending": "Payments awaiting check",
+      "approved": "Verified"
+    },
+    "status": {
+      "review": "Under review",
+      "auto_hidden": "Hidden",
+      "on_hold": "On hold",
+      "approved": "Verified",
+      "all": "All"
+    },
+    "fee": {
+      "unpaid": "Unpaid",
+      "pending": "Awaiting confirmation",
+      "paid": "Paid",
+      "waived": "Waived"
+    },
+    "fee_any": "Any fee status",
+    "search": "Search title or ORCID…",
+    "refresh": "Reload",
+    "loading": "Loading…",
+    "empty": "No listings match this filter.",
+    "reasons": {
+      "spam": "Spam",
+      "misleading": "Misleading",
+      "not_research": "Not research",
+      "duplicate": "Duplicate",
+      "other": "Other"
+    },
+    "fee_label": "Fee",
+    "fee_ref": "Proof",
+    "note": "Note",
+    "approve": "Approve",
+    "approve_needs_fee": "Fee not paid yet",
+    "mark_paid": "Confirm payment",
+    "reject_payment": "Reject proof",
+    "waive_fee": "Waive fee",
+    "hold": "Hold",
+    "restore": "Show again",
+    "delete": "Delete",
+    "prompt_hold": "Note for the poster (why it is on hold / what to fix):",
+    "prompt_reject_payment": "Why the payment proof was rejected:",
+    "confirm_delete": "Delete \"{{title}}\"? This cannot be undone.",
+    "confirm_force_waive": "The listing fee is not paid. Approve and waive the fee?",
+    "done": {
+      "approve": "Listing verified",
+      "hold": "Listing put on hold",
+      "restore": "Listing shown again",
+      "delete": "Listing deleted",
+      "mark_paid": "Payment confirmed",
+      "waive_fee": "Fee waived",
+      "reject_payment": "Payment proof rejected"
+    },
+    "settings_title": "Listing fee & curation settings",
+    "settings_saved": "Settings saved",
+    "save": "Save settings",
+    "saving": "Saving…",
+    "cfg": {
+      "feeEnabled": "Require a listing fee for verification",
+      "feeAmount": "Fee amount",
+      "feeCurrency": "Currency",
+      "autoHideReports": "Reports before auto-hide",
+      "feeInstructions": "Payment instructions (shown to posters)",
+      "feeInstructions_ph": "E.g. Transfer to Bank … Acc. … in the name of …, then confirm on the listing page.",
+      "curatorsRequireOrcid": "Reviewers must have ORCID",
+      "allowApplyInReview": "Allow applications to listings under review",
+      "note": "The fee applies to new listings. Listings posted by admins are verified automatically with no fee. An amount of 0 means free."
+    }
   }
 }

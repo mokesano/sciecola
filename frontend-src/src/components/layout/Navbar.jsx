@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { NavLink, Link, useLocation } from 'react-router';
+import { NavLink, Link, useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, Menu, X, Bell } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import InitialsAvatar from '../shared/InitialsAvatar';
 
 // Bahasa yang didukung — data di-drive dari locale navbar.json
 const SUPPORTED_LANGS = ['id', 'en'];
@@ -36,6 +37,7 @@ const MENU = [
       { key: 'projects',    to: '/projects' },
       { key: 'marketplace', to: '/innovation-marketplace' },
       { key: 'sponsor',     to: '/become-sponsor' },
+      { key: 'premium',     to: '/premium' },
   ]},
   { key: 'about', items: [
       { key: 'about',    to: '/about' },
@@ -51,6 +53,18 @@ const Navbar = () => {
   const location = useLocation();
   const { t, i18n } = useTranslation('navbar');
   const { user, logout } = useAuth();
+  // Jumlah notifikasi belum dibaca (data nyata dari /api/notifications.php).
+  const [unreadNotif, setUnreadNotif] = useState(0);
+  useEffect(() => {
+    if (!user) { setUnreadNotif(0); return undefined; }
+    let cancelled = false;
+    fetch('/api/notifications.php?count=1', { credentials: 'same-origin' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (!cancelled && d && d.status === 'success') setUnreadNotif(d.unread_count || 0); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [user, location.pathname]);
+  const navigate = useNavigate();
 
   const [langOpen, setLangOpen]       = useState(false);
   const [menuOpen, setMenuOpen]       = useState(false);
@@ -211,21 +225,31 @@ const Navbar = () => {
             {user ? (
               <div className="flex items-center gap-2">
                 <Link to="/notifications"
-                  className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-orange-50 hover:text-orange-700">
+                  className="relative rounded-lg p-2 text-slate-500 transition-colors hover:bg-orange-50 hover:text-orange-700">
                   <Bell className="h-5 w-5" />
+                  {unreadNotif > 0 && (
+                    <span className="absolute -right-0.5 -top-0.5 min-w-[18px] rounded-full bg-red-600 px-1 text-center text-[11px] font-bold leading-[18px] text-white">
+                      {unreadNotif > 99 ? '99+' : unreadNotif}
+                    </span>
+                  )}
                 </Link>
                 <Link to="/my-profile" className="flex items-center gap-2 border-l border-slate-200 pl-2">
-                  <img
-                    src={user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'U')}&background=ea580c&color=fff`}
-                    alt={user.name || t('auth.profile')}
-                    className="h-8 w-8 rounded-full border border-slate-200 object-cover"
-                    onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
-                  />
+                  <InitialsAvatar src={user.avatar} name={user.name || 'U'} alt={user.name || t('auth.profile')} className="h-8 w-8 rounded-full border border-slate-200" textClassName="text-xs" />
                   <span className="hidden max-w-[120px] truncate text-[15px] font-medium text-slate-700 md:block">
                     {user.name || t('auth.profile')}
                   </span>
                 </Link>
-                <button onClick={logout}
+                {user.role === 'admin' && (
+                  <Link to="/admin"
+                    className="hidden rounded-lg px-3 py-2 text-[15px] font-medium text-slate-500 transition-colors hover:bg-orange-50 hover:text-orange-700 md:block">
+                    Admin
+                  </Link>
+                )}
+                <Link to="/settings"
+                  className="hidden rounded-lg px-3 py-2 text-[15px] font-medium text-slate-500 transition-colors hover:bg-orange-50 hover:text-orange-700 md:block">
+                  {t('auth.settings', 'Pengaturan')}
+                </Link>
+                <button onClick={async () => { await logout(); navigate('/'); }}
                   className="hidden rounded-lg px-3 py-2 text-[15px] font-medium text-slate-500 transition-colors hover:bg-orange-50 hover:text-orange-700 md:block">
                   {t('auth.logout', 'Keluar')}
                 </button>

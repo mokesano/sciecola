@@ -18,24 +18,24 @@ declare(strict_types=1);
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
 
 try {
     if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
     $configFile = ROOT_PATH . '/config/config.php';
     if (file_exists($configFile)) require_once $configFile;
+    require_once ROOT_PATH . '/includes/autoload.php';
 
     $method = $_SERVER['REQUEST_METHOD'];
 
     if ($method === 'GET') {
-        $orcid = trim($_GET['orcid'] ?? '');
+        $orcid = \Sciecola\Auth\UserAuth::requireOrcid();
         if (!$orcid) {
             http_response_code(400);
             echo json_encode(['status' => 'error', 'message' => 'ORCID required']);
             exit;
         }
         echo json_encode(getUserPreferences($orcid));
-    } elseif ($method === 'PUT') {
+    } elseif ($method === 'PUT' || $method === 'POST') { // .htaccess memblokir PUT; frontend memakai POST
         echo json_encode(updateUserPreferences());
     } else {
         http_response_code(405);
@@ -48,7 +48,7 @@ try {
 
 function getUserPreferences(string $orcid): array {
     if (!defined('DB_HOST') || !DB_HOST) {
-        return getSampleUserPreferences();
+        return \Sciecola\Support\EmptyData::like(getSampleUserPreferences());
     }
 
     try {
@@ -107,7 +107,7 @@ function getUserPreferences(string $orcid): array {
         ];
     } catch (Exception $e) {
         error_log($e->getMessage());
-        return getSampleUserPreferences();
+        return \Sciecola\Support\EmptyData::like(getSampleUserPreferences());
     }
 }
 
@@ -119,9 +119,9 @@ function collectPreferenceUpdates(array $input): array {
     $updates = [];
     $params  = [];
 
-    $basicFields = ['language', 'timezone', 'theme'];
-    foreach ($basicFields as $field) {
-        if (isset($input[$field])) {
+    $basicFields = ['language' => 10, 'timezone' => 50, 'theme' => 20];
+    foreach ($basicFields as $field => $maxLen) {
+        if (isset($input[$field]) && is_string($input[$field]) && preg_match('/^[A-Za-z0-9_\/+\-]{1,' . $maxLen . '}$/', $input[$field])) {
             $updates[] = "$field = ?";
             $params[]  = $input[$field];
         }
@@ -132,8 +132,13 @@ function collectPreferenceUpdates(array $input): array {
         $params[]  = $input['newsletter_subscribed'] ? 1 : 0;
     }
 
+    // email_digest berupa teks, bukan boolean.
+    $digest = $input['notification']['email_digest'] ?? null;
+    if (in_array($digest, ['daily', 'weekly', 'monthly', 'never'], true)) {
+        $updates[] = 'notification_email_digest = ?';
+        $params[]  = $digest;
+    }
     $notificationMapping = [
-        'email_digest' => 'notification_email_digest',
         'push_enabled' => 'notification_push_enabled',
         'email_enabled' => 'notification_email_enabled',
         'in_app_enabled' => 'notification_in_app_enabled'
@@ -149,7 +154,6 @@ function collectPreferenceUpdates(array $input): array {
     applyBooleanMapping($input['notification_preferences'] ?? [], $topicMapping, $updates, $params);
 
     $privacyMapping = [
-        'profile_visibility' => 'privacy_profile_visibility',
         'show_affiliations' => 'privacy_show_affiliations',
         'show_publications' => 'privacy_show_publications',
         'show_collaborations' => 'privacy_show_collaborations'
@@ -169,7 +173,7 @@ function applyBooleanMapping(array $groupInput, array $mapping, array &$updates,
 }
 
 function applyPrivacyMapping(array $privacyInput, array $mapping, array &$updates, array &$params): void {
-    if (isset($privacyInput['profile_visibility'])) {
+    if (in_array($privacyInput['profile_visibility'] ?? null, ['public', 'registered', 'private'], true)) {
         $updates[] = 'privacy_profile_visibility = ?';
         $params[] = $privacyInput['profile_visibility'];
     }
@@ -184,7 +188,7 @@ function applyPrivacyMapping(array $privacyInput, array $mapping, array &$update
 
 function updateUserPreferences(): array {
     $input = json_decode(file_get_contents('php://input'), true);
-    $orcid = $input['orcid'] ?? '';
+    $orcid = \Sciecola\Auth\UserAuth::requireOrcid(); // abaikan orcid dari permintaan
 
     if (!$orcid) {
         return ['status' => 'error', 'message' => 'ORCID required'];

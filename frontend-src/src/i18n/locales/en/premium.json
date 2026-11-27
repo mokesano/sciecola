@@ -1,0 +1,163 @@
+{
+  "tier": {
+    "sponsor": "Sponsor",
+    "partner": "Partner",
+    "collaborator": "Collaborator"
+  },
+  "tier_hint": {
+    "sponsor": "Official Sciecola sponsor",
+    "partner": "Official Sciecola partner",
+    "collaborator": "Official Sciecola collaborator"
+  },
+  "badge_premium": "Premium",
+  "featured": "Featured",
+  "priority": "Priority",
+  "showcase": {
+    "title": "Supported by",
+    "subtitle": "Sponsors, partners, and collaborators supporting sustainable research",
+    "cta": "Join them"
+  },
+  "lock": {
+    "title": "Premium service",
+    "hint": "This feature is available to Sponsor, Partner, and Collaborator members.",
+    "cta": "See premium plans",
+    "login": "Sign in to continue"
+  },
+  "features": {
+    "verified_listing": {
+      "title": "Verified listings",
+      "desc": "A Verified badge on Innovation Marketplace listings. Members get a free yearly verification quota; others pay a listing fee."
+    },
+    "featured_listing": {
+      "title": "Featured listings",
+      "desc": "Listings posted by members are pinned to the top of the Innovation Marketplace with a Featured ribbon."
+    },
+    "partner_showcase": {
+      "title": "Partner showcase",
+      "desc": "Member logos and links appear on the home page and the Innovation Marketplace."
+    },
+    "institution_report": {
+      "title": "Institution report",
+      "desc": "Download an institution SDG report (researchers, publications, SDG distribution) as CSV."
+    },
+    "data_export": {
+      "title": "Data export",
+      "desc": "Download your personal statistics (views, citations, activity) as CSV."
+    },
+    "priority_matching": {
+      "title": "Priority matching",
+      "desc": "Member profiles are shown first in Research Matching for organisations looking for partners."
+    },
+    "analysis_quota": {
+      "title": "Unlimited re-analysis",
+      "desc": "Non-members can re-run SDG analysis {{count}} times a day; members without limit. Stored data stays open to everyone."
+    }
+  },
+  "page": {
+    "title": "Sciecola Premium Services",
+    "subtitle": "Support sustainable research and get extra services for your organisation.",
+    "free_title": "All services are currently free",
+    "free_desc": "Sciecola has not enabled premium services yet. Every feature is available to everyone at no cost.",
+    "always_free_title": "Always free for the public",
+    "always_free": [
+      "SDG search and classification",
+      "Researcher profiles and ORCID",
+      "Feed, messages, and shared projects",
+      "Applying to and posting opportunities (under review)",
+      "Basic analytics"
+    ],
+    "tiers_title": "Membership plans",
+    "tier_desc": {
+      "sponsor": "For organisations that want maximum visibility and to support the platform.",
+      "partner": "For research and industry organisations actively seeking collaboration.",
+      "collaborator": "For research groups, labs, and organisations getting started."
+    },
+    "quota": "{{count}} free listing verifications per year",
+    "all_features": "All active premium features",
+    "features_title": "Premium features",
+    "active": "Active",
+    "inactive": "Free",
+    "pricing_title": "Pricing & plans",
+    "contact_title": "Interested in becoming a member?",
+    "contact_desc": "Contact the Sciecola team to choose a plan and activate your membership.",
+    "contact_cta": "Contact us",
+    "contact_fallback": "Send a message through the Contact page.",
+    "my_title": "Your membership",
+    "my_until": "Valid until {{date}}",
+    "my_open": "No end date",
+    "my_quota": "Verification quota this year: {{used}} of {{quota}} used"
+  },
+  "export": {
+    "institution": "Download report",
+    "stats": "Download",
+    "done": "CSV file downloaded"
+  },
+  "admin": {
+    "title": "Premium Services",
+    "description": "Master switch for premium services, which features become premium, and Sponsor/Partner/Collaborator memberships.",
+    "state_on": "Premium services ACTIVE",
+    "state_off": "All services FREE",
+    "state_on_desc": "Checked features below are for members only (or paid). Badges and the partner showcase are shown.",
+    "state_off_desc": "Premium is not enabled: every feature is free for everyone; badges and the partner showcase are hidden.",
+    "make_premium": "Make Premium",
+    "make_free": "Switch back to Free",
+    "confirm_on": "Enable premium services? Checked features will be limited to members and listing verification will start charging a fee.",
+    "confirm_off": "Disable premium services? Every feature becomes free for everyone again.",
+    "toggled_on": "Premium services enabled",
+    "toggled_off": "All services are free again",
+    "features_title": "Features that become premium when active",
+    "quotas_title": "Quotas",
+    "quota_verified": "Free verifications/year — {{tier}}",
+    "quota_refresh": "Free re-analyses per day (non-members)",
+    "contact_email": "Premium contact email",
+    "pricing_note": "Pricing/plan note (shown on the Premium page)",
+    "pricing_ph": "E.g. Sponsor IDR … /year, Partner IDR … /year, Collaborator IDR … /year",
+    "fee_hint": "The listing verification fee and payment instructions are set in the Opportunity Curation tab.",
+    "save": "Save settings",
+    "saving": "Saving…",
+    "saved": "Premium settings saved",
+    "members_title": "Premium members",
+    "add_member": "Add member",
+    "edit_member": "Edit member",
+    "f": {
+      "tier": "Tier",
+      "display_name": "Display name",
+      "email": "Account email (optional)",
+      "orcid": "ORCID (optional)",
+      "institution_id": "Institution ID (optional)",
+      "institution_hint": "Same as the ID in the institution page address, e.g. /institutions/<ID>. Leave empty if not tied to an institution.",
+      "logo_url": "Logo URL",
+      "website": "Website",
+      "starts_on": "Starts",
+      "ends_on": "Ends (optional)",
+      "note": "Internal note"
+    },
+    "link_hint": "Link an account (email) or ORCID so the badge appears and the user gets the features.",
+    "state": {
+      "active": "Active",
+      "scheduled": "Scheduled",
+      "expired": "Expired",
+      "cancelled": "Cancelled"
+    },
+    "col": {
+      "member": "Member",
+      "tier": "Tier",
+      "link": "Linked to",
+      "period": "Period",
+      "quota": "Quota",
+      "state": "Status"
+    },
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "save_member": "Save member",
+    "confirm_cancel": "Cancel {{name}}'s membership?",
+    "confirm_delete": "Permanently delete {{name}}'s membership?",
+    "member_saved": "Member saved",
+    "member_cancelled": "Membership cancelled",
+    "member_deleted": "Membership deleted",
+    "empty": "No premium members yet.",
+    "active_count": "{{count}} active"
+  }
+}

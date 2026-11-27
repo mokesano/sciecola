@@ -5,6 +5,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line, AreaChart, Area,
 } from 'recharts';
+import { useTrackView } from '../hooks/useTrackActivity';
 
 const SDG_COLORS = {
   1: '#e5243b',  2: '#dda63a',  3: '#4c9f38',  4: '#c5192d',
@@ -49,6 +50,7 @@ const JournalProfile = () => {
   const { t } = useTranslation('journal_profile');
   const { journalId } = useParams();
   const [journal, setJournal]   = useState(null);
+  useTrackView('journal', journal?.issn || (journal ? journalId : ''), journal?.name);
   const [loading, setLoading]   = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [activeTab, setActiveTab] = useState('ringkasan');

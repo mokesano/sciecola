@@ -5,6 +5,7 @@ import {
   PieChart, Pie, Cell, LineChart, Line, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, AreaChart, Area,
 } from 'recharts';
+import { useTrackView } from '../hooks/useTrackActivity';
 
 // UN official SDG palette
 const SDG_COLORS = {
@@ -36,6 +37,7 @@ const ArticleProfile = () => {
   const navigate = useNavigate();
 
   const [article, setArticle] = useState(null);
+  useTrackView('article', article?.doi || (article ? decodeURIComponent(doiCode) : ''), article?.title);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [activeTab, setActiveTab] = useState('ringkasan');

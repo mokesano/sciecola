@@ -7,392 +7,227 @@ declare(strict_types=1);
  * Copyright (c) 2017-2026 Sangia Publishing House
  * Copyright (c) 2017-2026 Rochmady
  * Distributed under the MIT License.
- * 
+ *
  * @ingroup api
- * @brief Feeds API - Aggregates user-generated content with SDG classification.
- * 
- * Endpoints:
- * GET /api/feeds.php?action=list|get&limit=50&visibility=public
- * POST /api/feeds.php - create post
+ * @brief Feed komunitas: kiriman, suka, dan komentar antarpengguna.
+ *
+ * GET  ?action=list&limit=20&offset=0      kiriman yang boleh dilihat pengunjung ini
+ * GET  ?action=get&id=N                     satu kiriman + komentar
+ * POST { action:"create", content, title?, visibility: public|registered }   (login)
+ *      "registered" disimpan sebagai "internal".
+ * POST { action:"like", post_id }           (login) — suka/batal suka
+ * POST { action:"comment", post_id, comment_text }                          (login)
+ * POST { action:"delete", post_id }         (penulis atau admin)
+ * POST { action:"delete_comment", comment_id } (penulis komentar atau admin)
+ *
+ * Pengunjung hanya melihat kiriman "public"; pengguna yang login juga melihat "registered".
+ * ID penulis selalu diambil dari sesi. Versi sebelumnya memakai user_id dari permintaan,
+ * kolom u.avatar_url yang tidak ada, dan hitungan suka yang tidak pernah bertambah.
  */
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
+header('Cache-Control: no-store');
+
+if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
+$configFile = ROOT_PATH . '/config/config.php';
+if (file_exists($configFile)) require_once $configFile;
+require_once ROOT_PATH . '/includes/autoload.php';
+
+use Sciecola\Auth\UserAuth;
+use Sciecola\Community\CommunitySchema;
+use Sciecola\Community\Notifications;
+use Sciecola\Database\Db;
+
+const FEED_MAX_CONTENT = 5000;
+const FEED_MAX_COMMENT = 2000;
+
+function feed_respond(array $data, int $code = 200): void
+{
+    http_response_code($code);
+    echo json_encode($data, JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+function feed_visibilities(?array $user): array
+{
+    // "internal" = hanya pengguna terdaftar (nilai ENUM di db/schema_social_features.sql).
+    return $user ? ['public', 'internal'] : ['public'];
+}
+
+function feed_post_row(array $r, ?array $user): array
+{
+    $uid = $user ? (int) $user['id'] : 0;
+    return [
+        'id'             => (int) $r['id'],
+        'author_id'      => (int) $r['author_id'],
+        'author_name'    => $r['author_name'] ?: '—',
+        'author_orcid'   => $r['author_orcid'] ?: null,
+        'title'          => $r['title'],
+        'content'        => $r['content'],
+        'visibility'     => $r['visibility'] === 'internal' ? 'registered' : $r['visibility'],
+        'likes_count'    => (int) $r['likes_count'],
+        'comments_count' => (int) $r['comments_count'],
+        'liked_by_me'    => !empty($r['liked_by_me']),
+        'is_pinned'      => (bool) $r['is_pinned'],
+        'created_at'     => $r['created_at'],
+        'can_delete'     => $user !== null && ((int) $r['author_id'] === $uid || UserAuth::isAdmin($user)),
+    ];
+}
 
 try {
-    if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
-    $configFile = ROOT_PATH . '/config/config.php';
-    if (file_exists($configFile)) require_once $configFile;
-
-    $method = $_SERVER['REQUEST_METHOD'];
+    $pdo = Db::pdo();
+    if (!$pdo) {
+        feed_respond(['status' => 'error', 'message' => 'Database tidak dapat dihubungi', 'posts' => []], 503);
+    }
+    CommunitySchema::ensure($pdo);
+    $user   = UserAuth::current();
+    $method = strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? 'GET'));
 
     if ($method === 'GET') {
-        $action = trim($_GET['action'] ?? 'list');
-        $visibility = trim($_GET['visibility'] ?? 'public');
-        $limit = (int)($_GET['limit'] ?? 50);
-        $offset = (int)($_GET['offset'] ?? 0);
+        $vis = feed_visibilities($user);
+        $in  = implode(',', array_fill(0, count($vis), '?'));
+        $uid = $user ? (int) $user['id'] : 0;
+        $action = (string) ($_GET['action'] ?? 'list');
 
-        if ($limit > 500) $limit = 500;
-        if ($limit < 1) $limit = 1;
-        if ($offset < 0) $offset = 0;
+        if ($action === 'get') {
+            $stmt = $pdo->prepare(
+                "SELECT fp.*, u.name AS author_name, u.orcid AS author_orcid,
+                        (SELECT 1 FROM feed_post_likes l WHERE l.post_id = fp.id AND l.user_id = ?) AS liked_by_me
+                   FROM feed_posts fp LEFT JOIN user_accounts u ON u.id = fp.author_id
+                  WHERE fp.id = ? AND fp.is_deleted = 0 AND fp.visibility IN ($in)"
+            );
+            $stmt->execute(array_merge([$uid, (int) ($_GET['id'] ?? 0)], $vis));
+            $post = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$post) feed_respond(['status' => 'error', 'message' => 'Kiriman tidak ditemukan'], 404);
+            $c = $pdo->prepare(
+                'SELECT c.id, c.author_id, c.comment_text, c.created_at, u.name AS author_name
+                   FROM feed_post_comments c LEFT JOIN user_accounts u ON u.id = c.author_id
+                  WHERE c.post_id = ? AND c.is_deleted = 0 ORDER BY c.created_at ASC LIMIT 200'
+            );
+            $c->execute([(int) $post['id']]);
+            $comments = array_map(static fn ($r) => [
+                'id' => (int) $r['id'], 'author_id' => (int) $r['author_id'], 'author_name' => $r['author_name'] ?: '—',
+                'comment_text' => $r['comment_text'], 'created_at' => $r['created_at'],
+                'can_delete' => $user !== null && ((int) $r['author_id'] === $uid || UserAuth::isAdmin($user)),
+            ], $c->fetchAll(PDO::FETCH_ASSOC));
+            feed_respond(['status' => 'success', 'post' => feed_post_row($post, $user), 'comments' => $comments]);
+        }
 
-        if ($action === 'list') {
-            echo json_encode(getFeedPosts($visibility, $limit, $offset));
-        } elseif ($action === 'get') {
-            $postId = (int)($_GET['id'] ?? 0);
-            if ($postId > 0) {
-                echo json_encode(getFeedPost($postId));
+        $limit  = min(50, max(1, (int) ($_GET['limit'] ?? 20)));
+        $offset = max(0, (int) ($_GET['offset'] ?? 0));
+        $stmt = $pdo->prepare(
+            "SELECT fp.id, fp.author_id, fp.title, fp.content, fp.visibility, fp.likes_count, fp.comments_count,
+                    fp.is_pinned, fp.created_at, u.name AS author_name, u.orcid AS author_orcid,
+                    (SELECT 1 FROM feed_post_likes l WHERE l.post_id = fp.id AND l.user_id = ?) AS liked_by_me
+               FROM feed_posts fp LEFT JOIN user_accounts u ON u.id = fp.author_id
+              WHERE fp.is_deleted = 0 AND fp.visibility IN ($in)
+              ORDER BY fp.is_pinned DESC, fp.created_at DESC
+              LIMIT $limit OFFSET $offset"
+        );
+        $stmt->execute(array_merge([$uid], $vis));
+        $count = $pdo->prepare("SELECT COUNT(*) FROM feed_posts WHERE is_deleted = 0 AND visibility IN ($in)");
+        $count->execute($vis);
+        feed_respond([
+            'status' => 'success',
+            'posts'  => array_map(static fn ($r) => feed_post_row($r, $user), $stmt->fetchAll(PDO::FETCH_ASSOC)),
+            'total'  => (int) $count->fetchColumn(),
+        ]);
+    }
+
+    if ($method !== 'POST') {
+        feed_respond(['status' => 'error', 'message' => 'Method not allowed'], 405);
+    }
+
+    $user  = UserAuth::requireUser();
+    $uid   = (int) $user['id'];
+    $input = json_decode((string) file_get_contents('php://input'), true) ?: [];
+    $action = (string) ($input['action'] ?? '');
+    $now = gmdate('Y-m-d H:i:s');
+
+    switch ($action) {
+        case 'create':
+            $content = trim((string) ($input['content'] ?? ''));
+            $title   = trim((string) ($input['title'] ?? ''));
+            $vis     = in_array($input['visibility'] ?? 'public', ['registered', 'internal'], true) ? 'internal' : 'public';
+            if ($content === '') feed_respond(['status' => 'error', 'message' => 'Isi kiriman tidak boleh kosong'], 400);
+            if (mb_strlen($content) > FEED_MAX_CONTENT) feed_respond(['status' => 'error', 'message' => 'Kiriman maksimal ' . FEED_MAX_CONTENT . ' karakter'], 400);
+            $pdo->prepare('INSERT INTO feed_posts (author_id, title, content, visibility, created_at) VALUES (?, ?, ?, ?, ?)')
+                ->execute([$uid, $title !== '' ? mb_substr($title, 0, 255) : null, $content, $vis, $now]);
+            feed_respond(['status' => 'success', 'post_id' => (int) $pdo->lastInsertId()], 201);
+
+        case 'like':
+            $postId = (int) ($input['post_id'] ?? 0);
+            $exists = $pdo->prepare('SELECT 1 FROM feed_posts WHERE id = ? AND is_deleted = 0');
+            $exists->execute([$postId]);
+            if (!$exists->fetchColumn()) feed_respond(['status' => 'error', 'message' => 'Kiriman tidak ditemukan'], 404);
+            $liked = $pdo->prepare('SELECT 1 FROM feed_post_likes WHERE post_id = ? AND user_id = ?');
+            $liked->execute([$postId, $uid]);
+            if ($liked->fetchColumn()) {
+                $pdo->prepare('DELETE FROM feed_post_likes WHERE post_id = ? AND user_id = ?')->execute([$postId, $uid]);
+                $nowLiked = false;
             } else {
-                http_response_code(400);
-                echo json_encode(['status' => 'error', 'message' => 'Post ID required']);
+                $pdo->prepare('INSERT INTO feed_post_likes (post_id, user_id, created_at) VALUES (?, ?, ?)')->execute([$postId, $uid, $now]);
+                $au = $pdo->prepare('SELECT author_id FROM feed_posts WHERE id = ?');
+                $au->execute([$postId]);
+                Notifications::notify($pdo, (int) $au->fetchColumn(), 'like',
+                    Notifications::displayName($pdo, $uid) . ' menyukai kiriman Anda', null, '/feeds', $uid, 'like:' . $postId);
+                $nowLiked = true;
             }
-        } else {
-            http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
-        }
-    } elseif ($method === 'POST') {
-        $input = json_decode(file_get_contents('php://input'), true);
-        $action = trim($input['action'] ?? '');
+            // Hitungan dihitung ulang dari tabel suka agar selalu konsisten.
+            $pdo->prepare('UPDATE feed_posts SET likes_count = (SELECT COUNT(*) FROM feed_post_likes WHERE post_id = ?) WHERE id = ?')
+                ->execute([$postId, $postId]);
+            $cnt = $pdo->prepare('SELECT likes_count FROM feed_posts WHERE id = ?');
+            $cnt->execute([$postId]);
+            feed_respond(['status' => 'success', 'liked' => $nowLiked, 'likes_count' => (int) $cnt->fetchColumn()]);
 
-        if ($action === 'create') {
-            echo json_encode(createFeedPost($input));
-        } elseif ($action === 'like') {
-            echo json_encode(likeFeedPost($input));
-        } elseif ($action === 'comment') {
-            echo json_encode(commentFeedPost($input));
-        } else {
-            http_response_code(400);
-            echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
-        }
-    } else {
-        http_response_code(405);
-        echo json_encode(['status' => 'error', 'message' => 'Method not allowed']);
+        case 'comment':
+            $postId = (int) ($input['post_id'] ?? 0);
+            $text   = trim((string) ($input['comment_text'] ?? ''));
+            if ($text === '' || mb_strlen($text) > FEED_MAX_COMMENT) feed_respond(['status' => 'error', 'message' => 'Komentar kosong atau terlalu panjang'], 400);
+            $exists = $pdo->prepare('SELECT 1 FROM feed_posts WHERE id = ? AND is_deleted = 0');
+            $exists->execute([$postId]);
+            if (!$exists->fetchColumn()) feed_respond(['status' => 'error', 'message' => 'Kiriman tidak ditemukan'], 404);
+            $pdo->prepare('INSERT INTO feed_post_comments (post_id, author_id, comment_text, created_at) VALUES (?, ?, ?, ?)')
+                ->execute([$postId, $uid, $text, $now]);
+            $id = (int) $pdo->lastInsertId();
+            $au = $pdo->prepare('SELECT author_id FROM feed_posts WHERE id = ?');
+            $au->execute([$postId]);
+            Notifications::notify($pdo, (int) $au->fetchColumn(), 'comment',
+                Notifications::displayName($pdo, $uid) . ' mengomentari kiriman Anda', mb_substr($text, 0, 140), '/feeds', $uid);
+            $pdo->prepare('UPDATE feed_posts SET comments_count = (SELECT COUNT(*) FROM feed_post_comments WHERE post_id = ? AND is_deleted = 0) WHERE id = ?')
+                ->execute([$postId, $postId]);
+            feed_respond(['status' => 'success', 'comment_id' => $id], 201);
+
+        case 'delete':
+            $postId = (int) ($input['post_id'] ?? 0);
+            $own = $pdo->prepare('SELECT author_id FROM feed_posts WHERE id = ? AND is_deleted = 0');
+            $own->execute([$postId]);
+            $author = $own->fetchColumn();
+            if ($author === false) feed_respond(['status' => 'error', 'message' => 'Kiriman tidak ditemukan'], 404);
+            if ((int) $author !== $uid && !UserAuth::isAdmin($user)) feed_respond(['status' => 'error', 'message' => 'Bukan kiriman Anda'], 403);
+            $pdo->prepare('UPDATE feed_posts SET is_deleted = 1, updated_at = ? WHERE id = ?')->execute([$now, $postId]);
+            if ((int) $author !== $uid) {
+                \Sciecola\Support\AppSettings::audit($user, 'feed.delete_post', 'post #' . $postId);
+            }
+            feed_respond(['status' => 'success']);
+
+        case 'delete_comment':
+            $cid = (int) ($input['comment_id'] ?? 0);
+            $own = $pdo->prepare('SELECT author_id, post_id FROM feed_post_comments WHERE id = ? AND is_deleted = 0');
+            $own->execute([$cid]);
+            $row = $own->fetch(PDO::FETCH_ASSOC);
+            if (!$row) feed_respond(['status' => 'error', 'message' => 'Komentar tidak ditemukan'], 404);
+            if ((int) $row['author_id'] !== $uid && !UserAuth::isAdmin($user)) feed_respond(['status' => 'error', 'message' => 'Bukan komentar Anda'], 403);
+            $pdo->prepare('UPDATE feed_post_comments SET is_deleted = 1 WHERE id = ?')->execute([$cid]);
+            $pdo->prepare('UPDATE feed_posts SET comments_count = (SELECT COUNT(*) FROM feed_post_comments WHERE post_id = ? AND is_deleted = 0) WHERE id = ?')
+                ->execute([(int) $row['post_id'], (int) $row['post_id']]);
+            feed_respond(['status' => 'success']);
+
+        default:
+            feed_respond(['status' => 'error', 'message' => 'Aksi tidak dikenali'], 400);
     }
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
-}
-
-function getFeedPosts(string $visibility, int $limit, int $offset): array {
-    if (!defined('DB_HOST') || !DB_HOST) {
-        return getSampleFeedPosts();
-    }
-
-    try {
-        $pdo = new PDO(
-            'mysql:host=' . DB_HOST . ';dbname=' . DB_DATABASE . ';charset=utf8mb4',
-            DB_USERNAME, DB_PASSWORD,
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-        );
-
-        $params = [];
-        $whereClause = 'WHERE fp.is_deleted = FALSE';
-        if ($visibility !== 'all') {
-            $whereClause .= ' AND fp.visibility = ?';
-            $params = [$visibility];
-        }
-
-        $stmt = $pdo->prepare("
-            SELECT fp.id, fp.author_id, fp.post_type, fp.title, fp.content,
-                   fp.image_url, fp.likes_count, fp.comments_count, fp.is_pinned,
-                   fp.created_at, u.name as author_name, u.avatar_url as author_avatar
-            FROM feed_posts fp
-            LEFT JOIN user_accounts u ON u.id = fp.author_id
-            $whereClause
-            ORDER BY fp.is_pinned DESC, fp.created_at DESC
-            LIMIT ? OFFSET ?
-        ");
-        $params[] = $limit;
-        $params[] = $offset;
-        $stmt->execute($params);
-        $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $countStmt = $pdo->prepare("SELECT COUNT(*) as count FROM feed_posts fp $whereClause");
-        $countStmt->execute(array_slice($params, 0, -2));
-        $total = (int)$countStmt->fetch(PDO::FETCH_ASSOC)['count'];
-
-        return [
-            'status' => 'success',
-            'posts' => array_map(function ($row) {
-                return [
-                    'id' => (int)$row['id'],
-                    'author_id' => (int)$row['author_id'],
-                    'author_name' => $row['author_name'],
-                    'author_avatar' => $row['author_avatar'],
-                    'post_type' => $row['post_type'],
-                    'title' => $row['title'],
-                    'content' => $row['content'],
-                    'image_url' => $row['image_url'],
-                    'likes_count' => (int)$row['likes_count'],
-                    'comments_count' => (int)$row['comments_count'],
-                    'is_pinned' => (bool)$row['is_pinned'],
-                    'created_at' => $row['created_at']
-                ];
-            }, $posts),
-            'total' => $total,
-            'timestamp' => date('c')
-        ];
-    } catch (Exception $e) {
-        error_log($e->getMessage());
-        return getSampleFeedPosts();
-    }
-}
-
-function getFeedPost(int $postId): array {
-    if (!defined('DB_HOST') || !DB_HOST) {
-        return getSampleFeedPost();
-    }
-
-    try {
-        $pdo = new PDO(
-            'mysql:host=' . DB_HOST . ';dbname=' . DB_DATABASE . ';charset=utf8mb4',
-            DB_USERNAME, DB_PASSWORD,
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-        );
-
-        $stmt = $pdo->prepare("
-            SELECT fp.*, u.name as author_name, u.avatar_url as author_avatar
-            FROM feed_posts fp
-            LEFT JOIN user_accounts u ON u.id = fp.author_id
-            WHERE fp.id = ? AND fp.is_deleted = FALSE
-        ");
-        $stmt->execute([$postId]);
-        $post = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$post) {
-            return ['status' => 'error', 'message' => 'Post not found'];
-        }
-
-        $commentsStmt = $pdo->prepare("
-            SELECT fpc.id, fpc.author_id, fpc.comment_text, fpc.likes_count,
-                   fpc.created_at, u.name as author_name, u.avatar_url as author_avatar
-            FROM feed_post_comments fpc
-            LEFT JOIN user_accounts u ON u.id = fpc.author_id
-            WHERE fpc.post_id = ? AND fpc.is_deleted = FALSE AND fpc.parent_comment_id IS NULL
-            ORDER BY fpc.created_at DESC
-            LIMIT 10
-        ");
-        $commentsStmt->execute([$postId]);
-        $comments = $commentsStmt->fetchAll(PDO::FETCH_ASSOC);
-
-        return [
-            'status' => 'success',
-            'post' => [
-                'id' => (int)$post['id'],
-                'author_id' => (int)$post['author_id'],
-                'author_name' => $post['author_name'],
-                'author_avatar' => $post['author_avatar'],
-                'post_type' => $post['post_type'],
-                'title' => $post['title'],
-                'content' => $post['content'],
-                'image_url' => $post['image_url'],
-                'likes_count' => (int)$post['likes_count'],
-                'comments_count' => (int)$post['comments_count'],
-                'created_at' => $post['created_at']
-            ],
-            'comments' => array_map(function ($row) {
-                return [
-                    'id' => (int)$row['id'],
-                    'author_id' => (int)$row['author_id'],
-                    'author_name' => $row['author_name'],
-                    'author_avatar' => $row['author_avatar'],
-                    'comment_text' => $row['comment_text'],
-                    'likes_count' => (int)$row['likes_count'],
-                    'created_at' => $row['created_at']
-                ];
-            }, $comments),
-            'timestamp' => date('c')
-        ];
-    } catch (Exception $e) {
-        error_log($e->getMessage());
-        return getSampleFeedPost();
-    }
-}
-
-function createFeedPost(array $input): array {
-    if (!isset($input['author_id'], $input['content'])) {
-        return ['status' => 'error', 'message' => 'Missing required fields'];
-    }
-
-    if (!defined('DB_HOST') || !DB_HOST) {
-        return ['status' => 'success', 'post_id' => 1];
-    }
-
-    try {
-        $pdo = new PDO(
-            'mysql:host=' . DB_HOST . ';dbname=' . DB_DATABASE . ';charset=utf8mb4',
-            DB_USERNAME, DB_PASSWORD,
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-        );
-
-        $stmt = $pdo->prepare("
-            INSERT INTO feed_posts (author_id, post_type, title, content, image_url, visibility)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ");
-        $stmt->execute([
-            (int)$input['author_id'],
-            $input['post_type'] ?? 'text',
-            $input['title'] ?? null,
-            $input['content'],
-            $input['image_url'] ?? null,
-            $input['visibility'] ?? 'public'
-        ]);
-
-        return [
-            'status' => 'success',
-            'post_id' => (int)$pdo->lastInsertId(),
-            'timestamp' => date('c')
-        ];
-    } catch (Exception $e) {
-        error_log($e->getMessage());
-        return ['status' => 'error', 'message' => 'Failed to create post'];
-    }
-}
-
-function likeFeedPost(array $input): array {
-    if (!isset($input['post_id'], $input['user_id'])) {
-        return ['status' => 'error', 'message' => 'Missing required fields'];
-    }
-
-    if (!defined('DB_HOST') || !DB_HOST) {
-        return ['status' => 'success', 'message' => 'Liked (demo mode)'];
-    }
-
-    try {
-        $pdo = new PDO(
-            'mysql:host=' . DB_HOST . ';dbname=' . DB_DATABASE . ';charset=utf8mb4',
-            DB_USERNAME, DB_PASSWORD,
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-        );
-
-        $stmt = $pdo->prepare("
-            INSERT IGNORE INTO feed_post_likes (post_id, user_id)
-            VALUES (?, ?)
-        ");
-        $stmt->execute([(int)$input['post_id'], (int)$input['user_id']]);
-
-        $updateStmt = $pdo->prepare("
-            UPDATE feed_posts SET likes_count = likes_count + 1
-            WHERE id = ? AND id NOT IN (SELECT post_id FROM feed_post_likes WHERE post_id = ? AND user_id = ?)
-        ");
-        $updateStmt->execute([(int)$input['post_id'], (int)$input['post_id'], (int)$input['user_id']]);
-
-        return ['status' => 'success', 'timestamp' => date('c')];
-    } catch (Exception $e) {
-        error_log($e->getMessage());
-        return ['status' => 'error', 'message' => 'Failed to like post'];
-    }
-}
-
-function commentFeedPost(array $input): array {
-    if (!isset($input['post_id'], $input['author_id'], $input['comment_text'])) {
-        return ['status' => 'error', 'message' => 'Missing required fields'];
-    }
-
-    if (!defined('DB_HOST') || !DB_HOST) {
-        return ['status' => 'success', 'comment_id' => 1];
-    }
-
-    try {
-        $pdo = new PDO(
-            'mysql:host=' . DB_HOST . ';dbname=' . DB_DATABASE . ';charset=utf8mb4',
-            DB_USERNAME, DB_PASSWORD,
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-        );
-
-        $stmt = $pdo->prepare("
-            INSERT INTO feed_post_comments (post_id, author_id, comment_text)
-            VALUES (?, ?, ?)
-        ");
-        $stmt->execute([
-            (int)$input['post_id'],
-            (int)$input['author_id'],
-            $input['comment_text']
-        ]);
-
-        $updateStmt = $pdo->prepare("
-            UPDATE feed_posts SET comments_count = comments_count + 1
-            WHERE id = ?
-        ");
-        $updateStmt->execute([(int)$input['post_id']]);
-
-        return [
-            'status' => 'success',
-            'comment_id' => (int)$pdo->lastInsertId(),
-            'timestamp' => date('c')
-        ];
-    } catch (Exception $e) {
-        error_log($e->getMessage());
-        return ['status' => 'error', 'message' => 'Failed to add comment'];
-    }
-}
-
-function getSampleFeedPosts(): array {
-    return [
-        'status' => 'success',
-        'posts' => [
-            [
-                'id' => 1,
-                'author_id' => 1,
-                'author_name' => 'Dr. Budi Santoso',
-                'author_avatar' => 'https://via.placeholder.com/40/6366f1/ffffff?text=BS',
-                'post_type' => 'announcement',
-                'title' => 'Peluncuran Platform Baru',
-                'content' => 'Kami dengan bangga mengumumkan peluncuran fitur baru untuk analisis kolaborasi riset.',
-                'image_url' => null,
-                'likes_count' => 12,
-                'comments_count' => 5,
-                'is_pinned' => true,
-                'created_at' => '2026-05-16T10:00:00Z'
-            ],
-            [
-                'id' => 2,
-                'author_id' => 2,
-                'author_name' => 'Siti Nurhaliza',
-                'author_avatar' => 'https://via.placeholder.com/40/10b981/ffffff?text=SN',
-                'post_type' => 'research',
-                'title' => null,
-                'content' => 'Hasil terbaru dari riset SDG classification menunjukkan peningkatan akurasi hingga 94%.',
-                'image_url' => null,
-                'likes_count' => 8,
-                'comments_count' => 3,
-                'is_pinned' => false,
-                'created_at' => '2026-05-16T09:30:00Z'
-            ]
-        ],
-        'total' => 2,
-        'timestamp' => date('c')
-    ];
-}
-
-function getSampleFeedPost(): array {
-    return [
-        'status' => 'success',
-        'post' => [
-            'id' => 1,
-            'author_id' => 1,
-            'author_name' => 'Dr. Budi Santoso',
-            'author_avatar' => 'https://via.placeholder.com/40/6366f1/ffffff?text=BS',
-            'post_type' => 'announcement',
-            'title' => 'Peluncuran Platform Baru',
-            'content' => 'Kami dengan bangga mengumumkan peluncuran fitur baru untuk analisis kolaborasi riset.',
-            'image_url' => null,
-            'likes_count' => 12,
-            'comments_count' => 5,
-            'created_at' => '2026-05-16T10:00:00Z'
-        ],
-        'comments' => [
-            [
-                'id' => 1,
-                'author_id' => 2,
-                'author_name' => 'Siti Nurhaliza',
-                'author_avatar' => 'https://via.placeholder.com/40/10b981/ffffff?text=SN',
-                'comment_text' => 'Fitur ini sangat menunggu-nunggu!',
-                'likes_count' => 2,
-                'created_at' => '2026-05-16T10:15:00Z'
-            ]
-        ],
-        'timestamp' => date('c')
-    ];
+} catch (Throwable $e) {
+    error_log('[feeds] ' . $e->getMessage());
+    feed_respond(['status' => 'error', 'message' => 'Feed belum dapat dimuat.', 'posts' => []], 503);
 }

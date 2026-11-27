@@ -7,7 +7,7 @@
   "sidebar": {
     "profile":       "Profil",
     "profile_role":  "Peneliti",
-    "feeds":         "Feeds",
+    "feeds":         "Beranda (Feed)",
     "admin":         "Admin Dashboard",
     "admin_badge":   "ADMIN",
     "dashboard":     "Dashboard",
@@ -33,7 +33,7 @@
     "growth":    "↑ {{pct}}% dari tahun lalu"
   },
   "sections": {
-    "pub_per_month": "Publikasi per Bulan",
+    "pub_per_month": "Publikasi per Tahun",
     "sdg_contrib":   "SDGs Kontribusi",
     "articles":      "Artikel",
     "top_articles":  "Artikel Terpopuler",

@@ -5,6 +5,8 @@ import { Brain, Users, Target, Zap, Search, Filter, Sparkles, TrendingUp,
   Award, BookOpen, Building2, MapPin, Mail, ExternalLink, CheckCircle,
   Star, Lightbulb, Network, ArrowRight, Heart, MessageSquare, Share2
 } from 'lucide-react';
+import InitialsAvatar from '../components/shared/InitialsAvatar';
+import PremiumBadge from '../components/premium/PremiumBadge';
 
 const ResearchMatching = () => {
   const navigate = useNavigate();
@@ -42,51 +44,6 @@ const ResearchMatching = () => {
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [aiMatches, setAiMatches] = useState([]);
 
-  // Fallback mock data
-  const mockMatches = [
-    {
-      id: 1,
-      name: 'Dr. Sarah Chen',
-      title: 'Professor of Climate Science',
-      institution: 'MIT',
-      location: 'Cambridge, MA, USA',
-      match_score: 96,
-      match_reasons: ['Similar research focus', 'Complementary expertise', 'Active in SDG 13 & 14'],
-      sdg_focus: [13, 14, 15],
-      h_index: 52,
-      publications: 234,
-      collaborations: 47,
-      availability: 'Available for new projects'
-    },
-    {
-      id: 2,
-      name: 'Prof. Ahmed Hassan',
-      title: 'Director of Renewable Energy Lab',
-      institution: 'Cairo University',
-      location: 'Cairo, Egypt',
-      match_score: 93,
-      match_reasons: ['Expertise in sustainable energy', 'Strong publication record', 'Active network'],
-      sdg_focus: [7, 9, 11],
-      h_index: 48,
-      publications: 189,
-      collaborations: 63,
-      availability: 'Available for new projects'
-    },
-    {
-      id: 3,
-      name: 'Dr. James Wong',
-      title: 'AI & Ethics Researcher',
-      institution: 'Stanford University',
-      location: 'Stanford, CA, USA',
-      match_score: 89,
-      match_reasons: ['AI expertise', 'Ethics alignment', 'High citation impact'],
-      sdg_focus: [9, 10, 16],
-      h_index: 45,
-      publications: 178,
-      collaborations: 52,
-      availability: 'Limited availability'
-    }
-  ];
 
   const sdgColors = {
     1: 'bg-red-500',
@@ -130,11 +87,11 @@ const ResearchMatching = () => {
       if (data.status === 'success' && (data.matches || data.data)) {
         setAiMatches(data.matches || data.data);
       } else {
-        setAiMatches(mockMatches);
+        setAiMatches([]);
       }
     } catch (error) {
       console.error('Error fetching matches:', error);
-      setAiMatches(mockMatches);
+      setAiMatches([]);
     } finally {
       setIsSearching(false);
       setShowResults(true);
@@ -325,19 +282,18 @@ const ResearchMatching = () => {
                       </div>
 
                       {/* Avatar */}
-                      <img
-                        src={match.avatar || `https://i.pravatar.cc/150?u=${match.id}`}
-                        alt={match.name}
-                        className="w-20 h-20 rounded-2xl object-cover shadow-lg"
-                        onError={(e) => { e.target.src = '/assets/img/researcher-default.svg'; }}
-                      />
+                      <InitialsAvatar src={match.avatar} name={match.name} seed={String(match.orcid || match.id || match.name)} className="w-20 h-20 rounded-2xl shadow-lg shrink-0" textClassName="text-xl" />
 
                       {/* Main Info */}
                       <div className="flex-1">
                         <div className="flex justify-between items-start mb-3">
                           <div>
-                            <h3 className="text-2xl font-bold text-gray-900 group-hover:text-purple-600 transition-colors">
+                            <h3 className="text-2xl font-bold text-gray-900 group-hover:text-purple-600 transition-colors flex flex-wrap items-center gap-2">
                               {match.name}
+                              <PremiumBadge tier={match.premium_tier} size="md" />
+                              {match.priority && (
+                                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">★ {t('premium:priority')}</span>
+                              )}
                             </h3>
                             <p className="text-gray-600 mb-1">{match.title || t('card.role_fallback')}</p>
                             <div className="flex items-center gap-4 text-[15px] text-gray-500">

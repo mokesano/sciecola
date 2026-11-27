@@ -35,7 +35,7 @@ try {
     $sdg   = max(0, min(17, (int)($_GET['sdg']   ?? 0)));
     $years = max(0, (int)($_GET['years'] ?? 0));
     $sort  = in_array($_GET['sort'] ?? 'impact', ['impact', 'citations', 'year'], true)
-        ? $_GET['sort'] : 'impact';
+        ? ($_GET['sort'] ?? 'impact') : 'impact';
     $page  = max(1, (int)($_GET['page']  ?? 1));
     $limit = min(50, max(1, (int)($_GET['limit'] ?? 10)));
 
@@ -73,7 +73,7 @@ function fetchArticleImpactData(int $sdg, int $years, string $sort, int $page, i
         }
     }
 
-    return getSampleImpactData($sdg, $sort, $page, $limit);
+    return \Sciecola\Support\EmptyData::like(getSampleImpactData($sdg, $sort, $page, $limit));
 }
 
 function buildImpactResponseFromDb(PDO $pdo, int $sdg, int $years, string $sort, int $page, int $limit, int $offset): array

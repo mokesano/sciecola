@@ -31,7 +31,6 @@ declare(strict_types=1);
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
@@ -41,9 +40,12 @@ try {
     if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
     $configFile = ROOT_PATH . '/config/config.php';
     if (file_exists($configFile)) require_once $configFile;
+    // Endpoint admin: wajib token admin (X-Admin-Token = ADMIN_TOOL_TOKEN di .env)
+    require_once ROOT_PATH . '/includes/autoload.php';
+    \Sciecola\Auth\AdminGuard::require();
 
     $action = $_GET['action'] ?? 'list';
-    $method = $_SERVER['REQUEST_METHOD'];
+    $method = \Sciecola\Auth\AdminGuard::method();
 
     if ($method === 'GET') {
         switch ($action) {

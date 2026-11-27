@@ -24,6 +24,10 @@ declare(strict_types=1);
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
 
+if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
+if (!defined('DB_DATABASE')) require_once ROOT_PATH . '/config/config.php';
+require_once ROOT_PATH . '/includes/autoload.php';
+
 try {
     // Validate ISSN parameter
     if (!isset($_GET['issn']) || empty(trim($_GET['issn']))) {
@@ -38,15 +42,27 @@ try {
         throw new Exception('Format ISSN tidak valid. ISSN harus berformat XXXX-XXXX', 400);
     }
 
-    // Step 1: Get Scopus journal metrics via journal-checker API
-    $scopusData = fetchScopusJournalMetrics($issn);
+    // Step 1: Metrik Scopus (boleh gagal: banyak jurnal nasional tidak terindeks Scopus)
+    $scopusData  = null;
+    $scopusError = null;
+    try {
+        $scopusData = fetchScopusJournalMetrics($issn);
+    } catch (Exception $e) {
+        $scopusError = $e;
+    }
 
-    // Step 2: Get SDG article distribution (optional enhancement for future)
-    $sdgData = [];
-    // Can be implemented when ISSN-to-articles mapping is available
+    // Step 2: Data nyata dari database Sciecola (artikel, penulis, sitasi, SDG, tren)
+    $localData = fetchLocalJournalData($issn);
+
+    if ($scopusData === null && $localData === null) {
+        throw $scopusError ?? new Exception('Jurnal tidak ditemukan', 404);
+    }
+    if ($scopusData === null) {
+        $scopusData = emptyScopusData($issn, $localData);
+    }
 
     // Step 3: Build unified response
-    $response = buildJournalProfileResponse($scopusData, $sdgData);
+    $response = buildJournalProfileResponse($scopusData, $localData ?? []);
 
     http_response_code(200);
     echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
@@ -66,35 +82,14 @@ try {
 // =====================================================================
 
 /**
- * Fetch Scopus journal metrics via HTTP POST to journal-checker
+ * Fetch Scopus journal metrics.
+ * Dulu lebih dulu memanggil http://localhost/api/scopus/journal-checker.php dan melempar error
+ * bila gagal — di cPanel URL itu tidak ada, sehingga halaman jurnal selalu error 500 sebelum
+ * sempat memakai jalur langsung di bawah. Kini langsung memakai jalur langsung.
  */
 function fetchScopusJournalMetrics($issn) {
     // Format ISSN with dash for Scopus API
     $formattedIssn = substr(str_replace('-', '', $issn), 0, 4) . '-' . substr(str_replace('-', '', $issn), 4);
-
-    // Use journal-checker.php as backend service via HTTP POST
-    $url = 'http://localhost/api/scopus/journal-checker.php';
-
-    $ch = curl_init($url);
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST           => true,
-        CURLOPT_POSTFIELDS     => http_build_query(['issn' => $formattedIssn]),
-        CURLOPT_TIMEOUT        => 15,
-        CURLOPT_CONNECTTIMEOUT => 5,
-    ]);
-
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $error = curl_error($ch);
-    curl_close($ch);
-
-    if ($httpCode !== 200 || !$response) {
-        throw new Exception('Gagal mengambil data Scopus: ' . ($error ?: "HTTP $httpCode"), 500);
-    }
-
-    // journal-checker.php returns HTML. We need to extract JSON or create fallback
-    // For now, we'll call the ScopusAPI class directly
     return fetchScopusMetricsDirectly($formattedIssn);
 }
 
@@ -109,8 +104,17 @@ function fetchScopusMetricsDirectly($issn) {
         throw new Exception('Journal checker API tidak ditemukan', 500);
     }
 
-    // Get Scopus API key from environment or default
-    $scopusApiKey = getenv('SCOPUS_API_KEY') ?: '2b2a63a2cd69bd0cfd7acc07addc140f';
+    // API key Scopus hanya dari environment (.env). Dulu ada key tertanam di kode ini —
+    // key tersebut sebaiknya dicabut/diganti di portal Elsevier.
+    $scopusApiKey = getenv('SCOPUS_API_KEY') ?: '';
+    if ($scopusApiKey === '') {
+        // Tanpa key lokal: pakai wizdam-apis (menyimpan key Scopus di servernya sendiri)
+        $res = \Sciecola\Integration\SangiaApiClient::journalMetrics($issn);
+        if ($res) {
+            return mapWizdamJournalMetrics($res, $issn);
+        }
+        throw new Exception('Metrik Scopus tidak tersedia (SCOPUS_API_KEY / SANGIA_API_KEY belum diatur)', 503);
+    }
 
     // We'll use output buffering to capture and parse
     // But first, let's create a simple cURL wrapper for Scopus API
@@ -361,18 +365,14 @@ function extractPublicationType($entry) {
  * Build unified journal profile response
  */
 function buildJournalProfileResponse($scopusData, $sdgData = []) {
-    if (!$scopusData['success']) {
+    if (empty($scopusData['success'])) {
         throw new Exception($scopusData['error'] ?? 'Failed to fetch journal data', 500);
     }
 
-    // Build mock SDG distribution for now (future: integrate with real data)
-    $sdgDistribution = generateSampleSDGDistribution();
-
-    // Build mock publication trend (future: integrate with real Scopus data)
-    $publicationTrend = generateSamplePublicationTrend();
-
-    // Build mock citation trend (future: integrate with real Scopus data)
-    $citationTrend = generateSampleCitationTrend();
+    // Data nyata dari database Sciecola (kosong bila jurnal belum punya artikel tersimpan)
+    $sdgDistribution  = $sdgData['sdg_distribution'] ?? [];
+    $publicationTrend = $sdgData['publication_trend'] ?? [];
+    $citationTrend    = []; // belum ada data sitasi per tahun
 
     return [
         'status'             => 'success',
@@ -388,14 +388,14 @@ function buildJournalProfileResponse($scopusData, $sdgData = []) {
         'established'        => (string)($scopusData['coverage_start'] ?? date('Y')),
         'frequency'          => 'Regular',
         'coverImage'         => null, // No image from Scopus
-        'scope'              => 'Journal indexed in Scopus with articles across various SDGs.',
+        'scope'              => null,
         'editorialBoard'     => [],
 
         // Stats from Scopus
-        'totalArticles'      => 0, // Not available from this endpoint
-        'totalAuthors'       => 0, // Not available
-        'totalCitations'     => 0, // Not available
-        'totalViews'         => 0, // Not available
+        'totalArticles'      => (int) ($sdgData['total_articles'] ?? 0),
+        'totalAuthors'       => (int) ($sdgData['total_authors'] ?? 0),
+        'totalCitations'     => (int) ($sdgData['total_citations'] ?? 0),
+        'totalViews'         => 0, // belum ada pelacakan kunjungan
         'impactScore'        => $scopusData['citescore'] ?? 0,
         'sdgsCovered'        => count($sdgDistribution),
 
@@ -429,10 +429,9 @@ function buildJournalProfileResponse($scopusData, $sdgData = []) {
         'publicationTrend'   => $publicationTrend,
         'citationTrend'      => $citationTrend,
 
-        // Sample data
-        'topArticles'        => [],
-        'accessStats'        => generateSampleAccessStats(),
-        'indexing'           => ['Scopus'],
+        'topArticles'        => $sdgData['top_articles'] ?? [],
+        'accessStats'        => [], // belum ada pelacakan kunjungan/unduhan
+        'indexing'           => !empty($scopusData['scopus_id']) ? ['Scopus'] : [],
 
         'timestamp'          => date('c'),
         'api_version'        => 'v1.0.0',
@@ -490,23 +489,6 @@ function generateSampleCitationTrend() {
 }
 
 /**
- * Generate sample access stats
- */
-function generateSampleAccessStats() {
-    $months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-    $stats = [];
-
-    foreach ($months as $month) {
-        $stats[] = [
-            'month' => $month,
-            'views' => mt_rand(5000, 15000),
-        ];
-    }
-
-    return $stats;
-}
-
-/**
  * Sanitize ID from journal name
  */
 function sanitizeId($name) {
@@ -514,4 +496,95 @@ function sanitizeId($name) {
     $id = preg_replace('/[^a-z0-9]+/', '-', $id);
     $id = trim($id, '-');
     return $id;
+}
+
+/**
+ * Data jurnal dari database Sciecola berdasarkan ISSN (print atau elektronik).
+ * @return array|null null bila jurnal tidak ada di database
+ */
+function fetchLocalJournalData($issn) {
+    $pdo = \Sciecola\Database\Db::pdo();
+    if ($pdo === null) return null;
+    $clean = str_replace('-', '', $issn);
+    $dash  = substr($clean, 0, 4) . '-' . substr($clean, 4);
+    try {
+        $st = $pdo->prepare('SELECT * FROM journals WHERE issn IN (?, ?) OR e_issn IN (?, ?) LIMIT 1');
+        $st->execute([$dash, $clean, $dash, $clean]);
+        $j = $st->fetch(PDO::FETCH_ASSOC);
+        if (!$j) return null;
+        $jid = (int) $j['id'];
+
+        $tot = $pdo->prepare('SELECT COUNT(*) AS n, COALESCE(SUM(citation_count),0) AS c FROM publications WHERE journal_id = ?');
+        $tot->execute([$jid]);
+        $t = $tot->fetch(PDO::FETCH_ASSOC);
+
+        $au = $pdo->prepare('SELECT COUNT(DISTINCT pa.name) FROM publication_authors pa JOIN publications p ON p.doi = pa.doi WHERE p.journal_id = ?');
+        $au->execute([$jid]);
+
+        $tr = $pdo->prepare('SELECT publication_year AS y, COUNT(*) AS n FROM publications WHERE journal_id = ? AND publication_year IS NOT NULL GROUP BY publication_year ORDER BY publication_year');
+        $tr->execute([$jid]);
+        $trend = array_map(fn ($r) => ['year' => (string) $r['y'], 'articles' => (int) $r['n']], $tr->fetchAll(PDO::FETCH_ASSOC));
+
+        $sd = $pdo->prepare('SELECT ws.sdg_number AS sdg, COUNT(DISTINCT ws.doi) AS n FROM work_sdgs ws JOIN publications p ON p.doi = ws.doi WHERE p.journal_id = ? GROUP BY ws.sdg_number ORDER BY n DESC');
+        $sd->execute([$jid]);
+        $rows = $sd->fetchAll(PDO::FETCH_ASSOC);
+        $sum  = max(1, array_sum(array_column($rows, 'n')));
+        $dist = array_map(fn ($r) => [
+            'sdg'   => (int) $r['sdg'],
+            'name'  => 'SDG ' . (int) $r['sdg'],
+            'value' => (int) round($r['n'] / $sum * 100),
+            'count' => (int) $r['n'],
+        ], $rows);
+
+        $ta = $pdo->prepare('SELECT doi, title, publication_year, citation_count FROM publications WHERE journal_id = ? ORDER BY citation_count DESC, publication_year DESC LIMIT 5');
+        $ta->execute([$jid]);
+        $top = array_map(fn ($r) => [
+            'doi' => $r['doi'], 'title' => $r['title'],
+            'year' => $r['publication_year'] !== null ? (int) $r['publication_year'] : null,
+            'citations' => (int) $r['citation_count'],
+        ], $ta->fetchAll(PDO::FETCH_ASSOC));
+
+        return [
+            'journal'           => $j,
+            'total_articles'    => (int) $t['n'],
+            'total_citations'   => (int) $t['c'],
+            'total_authors'     => (int) $au->fetchColumn(),
+            'publication_trend' => $trend,
+            'sdg_distribution'  => $dist,
+            'top_articles'      => $top,
+        ];
+    } catch (Throwable $e) {
+        return null;
+    }
+}
+
+/** Kerangka data Scopus kosong untuk jurnal yang hanya ada di database lokal. */
+function emptyScopusData($issn, array $local) {
+    $j = $local['journal'] ?? [];
+    return [
+        'success' => true, 'issn' => $j['issn'] ?? $issn, 'title' => $j['title'] ?? 'Unknown Journal',
+        'publisher' => $j['publisher'] ?? null, 'scopus_id' => null, 'subject_areas' => [],
+        'citescore' => isset($j['cite_score']) ? (float) $j['cite_score'] : null, 'citescore_year' => null,
+        'quartile' => isset($j['quartile']) ? 'Q' . (int) $j['quartile'] : null, 'quartile_year' => null,
+        'sjr' => isset($j['sjr_score']) ? (float) $j['sjr_score'] : null, 'snip' => isset($j['snip_score']) ? (float) $j['snip_score'] : null,
+        'coverage_start' => null, 'coverage_end' => null, 'open_access' => null,
+        'country' => $j['country'] ?? null, 'publication_type' => 'Journal',
+    ];
+}
+
+/** Memetakan respons wizdam-apis /api/v1/journal/metrics ke bentuk parseScopusResponse(). */
+function mapWizdamJournalMetrics(array $res, $issn) {
+    $j = $res['journal'] ?? [];
+    $m = $res['metrics'] ?? [];
+    return [
+        'success' => true, 'issn' => $j['issn_print'] ?? $issn, 'title' => $j['title'] ?? 'N/A',
+        'publisher' => $j['publisher'] ?? 'N/A', 'scopus_id' => null,
+        'subject_areas' => array_values(array_filter(array_map(fn ($a) => $a['name'] ?? null, $m['subject_areas'] ?? []))),
+        'citescore' => $m['citescore'] ?? null, 'citescore_year' => null,
+        'quartile' => $m['quartile'] ?? null, 'quartile_year' => null,
+        'sjr' => $m['sjr'] ?? null, 'snip' => $m['snip'] ?? null,
+        'coverage_start' => null, 'coverage_end' => null,
+        'open_access' => $j['open_access'] ?? null, 'country' => null,
+        'publication_type' => $j['publication_type'] ?? 'Journal',
+    ];
 }

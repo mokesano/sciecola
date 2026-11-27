@@ -11,9 +11,10 @@ declare(strict_types=1);
  * @ingroup api
  * @brief Article Profile API - Aggregates DOI article data with SDG classification and journal metrics.
  * Combines data from:
- * - SDG_Classification_API.php: Article metadata + SDG classification
+ * - Database sangia_ecosystem (publications, publication_authors, work_sdgs, journals), bila ada
+ * - Mesin SDG lokal (SdgEngine, in-process) bila DOI belum ada di database; hasilnya disimpan ke DB
  * - Crossref API: Journal ISSN (via Crossref direct call)
- * - Scopus journal-checker: Journal metrics (CiteScore, Quartile, SJR, SNIP)
+ * - wizdam-apis /api/v1/journal/metrics: Journal metrics (CiteScore, Quartile, SJR, SNIP)
  *
  * Response includes: article info, authors, SDG distribution, journal metrics, citation trends
  *
@@ -23,6 +24,10 @@ declare(strict_types=1);
 
 error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 header('Content-Type: application/json; charset=utf-8');
+
+if (!defined('ROOT_PATH')) define('ROOT_PATH', dirname(__DIR__, 2));
+if (!defined('DB_DATABASE')) require_once ROOT_PATH . '/config/config.php';
+require_once ROOT_PATH . '/includes/autoload.php';
 
 try {
     // Validate DOI parameter
@@ -44,8 +49,9 @@ try {
 
     $doi = $clean_doi;
 
-    // Step 1: Call SDG_Classification_API for article data + SDG analysis
-    $articleData = callSdgClassificationApi($doi, $force_refresh);
+    // Step 1: Data artikel + SDG (database dulu, lalu mesin SDG lokal)
+    @set_time_limit(60);
+    $articleData = getArticleData($doi, $force_refresh);
 
     // Step 2: Extract journal ISSN and fetch Scopus metrics
     $journalData = [];
@@ -77,41 +83,93 @@ try {
 // =====================================================================
 
 /**
- * Call SDG_Classification_API.php to get article data + SDG classification
- * Uses HTTP request instead of direct include to avoid context issues
+ * Data artikel + klasifikasi SDG.
+ * 1) Database (publications + publication_authors + work_sdgs + journals) bila DOI sudah tersimpan.
+ * 2) Mesin SDG lokal di proses yang sama (SdgEngine); hasilnya langsung disimpan ke database.
+ * Dulu fungsi ini memanggil http://localhost/api/SDG_Classification_API.php — URL yang tidak ada
+ * di susunan cPanel (document root = public/) sehingga halaman selalu error 500.
  */
-function callSdgClassificationApi($doi, $force_refresh = false) {
-    $url = 'http://localhost/api/SDG_Classification_API.php?doi=' . urlencode($doi);
-    if ($force_refresh) {
-        $url .= '&refresh=true';
+function getArticleData($doi, $force_refresh = false) {
+    $doi = strtolower($doi);
+
+    if (!$force_refresh && ($fromDb = getArticleFromDatabase($doi)) !== null) {
+        return $fromDb;
     }
 
-    $ch = curl_init($url);
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT        => 30,
-        CURLOPT_CONNECTTIMEOUT => 5,
-    ]);
-
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $error = curl_error($ch);
-    curl_close($ch);
-
-    if (!$response || $httpCode !== 200) {
-        throw new Exception('SDG Classification API error: ' . ($error ?: "HTTP $httpCode"), 500);
+    try {
+        $data = \Sciecola\Sdg\SdgEngine::doi($doi, (bool) $force_refresh);
+    } catch (Throwable $e) {
+        $code = (int) $e->getCode();
+        throw new Exception('Analisis SDG gagal: ' . $e->getMessage(), $code >= 400 && $code < 600 ? $code : 502);
     }
 
-    $data = json_decode($response, true);
-    if (!$data) {
-        throw new Exception('SDG Classification API mengembalikan respons tidak valid', 500);
+    $pdo = \Sciecola\Database\Db::pdo();
+    if ($pdo !== null) {
+        try {
+            (new \Sciecola\Cache\CacheMigrator($pdo, ROOT_PATH . '/cache'))->migrateData($data, 'article_profile:' . $doi);
+        } catch (Throwable $e) {
+            // tampilan tetap jalan walau penyimpanan gagal
+        }
     }
-
-    if ($data['status'] !== 'success') {
-        throw new Exception($data['message'] ?? 'SDG Classification API error', 500);
-    }
-
+    $data['data_source'] = 'engine';
     return $data;
+}
+
+/**
+ * Menyusun data artikel dari database dalam bentuk yang sama dengan keluaran mesin SDG.
+ * Dipakai bila DOI sudah punya hasil klasifikasi (work_sdgs) atau abstrak tersimpan.
+ */
+function getArticleFromDatabase($doi) {
+    $pdo = \Sciecola\Database\Db::pdo();
+    if ($pdo === null) return null;
+    try {
+        $st = $pdo->prepare('SELECT p.*, j.title AS journal_title FROM publications p LEFT JOIN journals j ON j.id = p.journal_id WHERE p.doi = ?');
+        $st->execute([$doi]);
+        $p = $st->fetch(PDO::FETCH_ASSOC);
+        if (!$p) return null;
+
+        $st = $pdo->prepare('SELECT sdg_number, confidence, classification_detail FROM work_sdgs WHERE doi = ? ORDER BY confidence DESC');
+        $st->execute([$doi]);
+        $sdgRows = $st->fetchAll(PDO::FETCH_ASSOC);
+        if ($sdgRows === [] && trim((string) $p['abstract']) === '') {
+            return null; // belum pernah diklasifikasi: jalankan mesin
+        }
+
+        $st = $pdo->prepare('SELECT name FROM publication_authors WHERE doi = ? ORDER BY sequence');
+        $st->execute([$doi]);
+        $authors = $st->fetchAll(PDO::FETCH_COLUMN);
+
+        $sdgs = []; $confidence = []; $detailed = []; $ctypes = [];
+        foreach ($sdgRows as $r) {
+            $key = 'SDG' . (int) $r['sdg_number'];
+            $sdgs[] = $key;
+            if ($r['confidence'] !== null) $confidence[$key] = (float) $r['confidence'];
+            $detail = json_decode((string) $r['classification_detail'], true) ?: [];
+            if (!empty($detail['analysis'])) $detailed[$key] = $detail['analysis'];
+            if (!empty($detail['contributor_type'])) $ctypes[$key] = $detail['contributor_type'];
+        }
+        $raw = json_decode((string) $p['raw_data_json'], true) ?: [];
+
+        return [
+            'status'            => 'success',
+            'doi'               => $p['doi'],
+            'title'             => $p['title'],
+            'abstract'          => $p['abstract'],
+            'authors'           => $authors,
+            'journal'           => $p['journal_title'] ?? '',
+            'publisher'         => $p['publisher'],
+            'published_date'    => $raw['published_date'] ?? ($p['publication_year'] ? (string) $p['publication_year'] : null),
+            'year'              => $p['publication_year'] !== null ? (int) $p['publication_year'] : null,
+            'citations'         => (int) $p['citation_count'],
+            'sdgs'              => $sdgs,
+            'sdg_confidence'    => $confidence,
+            'contributor_types' => $ctypes,
+            'detailed_analysis' => $detailed,
+            'data_source'       => 'database',
+        ];
+    } catch (Throwable $e) {
+        return null;
+    }
 }
 
 /**
@@ -154,39 +212,26 @@ function extractISSNFromCrossref($doi) {
 }
 
 /**
- * Call Scopus journal-checker API to get journal metrics
- * Note: journal-checker.php expects POST request, so we call it via HTTP POST
+ * Metrik jurnal dari wizdam-apis (GET /api/v1/journal/metrics).
+ * Dulu memanggil http://localhost/api/scopus/journal-checker.php yang mengembalikan HTML
+ * (dan tidak terjangkau di cPanel), sehingga metrik jurnal selalu kosong.
  */
 function fetchScopusJournalData($issn) {
     if (empty($issn)) {
         return [];
     }
-
-    $url = 'http://localhost/api/scopus/journal-checker.php';
-
-    $ch = curl_init($url);
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST           => true,
-        CURLOPT_POSTFIELDS     => http_build_query(['issn' => $issn]),
-        CURLOPT_TIMEOUT        => 15,
-        CURLOPT_CONNECTTIMEOUT => 5,
-    ]);
-
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $error = curl_error($ch);
-    curl_close($ch);
-
-    if ($httpCode !== 200 || !$response) {
-        return [];
+    $res = \Sciecola\Integration\SangiaApiClient::journalMetrics($issn);
+    if (!$res) {
+        return ['issn' => $issn];
     }
-
-    // journal-checker.php returns HTML by default, not JSON
-    // We need to parse the response to extract JSON or journal data
-    // For now, return empty array since we can't easily parse the HTML response
-    // TODO: Consider modifying journal-checker.php to support API JSON response
-    return [];
+    $metrics = $res['metrics'] ?? [];
+    return [
+        'issn'      => $res['journal']['issn_print'] ?? $issn,
+        'quartile'  => $metrics['quartile'] ?? null,
+        'citescore' => $metrics['citescore'] ?? null,
+        'sjr'       => $metrics['sjr'] ?? null,
+        'snip'      => $metrics['snip'] ?? null,
+    ];
 }
 
 /**
@@ -228,9 +273,9 @@ function buildArticleProfileResponse($articleData, $journalData = []) {
             'quartile'   => $journalData['quartile'] ?? null,
             'citescore'  => $journalData['citescore'] ?? null,
         ],
-        'publisher'        => 'CrossRef',
+        'publisher'        => $articleData['publisher'] ?? null,
         'coverImage'       => null,
-        'citations'        => 0,
+        'citations'        => (int) ($articleData['citations'] ?? 0),
         'hIndex'           => 0,
         'views'            => 0,
         'downloads'        => 0,
@@ -238,8 +283,11 @@ function buildArticleProfileResponse($articleData, $journalData = []) {
         'impactScore'      => $journalData['citescore'] ?? 0,
         'sdgDistribution'  => $sdgDistribution,
         'sdgs'             => $articleData['sdgs'] ?? [],
-        'citationTrend'    => generateCitationTrendData(),
-        'performanceMetrics' => generatePerformanceMetricsData(),
+        // Belum ada sumber data tren sitasi/kinerja per tahun: kirim kosong (UI menampilkan keadaan kosong),
+        // bukan angka buatan seperti sebelumnya.
+        'citationTrend'    => [],
+        'performanceMetrics' => [],
+        'dataSource'       => $articleData['data_source'] ?? null,
         'versions'         => generateVersionHistory($articleData['published_date'] ?? null),
         'topCitations'     => [],
         'relatedArticles'  => [],
@@ -255,6 +303,9 @@ function buildArticleProfileResponse($articleData, $journalData = []) {
 function formatAuthorsForDisplay($authors) {
     $formatted = [];
     foreach ($authors as $index => $name) {
+        if (is_array($name)) {
+            $name = $name['name'] ?? '';
+        }
         $formatted[] = [
             'name'        => $name,
             'affiliation' => 'External Author',
