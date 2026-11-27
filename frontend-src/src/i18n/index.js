@@ -67,6 +67,8 @@ import idInnovationMarket   from './locales/id/innovation_marketplace.json';
 import enInnovationMarket   from './locales/en/innovation_marketplace.json';
 import idPremium            from './locales/id/premium.json';
 import enPremium            from './locales/en/premium.json';
+import idPayments           from './locales/id/payments.json';
+import enPayments           from './locales/en/payments.json';
 import idProjectManagement  from './locales/id/project_management.json';
 import enProjectManagement  from './locales/en/project_management.json';
 import idResearchMatching   from './locales/id/research_matching.json';
@@ -184,6 +186,7 @@ i18n
         collaboration_hub:      idCollaborationHub,
         innovation_marketplace: idInnovationMarket,
         premium: idPremium,
+        payments: idPayments,
         project_management:     idProjectManagement,
         institutions: idInstitutions,
         article_profile:     idArticleProfile,
@@ -256,6 +259,7 @@ i18n
         collaboration_hub:      enCollaborationHub,
         innovation_marketplace: enInnovationMarket,
         premium: enPremium,
+        payments: enPayments,
         project_management:     enProjectManagement,
         institutions: enInstitutions,
         article_profile:     enArticleProfile,
@@ -314,7 +318,7 @@ i18n
     lng:         detectLang(),
     fallbackLng: 'id',
     defaultNS:   'translation',
-    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams', 'insights_page', 'change_password', 'settings', 'account', 'auth', 'my_activity', 'notifications', 'my_statistics', 'messages', 'my_articles', 'dashboard_page', 'my_profile', 'feeds', 'terms', 'privacy', 'faq', 'help', 'sitemap', 'system_status', 'tutorial_orcid', 'docs_page', 'log_history', 'tutorial_doi', 'tutorial_results', 'tutorial_export', 'scieco_dashboard', 'collection_detail', 'contact', 'admin', 'monitoring', 'doc', 'api', 'research_matching', 'collaboration_hub', 'innovation_marketplace', 'premium', 'project_management', 'common_ui', 'chatbot', 'admin_panel', 'admin_landing'],
+    ns:          ['translation', 'navbar', 'footer', 'homepage', 'dashboard', 'researcher', 'researchers', 'articles', 'journals', 'institutions', 'article_profile', 'journal_profile', 'institution_profile', 'my_collections', 'sdgs_cluster', 'analytics', 'trends_analysis', 'article_impact', 'top_researchers', 'researcher_distribution', 'leaderboard', 'become_sponsor', 'sponsors', 'partners', 'about', 'history', 'teams', 'team_member', 'admin_teams', 'insights_page', 'change_password', 'settings', 'account', 'auth', 'my_activity', 'notifications', 'my_statistics', 'messages', 'my_articles', 'dashboard_page', 'my_profile', 'feeds', 'terms', 'privacy', 'faq', 'help', 'sitemap', 'system_status', 'tutorial_orcid', 'docs_page', 'log_history', 'tutorial_doi', 'tutorial_results', 'tutorial_export', 'scieco_dashboard', 'collection_detail', 'contact', 'admin', 'monitoring', 'doc', 'api', 'research_matching', 'collaboration_hub', 'innovation_marketplace', 'premium', 'payments', 'project_management', 'common_ui', 'chatbot', 'admin_panel', 'admin_landing'],
     interpolation: { escapeValue: false },
   });
 

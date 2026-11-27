@@ -1,10 +1,13 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router';
+import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle, Sparkles, Gift, Mail } from 'lucide-react';
 import usePremium, { refreshPremium } from '../hooks/usePremium';
 import PremiumBadge from '../components/premium/PremiumBadge';
 import PartnerShowcase from '../components/premium/PartnerShowcase';
+import { useAuth } from '../context/AuthContext';
+import { startPayment, checkReturnedPayment, formatMoney, GATEWAY_LABEL } from '../utils/payments';
 
 /**
  * Halaman Layanan Premium (/premium).
@@ -19,6 +22,26 @@ export default function Premium() {
   const { t, i18n } = useTranslation('premium');
   const p = usePremium();
   useEffect(() => { refreshPremium(); }, []); // status keanggotaan terbaru (mis. setelah masuk)
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [buying, setBuying] = useState('');
+
+  // Kembali dari halaman bayar: cek status transaksi keanggotaan.
+  useEffect(() => {
+    checkReturnedPayment('membership').then((pay) => {
+      if (!pay) return;
+      if (pay.status === 'paid') { toast.success(t('payments:returned.membership_paid'), { duration: 7000 }); refreshPremium(); }
+      else if (pay.status === 'pending') toast(t('payments:returned.pending'), { duration: 6000 });
+      else toast.error(t(`payments:returned.${pay.status}`, { defaultValue: t('payments:returned.failed') }));
+    });
+  }, [t]);
+
+  const buy = async (tier) => {
+    if (!user) { navigate(`/login?next=${encodeURIComponent('/premium')}`); return; }
+    setBuying(tier);
+    try { await startPayment({ purpose: 'membership', tier }); }
+    catch (e) { toast.error(e.message); setBuying(''); }
+  };
   const locale = i18n.language === 'id' ? 'id-ID' : 'en-US';
   const alwaysFree = t('page.always_free', { returnObjects: true });
   const activeFeatures = FEATURE_ORDER.filter((f) => p.features?.[f]);
@@ -70,6 +93,20 @@ export default function Premium() {
                   <li className="flex gap-2"><CheckCircle className="h-4 w-4 shrink-0 text-emerald-600" />{t('page.quota', { count: p.tiers?.[tier]?.verified_quota ?? 0 })}</li>
                   <li className="flex gap-2"><CheckCircle className="h-4 w-4 shrink-0 text-emerald-600" />{t('page.all_features')}</li>
                 </ul>
+                {p.enabled && (p.tiers?.[tier]?.price || 0) > 0 && (
+                  <div className="mt-5 border-t border-gray-100 pt-4">
+                    <p className="text-2xl font-bold text-gray-900">{formatMoney(p.tiers[tier].price, 'IDR', locale)}
+                      <span className="text-sm font-normal text-gray-500"> / {t('payments:months', { count: p.membership_months || 12 })}</span></p>
+                    {p.online_payment ? (
+                      <button type="button" disabled={!!buying} onClick={() => buy(tier)}
+                        className={`mt-3 w-full rounded-xl px-4 py-2.5 font-semibold disabled:opacity-60 ${tier === 'sponsor' ? 'bg-gradient-to-r from-amber-400 to-yellow-400 text-amber-950 hover:from-amber-500 hover:to-yellow-500' : 'bg-indigo-600 text-white hover:bg-indigo-700'}`}>
+                        {buying === tier ? t('payments:redirecting') : p.me?.tier === tier ? t('payments:extend') : t('payments:buy', { gateway: GATEWAY_LABEL[p.online_payment] })}
+                      </button>
+                    ) : (
+                      <p className="mt-2 text-xs text-gray-500">{t('payments:buy_contact')}</p>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>

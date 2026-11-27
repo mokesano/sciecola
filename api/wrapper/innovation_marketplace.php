@@ -32,6 +32,7 @@ use Sciecola\Auth\UserAuth;
 use Sciecola\Community\Notifications;
 use Sciecola\Database\Db;
 use Sciecola\Marketplace\OpportunityCuration;
+use Sciecola\Payment\PaymentService;
 use Sciecola\Premium\Premium;
 use Sciecola\Support\ResearcherRecord;
 
@@ -274,6 +275,8 @@ function mkt_opportunities(PDO $pdo, ?array $me): array
             'fee_currency'      => $cfg['feeCurrency'],
             // Instruksi pembayaran hanya untuk pengguna yang login (dipakai saat memasang peluang).
             'fee_instructions'  => $me ? $cfg['feeInstructions'] : null,
+            // Cara bayar: gateway online (midtrans/xendit/null) dan/atau manual.
+            'payment'           => PaymentService::publicConfig(),
         ],
     ];
 }
@@ -481,6 +484,7 @@ function mkt_confirm_payment(PDO $pdo, array $in, array $me): array
         mkt_fail('Peluang tidak ditemukan', 404);
     }
     if (in_array($o['fee_status'], ['paid', 'waived'], true)) mkt_fail('Biaya penayangan peluang ini sudah lunas', 409);
+    if (!PaymentService::manualAvailable()) mkt_fail('Pembayaran manual tidak tersedia. Silakan bayar melalui tombol pembayaran online.', 409);
     $ref = mb_substr(trim(strip_tags((string) ($in['reference'] ?? ''))), 0, 255);
     if (mb_strlen($ref) < 4) mkt_fail('Isi keterangan pembayaran (mis. nama pengirim, bank, tanggal, atau nomor referensi)');
     $now = date('Y-m-d H:i:s');

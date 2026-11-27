@@ -9,7 +9,10 @@
     "home": "Kembali ke Beranda",
     "support": "Hubungi Dukungan"
   },
-  "breadcrumb": { "label": "remah roti", "home": "Beranda" },
+  "breadcrumb": {
+    "label": "remah roti",
+    "home": "Beranda"
+  },
   "sponsorship": {
     "title": "Pilihan Tier Sponsorship",
     "popular": "Paling Diminati",
@@ -29,5 +32,19 @@
     "scopus": "Scopus Author ID",
     "cancel": "Batal"
   },
-  "map": { "less": "Sedikit", "more": "Banyak", "alt": "Peta dunia" }
+  "map": {
+    "less": "Sedikit",
+    "more": "Banyak",
+    "alt": "Peta dunia"
+  },
+  "lookup_loader": {
+    "title_profile": "Memeriksa profil peneliti",
+    "title_doi": "Memeriksa artikel (DOI)",
+    "validate": "Validasi format {{type}}",
+    "fetch_profile": "Mengambil profil & karya, lalu mengklasifikasikan SDG",
+    "fetch_doi": "Mengambil metadata artikel & mengklasifikasikan SDG",
+    "render_profile": "Menyusun halaman profil",
+    "render_doi": "Menyusun halaman artikel",
+    "slow_hint": "Pemeriksaan pertama bisa memakan waktu lebih lama karena data diambil dan dianalisis langsung. Hasilnya disimpan sehingga kunjungan berikutnya lebih cepat."
+  }
 }

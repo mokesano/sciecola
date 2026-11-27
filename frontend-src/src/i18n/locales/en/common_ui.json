@@ -9,7 +9,10 @@
     "home": "Back to Home",
     "support": "Contact Support"
   },
-  "breadcrumb": { "label": "breadcrumb", "home": "Home" },
+  "breadcrumb": {
+    "label": "breadcrumb",
+    "home": "Home"
+  },
   "sponsorship": {
     "title": "Sponsorship Tiers",
     "popular": "Most Popular",
@@ -29,5 +32,19 @@
     "scopus": "Scopus Author ID",
     "cancel": "Cancel"
   },
-  "map": { "less": "Less", "more": "More", "alt": "World map" }
+  "map": {
+    "less": "Less",
+    "more": "More",
+    "alt": "World map"
+  },
+  "lookup_loader": {
+    "title_profile": "Checking researcher profile",
+    "title_doi": "Checking article (DOI)",
+    "validate": "Validate {{type}} format",
+    "fetch_profile": "Fetch profile & works, then classify SDGs",
+    "fetch_doi": "Fetch article metadata & classify SDGs",
+    "render_profile": "Build profile page",
+    "render_doi": "Build article page",
+    "slow_hint": "The first check can take longer because data is fetched and analysed live. Results are stored, so the next visit is faster."
+  }
 }

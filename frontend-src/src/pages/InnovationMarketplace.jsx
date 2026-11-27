@@ -9,6 +9,7 @@ import { Lightbulb, Handshake, Building2, TrendingUp, Search, Filter, ArrowRight
 import { useAuth } from '../context/AuthContext';
 import PremiumBadge from '../components/premium/PremiumBadge';
 import PartnerShowcase from '../components/premium/PartnerShowcase';
+import { startPayment, checkReturnedPayment, GATEWAY_LABEL } from '../utils/payments';
 
 /**
  * Pasar Inovasi — data dari /api/innovation_marketplace.php.
@@ -153,6 +154,16 @@ const InnovationMarketplace = () => {
   }, []);
 
   useEffect(() => { loadOpportunities(); loadStats(); }, [loadOpportunities, loadStats]);
+
+  // Kembali dari halaman bayar Midtrans/Xendit: tanyakan status transaksi ke server.
+  useEffect(() => {
+    checkReturnedPayment('opportunity_fee').then((p) => {
+      if (!p) return;
+      if (p.status === 'paid') { toast.success(t('payments:returned.paid'), { duration: 6000 }); loadOpportunities(); }
+      else if (p.status === 'pending') toast(t('payments:returned.pending'), { duration: 6000 });
+      else toast.error(t(`payments:returned.${p.status}`, { defaultValue: t('payments:returned.failed') }));
+    });
+  }, [loadOpportunities, t]);
 
   // Tautan langsung: /innovation-marketplace?opp=12 (dari tombol bagikan / notifikasi).
   useEffect(() => {
@@ -763,6 +774,7 @@ function PostForm({ t, busy, categories, curation = {}, locale, onClose, onSubmi
 /** Lencana kurasi + penilaian publik, atau panel status untuk pemasang. */
 function CurationPanel({ opp, t, locale, curation, busy, onVote, onConfirmPayment }) {
   const [ref, setRef] = useState('');
+  const [paying, setPaying] = useState(false);
   const status = opp.curation_status;
 
   if (opp.is_mine) {
@@ -792,8 +804,24 @@ function CurationPanel({ opp, t, locale, curation, busy, onVote, onConfirmPaymen
             {!fee.free_now && fee.status !== 'waived' && fee.amount !== null && fee.amount !== undefined && (
               <p className="mt-2 text-lg font-bold text-gray-900">{fmtMoney(fee.amount, fee.currency, locale)}</p>
             )}
-            {fee.status === 'unpaid' && !fee.free_now && (
+            {fee.status === 'unpaid' && !fee.free_now && curation.payment?.gateway && (
+              <div className="mt-3">
+                <button type="button" disabled={paying}
+                  onClick={async () => {
+                    setPaying(true);
+                    try { await startPayment({ purpose: 'opportunity_fee', opportunity_id: opp.id }); }
+                    catch (e) { toast.error(e.message); setPaying(false); }
+                  }}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 font-semibold text-white hover:bg-emerald-700 disabled:opacity-60 sm:w-auto">
+                  <Wallet className="h-4 w-4" />
+                  {paying ? t('payments:redirecting') : t('payments:pay_now', { gateway: GATEWAY_LABEL[curation.payment.gateway] })}
+                </button>
+                <p className="mt-1 text-xs text-gray-500">{t('payments:pay_now_hint')}</p>
+              </div>
+            )}
+            {fee.status === 'unpaid' && !fee.free_now && curation.payment?.manual !== false && (
               <>
+                {curation.payment?.gateway && <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-gray-500">{t('payments:or_manual')}</p>}
                 {curation.fee_instructions && <p className="mt-2 whitespace-pre-wrap text-gray-700">{curation.fee_instructions}</p>}
                 <form className="mt-3 flex flex-col gap-2 sm:flex-row" onSubmit={(e) => { e.preventDefault(); onConfirmPayment(ref); }}>
                   <input className={inputCls} value={ref} onChange={(e) => setRef(e.target.value)} maxLength={255} required minLength={4}

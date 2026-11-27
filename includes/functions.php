@@ -247,7 +247,7 @@ function route_api_wrapper(): void {
         'journal_profile.php', 'journals.php', 'landing_content.php',
         'leaderboard.php', 'log_history.php', 'messages.php', 'my_activity.php',
         'my_articles.php', 'my_collections.php', 'my_profile.php',
-        'monitoring.php', 'my_statistics.php', 'notifications.php', 'partners.php', 'platform_stats.php', 'platform_timeline.php', 'premium.php',
+        'monitoring.php', 'my_statistics.php', 'notifications.php', 'partners.php', 'payments.php', 'payment_webhook.php', 'platform_stats.php', 'platform_timeline.php', 'premium.php',
         'profile_lookup.php', 'projects.php', 'proxy.php',
         'researcher_distribution.php', 'researcher_profile.php', 'researchers.php',
         'research_matching.php', 'sdg_distribution.php', 'sdgs_cluster.php', 'sitemap.php',
@@ -257,7 +257,7 @@ function route_api_wrapper(): void {
 
     static $admin_allowed = [
         'researchers.php', 'projects.php', 'opportunities.php', 'expertise.php', 'landing_content.php', 'users.php', 'settings.php',
-        'opportunity_curation.php', 'premium.php'
+        'opportunity_curation.php', 'premium.php', 'payments.php'
     ];
 
     if ($subdir === 'admin/') {

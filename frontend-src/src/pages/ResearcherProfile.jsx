@@ -8,6 +8,7 @@ import {
 import { useTrackView } from '../hooks/useTrackActivity';
 import { usePremiumTier } from '../hooks/usePremium';
 import PremiumBadge from '../components/premium/PremiumBadge';
+import { LookupLoader } from '../components/shared/GitLoader';
 
 // UN official SDG colour palette
 const SDG_COLORS = {
@@ -27,19 +28,6 @@ const CustomTooltip = ({ active, payload, label }) => {
       <p className="text-[15px] font-semibold text-gray-900">{label}</p>
       <p className="text-[15px] text-indigo-600">{payload[0].name}: {payload[0].value}</p>
     </div>
-  );
-};
-
-const LoadingState = () => {
-  const { t } = useTranslation('researcher');
-  return (
-    <main className="pt-[76px] pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-      <div className="flex flex-col items-center justify-center py-32 gap-4">
-        <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-        <p className="text-gray-600 font-medium">{t('loading.title')}</p>
-        <p className="text-[15px] text-gray-400">{t('loading.subtitle')}</p>
-      </div>
-    </main>
   );
 };
 
@@ -84,8 +72,10 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState(null);
   const [unsupported, setUnsupported] = useState(null);
+  const [startedAt, setStartedAt]   = useState(() => Date.now());
 
   const fetchProfile = useCallback(async () => {
+    setStartedAt(Date.now());
     setLoading(true);
     setError(null);
     setUnsupported(null);
@@ -109,7 +99,8 @@ const ResearcherProfile = ({ sourceType = 'orcid' }) => {
 
   useEffect(() => { fetchProfile(); }, [fetchProfile]);
 
-  if (loading) return <LoadingState />;
+  // Efek loading ala GitHub Actions (ikon git-running milik aplikasi, berputar).
+  if (loading) return <LookupLoader kind={sourceType} id={idValue} startedAt={startedAt} />;
 
   if (unsupported) {
     return (

@@ -1,0 +1,77 @@
+{
+  "pay_now": "Pay now via {{gateway}}",
+  "pay_now_hint": "Bank transfer/VA, QRIS, e-wallets, or cards. Payment is recorded automatically.",
+  "or_manual": "or pay by manual transfer",
+  "redirecting": "Redirecting to the payment page…",
+  "buy": "Pay & activate via {{gateway}}",
+  "extend": "Extend membership",
+  "buy_contact": "Online purchase is not available yet — contact the team to activate.",
+  "months_one": "{{count}} month",
+  "months_other": "{{count}} months",
+  "returned": {
+    "paid": "Payment successful! The listing fee is paid and the listing awaits admin approval.",
+    "membership_paid": "Payment successful! Your premium membership is active.",
+    "pending": "Payment not completed yet. The status updates automatically once payment is received.",
+    "failed": "Payment failed or was cancelled. Please try again.",
+    "expired": "The payment invoice expired. Please create a new payment."
+  },
+  "status": {
+    "pending": "Pending",
+    "paid": "Paid",
+    "failed": "Failed",
+    "expired": "Expired"
+  },
+  "admin": {
+    "title": "Payments",
+    "description": "Online payment gateways (Midtrans / Xendit), manual payments, and transaction history.",
+    "configured": "Keys installed",
+    "not_configured": "Not configured",
+    "active_now": "Currently in use",
+    "mode": "Mode",
+    "webhook_url": "Notification URL (register it in the gateway dashboard)",
+    "copy": "Copy",
+    "copied": "Copied",
+    "xendit_no_token": "XENDIT_CALLBACK_TOKEN is empty — Xendit notifications will be rejected.",
+    "env_hint": "API keys are set in the server's .env file (not stored in the database and not readable from the web). Reload this page after editing .env.",
+    "settings_title": "Payment method",
+    "provider": {
+      "auto": "Automatic",
+      "midtrans": "Midtrans",
+      "xendit": "Xendit",
+      "manual": "Manual only"
+    },
+    "provider_hint": {
+      "auto": "Uses Midtrans when its key is installed, otherwise Xendit; with neither, only manual payment.",
+      "midtrans": "Always uses Midtrans (if its key is missing, users are sent to manual payment).",
+      "xendit": "Always uses Xendit (if its key is missing, users are sent to manual payment).",
+      "manual": "Online payment is off; users transfer manually and admins confirm in Opportunity Curation."
+    },
+    "manual_enabled": "Also offer manual payment as an alternative",
+    "manual_hint_gateway": "When off, users can only pay through the online gateway.",
+    "manual_hint_fallback": "No gateway is active, so manual payment is always available.",
+    "saved": "Payment settings saved",
+    "synced": "Status updated: {{status}}",
+    "sync": "Check status",
+    "kpi_paid_one": "{{count}} paid transaction",
+    "kpi_paid_other": "{{count}} paid transactions",
+    "kpi_pending": "Awaiting payment",
+    "kpi_method": "Active method",
+    "manual_only": "Manual",
+    "transactions": "Transactions",
+    "all": "All statuses",
+    "search": "Search order / email…",
+    "empty": "No transactions yet.",
+    "col": {
+      "order": "Order",
+      "payer": "Payer",
+      "item": "For",
+      "amount": "Amount",
+      "status": "Status",
+      "date": "Date"
+    },
+    "prices_title": "Membership prices (online purchase)",
+    "prices_hint": "Set prices in IDR so plans can be bought directly on the Premium page via Midtrans/Xendit. 0 = not sold online (activated by admins).",
+    "price_for": "{{tier}} price (IDR)",
+    "months": "Membership length (months)"
+  }
+}

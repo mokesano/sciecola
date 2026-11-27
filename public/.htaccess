@@ -240,6 +240,10 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
  
  # BLOKIR USER AGENT SUSPICIOUS
  # Mencegah akses dari bot dan scraper yang mencurigakan
+ # Pengecualian: notifikasi pembayaran server-ke-server dari Midtrans/Xendit (user-agent
+ # mereka bisa kosong atau berbasis Java). Keasliannya diperiksa dengan tanda tangan/token
+ # di api/wrapper/payment_webhook.php, bukan dengan user-agent.
+ RewriteCond %{REQUEST_URI} !^/api/payment_webhook\.php$ [NC]
  RewriteCond %{HTTP_USER_AGENT} ^$ [OR]
  RewriteCond %{HTTP_USER_AGENT} (libwww|wget|python|nikto|curl|scan|java|winhttp|clshttp|loader) [NC]
  # Baris di bawah ini DINONAKTIFKAN agar tidak memicu error 403 (False Positive)

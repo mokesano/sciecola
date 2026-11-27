@@ -208,6 +208,43 @@ final class Premium
         return true;
     }
 
+    /** Harga keanggotaan untuk dibeli online (IDR); 0 = tidak dijual online. */
+    public static function price(string $tier): int
+    {
+        return (int) (self::settings()['price' . ucfirst($tier)] ?? 0);
+    }
+
+    /**
+     * Buat atau perpanjang keanggotaan setelah pembayaran lunas.
+     * Keanggotaan aktif tingkat yang sama diperpanjang dari tanggal berakhirnya; selain itu dibuat baru.
+     * @return string tanggal berakhir (Y-m-d)
+     */
+    public static function grantMembership(PDO $pdo, array $user, string $tier, int $months, string $displayName, string $note): string
+    {
+        if (!in_array($tier, self::TIERS, true)) throw new \InvalidArgumentException('Tingkat tidak dikenal');
+        self::ensure($pdo);
+        $months = max(1, $months);
+        $today = date('Y-m-d');
+        $now = date('Y-m-d H:i:s');
+        $st = $pdo->prepare('SELECT * FROM premium_memberships WHERE ' . self::activeWhere() . ' AND user_id = ? AND tier = ? ORDER BY ends_on DESC LIMIT 1');
+        $st->execute([$today, $today, (int) $user['id'], $tier]);
+        if ($m = $st->fetch(PDO::FETCH_ASSOC)) {
+            $from = $m['ends_on'] && $m['ends_on'] > $today ? $m['ends_on'] : $today;
+            $until = date('Y-m-d', strtotime($from . " +{$months} months"));
+            $pdo->prepare('UPDATE premium_memberships SET ends_on = ?, note = ?, updated_at = ? WHERE id = ?')
+                ->execute([$until, mb_substr(trim(((string) $m['note']) . "\n" . $note), 0, 2000), $now, (int) $m['id']]);
+        } else {
+            $until = date('Y-m-d', strtotime($today . " +{$months} months"));
+            $name = trim($displayName) !== '' ? $displayName : ((string) ($user['name'] ?? '') ?: (string) ($user['email'] ?? 'Anggota'));
+            $pdo->prepare("INSERT INTO premium_memberships (tier, display_name, user_id, orcid, starts_on, ends_on, status, note, created_at, updated_at)
+                           VALUES (?, ?, ?, ?, ?, ?, 'active', ?, ?, ?)")
+                ->execute([$tier, mb_substr($name, 0, 255), (int) $user['id'], !empty($user['orcid']) ? strtoupper((string) $user['orcid']) : null,
+                           $today, $until, $note, $now, $now]);
+        }
+        self::$memberCache = [];
+        return $until;
+    }
+
     /** Kuota verifikasi peluang gratis per tahun untuk tingkat keanggotaan. */
     public static function verifiedQuota(?array $membership): int
     {

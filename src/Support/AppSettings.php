@@ -76,6 +76,16 @@ final class AppSettings
             'freeAnalysisRefreshPerDay'=> 3,      // analisis ulang (refresh) gratis per hari untuk non-anggota
             'contactEmail'             => '',
             'pricingNote'              => '',     // keterangan harga/paket, tampil di halaman Premium
+            'priceSponsor'             => 0,      // harga keanggotaan (IDR) untuk dibeli online; 0 = lewat kontak admin
+            'pricePartner'             => 0,
+            'priceCollaborator'        => 0,
+            'membershipMonths'         => 12,     // lama keanggotaan yang dibeli online
+        ],
+        // Pembayaran. Kunci API ada di .env (MIDTRANS_SERVER_KEY, XENDIT_SECRET_KEY, ...);
+        // di sini hanya pilihan gateway dan pembayaran manual (src/Payment/PaymentService.php).
+        'payments' => [
+            'provider'      => 'auto',   // auto | midtrans | xendit | manual
+            'manualEnabled' => true,     // transfer manual + konfirmasi admin; selalu aktif bila tidak ada gateway
         ],
         'impact' => [
             'academic' => 0.40,
@@ -210,6 +220,15 @@ final class AppSettings
         }
         if ($key === 'autoHideReports') {
             return max(1, min(50, (int) $value));
+        }
+        if ($group === 'premium' && str_starts_with($key, 'price')) {
+            return max(0, min(1000000000, (int) round((float) $value)));
+        }
+        if ($key === 'membershipMonths') {
+            return max(1, min(60, (int) $value));
+        }
+        if ($key === 'provider') {
+            return in_array($value, ['auto', 'midtrans', 'xendit', 'manual'], true) ? $value : $default;
         }
         if ($group === 'premium' && (str_starts_with($key, 'quota') || $key === 'freeAnalysisRefreshPerDay')) {
             return max(0, min(10000, (int) $value));

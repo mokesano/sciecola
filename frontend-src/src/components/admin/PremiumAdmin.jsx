@@ -162,6 +162,23 @@ export default function PremiumAdmin() {
             </label>
           </div>
         </div>
+        <div>
+          <h3 className="font-semibold text-gray-900">{t('payments:admin.prices_title')}</h3>
+          <p className="mt-1 text-xs text-gray-500">{t('payments:admin.prices_hint')}</p>
+          <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {TIERS.map((tr) => {
+              const k = `price${tr.charAt(0).toUpperCase()}${tr.slice(1)}`;
+              return (
+                <label key={tr} className="block text-sm"><span className="mb-1 block text-gray-700">{t('payments:admin.price_for', { tier: t(`tier.${tr}`) })}</span>
+                  <input type="number" min={0} step={1000} className={input} value={cfg[k] ?? 0} onChange={(e) => setCfg({ ...cfg, [k]: e.target.value })} />
+                </label>
+              );
+            })}
+            <label className="block text-sm"><span className="mb-1 block text-gray-700">{t('payments:admin.months')}</span>
+              <input type="number" min={1} max={60} className={input} value={cfg.membershipMonths ?? 12} onChange={(e) => setCfg({ ...cfg, membershipMonths: e.target.value })} />
+            </label>
+          </div>
+        </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <label className="block text-sm"><span className="mb-1 block text-gray-700">{t('admin.contact_email')}</span>
             <input type="email" className={input} value={cfg.contactEmail} onChange={(e) => setCfg({ ...cfg, contactEmail: e.target.value })} />

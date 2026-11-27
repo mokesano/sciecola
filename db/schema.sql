@@ -746,6 +746,28 @@ CREATE TABLE IF NOT EXISTS premium_usage (
   PRIMARY KEY (usage_key, feature, period)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Pembayaran online (Midtrans/Xendit) — src/Payment/PaymentService.php; dibuat otomatis bila belum ada.
+-- purpose: opportunity_fee (ref_id = id peluang) | membership (ref_id = tier).
+CREATE TABLE IF NOT EXISTS payments (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  order_id        VARCHAR(64)     NOT NULL UNIQUE,
+  purpose         VARCHAR(30)     NOT NULL,
+  ref_id          VARCHAR(64)     NOT NULL,
+  user_id         INT             NULL,
+  provider        VARCHAR(12)     NOT NULL  COMMENT 'midtrans|xendit',
+  amount          DECIMAL(15,2)   NOT NULL,
+  currency        VARCHAR(3)      NOT NULL DEFAULT 'IDR',
+  status          VARCHAR(12)     NOT NULL DEFAULT 'pending'  COMMENT 'pending|paid|failed|expired',
+  provider_ref    VARCHAR(128)    NULL      COMMENT 'Snap token / Xendit invoice id',
+  checkout_url    VARCHAR(1024)   NULL,
+  description     VARCHAR(255)    NULL,
+  meta            TEXT            NULL,
+  last_event      TEXT            NULL      COMMENT 'ringkasan notifikasi terakhir dari gateway',
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP       NULL,
+  paid_at         TIMESTAMP       NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ── LAYER 11: Communication ─────────────────────────────────────────────
 
 CREATE TABLE IF NOT EXISTS chat_sessions (

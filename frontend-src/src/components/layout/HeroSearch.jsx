@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../context/AuthContext';
 import { trackActivity } from '../../hooks/useTrackActivity';
+import { GitStatusIcon } from '../shared/GitLoader';
 
 /* ─── Detectors ─────────────────────────────────────────────────────────────
  * Order matters: check the most specific patterns first (ORCID's dash layout,
@@ -101,7 +102,9 @@ const HeroSearch = () => {
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <i className={`fas ${isLoading ? 'fa-spinner fa-spin' : 'fa-search'} text-indigo-500`}></i>
+                {isLoading
+                  ? <GitStatusIcon status="running" size={18} />
+                  : <i className="fas fa-search text-indigo-500"></i>}
               </div>
               <input
                 type="text"

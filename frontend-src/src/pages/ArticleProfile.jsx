@@ -6,6 +6,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, AreaChart, Area,
 } from 'recharts';
 import { useTrackView } from '../hooks/useTrackActivity';
+import { LookupLoader } from '../components/shared/GitLoader';
 
 // UN official SDG palette
 const SDG_COLORS = {
@@ -41,8 +42,10 @@ const ArticleProfile = () => {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [activeTab, setActiveTab] = useState('ringkasan');
+  const [startedAt, setStartedAt] = useState(() => Date.now());
 
   const fetchProfile = useCallback(async () => {
+    setStartedAt(Date.now());
     setLoading(true);
     setNotFound(false);
     try {
@@ -64,17 +67,11 @@ const ArticleProfile = () => {
 
   useEffect(() => { fetchProfile(); }, [fetchProfile]);
 
+  // Efek loading ala GitHub Actions (ikon git-running milik aplikasi, berputar).
   if (loading) {
-    return (
-      <main className="pt-[76px] pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">{t('loading')}</p>
-          </div>
-        </div>
-      </main>
-    );
+    let shown = doiCode;
+    try { shown = decodeURIComponent(doiCode); } catch { /* biarkan apa adanya */ }
+    return <LookupLoader kind="doi" id={shown} startedAt={startedAt} />;
   }
 
   if (notFound || !article) {

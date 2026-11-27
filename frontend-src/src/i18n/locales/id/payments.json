@@ -1,0 +1,77 @@
+{
+  "pay_now": "Bayar sekarang via {{gateway}}",
+  "pay_now_hint": "Transfer bank/VA, QRIS, e-wallet, atau kartu. Status lunas tercatat otomatis.",
+  "or_manual": "atau transfer manual",
+  "redirecting": "Mengarahkan ke halaman pembayaran…",
+  "buy": "Bayar & aktifkan via {{gateway}}",
+  "extend": "Perpanjang keanggotaan",
+  "buy_contact": "Pembelian online belum tersedia — hubungi pengelola untuk aktivasi.",
+  "months_one": "{{count}} bulan",
+  "months_other": "{{count}} bulan",
+  "returned": {
+    "paid": "Pembayaran berhasil! Biaya penayangan lunas dan peluang menunggu persetujuan admin.",
+    "membership_paid": "Pembayaran berhasil! Keanggotaan premium Anda sudah aktif.",
+    "pending": "Pembayaran belum selesai. Status akan diperbarui otomatis setelah pembayaran diterima.",
+    "failed": "Pembayaran gagal atau dibatalkan. Silakan coba lagi.",
+    "expired": "Tagihan pembayaran kedaluwarsa. Silakan buat pembayaran baru."
+  },
+  "status": {
+    "pending": "Menunggu",
+    "paid": "Lunas",
+    "failed": "Gagal",
+    "expired": "Kedaluwarsa"
+  },
+  "admin": {
+    "title": "Pembayaran",
+    "description": "Gateway pembayaran online (Midtrans / Xendit), pembayaran manual, dan riwayat transaksi.",
+    "configured": "Kunci terpasang",
+    "not_configured": "Belum dikonfigurasi",
+    "active_now": "Dipakai saat ini",
+    "mode": "Mode",
+    "webhook_url": "URL notifikasi (daftarkan di dasbor gateway)",
+    "copy": "Salin",
+    "copied": "Disalin",
+    "xendit_no_token": "XENDIT_CALLBACK_TOKEN belum diisi — notifikasi Xendit akan ditolak.",
+    "env_hint": "Kunci API diisi di berkas .env server (tidak disimpan di database dan tidak bisa dibaca dari web). Setelah mengubah .env, muat ulang halaman ini.",
+    "settings_title": "Metode pembayaran",
+    "provider": {
+      "auto": "Otomatis",
+      "midtrans": "Midtrans",
+      "xendit": "Xendit",
+      "manual": "Manual saja"
+    },
+    "provider_hint": {
+      "auto": "Memakai Midtrans bila kuncinya terpasang, jika tidak Xendit; bila keduanya kosong, hanya pembayaran manual.",
+      "midtrans": "Selalu memakai Midtrans (bila kuncinya belum terpasang, pengguna diarahkan ke pembayaran manual).",
+      "xendit": "Selalu memakai Xendit (bila kuncinya belum terpasang, pengguna diarahkan ke pembayaran manual).",
+      "manual": "Pembayaran online dimatikan; pengguna mentransfer manual dan admin mengonfirmasi di Kurasi Peluang."
+    },
+    "manual_enabled": "Tampilkan juga pembayaran manual sebagai alternatif",
+    "manual_hint_gateway": "Bila dimatikan, pengguna hanya bisa membayar lewat gateway online.",
+    "manual_hint_fallback": "Tidak ada gateway aktif, jadi pembayaran manual selalu tersedia.",
+    "saved": "Pengaturan pembayaran disimpan",
+    "synced": "Status diperbarui: {{status}}",
+    "sync": "Cek status",
+    "kpi_paid_one": "{{count}} transaksi lunas",
+    "kpi_paid_other": "{{count}} transaksi lunas",
+    "kpi_pending": "Menunggu pembayaran",
+    "kpi_method": "Metode aktif",
+    "manual_only": "Manual",
+    "transactions": "Transaksi",
+    "all": "Semua status",
+    "search": "Cari order / email…",
+    "empty": "Belum ada transaksi.",
+    "col": {
+      "order": "Order",
+      "payer": "Pembayar",
+      "item": "Untuk",
+      "amount": "Jumlah",
+      "status": "Status",
+      "date": "Tanggal"
+    },
+    "prices_title": "Harga keanggotaan (pembelian online)",
+    "prices_hint": "Isi harga dalam Rupiah agar paket bisa dibeli langsung di halaman Premium lewat Midtrans/Xendit. 0 = tidak dijual online (aktivasi lewat admin).",
+    "price_for": "Harga {{tier}} (IDR)",
+    "months": "Lama keanggotaan (bulan)"
+  }
+}

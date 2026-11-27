@@ -91,10 +91,13 @@ try {
         'enabled'       => $enabled,
         'features'      => Premium::featureMap(),
         'tiers'         => [
-            'sponsor'      => ['verified_quota' => (int) $s['quotaVerifiedSponsor']],
-            'partner'      => ['verified_quota' => (int) $s['quotaVerifiedPartner']],
-            'collaborator' => ['verified_quota' => (int) $s['quotaVerifiedCollaborator']],
+            'sponsor'      => ['verified_quota' => (int) $s['quotaVerifiedSponsor'], 'price' => $enabled ? (int) $s['priceSponsor'] : 0],
+            'partner'      => ['verified_quota' => (int) $s['quotaVerifiedPartner'], 'price' => $enabled ? (int) $s['pricePartner'] : 0],
+            'collaborator' => ['verified_quota' => (int) $s['quotaVerifiedCollaborator'], 'price' => $enabled ? (int) $s['priceCollaborator'] : 0],
         ],
+        'membership_months' => (int) $s['membershipMonths'],
+        // Pembelian keanggotaan online hanya bila ada gateway pembayaran aktif.
+        'online_payment' => \Sciecola\Payment\PaymentService::activeGateway(),
         'free_analysis_refresh_per_day' => (int) $s['freeAnalysisRefreshPerDay'],
         'contact_email' => $enabled ? $s['contactEmail'] : '',
         'pricing_note'  => $enabled ? $s['pricingNote'] : '',
