@@ -6,6 +6,7 @@ namespace Sciecola\Marketplace;
 
 use PDO;
 use Sciecola\Community\Notifications;
+use Sciecola\Premium\Premium;
 use Sciecola\Support\AppSettings;
 use Sciecola\Support\ResearcherRecord;
 
@@ -114,14 +115,28 @@ final class OpportunityCuration
         return AppSettings::group('marketplace') + AppSettings::DEFAULTS['marketplace'];
     }
 
-    /** Biaya yang berlaku untuk peluang baru: [status, jumlah, mata uang]. */
-    public static function feeForNewListing(bool $byAdmin): array
+    /** Biaya verifikasi sedang berlaku? Hanya bila layanan premium & fitur verifikasi menyala. */
+    public static function feeActive(): bool
     {
         $s = self::settings();
-        if ($byAdmin || empty($s['feeEnabled']) || (int) $s['feeAmount'] <= 0) {
-            return ['waived', null, null];
+        return Premium::active('verified_listing') && !empty($s['feeEnabled']) && (int) $s['feeAmount'] > 0;
+    }
+
+    /**
+     * Biaya untuk peluang baru: [status, jumlah, mata uang, sumber].
+     * Gratis bila: dipasang admin, premium mati, biaya 0, atau anggota premium masih punya kuota tahunan.
+     */
+    public static function feeForNewListing(PDO $pdo, ?array $user, bool $byAdmin): array
+    {
+        if ($byAdmin || !self::feeActive()) {
+            return ['waived', null, null, $byAdmin ? 'admin' : 'free'];
         }
-        return ['unpaid', (float) $s['feeAmount'], (string) $s['feeCurrency']];
+        $m = Premium::membershipFor($pdo, $user);
+        if ($m && Premium::consume($pdo, 'm:' . $m['id'], 'verified_listing', date('Y'), Premium::verifiedQuota($m))) {
+            return ['waived', null, null, 'membership'];
+        }
+        $s = self::settings();
+        return ['unpaid', (float) $s['feeAmount'], (string) $s['feeCurrency'], 'fee'];
     }
 
     /** @return array<int, array{endorse:int, report:int}> */

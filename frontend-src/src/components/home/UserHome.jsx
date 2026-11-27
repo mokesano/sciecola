@@ -8,6 +8,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import InitialsAvatar from '../shared/InitialsAvatar';
 import { FeedStream } from '../../pages/Feeds';
+import PartnerShowcase from '../premium/PartnerShowcase';
 
 /**
  * Beranda pengguna yang masuk: kartu sambutan dengan angka pribadi, feed komunitas,
@@ -248,6 +249,7 @@ export default function UserHome() {
               </Link>
             </div>
             <QuickLookup t={t} />
+            <PartnerShowcase variant="sidebar" />
           </div>
         </aside>
       </div>

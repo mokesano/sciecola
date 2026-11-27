@@ -108,7 +108,7 @@ try {
             $feeCounts[(string) $r['s']] = (int) $r['n'];
         }
         cur_out(['status' => 'success', 'items' => $items, 'counts' => $statusCounts,
-                 'fee_counts' => $feeCounts, 'settings' => Cur::settings()]);
+                 'fee_counts' => $feeCounts, 'settings' => Cur::settings(), 'fee_active' => Cur::feeActive()]);
     }
 
     if (AdminGuard::method() !== 'POST') cur_out(['status' => 'error', 'message' => 'Method not allowed'], 405);
@@ -130,7 +130,8 @@ try {
     switch ($action) {
         case 'approve':
             if (!in_array($o['fee_status'], ['paid', 'waived'], true)) {
-                if (empty($in['force_waive'])) {
+                // Layanan premium mati → verifikasi gratis, biaya dibebaskan otomatis.
+                if (empty($in['force_waive']) && Cur::feeActive()) {
                     cur_out(['status' => 'error', 'code' => 'fee_unpaid',
                              'message' => 'Biaya penayangan belum lunas. Konfirmasi pembayaran atau bebaskan biaya terlebih dahulu.'], 409);
                 }

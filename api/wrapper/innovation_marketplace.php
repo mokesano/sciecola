@@ -32,6 +32,7 @@ use Sciecola\Auth\UserAuth;
 use Sciecola\Community\Notifications;
 use Sciecola\Database\Db;
 use Sciecola\Marketplace\OpportunityCuration;
+use Sciecola\Premium\Premium;
 use Sciecola\Support\ResearcherRecord;
 
 header('Content-Type: application/json; charset=utf-8');
@@ -205,13 +206,20 @@ function mkt_opportunities(PDO $pdo, ?array $me): array
     }
 
     $counts = OpportunityCuration::counts($pdo, array_column($rows, 'id'));
+    // Lencana & peluang unggulan anggota premium (kosong bila layanan premium mati).
+    $tiers = Premium::tiersForOrcids($pdo, array_column($rows, 'posted_by_orcid'));
+    $featuredOn = Premium::active('featured_listing');
+    $feeOn = OpportunityCuration::feeActive();
     $myVotes = $me ? OpportunityCuration::votesOf($pdo, (int) $me['id']) : [];
 
     $today = date('Y-m-d');
-    $list = array_map(static function ($r) use ($applied, $saved, $today, $me, $counts, $myVotes, $myOrcid) {
+    $list = array_map(static function ($r) use ($applied, $saved, $today, $me, $counts, $myVotes, $myOrcid, $tiers, $featuredOn, $feeOn) {
         $id = (int) $r['id'];
         $mine = $myOrcid !== '' && strtoupper((string) $r['posted_by_orcid']) === $myOrcid;
+        $tier = $tiers[strtoupper((string) $r['posted_by_orcid'])] ?? null;
         return [
+            'premium_tier'      => $tier,
+            'featured'          => $featuredOn && $tier !== null,
             'curation_status'   => $r['curation_status'],
             'curated_at'        => $r['curated_at'],
             'endorsements'      => $counts[$id]['endorse'] ?? 0,
@@ -224,6 +232,8 @@ function mkt_opportunities(PDO $pdo, ?array $me): array
                 'amount'    => $r['fee_amount'] !== null ? (float) $r['fee_amount'] : null,
                 'currency'  => $r['fee_currency'],
                 'reference' => $r['fee_reference'],
+                // Premium mati → verifikasi gratis; formulir pembayaran disembunyikan.
+                'free_now'  => !$feeOn,
             ] : null,
             'id'                => $id,
             'title'             => $r['title'],
@@ -259,7 +269,7 @@ function mkt_opportunities(PDO $pdo, ?array $me): array
             'can_vote'          => $me && (!$cfg['curatorsRequireOrcid'] || $myOrcid !== ''),
             'requires_orcid'    => (bool) $cfg['curatorsRequireOrcid'],
             'allow_apply_review'=> (bool) $cfg['allowApplyInReview'],
-            'fee_enabled'       => !empty($cfg['feeEnabled']) && (int) $cfg['feeAmount'] > 0,
+            'fee_enabled'       => OpportunityCuration::feeActive(),
             'fee_amount'        => (int) $cfg['feeAmount'],
             'fee_currency'      => $cfg['feeCurrency'],
             // Instruksi pembayaran hanya untuk pengguna yang login (dipakai saat memasang peluang).
@@ -405,7 +415,7 @@ function mkt_create(PDO $pdo, array $in, array $me): array
     }
 
     $isAdmin = UserAuth::isAdmin($me);
-    [$feeStatus, $feeAmount, $feeCurrency] = OpportunityCuration::feeForNewListing($isAdmin);
+    [$feeStatus, $feeAmount, $feeCurrency, $feeSource] = OpportunityCuration::feeForNewListing($pdo, $me, $isAdmin);
     $cols = ['title', 'description', 'category_id', 'status', 'posted_by_orcid', 'deadline', 'sdg_alignment', 'budget_range', 'required_skills',
              'curation_status', 'curated_at', 'fee_status', 'fee_amount', 'fee_currency', 'created_at', 'updated_at'];
     $now  = date('Y-m-d H:i:s');
@@ -435,6 +445,7 @@ function mkt_create(PDO $pdo, array $in, array $me): array
         'opportunity_id'  => (int) $pdo->lastInsertId(),
         'curation_status' => $isAdmin ? 'approved' : 'review',
         'fee_status'      => $feeStatus,
+        'fee_source'      => $feeSource,   // admin | free | membership | fee
     ];
 }
 

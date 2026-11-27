@@ -717,6 +717,35 @@ CREATE TABLE IF NOT EXISTS partners (
   INDEX idx_category (category_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Layanan premium (src/Premium/Premium.php; dibuat otomatis bila belum ada).
+-- Saklar utama ada di app_settings grup 'premium' (enabled). Mati = semua layanan gratis.
+CREATE TABLE IF NOT EXISTS premium_memberships (
+  id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
+  tier            VARCHAR(20)     NOT NULL  COMMENT 'sponsor|partner|collaborator',
+  display_name    VARCHAR(255)    NOT NULL,
+  user_id         INT             NULL      COMMENT 'akun yang mendapat fitur premium',
+  orcid           VARCHAR(20)     NULL      COMMENT 'lencana pada profil/peluang/pencocokan',
+  institution_id  VARCHAR(191)    NULL      COMMENT 'ID halaman /institutions/<ID> untuk laporan institusi',
+  logo_url        VARCHAR(512)    NULL,
+  website         VARCHAR(512)    NULL,
+  starts_on       DATE            NOT NULL,
+  ends_on         DATE            NULL,
+  status          VARCHAR(12)     NOT NULL DEFAULT 'active'  COMMENT 'active|cancelled',
+  note            TEXT            NULL,
+  created_by      INT             NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at      TIMESTAMP       NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Pemakaian kuota premium: verifikasi peluang per tahun (m:<membership>), analisis ulang per hari (u:<user>/ip:<hash>).
+CREATE TABLE IF NOT EXISTS premium_usage (
+  usage_key       VARCHAR(80)     NOT NULL,
+  feature         VARCHAR(40)     NOT NULL,
+  period          VARCHAR(10)     NOT NULL  COMMENT 'YYYY atau YYYY-MM-DD',
+  uses            INT             NOT NULL DEFAULT 0,
+  PRIMARY KEY (usage_key, feature, period)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ── LAYER 11: Communication ─────────────────────────────────────────────
 
 CREATE TABLE IF NOT EXISTS chat_sessions (

@@ -8,6 +8,7 @@ import {
 import SectionBackdrop from '../components/shared/SectionBackdrop';
 import AnalyticsHero from '../components/home/AnalyticsHero';
 import UserHome from '../components/home/UserHome';
+import PartnerShowcase from '../components/premium/PartnerShowcase';
 import { useAuth } from '../context/AuthContext';
 import '../styles/homepage.css';
 
@@ -517,6 +518,9 @@ const PublicLanding = () => {
           </div>
         </div>
       </section>
+
+      {/* Etalase anggota premium (tidak tampil bila layanan premium mati). */}
+      <PartnerShowcase className="bg-white" />
 
       {/* Pita gambar antara seksi terakhir dan footer: bukan bagian dari
           seksi mana pun, hanya jeda visual. Tingginya mengikuti rasio

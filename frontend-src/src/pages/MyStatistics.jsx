@@ -3,6 +3,8 @@ import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Line, Legend } from 'recharts';
 import { useAuth } from '../context/AuthContext';
+import { downloadCsv } from '../hooks/usePremium';
+import PremiumAction from '../components/premium/PremiumAction';
 
 const Chevron = () => (
   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,6 +86,24 @@ const MyStatistics = () => {
     return null;
   };
 
+  // Unduh statistik (CSV). Menjadi layanan premium bila fitur "Ekspor data" berlaku.
+  const flat = (list) => {
+    const arr = (Array.isArray(list) ? list : []).filter((x) => x && typeof x === 'object');
+    const keys = [...new Set(arr.flatMap((o) => Object.keys(o).filter((k) => ['string', 'number', 'boolean'].includes(typeof o[k]))))];
+    return keys.length ? [keys, ...arr.map((o) => keys.map((k) => o[k] ?? ''))] : [];
+  };
+  const exportStats = () => {
+    const sm = data?.summary || {};
+    downloadCsv(`sciecola-statistik-${user.orcid}-${new Date().toISOString().slice(0, 10)}.csv`, [
+      ['Sciecola — Statistik', user.name || user.email || '', user.orcid], ['Rentang (bulan)', timeRange], ['Dibuat', new Date().toISOString()], [],
+      ['Ringkasan'], ...Object.entries(sm).filter(([, v]) => v === null || ['string', 'number'].includes(typeof v)).map(([k, v]) => [k, v ?? '']), [],
+      ['Tren dampak'], ...flat(impactTrends), [],
+      ['SDG'], ...flat(sdgData), [],
+      ['Demografi'], ...flat(demographics), [],
+      ['Sumber sitasi'], ...flat(sources),
+    ]);
+  };
+
   const cards = [
     { key: 'views',     value: (data?.summary?.views      || 0).toLocaleString(),  growth: data?.summary?.viewsGrowth ?? null, icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z', color: 'bg-indigo-50 text-indigo-600' },
     { key: 'citations', value: (data?.summary?.citations  || 0).toLocaleString(),  growth: data?.summary?.citationsGrowth ?? null, icon: 'M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z', color: 'bg-purple-50 text-purple-600' },
@@ -119,12 +139,13 @@ const MyStatistics = () => {
             <option value="1">{t('range.1')}</option>
             <option value="all">{t('range.all')}</option>
           </select>
-          <button className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-sm">
+          <PremiumAction feature="data_export" onClick={exportStats}
+            className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-sm">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
             {t('download')}
-          </button>
+          </PremiumAction>
         </div>
       </div>
 

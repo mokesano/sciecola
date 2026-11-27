@@ -147,7 +147,8 @@ export default function OpportunityCuration() {
       ) : (
         <div className="space-y-3">
           {data.items.map((it) => {
-            const feeOk = it.fee_status === 'paid' || it.fee_status === 'waived';
+            // Premium mati → verifikasi gratis, tombol Setujui langsung aktif.
+            const feeOk = it.fee_status === 'paid' || it.fee_status === 'waived' || data.fee_active === false;
             const busy = busyId === it.id;
             return (
               <div key={it.id} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">

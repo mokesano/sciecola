@@ -7,6 +7,8 @@ import {
 } from 'recharts';
 import { LoadingSpinner } from '../components/shared';
 import { useTrackView } from '../hooks/useTrackActivity';
+import { downloadCsv } from '../hooks/usePremium';
+import PremiumAction from '../components/premium/PremiumAction';
 
 const SDG_COLORS = {
   1:'#E5243B',2:'#DDA63A',3:'#4C9F38',4:'#C5192D',5:'#FF3A21',
@@ -122,6 +124,28 @@ const InstitutionProfile = () => {
   useEffect(() => { fetchProfile(); }, [fetchProfile]);
 
   const inst = profileData?.institution || null;
+
+  // Laporan institusi (CSV): ringkasan, sebaran SDG, tren publikasi, peneliti & publikasi teratas.
+  // Menjadi layanan premium bila fitur "Laporan institusi" berlaku (lihat PremiumAction).
+  const exportReport = () => {
+    if (!profileData || !inst) return;
+    const flat = (list) => {
+      const arr = (Array.isArray(list) ? list : []).filter((x) => x && typeof x === 'object');
+      const keys = [...new Set(arr.flatMap((o) => Object.keys(o).filter((k) => ['string', 'number', 'boolean'].includes(typeof o[k]))))];
+      return keys.length ? [keys, ...arr.map((o) => keys.map((k) => o[k] ?? ''))] : [];
+    };
+    const rows = [
+      ['Sciecola — Laporan Institusi', inst.name], ['Dibuat', new Date().toISOString()], [],
+      ['Ringkasan'], ['Publikasi', inst.publications], ['Peneliti', inst.researchers], ['Sitasi', inst.citations],
+      ['h-index', inst.hIndex], ['i10-index', inst.i10Index], ['Jurnal', inst.journals], ['Kolaborasi', inst.collaborations], [],
+      ['Sebaran SDG'], ['SDG', 'Nama', 'Jumlah'], ...profileData.sdg_list.map((x) => [x.sdg, x.name, x.count]), [],
+      ['Tren publikasi'], ...flat(profileData.publication_trend), [],
+      ['Peneliti teratas'], ...flat(profileData.top_researchers), [],
+      ['Publikasi teratas'], ...flat(profileData.top_publications),
+    ];
+    const slug = String(inst.name || id).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    downloadCsv(`sciecola-institusi-${slug}-${new Date().toISOString().slice(0, 10)}.csv`, rows);
+  };
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (!active || !payload?.length) return null;
@@ -282,6 +306,13 @@ const InstitutionProfile = () => {
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                     </a>
                   )}
+                </div>
+                <div className="mt-4 flex justify-center">
+                  <PremiumAction feature="institution_report" params={{ institution: String(id || '') }} onClick={exportReport}
+                    className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    {t('premium:export.institution')}
+                  </PremiumAction>
                 </div>
               </div>
             </div>

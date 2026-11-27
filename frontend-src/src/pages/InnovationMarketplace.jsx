@@ -7,6 +7,8 @@ import { Lightbulb, Handshake, Building2, TrendingUp, Search, Filter, ArrowRight
   Clock, Briefcase, X, Plus, Send, BadgeCheck, ShieldAlert, ThumbsUp, Flag, EyeOff, Hourglass, Wallet,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import PremiumBadge from '../components/premium/PremiumBadge';
+import PartnerShowcase from '../components/premium/PartnerShowcase';
 
 /**
  * Pasar Inovasi — data dari /api/innovation_marketplace.php.
@@ -209,7 +211,9 @@ const InnovationMarketplace = () => {
       deadline: (a, b) => String(a.deadline || '9999').localeCompare(String(b.deadline || '9999')),
       popular: (a, b) => b.application_count - a.application_count,
     };
-    return [...list].sort(by[adv.sort] || by.newest);
+    // Peluang unggulan (anggota premium) selalu di atas; urutan pilihan berlaku di dalam kelompoknya.
+    const sorter = by[adv.sort] || by.newest;
+    return [...list].sort((a, b) => (Number(b.featured) - Number(a.featured)) || sorter(a, b));
   }, [opportunities, searchTerm, activeCategory, activeType, adv]);
 
   const requireLogin = (orcid = false) => {
@@ -398,8 +402,13 @@ const InnovationMarketplace = () => {
             ) : (filtered.map((opp) => (
               <div key={opp.id} role="button" tabIndex={0}
                 onKeyDown={(e) => { if (e.key === 'Enter') setSelected(opp); }}
-                className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer group"
+                className={`relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer group ${opp.featured ? 'ring-2 ring-amber-400' : ''}`}
                 onClick={() => setSelected(opp)}>
+                {opp.featured && (
+                  <span className="absolute right-0 top-0 z-10 rounded-bl-xl bg-gradient-to-r from-amber-300 to-yellow-400 px-3 py-1 text-xs font-bold text-amber-950 shadow">
+                    ★ {t('premium:featured')}
+                  </span>
+                )}
                 {/* Header */}
                 <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-6 text-white">
                   <div className="flex justify-between items-start mb-4 gap-3">
@@ -415,7 +424,7 @@ const InnovationMarketplace = () => {
                       <div className="min-w-0">
                         <div className="text-[15px] opacity-90 truncate">{opp.organization || opp.posted_by_name || t('list.unknown_org')}</div>
                         <div className="font-bold text-lg">{opp.title}</div>
-                        <div className="mt-1"><CurationBadge status={opp.curation_status} t={t} /></div>
+                        <div className="mt-1 flex flex-wrap gap-1.5"><CurationBadge status={opp.curation_status} t={t} /><PremiumBadge tier={opp.premium_tier} /></div>
                       </div>
                     </div>
                     {opp.type && (
@@ -494,6 +503,8 @@ const InnovationMarketplace = () => {
         </div>
       </section>
 
+      <PartnerShowcase compact className="bg-white/60" />
+
       {/* How It Works */}
       <section className="py-28 bg-white">
         <div className="container px-8 max-w-7xl mx-auto">
@@ -553,6 +564,7 @@ const InnovationMarketplace = () => {
             <div className="flex flex-wrap items-center gap-2 text-gray-600">
               <Building2 className="h-4 w-4" />
               <span className="font-medium text-gray-900">{selected.organization || selected.posted_by_name || t('list.unknown_org')}</span>
+              <PremiumBadge tier={selected.premium_tier} size="md" />
               {selected.type && <span className="rounded-full bg-orange-50 px-2 py-0.5 text-sm text-orange-700">{t(`org_type.${selected.type}`)}</span>}
               {selected.category && <span className="rounded-full bg-gray-100 px-2 py-0.5 text-sm">{selected.category}</span>}
               {selected.website && (
@@ -642,7 +654,8 @@ const InnovationMarketplace = () => {
             setBusy(true);
             try {
               const d = await api({ action: 'create', ...f });
-              toast.success(d.curation_status === 'approved' ? t('toast.posted') : t('curation.toast_posted_review'), { duration: 6000 });
+              toast.success(d.curation_status === 'approved' ? t('toast.posted')
+                : d.fee_source === 'membership' ? t('curation.toast_posted_member') : t('curation.toast_posted_review'), { duration: 6000 });
               setPosting(false);
               await loadOpportunities();
               loadStats();
@@ -754,14 +767,15 @@ function CurationPanel({ opp, t, locale, curation, busy, onVote, onConfirmPaymen
 
   if (opp.is_mine) {
     const fee = opp.fee || {};
-    const feeDone = fee.status === 'paid' || fee.status === 'waived';
+    // Layanan premium mati → verifikasi gratis; tidak ada tagihan yang perlu dibayar.
+    const feeDone = fee.status === 'paid' || fee.status === 'waived' || fee.free_now;
     return (
       <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="font-semibold text-gray-900">{t('curation.mine_title')}</span>
           <CurationBadge status={status} t={t} size="md" />
         </div>
-        <p className="mt-2 text-gray-600">{t(`curation.mine_hint.${status}`)}</p>
+        <p className="mt-2 text-gray-600">{status === 'review' && fee.free_now ? t('curation.mine_hint_free') : t(`curation.mine_hint.${status}`)}</p>
         {opp.curation_note && (status === 'on_hold' || fee.status === 'unpaid') && (
           <p className="mt-2 rounded-lg border border-gray-200 bg-white p-3 text-gray-700">
             <span className="font-medium">{t('curation.admin_note')}:</span> {opp.curation_note}
@@ -772,13 +786,13 @@ function CurationPanel({ opp, t, locale, curation, busy, onVote, onConfirmPaymen
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="inline-flex items-center gap-2 font-medium text-gray-900"><Wallet className="h-4 w-4" /> {t('curation.fee_title')}</span>
               <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${feeDone ? 'bg-emerald-100 text-emerald-800' : fee.status === 'pending' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}`}>
-                {t(`curation.fee_status.${fee.status || 'unpaid'}`)}
+                {fee.free_now && fee.status !== 'paid' ? t('curation.fee_free_now') : t(`curation.fee_status.${fee.status || 'unpaid'}`)}
               </span>
             </div>
-            {fee.status !== 'waived' && fee.amount !== null && fee.amount !== undefined && (
+            {!fee.free_now && fee.status !== 'waived' && fee.amount !== null && fee.amount !== undefined && (
               <p className="mt-2 text-lg font-bold text-gray-900">{fmtMoney(fee.amount, fee.currency, locale)}</p>
             )}
-            {fee.status === 'unpaid' && (
+            {fee.status === 'unpaid' && !fee.free_now && (
               <>
                 {curation.fee_instructions && <p className="mt-2 whitespace-pre-wrap text-gray-700">{curation.fee_instructions}</p>}
                 <form className="mt-3 flex flex-col gap-2 sm:flex-row" onSubmit={(e) => { e.preventDefault(); onConfirmPayment(ref); }}>

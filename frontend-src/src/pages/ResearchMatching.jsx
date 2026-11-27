@@ -6,6 +6,7 @@ import { Brain, Users, Target, Zap, Search, Filter, Sparkles, TrendingUp,
   Star, Lightbulb, Network, ArrowRight, Heart, MessageSquare, Share2
 } from 'lucide-react';
 import InitialsAvatar from '../components/shared/InitialsAvatar';
+import PremiumBadge from '../components/premium/PremiumBadge';
 
 const ResearchMatching = () => {
   const navigate = useNavigate();
@@ -287,8 +288,12 @@ const ResearchMatching = () => {
                       <div className="flex-1">
                         <div className="flex justify-between items-start mb-3">
                           <div>
-                            <h3 className="text-2xl font-bold text-gray-900 group-hover:text-purple-600 transition-colors">
+                            <h3 className="text-2xl font-bold text-gray-900 group-hover:text-purple-600 transition-colors flex flex-wrap items-center gap-2">
                               {match.name}
+                              <PremiumBadge tier={match.premium_tier} size="md" />
+                              {match.priority && (
+                                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">★ {t('premium:priority')}</span>
+                              )}
                             </h3>
                             <p className="text-gray-600 mb-1">{match.title || t('card.role_fallback')}</p>
                             <div className="flex items-center gap-4 text-[15px] text-gray-500">

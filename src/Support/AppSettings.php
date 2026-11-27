@@ -58,6 +58,25 @@ final class AppSettings
             'curatorsRequireOrcid' => true,       // hanya akun ber-ORCID yang boleh menilai
             'allowApplyInReview'   => true,       // boleh melamar peluang yang belum diverifikasi
         ],
+        // Layanan premium. Saklar utama `enabled` mati = SEMUA layanan gratis untuk semua orang,
+        // lencana premium dan etalase mitra tidak ditampilkan. Saat menyala, fitur yang
+        // dicentang di bawah menjadi premium (lihat src/Premium/Premium.php).
+        'premium' => [
+            'enabled'                  => false,
+            'f_verified_listing'       => true,   // verifikasi peluang berbayar
+            'f_featured_listing'       => true,   // peluang anggota disematkan di atas daftar
+            'f_partner_showcase'       => true,   // logo anggota di beranda & Pasar Inovasi
+            'f_institution_report'     => true,   // ekspor laporan SDG institusi
+            'f_data_export'            => true,   // unduh statistik pribadi (CSV)
+            'f_priority_matching'      => true,   // prioritas di Pencocokan Riset
+            'f_analysis_quota'         => true,   // kuota analisis ulang SDG harian
+            'quotaVerifiedSponsor'     => 12,     // peluang terverifikasi gratis per tahun
+            'quotaVerifiedPartner'     => 6,
+            'quotaVerifiedCollaborator'=> 3,
+            'freeAnalysisRefreshPerDay'=> 3,      // analisis ulang (refresh) gratis per hari untuk non-anggota
+            'contactEmail'             => '',
+            'pricingNote'              => '',     // keterangan harga/paket, tampil di halaman Premium
+        ],
         'impact' => [
             'academic' => 0.40,
             'social'   => 0.25,
@@ -191,6 +210,16 @@ final class AppSettings
         }
         if ($key === 'autoHideReports') {
             return max(1, min(50, (int) $value));
+        }
+        if ($group === 'premium' && (str_starts_with($key, 'quota') || $key === 'freeAnalysisRefreshPerDay')) {
+            return max(0, min(10000, (int) $value));
+        }
+        if ($key === 'contactEmail') {
+            $v = trim((string) $value);
+            return $v === '' || filter_var($v, FILTER_VALIDATE_EMAIL) ? $v : $default;
+        }
+        if ($key === 'pricingNote') {
+            return mb_substr(trim(strip_tags((string) $value)), 0, 3000);
         }
         if ($key === 'maintenanceMessage') {
             return mb_substr(trim(strip_tags((string) $value)), 0, 500);

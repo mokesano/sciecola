@@ -37,6 +37,7 @@ const MENU = [
       { key: 'projects',    to: '/projects' },
       { key: 'marketplace', to: '/innovation-marketplace' },
       { key: 'sponsor',     to: '/become-sponsor' },
+      { key: 'premium',     to: '/premium' },
   ]},
   { key: 'about', items: [
       { key: 'about',    to: '/about' },

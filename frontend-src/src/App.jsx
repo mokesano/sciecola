@@ -55,6 +55,7 @@ import History from './pages/History';
 import Teams from './pages/Teams';
 import TeamMemberProfile from './pages/TeamMemberProfile';
 import Sponsors from './pages/Sponsors';
+import Premium from './pages/Premium';
 import BecomeSponsor from './pages/BecomeSponsor';
 import Partners from './pages/Partners';
 
@@ -235,6 +236,7 @@ function App() {
               <Route path="/teams" element={<Teams />} />
               <Route path="/teams/:memberSlug" element={<TeamMemberProfile />} />
               <Route path="/sponsors" element={<Sponsors />} />
+              <Route path="/premium" element={<Premium />} />
               <Route path="/become-sponsor" element={<BecomeSponsor />} />
               <Route path="/partners" element={<Partners />} />
 

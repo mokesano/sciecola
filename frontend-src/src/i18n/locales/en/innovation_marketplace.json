@@ -196,6 +196,9 @@
     },
     "fee_reference_ph": "Transfer details: sender name, bank, date, reference no.",
     "fee_confirm": "I have paid",
-    "fee_pending": "Your confirmation ({{ref}}) is being checked by an admin."
+    "fee_pending": "Your confirmation ({{ref}}) is being checked by an admin.",
+    "toast_posted_member": "Your listing is live and uses your membership verification quota — no fee. An admin will verify it.",
+    "fee_free_now": "Free",
+    "mine_hint_free": "Your listing is public and under review. Verification is currently free; an admin will verify it."
   }
 }

@@ -195,6 +195,9 @@
     },
     "fee_reference_ph": "Keterangan transfer: nama pengirim, bank, tanggal, no. referensi",
     "fee_confirm": "Saya sudah membayar",
-    "fee_pending": "Konfirmasi Anda ({{ref}}) sedang diperiksa admin."
+    "fee_pending": "Konfirmasi Anda ({{ref}}) sedang diperiksa admin.",
+    "toast_posted_member": "Peluang tayang dan memakai kuota verifikasi keanggotaan Anda — tanpa biaya. Admin akan memverifikasinya.",
+    "fee_free_now": "Gratis",
+    "mine_hint_free": "Peluang tampil untuk umum dan sedang dinilai. Verifikasi saat ini gratis; admin akan memverifikasinya."
   }
 }

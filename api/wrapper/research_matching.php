@@ -140,7 +140,26 @@ function calculateMatches(): array {
                 'response_time'  => null,
             ];
         }
-        usort($matches, fn ($x, $y) => ($y['match_score'] ?? 0) <=> ($x['match_score'] ?? 0)
+        // Layanan premium: anggota mendapat lencana; bila fitur prioritas pencocokan berlaku,
+        // anggota yang cocok ditampilkan lebih dulu (tetap hanya yang memenuhi kriteria).
+        $tiers = [];
+        $priority = false;
+        try {
+            $ppdo = \Sciecola\Database\Db::pdo();
+            if ($ppdo) {
+                $tiers = \Sciecola\Premium\Premium::tiersForOrcids($ppdo, array_column($matches, 'orcid'));
+                $priority = \Sciecola\Premium\Premium::active('priority_matching');
+            }
+        } catch (\Throwable $e) {
+            error_log('[research_matching] premium: ' . $e->getMessage());
+        }
+        foreach ($matches as &$mm) {
+            $mm['premium_tier'] = $tiers[strtoupper((string) $mm['orcid'])] ?? null;
+            $mm['priority'] = $priority && $mm['premium_tier'] !== null;
+        }
+        unset($mm);
+        usort($matches, fn ($x, $y) => ($y['priority'] <=> $x['priority'])
+            ?: (($y['match_score'] ?? 0) <=> ($x['match_score'] ?? 0))
             ?: $y['publications'] <=> $x['publications']);
         $matches = array_slice($matches, 0, 20);
 
