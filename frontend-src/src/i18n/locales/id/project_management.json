@@ -22,15 +22,29 @@
   "filter": {
     "search_placeholder": "Cari proyek…",
     "filters": "Penyaring",
-    "export": "Ekspor"
+    "export": "Ekspor",
+    "mine": "Hanya proyek saya",
+    "all_sdgs": "Semua SDG",
+    "sort": {
+      "updated": "Terakhir diperbarui",
+      "progress": "Kemajuan tertinggi",
+      "end": "Tenggat terdekat",
+      "title": "Judul (A–Z)"
+    }
   },
   "card": {
     "progress": "Kemajuan",
-    "team_member": "Anggota tim",
     "budget_used": "Anggaran Terpakai",
     "institution": "Institusi",
     "updated": "Diperbarui {{when}}",
-    "recently": "baru-baru ini"
+    "recently": "baru-baru ini",
+    "yours": "Milik Anda",
+    "collaborators": "{{count}} anggota",
+    "milestones": "{{done}}/{{total}} tonggak",
+    "publications": "{{count}} publikasi",
+    "share": "Bagikan / salin tautan",
+    "view": "Lihat detail",
+    "edit": "Ubah proyek"
   },
   "quick": {
     "title": "Aksi Cepat",
@@ -54,6 +68,106 @@
     ]
   },
   "list": {
-    "empty": "Tidak ada proyek yang cocok"
+    "empty": "Tidak ada proyek yang cocok",
+    "none": "Belum ada proyek. Jadilah yang pertama membuat proyek kolaborasi.",
+    "load_error_title": "Daftar proyek belum dapat dimuat",
+    "load_error_gateway": "Server API tidak menjawab (HTTP {{status}}). Biasanya karena server PHP sedang tidak berjalan atau kehabisan waktu. Coba lagi beberapa saat lagi.",
+    "load_error_generic": "Terjadi kesalahan saat memuat data (HTTP {{status}}).",
+    "retry": "Coba lagi"
+  },
+  "status": {
+    "planning": "Perencanaan",
+    "active": "Berjalan",
+    "paused": "Ditunda",
+    "completed": "Selesai",
+    "cancelled": "Dibatalkan"
+  },
+  "visibility": {
+    "public": "Publik",
+    "private": "Privat",
+    "restricted": "Terbatas"
+  },
+  "milestone": {
+    "planned": "Direncanakan",
+    "in-progress": "Berjalan",
+    "completed": "Selesai",
+    "overdue": "Terlambat"
+  },
+  "common": {
+    "save": "Simpan",
+    "saving": "Menyimpan…"
+  },
+  "form": {
+    "new_title": "Proyek Baru",
+    "title": "Judul proyek",
+    "description": "Deskripsi",
+    "status": "Status",
+    "visibility": "Visibilitas",
+    "visibility_hint": {
+      "public": "Terlihat oleh semua pengunjung.",
+      "private": "Hanya terlihat oleh Anda dan anggota proyek.",
+      "restricted": "Hanya terlihat oleh Anda dan anggota proyek."
+    },
+    "start_date": "Tanggal mulai",
+    "end_date": "Tanggal selesai",
+    "budget": "Anggaran",
+    "spent": "Anggaran terpakai",
+    "progress": "Kemajuan",
+    "sdg": "Fokus SDG",
+    "create": "Buat Proyek"
+  },
+  "detail": {
+    "loading": "Memuat proyek…",
+    "tabs": {
+      "overview": "Ringkasan",
+      "members": "Anggota",
+      "milestones": "Tonggak",
+      "settings": "Pengaturan"
+    },
+    "no_description": "Belum ada deskripsi.",
+    "fields": {
+      "status": "Status",
+      "visibility": "Visibilitas",
+      "period": "Periode",
+      "lead": "Pemimpin",
+      "budget": "Terpakai / Anggaran",
+      "progress": "Kemajuan"
+    },
+    "publications": "Publikasi terkait",
+    "contact_lead": "Hubungi pemimpin proyek",
+    "lead_profile": "Profil pemimpin",
+    "lead_role": "Pemimpin proyek",
+    "no_members": "Belum ada anggota lain.",
+    "role_ph": "Peran (mis. Peneliti, Analis Data)",
+    "add_member": "Tambah anggota",
+    "member_hint": "Masukkan ORCID peneliti yang sudah terdaftar di Sciecola. Bila ia punya akun, ia akan menerima notifikasi.",
+    "remove": "Keluarkan",
+    "confirm_remove_member": "Keluarkan anggota ini dari proyek?",
+    "leave": "Keluar dari proyek",
+    "confirm_leave": "Keluar dari proyek ini?",
+    "no_milestones": "Belum ada tonggak.",
+    "target": "Target",
+    "milestone_ph": "Judul tonggak (mis. Pengumpulan data selesai)",
+    "add_milestone": "Tambah tonggak",
+    "confirm_delete_milestone": "Hapus tonggak ini?",
+    "delete_warning": "Menghapus proyek juga menghapus anggota, tonggak, dan tautan publikasinya. Tindakan ini tidak dapat dibatalkan.",
+    "delete": "Hapus proyek",
+    "confirm_delete": "Hapus proyek ini secara permanen?"
+  },
+  "picker": {
+    "title": "Pilih proyek Anda",
+    "empty": "Anda belum memimpin proyek apa pun."
+  },
+  "toast": {
+    "need_orcid": "Tautkan ORCID Anda di Pengaturan untuk mengelola proyek.",
+    "created": "Proyek dibuat",
+    "saved": "Perubahan disimpan",
+    "deleted": "Proyek dihapus",
+    "member_added": "Anggota ditambahkan",
+    "member_removed": "Anggota dikeluarkan",
+    "left": "Anda keluar dari proyek",
+    "milestone_added": "Tonggak ditambahkan",
+    "link_copied": "Tautan proyek disalin",
+    "nothing_to_export": "Tidak ada proyek untuk diekspor"
   }
 }

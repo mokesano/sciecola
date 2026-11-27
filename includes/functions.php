@@ -229,7 +229,8 @@ function route_api_wrapper(): void {
     ];
 
     static $admin_allowed = [
-        'researchers.php', 'projects.php', 'opportunities.php', 'expertise.php', 'landing_content.php', 'users.php', 'settings.php'
+        'researchers.php', 'projects.php', 'opportunities.php', 'expertise.php', 'landing_content.php', 'users.php', 'settings.php',
+        'opportunity_curation.php'
     ];
 
     if ($subdir === 'admin/') {

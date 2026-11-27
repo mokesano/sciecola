@@ -143,6 +143,15 @@ function createOpportunity(PDO $pdo): array {
 
         $opportunityId = intval($pdo->lastInsertId());
 
+        // Peluang yang dipasang admin langsung terverifikasi tanpa biaya penayangan.
+        try {
+            \Sciecola\Marketplace\OpportunityCuration::ensure($pdo);
+            $pdo->prepare("UPDATE innovation_opportunities SET curation_status = 'approved', fee_status = 'waived', curated_at = NOW() WHERE id = ?")
+                ->execute([$opportunityId]);
+        } catch (\Throwable $e) {
+            error_log('[admin/opportunities] curation: ' . $e->getMessage());
+        }
+
         // Log action
         logAdminAction($pdo, 'CREATE', 'innovation_opportunities', (string)$opportunityId, null, $input);
 

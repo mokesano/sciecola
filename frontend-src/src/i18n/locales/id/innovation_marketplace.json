@@ -13,12 +13,36 @@
   "filter": {
     "search_placeholder": "Cari peluang berdasarkan kata kunci, organisasi, atau teknologi…",
     "advanced": "Filter Lanjutan",
-    "org_type": "Jenis Organisasi:"
+    "org_type": "Jenis Organisasi:",
+    "all_categories": "Semua Kategori",
+    "all_sdgs": "Semua SDG",
+    "saved_only": "Hanya yang saya simpan",
+    "deadline": {
+      "any": "Semua batas waktu",
+      "open": "Masih dibuka",
+      "30d": "Berakhir ≤ 30 hari"
+    },
+    "sort": {
+      "newest": "Terbaru",
+      "deadline": "Batas waktu terdekat",
+      "popular": "Pelamar terbanyak"
+    }
   },
   "list": {
     "empty": "Tidak ada peluang yang cocok",
     "apply": "Ajukan Sekarang",
-    "requirements": "Syarat Utama"
+    "requirements": "Syarat Utama",
+    "none": "Belum ada peluang yang dipasang.",
+    "no_deadline": "Tanpa batas waktu",
+    "budget_unspecified": "Dana belum ditentukan",
+    "unknown_org": "Organisasi tidak disebutkan",
+    "more": "+{{count}} lainnya",
+    "closed": "Ditutup",
+    "share": "Bagikan",
+    "save": "Simpan",
+    "unsave": "Hapus dari simpanan",
+    "applications": "{{count}} pelamar",
+    "your_listing": "Peluang Anda · {{count}} pelamar"
   },
   "how": {
     "title": "Cara Pasar Inovasi Bekerja",
@@ -44,8 +68,133 @@
   },
   "cta": {
     "title": "Siap mengubah riset Anda jadi dampak?",
-    "subtitle": "Bergabung dengan ratusan peneliti yang telah memperoleh pendanaan dan mitra lewat Pasar Inovasi Sciecola.",
+    "subtitle": "Temukan mitra industri, pemerintah, dan yayasan untuk riset Anda — atau pasang peluang kolaborasi Anda sendiri.",
     "primary": "Telusuri Semua Peluang",
     "secondary": "Pasang Peluang"
+  },
+  "org_type": {
+    "all": "Semua",
+    "industry": "Industri",
+    "government": "Pemerintah",
+    "foundation": "Yayasan",
+    "nonprofit": "Nirlaba"
+  },
+  "application_status": {
+    "pending": "Lamaran terkirim",
+    "under_review": "Sedang ditinjau",
+    "shortlisted": "Masuk daftar pendek",
+    "accepted": "Lamaran diterima",
+    "rejected": "Lamaran ditolak"
+  },
+  "detail": {
+    "website": "Situs web",
+    "budget": "Dana",
+    "deadline": "Batas waktu",
+    "applications": "Pelamar",
+    "sdgs": "Fokus SDG",
+    "posted_by": "Dipasang oleh",
+    "ask": "Tanya pemasang"
+  },
+  "apply": {
+    "title": "Ajukan: {{title}}",
+    "as": "Diajukan sebagai {{name}} ({{email}}).",
+    "text": "Proposal / motivasi",
+    "text_hint": "Minimal 50 karakter · {{count}} karakter",
+    "attachment": "Tautan proposal (opsional)",
+    "attachment_hint": "Tautan ke dokumen PDF/Google Drive yang bisa dibuka pemasang peluang.",
+    "submit": "Kirim Lamaran"
+  },
+  "post": {
+    "title": "Pasang Peluang Baru",
+    "f_title": "Judul peluang",
+    "f_description": "Deskripsi",
+    "f_description_hint": "Jelaskan tujuan, ruang lingkup, dan yang diharapkan dari mitra (min. 50 karakter).",
+    "f_category": "Kategori",
+    "f_deadline": "Batas waktu lamaran",
+    "f_organization": "Organisasi (opsional)",
+    "f_org_type": "Jenis organisasi",
+    "f_budget": "Kisaran dana (opsional)",
+    "f_budget_ph": "mis. Rp 50–100 juta",
+    "f_skills": "Keahlian yang dibutuhkan",
+    "f_skills_hint": "Pisahkan dengan koma",
+    "f_sdgs": "Fokus SDG",
+    "notice": "Peluang langsung tampil untuk umum. Admin dapat menutup peluang yang tidak sesuai.",
+    "submit": "Pasang Peluang"
+  },
+  "common": {
+    "cancel": "Batal",
+    "sending": "Mengirim…"
+  },
+  "toast": {
+    "need_orcid": "Tautkan ORCID Anda di Pengaturan untuk memasang peluang.",
+    "saved": "Peluang disimpan",
+    "unsaved": "Dihapus dari simpanan",
+    "link_copied": "Tautan peluang disalin",
+    "already_applied": "Anda sudah melamar peluang ini",
+    "deadline_passed": "Batas waktu peluang ini sudah lewat",
+    "applied": "Lamaran terkirim",
+    "posted": "Peluang dipasang"
+  },
+  "curation": {
+    "status": {
+      "review": "Dalam kurasi",
+      "approved": "Terverifikasi",
+      "on_hold": "Ditunda",
+      "auto_hidden": "Disembunyikan"
+    },
+    "status_hint": {
+      "review": "Tampil untuk umum, belum diverifikasi admin",
+      "approved": "Telah diperiksa dan disetujui admin",
+      "on_hold": "Ditunda admin dan tidak tampil untuk umum",
+      "auto_hidden": "Disembunyikan sementara karena banyak laporan"
+    },
+    "counts": "{{endorse}} layak · {{report}} laporan",
+    "counts_hint": "Penilaian komunitas: layak / laporan",
+    "public_hint": "Peluang ini belum diverifikasi admin. Bantu kurasi: tandai Layak bila informasinya benar dan relevan, atau Laporkan bila bermasalah.",
+    "need_orcid": "Tautkan ORCID di Pengaturan untuk ikut menilai.",
+    "endorse": "Layak",
+    "report": "Laporkan",
+    "reported": "Dilaporkan",
+    "verified_note": "Peluang ini telah diperiksa dan disetujui pengelola Sciecola.",
+    "report_title": "Laporkan peluang",
+    "report_intro": "Mengapa \"{{title}}\" perlu ditinjau?",
+    "report_note_ph": "Keterangan tambahan (opsional)",
+    "report_submit": "Kirim laporan",
+    "reasons": {
+      "spam": "Spam atau promosi",
+      "misleading": "Informasi tidak benar / menyesatkan",
+      "not_research": "Bukan peluang riset atau inovasi",
+      "duplicate": "Duplikat peluang lain",
+      "other": "Lainnya"
+    },
+    "toast_endorse": "Terima kasih, penilaian Anda tersimpan",
+    "toast_report": "Laporan terkirim ke admin",
+    "toast_cleared": "Penilaian dibatalkan",
+    "toast_hidden": "Peluang disembunyikan sementara sampai admin meninjaunya",
+    "toast_payment": "Konfirmasi pembayaran terkirim. Admin akan memeriksanya.",
+    "toast_posted_review": "Peluang tayang dengan lencana \"Dalam kurasi\". Lihat status kurasi dan biaya penayangan di halaman detail.",
+    "apply_warning": "Peluang ini masih dalam kurasi dan belum diverifikasi admin. Periksa kebenaran informasinya sebelum mengirim data pribadi.",
+    "post_title": "Kurasi & verifikasi",
+    "post_flow": "Peluang langsung tampil dengan lencana \"Dalam kurasi\" dan dinilai komunitas. Lencana \"Terverifikasi\" diberikan setelah disetujui admin.",
+    "post_fee": "Verifikasi adalah layanan berbayar: biaya penayangan {{amount}}. Petunjuk pembayaran muncul di halaman detail setelah peluang dipasang.",
+    "post_free": "Saat ini verifikasi tidak dikenakan biaya.",
+    "mine_title": "Status kurasi peluang Anda",
+    "mine_hint": {
+      "review": "Peluang tampil untuk umum dan sedang dinilai. Admin akan memverifikasi setelah biaya penayangan lunas.",
+      "approved": "Peluang telah terverifikasi.",
+      "on_hold": "Peluang ditunda admin dan tidak tampil untuk umum. Perbaiki sesuai catatan, lalu hubungi admin.",
+      "auto_hidden": "Peluang disembunyikan sementara karena beberapa laporan. Admin akan meninjaunya."
+    },
+    "admin_note": "Catatan admin",
+    "fee_title": "Biaya penayangan",
+    "fee_status": {
+      "unpaid": "Belum dibayar",
+      "pending": "Menunggu konfirmasi",
+      "paid": "Lunas",
+      "waived": "Dibebaskan"
+    },
+    "fee_reference_ph": "Keterangan transfer: nama pengirim, bank, tanggal, no. referensi",
+    "fee_confirm": "Saya sudah membayar",
+    "fee_pending": "Konfirmasi Anda ({{ref}}) sedang diperiksa admin."
   }
 }

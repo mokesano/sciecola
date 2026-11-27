@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
@@ -37,6 +37,12 @@ const Messages = () => {
   const [firstMessage, setFirstMessage] = useState('');
   const [search, setSearch] = useState('');
   const endRef = useRef(null);
+  const location = useLocation();
+  // /messages?to=ORCID|email (mis. dari tombol "Hubungi" di Proyek) → buka form pesan baru.
+  useEffect(() => {
+    const to = new URLSearchParams(location.search).get('to');
+    if (to) { setRecipient(to); setStarting(true); }
+  }, [location.search]);
 
   const loadConversations = useCallback(async (selectId = null) => {
     try {

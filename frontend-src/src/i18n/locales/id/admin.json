@@ -5,6 +5,7 @@
     "api-security": "API & Keamanan",
     "user-management": "Pengguna",
     "content-moderation": "Konten",
+    "opportunity-curation": "Kurasi Peluang",
     "ui-customization": "Tampilan",
     "system": "Sistem",
     "crawl-queue": "Crawl Queue",
@@ -316,5 +317,79 @@
     "session_timeout": "Lama sesi login (menit)",
     "session_timeout_help": "Berlaku untuk login tanpa \"Ingat saya\". Login dengan \"Ingat saya\" tetap 30 hari.",
     "email_verify_note": "Saat mode pemeliharaan aktif, hanya admin yang bisa memakai aplikasi; halaman masuk tetap terbuka. Verifikasi email bisa dipaksa mati dengan REQUIRE_EMAIL_VERIFICATION=false di .env."
+  },
+  "curation": {
+    "title": "Kurasi Peluang",
+    "description": "Tinjau peluang Pasar Inovasi yang dipasang pengguna, konfirmasi biaya penayangan, dan beri lencana Terverifikasi.",
+    "kpi": {
+      "review": "Dalam kurasi",
+      "auto_hidden": "Disembunyikan otomatis",
+      "fee_pending": "Bukti bayar menunggu",
+      "approved": "Terverifikasi"
+    },
+    "status": {
+      "review": "Dalam kurasi",
+      "auto_hidden": "Disembunyikan",
+      "on_hold": "Ditunda",
+      "approved": "Terverifikasi",
+      "all": "Semua"
+    },
+    "fee": {
+      "unpaid": "Belum bayar",
+      "pending": "Menunggu konfirmasi",
+      "paid": "Lunas",
+      "waived": "Dibebaskan"
+    },
+    "fee_any": "Semua status biaya",
+    "search": "Cari judul atau ORCID…",
+    "refresh": "Muat ulang",
+    "loading": "Memuat…",
+    "empty": "Tidak ada peluang pada filter ini.",
+    "reasons": {
+      "spam": "Spam",
+      "misleading": "Menyesatkan",
+      "not_research": "Bukan riset",
+      "duplicate": "Duplikat",
+      "other": "Lainnya"
+    },
+    "fee_label": "Biaya",
+    "fee_ref": "Bukti",
+    "note": "Catatan",
+    "approve": "Setujui",
+    "approve_needs_fee": "Biaya belum lunas",
+    "mark_paid": "Konfirmasi bayar",
+    "reject_payment": "Tolak bukti",
+    "waive_fee": "Bebaskan biaya",
+    "hold": "Tunda",
+    "restore": "Tampilkan lagi",
+    "delete": "Hapus",
+    "prompt_hold": "Catatan untuk pemasang (alasan ditunda / yang perlu diperbaiki):",
+    "prompt_reject_payment": "Alasan bukti pembayaran ditolak:",
+    "confirm_delete": "Hapus peluang \"{{title}}\"? Tindakan ini tidak dapat dibatalkan.",
+    "confirm_force_waive": "Biaya penayangan belum lunas. Setujui sekaligus bebaskan biayanya?",
+    "done": {
+      "approve": "Peluang terverifikasi",
+      "hold": "Peluang ditunda",
+      "restore": "Peluang ditampilkan kembali",
+      "delete": "Peluang dihapus",
+      "mark_paid": "Pembayaran dikonfirmasi",
+      "waive_fee": "Biaya dibebaskan",
+      "reject_payment": "Bukti pembayaran ditolak"
+    },
+    "settings_title": "Pengaturan biaya penayangan & kurasi",
+    "settings_saved": "Pengaturan disimpan",
+    "save": "Simpan pengaturan",
+    "saving": "Menyimpan…",
+    "cfg": {
+      "feeEnabled": "Wajibkan biaya penayangan untuk verifikasi",
+      "feeAmount": "Jumlah biaya",
+      "feeCurrency": "Mata uang",
+      "autoHideReports": "Laporan untuk sembunyi otomatis",
+      "feeInstructions": "Petunjuk pembayaran (tampil ke pemasang)",
+      "feeInstructions_ph": "Contoh: Transfer ke Bank … No. Rek … a.n. …, lalu isi konfirmasi di halaman peluang.",
+      "curatorsRequireOrcid": "Penilai wajib ber-ORCID",
+      "allowApplyInReview": "Boleh melamar peluang yang masih dalam kurasi",
+      "note": "Biaya berlaku untuk peluang baru. Peluang yang dipasang admin otomatis terverifikasi tanpa biaya. Jumlah 0 berarti gratis."
+    }
   }
 }

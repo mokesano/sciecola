@@ -48,6 +48,16 @@ final class AppSettings
             'secondaryColor'   => '#8b5cf6',
             'fontFamily'       => 'Inter',
         ],
+        // Pasar Inovasi: kurasi publik + biaya penayangan (persetujuan admin menunggu pembayaran).
+        'marketplace' => [
+            'feeEnabled'           => true,
+            'feeAmount'            => 0,          // 0 = gratis (biaya dianggap dibebaskan)
+            'feeCurrency'          => 'IDR',
+            'feeInstructions'      => '',         // cara membayar (rekening, dsb.), tampil ke pemasang
+            'autoHideReports'      => 3,          // laporan dari orang berbeda sebelum disembunyikan otomatis
+            'curatorsRequireOrcid' => true,       // hanya akun ber-ORCID yang boleh menilai
+            'allowApplyInReview'   => true,       // boleh melamar peluang yang belum diverifikasi
+        ],
         'impact' => [
             'academic' => 0.40,
             'social'   => 0.25,
@@ -57,7 +67,7 @@ final class AppSettings
     ];
 
     /** Grup yang boleh dibaca siapa pun (dipakai frontend sebelum login). */
-    public const PUBLIC_GROUPS = ['system', 'content', 'ui'];
+    public const PUBLIC_GROUPS = ['system', 'content', 'ui', 'marketplace'];
 
     /** @var array<string,array<string,mixed>>|null */
     private static ?array $cache = null;
@@ -169,6 +179,18 @@ final class AppSettings
         }
         if ($key === 'fontFamily') {
             return in_array($value, ['Inter', 'Roboto', 'Open Sans', 'Nunito'], true) ? $value : $default;
+        }
+        if ($key === 'feeAmount') {
+            return max(0, min(1000000000, (int) round((float) $value)));
+        }
+        if ($key === 'feeCurrency') {
+            return in_array($value, ['IDR', 'USD'], true) ? $value : $default;
+        }
+        if ($key === 'feeInstructions') {
+            return mb_substr(trim(strip_tags((string) $value)), 0, 1500);
+        }
+        if ($key === 'autoHideReports') {
+            return max(1, min(50, (int) $value));
         }
         if ($key === 'maintenanceMessage') {
             return mb_substr(trim(strip_tags((string) $value)), 0, 500);

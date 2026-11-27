@@ -5,6 +5,7 @@
     "api-security": "API & Security",
     "user-management": "Users",
     "content-moderation": "Content",
+    "opportunity-curation": "Opportunity Curation",
     "ui-customization": "Appearance",
     "system": "System",
     "crawl-queue": "Crawl Queue",
@@ -316,5 +317,79 @@
     "session_timeout": "Sign-in session length (minutes)",
     "session_timeout_help": "Applies to sign-ins without \"Remember me\". \"Remember me\" sign-ins last 30 days.",
     "email_verify_note": "While maintenance mode is on, only admins can use the application; the sign-in page stays open. Email verification can be forced off with REQUIRE_EMAIL_VERIFICATION=false in .env."
+  },
+  "curation": {
+    "title": "Opportunity Curation",
+    "description": "Review user-posted Innovation Marketplace listings, confirm listing fees, and grant the Verified badge.",
+    "kpi": {
+      "review": "Under review",
+      "auto_hidden": "Auto-hidden",
+      "fee_pending": "Payments awaiting check",
+      "approved": "Verified"
+    },
+    "status": {
+      "review": "Under review",
+      "auto_hidden": "Hidden",
+      "on_hold": "On hold",
+      "approved": "Verified",
+      "all": "All"
+    },
+    "fee": {
+      "unpaid": "Unpaid",
+      "pending": "Awaiting confirmation",
+      "paid": "Paid",
+      "waived": "Waived"
+    },
+    "fee_any": "Any fee status",
+    "search": "Search title or ORCID…",
+    "refresh": "Reload",
+    "loading": "Loading…",
+    "empty": "No listings match this filter.",
+    "reasons": {
+      "spam": "Spam",
+      "misleading": "Misleading",
+      "not_research": "Not research",
+      "duplicate": "Duplicate",
+      "other": "Other"
+    },
+    "fee_label": "Fee",
+    "fee_ref": "Proof",
+    "note": "Note",
+    "approve": "Approve",
+    "approve_needs_fee": "Fee not paid yet",
+    "mark_paid": "Confirm payment",
+    "reject_payment": "Reject proof",
+    "waive_fee": "Waive fee",
+    "hold": "Hold",
+    "restore": "Show again",
+    "delete": "Delete",
+    "prompt_hold": "Note for the poster (why it is on hold / what to fix):",
+    "prompt_reject_payment": "Why the payment proof was rejected:",
+    "confirm_delete": "Delete \"{{title}}\"? This cannot be undone.",
+    "confirm_force_waive": "The listing fee is not paid. Approve and waive the fee?",
+    "done": {
+      "approve": "Listing verified",
+      "hold": "Listing put on hold",
+      "restore": "Listing shown again",
+      "delete": "Listing deleted",
+      "mark_paid": "Payment confirmed",
+      "waive_fee": "Fee waived",
+      "reject_payment": "Payment proof rejected"
+    },
+    "settings_title": "Listing fee & curation settings",
+    "settings_saved": "Settings saved",
+    "save": "Save settings",
+    "saving": "Saving…",
+    "cfg": {
+      "feeEnabled": "Require a listing fee for verification",
+      "feeAmount": "Fee amount",
+      "feeCurrency": "Currency",
+      "autoHideReports": "Reports before auto-hide",
+      "feeInstructions": "Payment instructions (shown to posters)",
+      "feeInstructions_ph": "E.g. Transfer to Bank … Acc. … in the name of …, then confirm on the listing page.",
+      "curatorsRequireOrcid": "Reviewers must have ORCID",
+      "allowApplyInReview": "Allow applications to listings under review",
+      "note": "The fee applies to new listings. Listings posted by admins are verified automatically with no fee. An amount of 0 means free."
+    }
   }
 }

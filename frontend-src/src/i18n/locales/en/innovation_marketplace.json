@@ -13,12 +13,37 @@
   "filter": {
     "search_placeholder": "Search opportunities by keyword, organisation or technology…",
     "advanced": "Advanced Filters",
-    "org_type": "Organisation type:"
+    "org_type": "Organisation type:",
+    "all_categories": "All Categories",
+    "all_sdgs": "All SDGs",
+    "saved_only": "Saved only",
+    "deadline": {
+      "any": "Any deadline",
+      "open": "Still open",
+      "30d": "Closing in ≤ 30 days"
+    },
+    "sort": {
+      "newest": "Newest",
+      "deadline": "Nearest deadline",
+      "popular": "Most applicants"
+    }
   },
   "list": {
     "empty": "No matching opportunities",
     "apply": "Apply Now",
-    "requirements": "Key Requirements"
+    "requirements": "Key Requirements",
+    "none": "No opportunities have been posted yet.",
+    "no_deadline": "No deadline",
+    "budget_unspecified": "Funding not specified",
+    "unknown_org": "Organisation not specified",
+    "more": "+{{count}} more",
+    "closed": "Closed",
+    "share": "Share",
+    "save": "Save",
+    "unsave": "Remove from saved",
+    "applications_one": "{{count}} applicant",
+    "applications_other": "{{count}} applicants",
+    "your_listing": "Your listing · {{count}} applicants"
   },
   "how": {
     "title": "How the Innovation Marketplace Works",
@@ -44,8 +69,133 @@
   },
   "cta": {
     "title": "Ready to turn your research into impact?",
-    "subtitle": "Join hundreds of researchers who have secured funding and partners through the Sciecola Innovation Marketplace.",
+    "subtitle": "Find industry, government and foundation partners for your research — or post your own collaboration opportunity.",
     "primary": "Browse All Opportunities",
     "secondary": "Post an Opportunity"
+  },
+  "org_type": {
+    "all": "All",
+    "industry": "Industry",
+    "government": "Government",
+    "foundation": "Foundation",
+    "nonprofit": "Non-profit"
+  },
+  "application_status": {
+    "pending": "Application sent",
+    "under_review": "Under review",
+    "shortlisted": "Shortlisted",
+    "accepted": "Application accepted",
+    "rejected": "Application rejected"
+  },
+  "detail": {
+    "website": "Website",
+    "budget": "Funding",
+    "deadline": "Deadline",
+    "applications": "Applicants",
+    "sdgs": "SDG focus",
+    "posted_by": "Posted by",
+    "ask": "Ask the poster"
+  },
+  "apply": {
+    "title": "Apply: {{title}}",
+    "as": "Applying as {{name}} ({{email}}).",
+    "text": "Proposal / motivation",
+    "text_hint": "At least 50 characters · {{count}} characters",
+    "attachment": "Proposal link (optional)",
+    "attachment_hint": "Link to a PDF/Google Drive document the poster can open.",
+    "submit": "Submit Application"
+  },
+  "post": {
+    "title": "Post a New Opportunity",
+    "f_title": "Opportunity title",
+    "f_description": "Description",
+    "f_description_hint": "Describe the goal, scope and what you expect from partners (min. 50 characters).",
+    "f_category": "Category",
+    "f_deadline": "Application deadline",
+    "f_organization": "Organisation (optional)",
+    "f_org_type": "Organisation type",
+    "f_budget": "Funding range (optional)",
+    "f_budget_ph": "e.g. USD 5–10k",
+    "f_skills": "Required skills",
+    "f_skills_hint": "Separate with commas",
+    "f_sdgs": "SDG focus",
+    "notice": "The opportunity is published immediately. Admins can close listings that are not appropriate.",
+    "submit": "Post Opportunity"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "sending": "Sending…"
+  },
+  "toast": {
+    "need_orcid": "Link your ORCID in Settings to post opportunities.",
+    "saved": "Opportunity saved",
+    "unsaved": "Removed from saved",
+    "link_copied": "Opportunity link copied",
+    "already_applied": "You have already applied to this opportunity",
+    "deadline_passed": "This opportunity's deadline has passed",
+    "applied": "Application sent",
+    "posted": "Opportunity posted"
+  },
+  "curation": {
+    "status": {
+      "review": "Under review",
+      "approved": "Verified",
+      "on_hold": "On hold",
+      "auto_hidden": "Hidden"
+    },
+    "status_hint": {
+      "review": "Public, not yet verified by an admin",
+      "approved": "Checked and approved by an admin",
+      "on_hold": "Put on hold by an admin and hidden from the public",
+      "auto_hidden": "Temporarily hidden after several reports"
+    },
+    "counts": "{{endorse}} endorsements · {{report}} reports",
+    "counts_hint": "Community review: endorsements / reports",
+    "public_hint": "This opportunity has not been verified by an admin yet. Help curate it: endorse it if it is accurate and relevant, or report it if something is wrong.",
+    "need_orcid": "Link your ORCID in Settings to take part in reviews.",
+    "endorse": "Endorse",
+    "report": "Report",
+    "reported": "Reported",
+    "verified_note": "This opportunity has been checked and approved by the Sciecola team.",
+    "report_title": "Report opportunity",
+    "report_intro": "Why should \"{{title}}\" be reviewed?",
+    "report_note_ph": "Additional details (optional)",
+    "report_submit": "Send report",
+    "reasons": {
+      "spam": "Spam or promotion",
+      "misleading": "False or misleading information",
+      "not_research": "Not a research or innovation opportunity",
+      "duplicate": "Duplicate of another listing",
+      "other": "Other"
+    },
+    "toast_endorse": "Thanks, your review has been saved",
+    "toast_report": "Report sent to the admins",
+    "toast_cleared": "Review withdrawn",
+    "toast_hidden": "The opportunity is hidden until an admin reviews it",
+    "toast_payment": "Payment confirmation sent. An admin will check it.",
+    "toast_posted_review": "Your opportunity is live with an \"Under review\" badge. See its curation and listing-fee status on the detail page.",
+    "apply_warning": "This opportunity is still under review and has not been verified by an admin. Check the details before sharing personal information.",
+    "post_title": "Curation & verification",
+    "post_flow": "Your opportunity goes live right away with an \"Under review\" badge and is reviewed by the community. The \"Verified\" badge is granted after admin approval.",
+    "post_fee": "Verification is a paid service: listing fee {{amount}}. Payment instructions appear on the detail page after posting.",
+    "post_free": "Verification is currently free of charge.",
+    "mine_title": "Curation status of your listing",
+    "mine_hint": {
+      "review": "Your listing is public and under review. An admin will verify it once the listing fee is paid.",
+      "approved": "Your listing is verified.",
+      "on_hold": "Your listing is on hold and hidden from the public. Fix it according to the note, then contact the admins.",
+      "auto_hidden": "Your listing is temporarily hidden after several reports. An admin will review it."
+    },
+    "admin_note": "Admin note",
+    "fee_title": "Listing fee",
+    "fee_status": {
+      "unpaid": "Unpaid",
+      "pending": "Awaiting confirmation",
+      "paid": "Paid",
+      "waived": "Waived"
+    },
+    "fee_reference_ph": "Transfer details: sender name, bank, date, reference no.",
+    "fee_confirm": "I have paid",
+    "fee_pending": "Your confirmation ({{ref}}) is being checked by an admin."
   }
 }

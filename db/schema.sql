@@ -583,6 +583,17 @@ CREATE TABLE IF NOT EXISTS innovation_opportunities (
   sdg_alignment   JSON            NULL  COMMENT '[3, 13]',
   budget_range    VARCHAR(50)     NULL,
   required_skills JSON            NULL,
+  -- Kurasi (src/Marketplace/OpportunityCuration.php; ditambahkan otomatis bila belum ada)
+  curation_status VARCHAR(20)     NOT NULL DEFAULT 'review'  COMMENT 'review|approved|on_hold|auto_hidden',
+  curation_note   TEXT            NULL,
+  curated_by      INT             NULL,
+  curated_at      TIMESTAMP       NULL,
+  fee_status      VARCHAR(10)     NOT NULL DEFAULT 'unpaid'  COMMENT 'unpaid|pending|paid|waived',
+  fee_amount      DECIMAL(15,2)   NULL,
+  fee_currency    VARCHAR(3)      NULL,
+  fee_reference   VARCHAR(255)    NULL,
+  fee_submitted_at TIMESTAMP      NULL,
+  fee_confirmed_at TIMESTAMP      NULL,
   created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (category_id)     REFERENCES innovation_categories(id) ON DELETE RESTRICT,
@@ -604,6 +615,17 @@ CREATE TABLE IF NOT EXISTS innovation_reviews (
   FOREIGN KEY (reviewer_orcid) REFERENCES researchers(orcid)           ON DELETE CASCADE,
   INDEX idx_opportunity (opportunity_id),
   INDEX idx_rating      (rating)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Penilaian kurasi publik: satu suara per pengguna per peluang (endorse = "Layak", report = "Laporkan").
+CREATE TABLE IF NOT EXISTS opportunity_curation_votes (
+  opportunity_id  INT UNSIGNED    NOT NULL,
+  user_id         INT UNSIGNED    NOT NULL,
+  vote            VARCHAR(10)     NOT NULL  COMMENT 'endorse|report',
+  reason          VARCHAR(20)     NULL      COMMENT 'spam|misleading|not_research|duplicate|other',
+  note            VARCHAR(500)    NULL,
+  created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (opportunity_id, user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ── LAYER 10: Sponsorships & Partnerships ────────────────────────────────
