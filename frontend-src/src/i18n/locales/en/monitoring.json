@@ -7,49 +7,122 @@
     "30d": "Last 30 Days"
   },
   "loading": "Loading monitoring data…",
-  "error_prefix": "Error loading data:",
-  "error_suffix": "Using cached data.",
+  "error_prefix": "Failed to load data:",
+  "error_suffix": "Please try reloading.",
+  "empty": "No visits in this range yet.",
+  "empty_utm": "No visits with UTM parameters yet.",
+  "source_note": "Figures on this page are counted from pages actually opened in a browser (bots and admin pages are excluded).",
+  "tracking_since": "Tracking active since {{date}}.",
+  "tracking_none": "No visits recorded yet — tracking starts once the latest frontend build is deployed.",
+  "updated": "updated {{time}}",
+  "header": {
+    "subtitle": "Real visits to the app: pages, traffic sources, locations and devices"
+  },
   "geo": {
     "title": "Geographic Distribution",
-    "subtitle": "Visitor distribution by geographic location"
+    "subtitle": "Visitor locations based on IP address (GeoLite2)",
+    "empty": "No visits with a recognisable location yet.",
+    "visitors_one": "{{count}} visitor",
+    "visitors_other": "{{count}} visitors",
+    "views_one": "{{count}} page view",
+    "views_other": "{{count}} page views"
   },
   "stats": {
-    "page_views": "Total Page Views",
+    "page_views": "Page Views",
     "visitors": "Unique Visitors",
-    "session": "Avg. Session",
-    "bounce": "Bounce Rate"
+    "session": "Avg. Session Duration",
+    "bounce": "Bounce Rate",
+    "vs_prev": "vs previous period",
+    "no_prev": "No comparison yet",
+    "points": " pts",
+    "sessions_line": "{{sessions}} sessions · {{pps}} pages per session. Bounce rate = share of sessions that viewed a single page."
+  },
+  "timeline": {
+    "title": "Visit Trend",
+    "views": "Page views",
+    "visitors": "Visitors"
   },
   "sections": {
     "sources": "Sources",
     "top_pages": "Top Pages",
     "entry_pages": "Entry Pages",
+    "exit_pages": "Exit Pages",
     "browsers": "Browsers",
-    "platforms": "Platforms",
+    "platforms": "Devices",
     "os": "Operating Systems"
   },
+  "pages": {
+    "views": "views",
+    "avg_time": "avg. time on page",
+    "bounce": "Bounce {{value}}%"
+  },
+  "source": {
+    "direct": "Direct",
+    "organic": "Organic Search",
+    "social": "Social Media",
+    "referral": "Referral",
+    "email": "Email",
+    "paid": "Paid"
+  },
+  "device": {
+    "desktop": "Desktop",
+    "mobile": "Mobile",
+    "tablet": "Tablet"
+  },
   "activity": {
-    "title": "Page View Activity",
-    "subtitle": "Real-time visitor activity detail"
+    "title": "Recent Visits",
+    "subtitle": "Last 15 page views in the selected range"
   },
   "table": {
-    "timestamp": "Timestamp",
+    "timestamp": "Time",
     "page": "Page",
     "source": "Source",
     "location": "Location",
     "device": "Device",
-    "duration": "Duration"
-  },
-  "header": {
-    "subtitle": "Live monitoring of application activity and traffic"
+    "duration": "Time on Page",
+    "ongoing": "still open / not measured"
   },
   "action": {
-    "refresh": "Refresh",
-    "export": "Export CSV",
-    "view_all": "View All"
+    "refresh": "Reload",
+    "export": "Export CSV"
   },
   "panel": {
     "by_source": "By Traffic Source",
+    "referrers": "Referring Sites",
     "campaigns": "UTM Campaigns",
-    "by_pages": "By Pages"
+    "by_pages": "By Page"
+  },
+  "legend": {
+    "visits": "Visits",
+    "danger": "Danger",
+    "warning": "Warning",
+    "normal_visit": "Normal visit"
+  },
+  "security": {
+    "title": "Security Events",
+    "subtitle": "Recorded by the server: failed logins & brute force, vulnerability scans, blocked requests, access bypassing the home page, non-existent API endpoints, wrong admin tokens and bot visits. Red = danger, yellow = warning.",
+    "empty": "No security events in this range.",
+    "unknown_city": "Unknown location",
+    "ips_one": "{{count}} IP address",
+    "ips_other": "{{count}} IP addresses",
+    "top_ips": "Most Active IPs",
+    "types": {
+      "brute_force": "Brute Force",
+      "scanner_probe": "Vulnerability Scan",
+      "blocked_request": "Blocked Request",
+      "admin_token_invalid": "Wrong Admin Token",
+      "login_failed": "Failed Login",
+      "direct_access": "Direct Access",
+      "api_probe": "API Probe",
+      "bot_visit": "Bot Visit"
+    },
+    "table": {
+      "time": "Last seen",
+      "event": "Event",
+      "ip": "IP",
+      "target": "Path / Account",
+      "location": "Location",
+      "hits": "Count"
+    }
   }
 }

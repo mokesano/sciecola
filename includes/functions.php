@@ -224,7 +224,7 @@ function route_api_wrapper(): void {
         'profile_lookup.php', 'projects.php', 'proxy.php',
         'researcher_distribution.php', 'researcher_profile.php', 'researchers.php',
         'research_matching.php', 'sdg_distribution.php', 'sdgs_cluster.php', 'sitemap.php',
-        'sponsors.php', 'team_member_profile.php', 'teams.php', 'top_researchers.php',
+        'sponsors.php', 'team_member_profile.php', 'teams.php', 'top_researchers.php', 'track.php',
         'trends_analysis.php', 'user_preferences.php',
     ];
 
@@ -234,11 +234,13 @@ function route_api_wrapper(): void {
 
     if ($subdir === 'admin/') {
         if (!in_array($filename, $admin_allowed, true)) {
+            \Sciecola\Middleware\AccessLogger::record('api_probe');
             send_json_response(['status' => 'error', 'message' => 'Admin endpoint tidak ditemukan'], 404);
         }
         $apiFile = ROOT_PATH . '/api/admin/' . $filename;
     } else {
         if (!in_array($filename, $allowed, true)) {
+            \Sciecola\Middleware\AccessLogger::record('api_probe');
             send_json_response(['status' => 'error', 'message' => 'Endpoint tidak ditemukan'], 404);
         }
         $apiFile = ROOT_PATH . '/api/wrapper/' . $filename;

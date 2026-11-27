@@ -45,15 +45,11 @@ if (file_exists($functionsFile)) {
     die('System Error: file functions.php tidak ditemukan di folder includes.');
 }
 
-// 5. Start session (required for AccessLogger session_id)
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// 6. Log request ke access_logs (hanya untuk non-bot GET request ke frontend)
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && !str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/api/')) {
-    (new \Sciecola\Middleware\AccessLogger())->log();
-}
+// 5–6. Kunjungan halaman TIDAK lagi dicatat di sini. Aplikasi memakai HashRouter
+// (/#/halaman), jadi server hanya melihat "/" untuk setiap halaman dan tidak tahu lama
+// kunjungan. Pencatatan dilakukan frontend lewat /api/track.php
+// (src/Analytics/VisitTracker.php). Sesi PHP (PHPSESSID) juga tidak lagi dibuka untuk
+// setiap pengunjung; login memakai cookie sciecola_session sendiri.
 
 // =========================================================================
 // 7. SISTEM ROUTER UTAMA (API vs FRONTEND)
@@ -90,6 +86,9 @@ if (is_api_request()) {
     /*
      * JALUR C: FRONTEND (HTML)
      */
+    // Catatan keamanan: alamat selain "/" (404) dan kunjungan bot → security_events.
+    \Sciecola\Middleware\AccessLogger::inspectRequest();
+
     $uiFile = __DIR__ . '/sciecolaUI.php';
 
     if (file_exists($uiFile)) {

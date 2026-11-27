@@ -51,6 +51,10 @@ final class AdminGuard
             UserAuth::checkSameOrigin();
             return;
         }
+        // Token admin dikirim tetapi salah: catat sebagai peristiwa keamanan.
+        if ((string) ($_SERVER['HTTP_X_ADMIN_TOKEN'] ?? '') !== '') {
+            \Sciecola\Middleware\AccessLogger::record('admin_token_invalid');
+        }
         if (self::configuredToken() === '' && UserAuth::current() === null) {
             self::deny(503, 'TOKEN_NOT_CONFIGURED',
                 'Masuk dengan akun admin, atau atur ADMIN_TOOL_TOKEN di file .env server.');

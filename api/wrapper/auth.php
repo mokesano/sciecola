@@ -177,6 +177,13 @@ function throttle(string $scope, string $identifier, int $max, int $window): voi
 {
     if ($identifier === '') return;
     if (store()->countAttempts($scope, $identifier, $window) >= $max) {
+        // Percobaan yang terus berlanjut setelah dibatasi = indikasi brute force.
+        if (in_array($scope, ['login', 'login_ip'], true)) {
+            \Sciecola\Middleware\AccessLogger::record('brute_force', [
+                'identifier' => \Sciecola\Middleware\AccessLogger::maskIdentifier($identifier),
+                'detail'     => ['stage' => 'rate_limited', 'scope' => $scope],
+            ]);
+        }
         fail('Terlalu banyak percobaan. Coba lagi dalam ' . (int) ceil($window / 60) . ' menit.', 429, 'RATE_LIMITED');
     }
 }
@@ -468,6 +475,9 @@ function actionLogin(array $b): void
     if (!$ok) {
         store()->recordAttempt('login', $email);
         store()->recordAttempt('login_ip', $ip);
+        // Peta keamanan Monitoring: login gagal (kuning) / brute force (merah).
+        \Sciecola\Middleware\AccessLogger::loginFailed($email, store()->countAttempts('login_ip', $ip,
+            \Sciecola\Middleware\AccessLogger::BRUTE_FORCE_WINDOW));
         fail('Email atau kata sandi salah.', 401, 'BAD_CREDENTIALS');
     }
     if ((int) $user['is_active'] !== 1) fail('Akun ini dinonaktifkan. Hubungi admin untuk mengaktifkan kembali.', 403, 'INACTIVE');
@@ -502,7 +512,8 @@ function actionLogin2fa(array $b): void
         $ok = checkSecondFactor($user, $code, $method === 'recovery' ? 'recovery' : 'totp');
     }
     if (!$ok) {
-        store()->incrementTokenAttempts((int) $row['id']);
+        $tries = store()->incrementTokenAttempts((int) $row['id']);
+        \Sciecola\Middleware\AccessLogger::loginFailed((string) ($user['email'] ?? ''), $tries, '2fa');
         fail('Kode salah.', 400, 'INVALID_CODE', 'code');
     }
     store()->markTokenUsed((int) $row['id']);

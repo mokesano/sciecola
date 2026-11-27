@@ -4,6 +4,7 @@ import { useAuth } from './context/AuthContext';
 import { AuthProvider } from './context/AuthContext';
 import { AppSettingsProvider, useAppSettings } from './context/AppSettingsContext';
 import ScrollToTop from './components/shared/ScrollToTop';
+import { PageTracker } from './hooks/usePageTracking';
 
 // Komponen Layout Global
 import Navbar from './components/layout/Navbar';
@@ -176,6 +177,9 @@ function App() {
         <ErrorBoundary>
           {/* Scroll ke atas setiap perpindahan halaman */}
           <ScrollToTop />
+
+          {/* Catat kunjungan halaman nyata untuk Admin → Monitoring */}
+          <PageTracker />
 
           {/* Pengatur Lalu Lintas Halaman */}
           <Routes>

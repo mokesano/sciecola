@@ -119,6 +119,11 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
  # Mengatur akses ke halaman utama aplikasi
  # ----------------------------------------------------------------
  
+ # PENCATAT KEAMANAN: guard.php menerima permintaan yang ditolak / tidak ditemukan dari
+ # aturan di bawah, mencatatnya ke security_events (Admin → Monitoring), lalu menjawab
+ # 403/404. Jangan diproses ulang oleh aturan lain.
+ RewriteRule ^guard\.php$ - [L]
+
  # EXCEPTION: Allow phpinfo.php untuk testing (HAPUS SETELAH TESTING!)
  RewriteCond %{REQUEST_URI} ^/version\.php$ [NC]
  RewriteRule ^(.*)$ - [L]
@@ -208,23 +213,24 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
  # BLOKIR AKSES DIREKTORI CONFIG
  # Mencegah akses ke: /config/, /includes/, /vendor/, dll
- RewriteRule ^(config|includes|vendor|logs|cache|temp)/?$ error/403.html [L]
- RewriteRule ^(config|includes|vendor|logs|cache|temp)/(.*)$ error/403.html [L]
+ RewriteRule ^(config|includes|vendor|logs|cache|temp)/?$ guard.php?r=sensitive_path [L]
+ RewriteRule ^(config|includes|vendor|logs|cache|temp)/(.*)$ guard.php?r=sensitive_path [L]
  
  # BLOKIR AKSES FILE INTERNAL PHP
  # Mencegah akses langsung ke file internal aplikasi
  RewriteCond %{REQUEST_URI} ^/(classes|lib|core)/ [NC]
- RewriteRule ^(.*)$ error/403.html [L]
+ RewriteRule ^(.*)$ guard.php?r=sensitive_path [L]
  
  # BLOKIR AKSES FILE DATABASE
  # Mencegah download file database dan backup
  RewriteCond %{REQUEST_URI} \.(sql|db|sqlite|mdb)$ [NC]
- RewriteRule ^(.*)$ error/403.html [L]
+ RewriteRule ^(.*)$ guard.php?r=database_file [L]
  
  # PROTEKSI ENVIRONMENT FILES
  # Mencegah akses ke file .env, .config, dll
- RewriteCond %{REQUEST_URI} ^\.(env|config) [NC]
- RewriteRule ^(.*)$ error/403.html [L]
+ # (Dulu ^\.(env|config) tidak pernah cocok karena REQUEST_URI selalu diawali "/".)
+ RewriteCond %{REQUEST_URI} (^|/)\.(env|git|svn|config|htpasswd) [NC]
+ RewriteRule ^(.*)$ guard.php?r=hidden_file [L]
  
  
  # ----------------------------------------------------------------
@@ -238,12 +244,12 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
  RewriteCond %{HTTP_USER_AGENT} (libwww|wget|python|nikto|curl|scan|java|winhttp|clshttp|loader) [NC]
  # Baris di bawah ini DINONAKTIFKAN agar tidak memicu error 403 (False Positive)
  # RewriteCond %{HTTP_USER_AGENT} (;|<|>|'|"|\)|\(|%0A|%0D|%27|%3C|%3E|%00) [NC]
- RewriteRule ^(.*)$ error/403.html [F,L]
+ RewriteRule ^(.*)$ guard.php?r=bad_user_agent [L]
  
  # BLOKIR REQUEST METHOD BERBAHAYA
  # Hanya izinkan GET, POST, HEAD, OPTIONS
  RewriteCond %{REQUEST_METHOD} ^(TRACE|DELETE|TRACK|PUT|PATCH) [NC]
- RewriteRule ^(.*)$ error/403.html [F,L]
+ RewriteRule ^(.*)$ guard.php?r=bad_method [L]
  
  
  # ----------------------------------------------------------------
@@ -287,8 +293,8 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
  # CUSTOM ERROR PAGES
  ErrorDocument 400 /error/400.html
  ErrorDocument 401 /error/401.html
- ErrorDocument 403 /error/403.html
- ErrorDocument 404 /error/404.html
+ ErrorDocument 403 /guard.php?r=forbidden
+ ErrorDocument 404 /guard.php?r=notfound
  ErrorDocument 500 /error/500.html
  ErrorDocument 502 /error/502.html
  ErrorDocument 503 /error/503.html
@@ -313,10 +319,11 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
  RewriteCond %{REQUEST_URI} !^/error/
  
  # FINAL FALLBACK
- # Jika tidak ada yang cocok, tampilkan 404
+ # Alamat yang tidak ada (aplikasi memakai /#/…, jadi halaman sah selalu lewat "/")
+ # dicatat sebagai akses langsung / pemindaian lalu dijawab 404 oleh guard.php.
  RewriteCond %{REQUEST_FILENAME} !-f
  RewriteCond %{REQUEST_FILENAME} !-d
- RewriteRule ^(.*)$ error/404.html [L]
+ RewriteRule ^(.*)$ guard.php?r=notfound [L]
  
 </IfModule>
 

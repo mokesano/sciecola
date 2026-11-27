@@ -779,7 +779,8 @@ CREATE TABLE IF NOT EXISTS access_logs (
   utm_medium        VARCHAR(100)    NULL,
   utm_campaign      VARCHAR(100)    NULL,
   is_bot            TINYINT(1)      NOT NULL DEFAULT 0,
-  visit_type        VARCHAR(20)     NOT NULL DEFAULT 'normal'  COMMENT 'normal | bot | brute',
+  visit_type        VARCHAR(20)     NOT NULL DEFAULT 'normal'  COMMENT 'pageview (VisitTracker) | normal/bot (pencatat lama)',
+  visitor_id        VARCHAR(40)     NULL  COMMENT 'ID pengunjung acak dari browser',
   created_at        TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_orcid) REFERENCES researchers(orcid) ON DELETE SET NULL,
   INDEX idx_user       (user_orcid),
@@ -791,6 +792,30 @@ CREATE TABLE IF NOT EXISTS access_logs (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ── LAYER 13: Teams & Editorial ──────────────────────────────────────────
+
+-- Peristiwa keamanan (src/Middleware/AccessLogger.php juga membuat tabel ini otomatis):
+-- brute force, pemindaian celah, akses diblokir .htaccess, login gagal, akses langsung,
+-- endpoint API yang tidak ada, token admin salah, bot. Ditampilkan di Admin → Monitoring.
+CREATE TABLE IF NOT EXISTS security_events (
+  id            BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  event_type    VARCHAR(30)     NOT NULL,
+  severity      VARCHAR(10)     NOT NULL  COMMENT 'danger | warning',
+  ip_address    VARCHAR(45)     NOT NULL,
+  http_method   VARCHAR(10)     NULL,
+  path          VARCHAR(512)    NULL,
+  user_agent    VARCHAR(255)    NULL,
+  identifier    VARCHAR(255)    NULL  COMMENT 'akun yang dicoba (disamarkan)',
+  city          VARCHAR(100)    NULL,
+  country       VARCHAR(100)    NULL,
+  latitude      DECIMAL(10,7)   NULL,
+  longitude     DECIMAL(10,7)   NULL,
+  hits          INT UNSIGNED    NOT NULL DEFAULT 1  COMMENT 'digabung per IP+jenis dalam 10 menit',
+  detail        TEXT            NULL,
+  created_at    TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  last_seen_at  TIMESTAMP       NULL,
+  INDEX idx_se_seen    (last_seen_at),
+  INDEX idx_se_ip_type (ip_address, event_type, last_seen_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS team_departments (
   id              INT UNSIGNED    AUTO_INCREMENT PRIMARY KEY,
