@@ -127,7 +127,7 @@ const Teams = () => {
 
       {/* ══ MASTHEAD — biru ═════════════════════════════════════════ */}
       <AmbientSection tone="light" accent="blue" art={ART.team} artOpacity={0.45}>
-        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
           <nav className="mb-10 flex items-center gap-2 text-[15px] text-slate-500">
             <Link to="/"      className="hover:text-slate-900 hover:underline">{t('breadcrumb.home')}</Link>
             <span className="text-slate-400">/</span>
